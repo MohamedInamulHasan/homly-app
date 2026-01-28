@@ -1,0 +1,69 @@
+import mongoose from 'mongoose';
+
+const productSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: [true, 'Please add a product title'],
+        trim: true
+    },
+    description: {
+        type: String,
+        required: [true, 'Please add a product description']
+    },
+    price: {
+        type: Number,
+        required: [true, 'Please add a product price'],
+        min: 0
+    },
+    category: {
+        type: String,
+        required: [true, 'Please add a product category'],
+        trim: true
+    },
+    subcategory: {
+        type: String,
+        trim: true,
+        default: ''
+    },
+    image: {
+        type: String,
+        required: [true, 'Please add a product image']
+    },
+    images: [{
+        type: String
+    }],
+    stock: {
+        type: Number,
+        required: true,
+        default: 0,
+        min: 0
+    },
+    unit: {
+        type: String,
+        default: ''
+    },
+    featured: {
+        type: Boolean,
+        default: false
+    },
+    isAvailable: {
+        type: Boolean,
+        default: true
+    },
+    storeId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Store',
+        required: false // Optional for now, or true if every product MUST belong to a store
+    }
+}, {
+    timestamps: true
+});
+
+// Add indexes for performance and to avoid sort memory limit errors
+productSchema.index({ createdAt: -1 });
+productSchema.index({ storeId: 1 });
+productSchema.index({ category: 1 });
+
+const Product = mongoose.model('Product', productSchema);
+
+export default Product;
