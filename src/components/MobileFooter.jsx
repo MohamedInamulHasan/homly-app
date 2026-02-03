@@ -32,7 +32,7 @@ const MobileFooter = () => {
 
             {/* Footer Container */}
             <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-2xl border-t border-gray-200/50 dark:border-gray-700/50 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
-                <div className="flex justify-around items-center px-1 py-2">
+                <div className="flex justify-around items-center px-1 pt-2 pb-6">
                     {navItems.map((item) => {
                         const active = isActive(item.path);
                         return (
@@ -43,15 +43,15 @@ const MobileFooter = () => {
                             >
                                 {/* Icon Container */}
                                 <div className={`relative p-2 rounded-xl transition-all duration-300 ${active
-                                        ? 'bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 shadow-md shadow-blue-400/50 dark:shadow-blue-600/50 scale-105'
-                                        : 'bg-gray-100 dark:bg-gray-700/50 group-hover:bg-gray-200 dark:group-hover:bg-gray-600/50 group-hover:scale-105'
+                                    ? 'bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 shadow-md shadow-blue-400/50 dark:shadow-blue-600/50 scale-105'
+                                    : 'bg-gray-100 dark:bg-gray-700/50 group-hover:bg-gray-200 dark:group-hover:bg-gray-600/50 group-hover:scale-105'
                                     }`}>
                                     <item.icon
                                         size={18}
                                         strokeWidth={active ? 2.5 : 2}
                                         className={`transition-all duration-300 ${active
-                                                ? 'text-white'
-                                                : 'text-gray-600 dark:text-gray-300'
+                                            ? 'text-white'
+                                            : 'text-gray-600 dark:text-gray-300'
                                             }`}
                                     />
                                     {item.path === '/cart' && cartCount > 0 && (
@@ -63,8 +63,8 @@ const MobileFooter = () => {
 
                                 {/* Label */}
                                 <span className={`text-[8px] font-semibold transition-all duration-300 ${active
-                                        ? 'text-blue-600 dark:text-blue-400'
-                                        : 'text-gray-500 dark:text-gray-400'
+                                    ? 'text-blue-600 dark:text-blue-400'
+                                    : 'text-gray-500 dark:text-gray-400'
                                     }`}>
                                     {item.label}
                                 </span>
