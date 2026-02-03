@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Package, Truck, CheckCircle, Clock, MapPin, CreditCard, RotateCcw, Store } from 'lucide-react';
+import { ArrowLeft, Package, Truck, CheckCircle, Clock, MapPin, CreditCard, RotateCcw, Store, ChevronLeft } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -146,10 +146,9 @@ const OrderDetails = () => {
                 {/* Back Button */}
                 <button
                     onClick={() => navigate('/orders')}
-                    className="flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors flex-shrink-0 mb-6"
                 >
-                    <ArrowLeft size={20} className="mr-2" />
-                    {t('Back to Orders')}
+                    <ChevronLeft className="text-gray-600 dark:text-white" size={24} />
                 </button>
 
                 {/* Header */}

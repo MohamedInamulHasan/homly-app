@@ -7,7 +7,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { API_BASE_URL } from '../utils/api';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext';
-import { CheckCircle, ArrowLeft, ClipboardList, ShoppingBag, MapPin, Store } from 'lucide-react';
+import { CheckCircle, ArrowLeft, ClipboardList, ShoppingBag, MapPin, Store, ChevronLeft } from 'lucide-react';
 
 const OrderConfirmation = () => {
     const location = useLocation();
@@ -183,10 +183,9 @@ const OrderConfirmation = () => {
             <div className="max-w-3xl mx-auto">
                 <button
                     onClick={() => navigate(-1)}
-                    className="flex items-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 mb-6 transition-colors group"
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors flex-shrink-0 mb-6"
                 >
-                    <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" size={20} />
-                    <span className="font-medium">{t('Back to Edit')}</span>
+                    <ChevronLeft className="text-gray-600 dark:text-white" size={24} />
                 </button>
 
                 <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden mb-8">
@@ -329,7 +328,7 @@ const OrderConfirmation = () => {
                 <div className="hidden md:block">
                     <button
                         onClick={handleConfirmOrder}
-                        className="w-full bg-blue-600 text-white py-4 px-6 text-lg rounded-xl font-bold shadow-lg hover:bg-blue-700 dark:hover:bg-blue-500 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
+                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 px-6 text-lg rounded-2xl font-bold shadow-lg shadow-blue-200 dark:shadow-blue-900/20 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
                     >
                         {t('Place Order')}
                     </button>
@@ -337,11 +336,11 @@ const OrderConfirmation = () => {
             </div>
 
             {/* Sticky Action Footer - Mobile Only */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 p-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50 md:hidden pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+            <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 p-3 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] z-50 md:hidden pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
                 <div className="max-w-7xl mx-auto">
                     <button
                         onClick={handleConfirmOrder}
-                        className="w-[90%] mx-auto block bg-blue-600 text-white py-2.5 px-4 text-sm md:py-4 md:px-6 md:text-lg rounded-xl font-bold shadow-lg hover:bg-blue-700 dark:hover:bg-blue-500 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
+                        className="w-[90%] mx-auto block bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3.5 px-4 text-sm md:py-4 md:px-6 md:text-lg rounded-2xl font-bold shadow-lg shadow-blue-200 dark:shadow-blue-900/20 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
                     >
                         {t('Place Order')}
                     </button>

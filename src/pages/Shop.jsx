@@ -49,16 +49,16 @@ const Shop = () => {
             <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
                 <div className="max-w-7xl mx-auto">
                     <div className="mb-8">
-                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">{t('Find a Store')}</h1>
+                        <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent mb-6">{t('Find a Store')}</h1>
                         <div className="relative max-w-xl mb-6">
                             <input
                                 type="text"
                                 placeholder={t('Search by store name or location...')}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors"
+                                className="w-full pl-12 pr-4 py-3.5 rounded-2xl border-2 border-blue-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-all focus:shadow-xl"
                             />
-                            <Search className="absolute left-3 top-3.5 text-gray-400 dark:text-gray-500" size={20} />
+                            <Search className="absolute left-4 top-4 text-blue-500 dark:text-blue-400" size={22} />
                         </div>
 
                         {/* Toggle and Count */}
@@ -76,12 +76,12 @@ const Shop = () => {
                                     <button
                                         key={category.name}
                                         onClick={() => handleCategoryClick(category.name)}
-                                        className={`flex-shrink-0 px-4 py-2 rounded-full border transition-all duration-300 ${isActive
-                                            ? 'bg-blue-600 text-white border-blue-600'
-                                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-blue-500 hover:text-blue-500'
+                                        className={`flex-shrink-0 px-5 py-2.5 rounded-full border-2 transition-all duration-300 shadow-md hover:shadow-lg ${isActive
+                                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-600 shadow-blue-300 dark:shadow-blue-900/50 scale-105'
+                                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-blue-500 hover:text-blue-500 hover:scale-105'
                                             }`}
                                     >
-                                        <span className="font-medium whitespace-nowrap text-sm">
+                                        <span className="font-bold whitespace-nowrap text-sm">
                                             {t(category.name)}
                                         </span>
                                     </button>
@@ -110,29 +110,29 @@ const Shop = () => {
                     ) : filteredStores.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredStores.map((store) => (
-                                <div key={store._id || store.id} className="bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden border border-gray-100 dark:border-gray-700 group flex flex-col">
+                                <div key={store._id || store.id} className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 hover:scale-[1.02] overflow-hidden border border-gray-100 dark:border-gray-700 group flex flex-col">
                                     {/* Image Section - Reduced Height */}
                                     <div className="relative h-48 overflow-hidden">
                                         <img
                                             src={store.image || `${API_BASE_URL}/stores/${store._id || store.id}/image`}
                                             alt={store.name}
-                                            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 ease-out"
+                                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500 ease-out"
                                             loading="lazy"
                                             onError={(e) => {
                                                 e.target.onerror = null;
                                                 e.target.src = "https://via.placeholder.com/400x300?text=Store";
                                             }}
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
                                         {/* Status & Type Badges */}
                                         <div className="absolute top-3 right-3 z-10 flex flex-col items-end gap-2">
                                             {isStoreOpen(store) ? (
-                                                <span className="px-2.5 py-1 bg-green-500 text-white text-[10px] uppercase font-bold tracking-wider rounded-md shadow-sm">
+                                                <span className="px-3 py-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-[10px] uppercase font-bold tracking-wider rounded-full shadow-lg">
                                                     OPEN
                                                 </span>
                                             ) : (
-                                                <span className="px-2.5 py-1 bg-red-500 text-white text-[10px] uppercase font-bold tracking-wider rounded-md shadow-sm">
+                                                <span className="px-3 py-1.5 bg-gradient-to-r from-red-500 to-pink-600 text-white text-[10px] uppercase font-bold tracking-wider rounded-full shadow-lg">
                                                     CLOSED
                                                 </span>
                                             )}
@@ -143,12 +143,12 @@ const Shop = () => {
                                             <div className="absolute bottom-3 left-3 z-10 flex flex-wrap gap-1">
                                                 {Array.isArray(store.type) ? (
                                                     store.type.map((type, idx) => (
-                                                        <span key={idx} className="px-2.5 py-1 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm text-gray-800 dark:text-white text-xs font-semibold rounded-lg shadow-sm">
+                                                        <span key={idx} className="px-3 py-1.5 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm text-gray-800 dark:text-white text-xs font-bold rounded-full shadow-lg">
                                                             {type}
                                                         </span>
                                                     ))
                                                 ) : (
-                                                    <span className="px-2.5 py-1 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm text-gray-800 dark:text-white text-xs font-semibold rounded-lg shadow-sm">
+                                                    <span className="px-3 py-1.5 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm text-gray-800 dark:text-white text-xs font-bold rounded-full shadow-lg">
                                                         {store.type}
                                                     </span>
                                                 )}
@@ -171,15 +171,15 @@ const Shop = () => {
 
                                         {/* Info Grid: Time and Phone */}
                                         <div className="grid grid-cols-2 gap-3">
-                                            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-2 flex items-center gap-2">
-                                                <Clock size={14} className="text-blue-500 shrink-0" />
-                                                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate">
+                                            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-2.5 flex items-center gap-2 border border-blue-100 dark:border-blue-800">
+                                                <Clock size={16} className="text-blue-600 dark:text-blue-400 shrink-0" />
+                                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300 truncate">
                                                     {store.timing || '9 - 9'}
                                                 </span>
                                             </div>
-                                            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-2 flex items-center gap-2">
-                                                <Phone size={14} className="text-purple-500 shrink-0" />
-                                                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate">
+                                            <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-2.5 flex items-center gap-2 border border-purple-100 dark:border-purple-800">
+                                                <Phone size={16} className="text-purple-600 dark:text-purple-400 shrink-0" />
+                                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300 truncate">
                                                     {store.mobile}
                                                 </span>
                                             </div>

@@ -1462,7 +1462,7 @@ const CategoryManagement = () => {
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Subcategories')} ({t('Optional')})</label>
                             <div className="space-y-3">
                                 {/* Input field with add button */}
-                                <div className="flex gap-2">
+                                <div className="flex flex-col sm:flex-row gap-2">
                                     <input
                                         type="text"
                                         value={newSubcategory}
@@ -1510,7 +1510,7 @@ const CategoryManagement = () => {
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Category Image')}</label>
-                            <div className="flex items-center gap-4">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                 {formData.image && (
                                     <div className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-gray-200 dark:ring-gray-700">
                                         <img
@@ -1544,7 +1544,7 @@ const CategoryManagement = () => {
                             <button
                                 type="submit"
                                 disabled={uploadingCategory}
-                                className={`px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2 ${uploadingCategory
+                                className={`w-full sm:w-auto px-6 py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2 ${uploadingCategory
                                     ? 'bg-gray-400 cursor-not-allowed text-white'
                                     : 'bg-blue-600 text-white hover:bg-blue-700'
                                     }`}
@@ -1743,6 +1743,7 @@ const UserManagement = () => {
                                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('User')}</th>
                                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Contact')}</th>
                                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Role')}</th>
+                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Fast Mode')}</th>
                                     <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Actions')}</th>
                                 </tr>
                             </thead>
@@ -1793,6 +1794,30 @@ const UserManagement = () => {
                                                 </div>
                                             )}
 
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <button
+                                                onClick={async () => {
+                                                    try {
+                                                        const newStatus = !user.isFastMode;
+                                                        await updateUser({
+                                                            id: user._id || user.id,
+                                                            data: { isFastMode: newStatus } // Send ONLY the changed field
+                                                        });
+                                                        // Optimistic update handled by React Query usually, but to be sure we can trigger refetch if needed
+                                                        // fetchUsers(); // React Query's onSuccess in useUpdateUser should handle invalidation
+                                                    } catch (error) {
+                                                        console.error('Failed to toggle Fast Mode:', error);
+                                                        alert(t('Failed to update Fast Mode'));
+                                                    }
+                                                }}
+                                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${user.isFastMode ? 'bg-orange-500' : 'bg-gray-200 dark:bg-gray-600'}`}
+                                                title={user.isFastMode ? t('Fast Mode ON') : t('Fast Mode OFF')}
+                                            >
+                                                <span
+                                                    className={`${user.isFastMode ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                                                />
+                                            </button>
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             {editingUser && (editingUser._id || editingUser.id) === (user._id || user.id) ? (

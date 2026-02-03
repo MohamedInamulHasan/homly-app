@@ -36,7 +36,9 @@ const sendTokenResponse = (user, statusCode, res) => {
                 address: user.address,
                 mobile: user.mobile,
                 storeId: user.storeId,
-                coins: user.coins || 0
+                storeId: user.storeId,
+                coins: user.coins || 0,
+                isFastMode: user.isFastMode || false
             }
         });
 };
@@ -148,6 +150,12 @@ export const updateUserProfile = async (req, res, next) => {
             user.mobile = req.body.mobile || user.mobile;
             user.address = req.body.address || user.address;
 
+            user.address = req.body.address || user.address;
+
+            if (req.body.isFastMode !== undefined) {
+                user.isFastMode = req.body.isFastMode;
+            }
+
             if (req.body.password) {
                 user.password = req.body.password;
             }
@@ -218,6 +226,15 @@ export const updateUserByAdmin = async (req, res, next) => {
         if (req.body.coins !== undefined) {
             console.log(`🪙 Updating coins for user ${user._id}: ${user.coins} -> ${req.body.coins}`);
             user.coins = Number(req.body.coins);
+        }
+
+        if (req.body.coins !== undefined) {
+            console.log(`🪙 Updating coins for user ${user._id}: ${user.coins} -> ${req.body.coins}`);
+            user.coins = Number(req.body.coins);
+        }
+
+        if (req.body.isFastMode !== undefined) {
+            user.isFastMode = req.body.isFastMode;
         }
 
         if (req.body.password) {

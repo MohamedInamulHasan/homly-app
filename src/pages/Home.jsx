@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight, ShoppingCart, Zap } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingCart, Zap, Bookmark } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext.jsx'; // Keep for now if other things need it, or remove if unused.
+import { useCart } from '../context/CartContext';
 import { useProducts } from '../hooks/queries/useProducts';
 import { useAds } from '../hooks/queries/useAds';
 import { useCategories } from '../hooks/queries/useCategories';
@@ -36,6 +37,7 @@ const Home = () => {
 
     const { t } = useLanguage();
     const navigate = useNavigate();
+    const { cartItems, savedProducts } = useCart();
 
     // Use ads from backend only
     const slides = (ads && ads.length > 0) ? ads : [];
@@ -215,7 +217,7 @@ const Home = () => {
                 {loadingAds ? (
                     <div className="w-full h-[250px] md:h-[500px] bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
                 ) : slides.length > 0 ? (
-                    <section className="relative h-[250px] md:h-[500px] group">
+                    <section className="relative h-[250px] md:h-[500px] group overflow-hidden">
                         <div
                             id="hero-slider"
                             className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide h-full w-full"
@@ -233,6 +235,8 @@ const Home = () => {
                                         className="w-full h-full object-cover"
                                         loading="lazy"
                                     />
+                                    {/* Gradient Overlay for better contrast */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
                                 </div>
                             ))}
                         </div>
@@ -240,24 +244,24 @@ const Home = () => {
                         {/* Slider Controls */}
                         <button
                             onClick={() => scrollToSlide(currentSlide === 0 ? slides.length - 1 : currentSlide - 1)}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 p-2 rounded-full text-white transition-colors opacity-0 group-hover:opacity-100 z-10"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm hover:bg-white dark:hover:bg-gray-700 p-3 rounded-full text-gray-800 dark:text-white transition-all shadow-xl hover:shadow-2xl opacity-0 group-hover:opacity-100 z-10 hover:scale-110"
                         >
-                            <ChevronLeft size={32} />
+                            <ChevronLeft size={28} />
                         </button>
                         <button
                             onClick={() => scrollToSlide(currentSlide === slides.length - 1 ? 0 : currentSlide + 1)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 p-2 rounded-full text-white transition-colors opacity-0 group-hover:opacity-100 z-10"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm hover:bg-white dark:hover:bg-gray-700 p-3 rounded-full text-gray-800 dark:text-white transition-all shadow-xl hover:shadow-2xl opacity-0 group-hover:opacity-100 z-10 hover:scale-110"
                         >
-                            <ChevronRight size={32} />
+                            <ChevronRight size={28} />
                         </button>
 
                         {/* Dots */}
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
+                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-10 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-full">
                             {slides.map((_, index) => (
                                 <button
                                     key={index}
                                     onClick={() => scrollToSlide(index)}
-                                    className={`w-3 h-3 rounded-full transition-colors ${index === currentSlide ? 'bg-white' : 'bg-white/50'}`}
+                                    className={`transition-all duration-300 rounded-full ${index === currentSlide ? 'w-8 h-3 bg-white shadow-lg' : 'w-3 h-3 bg-white/60 hover:bg-white/80'}`}
                                 />
                             ))}
                         </div>
@@ -281,9 +285,9 @@ const Home = () => {
                         </div>
                     </section>
                 ) : allCategories.length > 0 ? (
-                    <section className="bg-gray-50 dark:bg-gray-900 py-6">
+                    <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 py-8">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                            <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent mb-6">
                                 {t('Shop by Category')}
                             </h2>
                             {/* Grid: 3 columns on mobile, 4 on tablet, 6 on desktop, 8 on xl screens */}
@@ -294,13 +298,15 @@ const Home = () => {
                                         to={`/category/${encodeURIComponent(category.name)}`}
                                         className="flex flex-col items-center gap-2 md:gap-3 group"
                                     >
-                                        <div className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 ring-4 ring-white dark:ring-gray-800 group-hover:ring-blue-500">
+                                        <div className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 ring-4 ring-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 group-hover:ring-blue-500 dark:group-hover:ring-blue-400 group-hover:scale-110">
                                             <img
                                                 src={category.image || `${API_BASE_URL}/categories/${category._id || category.id}/image`}
                                                 alt={category.name}
                                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                                 loading="lazy"
                                             />
+                                            {/* Gradient overlay on hover */}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-blue-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                         </div>
                                         {(() => {
                                             const fullName = t(category.name);
@@ -312,7 +318,7 @@ const Home = () => {
 
                                                 return (
                                                     <div className="flex flex-col items-center gap-0.5 max-w-full">
-                                                        <span className="text-xs sm:text-sm md:text-base font-semibold text-gray-900 dark:text-white text-center max-w-full group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate w-full" title={mainName}>
+                                                        <span className="text-xs sm:text-sm md:text-base font-bold text-gray-900 dark:text-white text-center max-w-full group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate w-full" title={mainName}>
                                                             {mainName}
                                                         </span>
                                                         <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 text-center max-w-full truncate w-full" title={bracketText}>
@@ -323,7 +329,7 @@ const Home = () => {
                                             }
 
                                             return (
-                                                <span className="text-xs sm:text-sm md:text-base font-semibold text-gray-900 dark:text-white text-center max-w-full group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2" title={fullName}>
+                                                <span className="text-xs sm:text-sm md:text-base font-bold text-gray-900 dark:text-white text-center max-w-full group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2" title={fullName}>
                                                     {fullName}
                                                 </span>
                                             );
@@ -336,7 +342,7 @@ const Home = () => {
                 ) : null}
 
                 {/* Mobile Search Bar - Below Categories */}
-                <section className="md:hidden bg-white dark:bg-gray-800 py-4 sticky top-0 z-20 shadow-sm">
+                <section className="md:hidden bg-gradient-to-r from-blue-50 via-white to-indigo-50 dark:from-gray-800 dark:via-gray-800 dark:to-blue-900/10 py-4 sticky top-0 z-20 shadow-lg border-b border-blue-100 dark:border-gray-700">
                     <div className="max-w-7xl mx-auto px-4">
                         <div className="relative">
                             <form
@@ -355,17 +361,17 @@ const Home = () => {
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder={t('Search products...')}
-                                    className="w-full pl-10 pr-4 py-3 rounded-full border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors"
+                                    className="w-full pl-12 pr-4 py-3.5 rounded-2xl border-2 border-blue-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-all shadow-md focus:shadow-xl"
                                 />
                                 <svg
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"
-                                    width="20"
-                                    height="20"
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500 dark:text-blue-400"
+                                    width="22"
+                                    height="22"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
                                 >
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </form>
 
@@ -387,29 +393,50 @@ const Home = () => {
                                             );
                                         }
 
-                                        return filteredProducts.map((product) => (
-                                            <Link
-                                                key={product._id || product.id}
-                                                to={`/product/${product._id || product.id}`}
-                                                onClick={() => setSearchQuery('')}
-                                                className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0"
-                                            >
-                                                <img
-                                                    src={product.image || `${API_BASE_URL}/products/${product._id || product.id}/image`}
-                                                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
-                                                    alt={product.title}
-                                                    className="w-12 h-12 rounded-lg object-cover"
-                                                />
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="font-medium text-gray-900 dark:text-white truncate">
-                                                        {t(product, 'title')}
-                                                    </p>
-                                                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                        ₹{Number(product.price).toFixed(0)}
-                                                    </p>
-                                                </div>
-                                            </Link>
-                                        ));
+                                        return filteredProducts.map((product) => {
+                                            const productId = product._id || product.id;
+                                            const cartItem = cartItems.find(item => item.id === productId);
+                                            const cartQuantity = cartItem ? cartItem.quantity : 0;
+                                            const isSaved = savedProducts?.some(p => (p._id || p.id || p) === productId);
+
+                                            return (
+                                                <Link
+                                                    key={productId}
+                                                    to={`/product/${productId}`}
+                                                    onClick={() => setSearchQuery('')}
+                                                    className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0"
+                                                >
+                                                    <div className="relative flex-shrink-0">
+                                                        <img
+                                                            src={product.image || `${API_BASE_URL}/products/${productId}/image`}
+                                                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
+                                                            alt={product.title}
+                                                            className="w-12 h-12 rounded-lg object-cover border border-gray-100 dark:border-gray-700"
+                                                        />
+                                                        {cartQuantity > 0 && (
+                                                            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-sm border border-white dark:border-gray-800 z-10">
+                                                                {cartQuantity}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex-1 min-w-0 px-1">
+                                                        <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                                                            {t(product, 'title')}
+                                                        </p>
+                                                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                            ₹{Number(product.price).toFixed(0)}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex-shrink-0">
+                                                        {isSaved ? (
+                                                            <Bookmark size={18} className="text-blue-600 fill-current" />
+                                                        ) : (
+                                                            <Bookmark size={18} className="text-gray-300 dark:text-gray-600" />
+                                                        )}
+                                                    </div>
+                                                </Link>
+                                            );
+                                        });
                                     })()}
                                 </div>
                             )}
@@ -517,13 +544,13 @@ const CategorySection = ({ category, products, t, fastMode }) => {
     return (
         <section className="relative space-y-4">
             {/* Category Header */}
-            <div className="flex items-center justify-between">
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+            <div className="flex items-center justify-between gap-4">
+                <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent truncate flex-1 min-w-0" title={t(category)}>
                     {t(category)}
                 </h2>
                 <Link
                     to={`/category/${encodeURIComponent(category)}`}
-                    className="text-sm md:text-base text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
+                    className="text-sm md:text-base bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent hover:from-blue-700 hover:to-indigo-700 dark:hover:from-blue-300 dark:hover:to-indigo-300 font-bold transition-all px-3 py-1.5 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 flex-shrink-0 whitespace-nowrap"
                 >
                     {t('View All')} →
                 </Link>

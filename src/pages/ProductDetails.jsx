@@ -106,10 +106,9 @@ const ProductDetails = () => {
                 <div className="flex items-center justify-between mb-8">
                     <button
                         onClick={() => navigate(-1)}
-                        className="flex items-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors group"
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors flex-shrink-0"
                     >
-                        <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" size={20} />
-                        <span className="font-medium">{t('Back')}</span>
+                        <ChevronLeft className="text-gray-600 dark:text-white" size={24} />
                     </button>
                     <div className="flex gap-4">
                         <button
@@ -189,13 +188,13 @@ const ProductDetails = () => {
                         <div className="p-8 lg:p-12 flex flex-col h-full">
                             <div className="mb-auto">
                                 <div className="flex items-center gap-2 mb-4">
-                                    <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider rounded-full">
+                                    <span className="px-4 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-md">
                                         {t(product, 'category')}
                                     </span>
                                     {product.storeId && (
-                                        <div className="flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full">
-                                            <Store size={12} className="text-gray-500 dark:text-gray-400" />
-                                            <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                                        <div className="flex items-center gap-1 px-4 py-1.5 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-full shadow-sm">
+                                            <Store size={12} className="text-gray-600 dark:text-gray-300" />
+                                            <span className="text-xs font-bold text-gray-700 dark:text-gray-200">
                                                 {storeName}
                                             </span>
                                         </div>
@@ -213,10 +212,10 @@ const ProductDetails = () => {
 
                                         return (
                                             <div className="mb-4">
-                                                <h1 className="text-2xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight">
+                                                <h1 className="text-2xl md:text-4xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent leading-tight">
                                                     {mainTitle}
                                                 </h1>
-                                                <p className="text-base md:text-xl text-gray-500 dark:text-gray-400 mt-2">
+                                                <p className="text-base md:text-xl text-gray-600 dark:text-gray-400 mt-2 font-medium">
                                                     {bracketText}
                                                 </p>
                                             </div>
@@ -224,16 +223,16 @@ const ProductDetails = () => {
                                     }
 
                                     return (
-                                        <h1 className="text-2xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-4 leading-tight">
+                                        <h1 className="text-2xl md:text-4xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-4 leading-tight">
                                             {fullTitle}
                                         </h1>
                                     );
                                 })()}
 
-                                <div className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white mb-8 flex items-baseline gap-2">
+                                <div className="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent mb-8 flex items-baseline gap-2">
                                     ₹{Number(product.price).toFixed(0)}
                                     {product.unit && (
-                                        <span className="text-base md:text-xl font-medium text-gray-500 dark:text-gray-400">
+                                        <span className="text-lg md:text-2xl font-bold text-gray-600 dark:text-gray-400">
                                             / {product.unit}
                                         </span>
                                     )}

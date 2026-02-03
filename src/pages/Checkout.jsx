@@ -6,7 +6,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { useUserProfile } from '../hooks/queries/useUsers';
 import { getStoreName } from '../utils/storeHelpers';
-import { CreditCard, Truck, MapPin, ShieldCheck, ShoppingBag, ArrowLeft, Store, Trash2 } from 'lucide-react';
+import { CreditCard, Truck, MapPin, ShieldCheck, ShoppingBag, ArrowLeft, Store, Trash2, ChevronLeft, Pencil } from 'lucide-react';
 import { API_BASE_URL } from '../utils/api';
 
 const Checkout = () => {
@@ -26,6 +26,7 @@ const Checkout = () => {
         paymentMethod: 'cod'
     });
     const [isNavigating, setIsNavigating] = useState(false);
+    const [isEditingAddress, setIsEditingAddress] = useState(true);
 
     // Check if user is authenticated
     useEffect(() => {
@@ -45,6 +46,11 @@ const Checkout = () => {
             const addressObj = user.address || {};
             const isAddressObject = typeof user.address === 'object' && user.address !== null;
 
+            // Check if we have valid address data to show card view
+            // We check for minimal requirement: street address + city + zip
+            const hasValidAddress = (isAddressObject && addressObj.street && addressObj.city && addressObj.zip) ||
+                (!isAddressObject && user.address && user.city && (user.zip || user.pincode));
+
             setFormData(prev => ({
                 ...prev,
                 fullName: user.fullName || user.name || prev.fullName,
@@ -54,6 +60,11 @@ const Checkout = () => {
                 city: (isAddressObject ? addressObj.city : user.city) || prev.city,
                 zip: (isAddressObject ? addressObj.zip : (user.zip || user.pincode)) || prev.zip
             }));
+
+            // Auto-switch to card view if address exists
+            if (hasValidAddress) {
+                setIsEditingAddress(false);
+            }
         }
     }, [user]);
 
@@ -179,10 +190,9 @@ const Checkout = () => {
             <div className="max-w-7xl mx-auto">
                 <button
                     onClick={() => navigate(-1)}
-                    className="flex items-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 mb-8 transition-colors group"
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors flex-shrink-0 mb-8"
                 >
-                    <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" size={20} />
-                    <span className="font-medium">{t('Back')}</span>
+                    <ChevronLeft className="text-gray-600 dark:text-white" size={24} />
                 </button>
 
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
@@ -199,169 +209,203 @@ const Checkout = () => {
                                 <MapPin className="text-blue-600 dark:text-blue-400" size={24} />
                                 {t('Shipping Details')}
                             </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Full Name')}</label>
-                                    <input
-                                        type="text"
-                                        name="fullName"
-                                        required
-                                        value={formData.fullName}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
-                                        placeholder={t('Enter your full name')}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Mobile Number')}</label>
-                                    <input
-                                        type="tel"
-                                        name="mobile"
-                                        required
-                                        value={formData.mobile}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
-                                        placeholder={t('Enter your mobile number')}
-                                        maxLength={10}
-                                        inputMode="numeric"
-                                        pattern="\d{10}"
-                                    />
-                                </div>
-                                <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Address')}</label>
-                                    <textarea
-                                        name="address"
-                                        required
-                                        rows="3"
-                                        value={formData.address}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors resize-none"
-                                        placeholder={t('Enter your full address')}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('City')}</label>
-                                    <input
-                                        type="text"
-                                        name="city"
-                                        required
-                                        value={formData.city}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
-                                        placeholder={t('Enter city')}
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('ZIP Code')}</label>
-                                    <input
-                                        type="text"
-                                        name="zip"
-                                        required
-                                        value={formData.zip}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
-                                        placeholder={t('Enter ZIP code')}
-                                        maxLength={6}
-                                        inputMode="numeric"
-                                        pattern="\d{6}"
-                                    />
-                                </div>
-
-                                <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        {t('Preferred Delivery Time')} <span className="text-red-500">*</span>
-                                    </label>
-                                    <select
-                                        name="deliveryTime"
-                                        required
-                                        value={formData.deliveryTime}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
+                            {!isEditingAddress ? (
+                                // Address Card View
+                                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-700/50 dark:to-gray-700/30 rounded-xl p-6 border-2 border-blue-100 dark:border-gray-600 relative group transition-all hover:shadow-md">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsEditingAddress(true)}
+                                        className="absolute top-4 right-4 p-2.5 text-blue-600 dark:text-blue-400 hover:bg-white dark:hover:bg-gray-700 rounded-full shadow-sm transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:scale-110"
+                                        title={t('Edit Address')}
                                     >
-                                        <option value="">{t('Select a time slot')}</option>
-                                        {(() => {
-                                            const now = new Date();
-                                            // Start from current time + 30 minutes
-                                            const startTime = new Date(now.getTime() + 30 * 60000);
+                                        <Pencil size={18} />
+                                    </button>
 
-                                            // Round to next 30-minute slot
-                                            const minutes = startTime.getMinutes();
-                                            if (minutes < 30) {
-                                                startTime.setMinutes(30, 0, 0);
-                                            } else {
-                                                startTime.setMinutes(0, 0, 0);
-                                                startTime.setHours(startTime.getHours() + 1);
-                                            }
-
-                                            // Set end of day to 11:30 PM
-                                            const endOfDay = new Date(startTime);
-                                            endOfDay.setHours(23, 30, 0, 0);
-
-                                            // If we're past 11:30 PM, start from 9 AM tomorrow
-                                            if (startTime.getHours() >= 23 && startTime.getMinutes() > 30) {
-                                                startTime.setDate(startTime.getDate() + 1);
-                                                startTime.setHours(9, 0, 0, 0);
-                                                endOfDay.setDate(endOfDay.getDate() + 1);
-                                            }
-
-                                            // Generate potential slots (Data only)
-                                            const potentialSlots = [];
-                                            const currentSlot = new Date(startTime);
-                                            let slotCount = 0;
-
-                                            while (currentSlot <= endOfDay && slotCount < 50) {
-                                                const hours = currentSlot.getHours();
-                                                const mins = currentSlot.getMinutes();
-                                                const timeString = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
-                                                const displayTime = currentSlot.toLocaleTimeString('en-US', {
-                                                    hour: 'numeric',
-                                                    minute: '2-digit',
-                                                    hour12: true
-                                                });
-
-                                                potentialSlots.push({
-                                                    value: timeString,
-                                                    label: displayTime
-                                                });
-
-                                                currentSlot.setMinutes(currentSlot.getMinutes() + 30);
-                                                slotCount++;
-                                            }
-
-                                            // Filter slots based on Admin Settings
-                                            const allowedSlots = settings?.deliveryTimes || [];
-
-                                            // Iterate and render
-                                            return potentialSlots.map(slot => {
-                                                // If allowedSlots is not empty, check if this slot is allowed.
-                                                // If allowedSlots IS empty, we default to SHOWING ALL (as per logic discussed).
-                                                // Wait, logic discussed: if empty, show all?
-                                                // SettingsManagement init state is empty [], which means "No restrictions" effectively? 
-                                                // Or does it mean "Nothing allowed"? 
-                                                // Using "Empty = Show All" is safer for existing users if db is empty.
-                                                // But if Admin explicitly unchecks everything -> empty array -> Show All? That's confusing.
-                                                // Let's assume if it's undefined (fetch failed) -> Show All.
-                                                // If it is Defined Array -> Filter (even if empty).
-                                                // But initial state is [] in DataContext.
-                                                // Let's stick strictly to: if (allowedSlots.length > 0) filter. Else show all.
-
-                                                if (allowedSlots.length > 0 && !allowedSlots.includes(slot.value)) {
-                                                    return null;
-                                                }
-
-                                                return (
-                                                    <option key={slot.value} value={slot.value}>
-                                                        {slot.label}
-                                                    </option>
-                                                );
-                                            });
-                                        })()}
-                                    </select>
-                                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                        {t('Choose your preferred delivery time (available slots from now until 11:30 PM)')}
-                                    </p>
+                                    <div className="flex items-start gap-4 pr-12">
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-2">{formData.fullName}</h3>
+                                            <div className="space-y-1.5">
+                                                <p className="text-gray-700 dark:text-gray-200 text-sm leading-relaxed">
+                                                    {formData.address}
+                                                </p>
+                                                <p className="text-gray-700 dark:text-gray-200 text-sm font-medium">
+                                                    {formData.city} - {formData.zip}
+                                                </p>
+                                                <p className="text-gray-600 dark:text-gray-300 text-sm mt-2 flex items-center gap-1.5">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                                                    <span>{formData.mobile}</span>
+                                                </p>
+                                                {formData.deliveryTime && (
+                                                    <p className="text-gray-600 dark:text-gray-300 text-sm flex items-center gap-1.5">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                                        <span>
+                                                            {(() => {
+                                                                const [hours, minutes] = formData.deliveryTime.split(':');
+                                                                const date = new Date();
+                                                                date.setHours(parseInt(hours), parseInt(minutes));
+                                                                return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                                                            })()}
+                                                        </span>
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Full Name')}</label>
+                                        <input
+                                            type="text"
+                                            name="fullName"
+                                            required
+                                            value={formData.fullName}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
+                                            placeholder={t('Enter your full name')}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Mobile Number')}</label>
+                                        <input
+                                            type="tel"
+                                            name="mobile"
+                                            required
+                                            value={formData.mobile}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
+                                            placeholder={t('Enter your mobile number')}
+                                            maxLength={10}
+                                            inputMode="numeric"
+                                            pattern="\d{10}"
+                                        />
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Address')}</label>
+                                        <textarea
+                                            name="address"
+                                            required
+                                            rows="3"
+                                            value={formData.address}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors resize-none"
+                                            placeholder={t('Enter your full address')}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('City')}</label>
+                                        <input
+                                            type="text"
+                                            name="city"
+                                            required
+                                            value={formData.city}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
+                                            placeholder={t('Enter city')}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('ZIP Code')}</label>
+                                        <input
+                                            type="text"
+                                            name="zip"
+                                            required
+                                            value={formData.zip}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
+                                            placeholder={t('Enter ZIP code')}
+                                            maxLength={6}
+                                            inputMode="numeric"
+                                            pattern="\d{6}"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Delivery Time - Always Visible */}
+                            <div className="mt-6">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    {t('Preferred Delivery Time')} <span className="text-red-500">*</span>
+                                </label>
+                                <select
+                                    name="deliveryTime"
+                                    required
+                                    value={formData.deliveryTime}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
+                                >
+                                    <option value="">{t('Select a time slot')}</option>
+                                    {(() => {
+                                        const now = new Date();
+                                        // Start from current time + 30 minutes
+                                        const startTime = new Date(now.getTime() + 30 * 60000);
+
+                                        // Round to next 30-minute slot
+                                        const minutes = startTime.getMinutes();
+                                        if (minutes < 30) {
+                                            startTime.setMinutes(30, 0, 0);
+                                        } else {
+                                            startTime.setMinutes(0, 0, 0);
+                                            startTime.setHours(startTime.getHours() + 1);
+                                        }
+
+                                        // Set end of day to 11:30 PM
+                                        const endOfDay = new Date(startTime);
+                                        endOfDay.setHours(23, 30, 0, 0);
+
+                                        // If we're past 11:30 PM, start from 9 AM tomorrow
+                                        if (startTime.getHours() >= 23 && startTime.getMinutes() > 30) {
+                                            startTime.setDate(startTime.getDate() + 1);
+                                            startTime.setHours(9, 0, 0, 0);
+                                            endOfDay.setDate(endOfDay.getDate() + 1);
+                                        }
+
+                                        // Generate potential slots (Data only)
+                                        const potentialSlots = [];
+                                        const currentSlot = new Date(startTime);
+                                        let slotCount = 0;
+
+                                        while (currentSlot <= endOfDay && slotCount < 50) {
+                                            const hours = currentSlot.getHours();
+                                            const mins = currentSlot.getMinutes();
+                                            const timeString = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+                                            const displayTime = currentSlot.toLocaleTimeString('en-US', {
+                                                hour: 'numeric',
+                                                minute: '2-digit',
+                                                hour12: true
+                                            });
+
+                                            potentialSlots.push({
+                                                value: timeString,
+                                                label: displayTime
+                                            });
+
+                                            currentSlot.setMinutes(currentSlot.getMinutes() + 30);
+                                            slotCount++;
+                                        }
+
+                                        // Filter slots based on Admin Settings
+                                        const allowedSlots = settings?.deliveryTimes || [];
+
+                                        // Iterate and render
+                                        return potentialSlots.map(slot => {
+                                            if (allowedSlots.length > 0 && !allowedSlots.includes(slot.value)) {
+                                                return null;
+                                            }
+
+                                            return (
+                                                <option key={slot.value} value={slot.value}>
+                                                    {slot.label}
+                                                </option>
+                                            );
+                                        });
+                                    })()}
+                                </select>
+                                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                    {t('Choose your preferred delivery time (available slots from now until 11:30 PM)')}
+                                </p>
                             </div>
                         </div>
 
@@ -515,27 +559,29 @@ const Checkout = () => {
                 </form>
             </div>
 
-            {/* Sticky Action Footer - Mobile Only */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 p-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50 md:hidden pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
-                <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-                    <div className="flex flex-col">
-                        <span className="text-xs text-gray-500 dark:text-gray-400">{t('Total')}</span>
-                        <span className="text-lg font-bold text-blue-600 dark:text-blue-400">₹{finalTotal.toFixed(0)}</span>
+            {/* Sticky Action Footer - Mobile Only - Redesigned */}
+            <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] z-50 md:hidden pb-[calc(0.75rem+env(safe-area-inset-bottom))] px-4 py-3">
+                <div className="max-w-7xl mx-auto flex items-center gap-4">
+                    <div className="flex flex-col flex-shrink-0">
+                        <span className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider mb-0.5">{t('Total Amount')}</span>
+                        <div className="flex items-baseline gap-1">
+                            <span className="text-2xl font-extrabold text-blue-600 dark:text-blue-400">₹{finalTotal.toFixed(0)}</span>
+                        </div>
                     </div>
+
                     <button
                         onClick={handleSubmit}
                         disabled={isNavigating}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 text-sm rounded-xl shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3.5 px-4 text-base rounded-2xl shadow-lg shadow-blue-200 dark:shadow-blue-900/20 flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-70 disabled:grayscale"
                     >
                         {isNavigating ? (
                             <>
-                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                {t('Loading...')}
+                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                             </>
                         ) : (
                             <>
-                                <ShoppingBag size={20} />
-                                {t('Review Order')}
+                                <span>{t('Review Order')}</span>
+                                <ShoppingBag size={20} className="ml-1" />
                             </>
                         )}
                     </button>

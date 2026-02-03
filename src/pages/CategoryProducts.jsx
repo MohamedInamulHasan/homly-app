@@ -100,13 +100,36 @@ const CategoryProducts = () => {
                 {/* Header */}
                 <div className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-10">
                     <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-4">
-                            <Link to="/" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
+                        <div className="flex items-center gap-4 min-w-0 flex-1">
+                            <Link to="/" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors flex-shrink-0">
                                 <ChevronLeft className="text-gray-600 dark:text-white" size={24} />
                             </Link>
-                            <h1 className="text-xl font-bold text-gray-900 dark:text-white capitalize truncate">
-                                {t(categoryName)}
-                            </h1>
+                            {(() => {
+                                const fullName = t(categoryName);
+                                const bracketIndex = fullName.indexOf('(');
+
+                                if (bracketIndex !== -1) {
+                                    const mainName = fullName.substring(0, bracketIndex).trim();
+                                    const bracketText = fullName.substring(bracketIndex).trim();
+
+                                    return (
+                                        <div className="flex flex-col min-w-0">
+                                            <h1 className="text-xl md:text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent capitalize truncate leading-tight" title={mainName}>
+                                                {mainName}
+                                            </h1>
+                                            <span className="text-sm text-gray-600 dark:text-gray-400 truncate leading-tight font-medium" title={bracketText}>
+                                                {bracketText}
+                                            </span>
+                                        </div>
+                                    );
+                                }
+
+                                return (
+                                    <h1 className="text-xl md:text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent capitalize truncate" title={fullName}>
+                                        {fullName}
+                                    </h1>
+                                );
+                            })()}
                         </div>
 
                         <button
@@ -130,24 +153,28 @@ const CategoryProducts = () => {
                                 onSubmit={(e) => e.preventDefault()}
                                 className="relative"
                             >
-                                <input
-                                    type="text"
-                                    name="search"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    placeholder={t('Search products...')}
-                                    className="w-full pl-10 pr-4 py-3 rounded-full border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors"
-                                />
-                                <svg
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"
-                                    width="20"
-                                    height="20"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
+                                <div className="relative group">
+                                    <input
+                                        type="text"
+                                        name="search"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        placeholder={t('Search products...')}
+                                        className="w-full pl-12 pr-4 py-3.5 rounded-2xl border-2 border-blue-100 dark:border-gray-700 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-500/10 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 shadow-md focus:shadow-xl transition-all duration-300"
+                                    />
+                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500 dark:text-blue-400 transition-transform group-focus-within:scale-110">
+                                        <svg
+                                            width="20"
+                                            height="20"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth="2.5"
+                                        >
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </form>
 
                             {/* Search Results Dropdown */}
@@ -245,11 +272,20 @@ const CategoryProducts = () => {
                     ) : displayProducts.length > 0 ? (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                             {displayProducts.map(product => (
-                                <SimpleProductCard
-                                    key={product._id || product.id}
-                                    product={product}
-                                    isFastPurchase={fastMode}
-                                />
+                                fastMode ? (
+                                    <SimpleProductCard
+                                        key={product._id || product.id}
+                                        product={product}
+                                        isFastPurchase={true}
+                                    />
+                                ) : (
+                                    <ProductCard
+                                        key={product._id || product.id}
+                                        product={product}
+                                        showHeart={false}
+                                        showCartControls={false}
+                                    />
+                                )
                             ))}
                         </div>
                     ) : (

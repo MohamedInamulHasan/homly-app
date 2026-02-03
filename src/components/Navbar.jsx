@@ -62,15 +62,15 @@ const Navbar = () => {
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center space-x-8">
                         {/* Search Bar */}
-                        <form onSubmit={handleSearch} className="relative">
+                        <form onSubmit={handleSearch} className="relative group">
                             <input
                                 type="text"
                                 placeholder={t('Search products...')}
                                 value={searchQuery}
                                 onChange={handleInputChange}
-                                className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white transition-colors"
+                                className="pl-11 pr-4 py-2.5 border-2 border-blue-200 dark:border-gray-600 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 transition-all shadow-md focus:shadow-lg focus:w-72"
                             />
-                            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 dark:text-gray-500" />
+                            <Search className="absolute left-3.5 top-3 h-5 w-5 text-blue-500 dark:text-blue-400 group-focus-within:scale-110 transition-transform" />
                         </form>
 
                         <Link to="/" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('Home')}</Link>
@@ -98,8 +98,8 @@ const Navbar = () => {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                        <ShoppingCart size={24} />
+                                    <div className="relative p-2.5 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-full hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/30 dark:hover:to-indigo-900/30 transition-all duration-300 hover:scale-110 shadow-sm hover:shadow-md">
+                                        <ShoppingCart size={20} className="text-blue-600 dark:text-blue-400" />
                                     </div>
                                 )}
                             </Link>
@@ -121,8 +121,8 @@ const Navbar = () => {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="relative p-2 text-gray-600 dark:text-gray-300">
-                                        <ShoppingCart size={24} />
+                                    <div className="relative p-2.5 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-full transition-all duration-300 shadow-sm">
+                                        <ShoppingCart size={20} className="text-blue-600 dark:text-blue-400" />
                                     </div>
                                 )}
                             </Link>

@@ -6,7 +6,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { getStoreName } from '../utils/storeHelpers';
 import { API_BASE_URL } from '../utils/api';
 
-const ProductCard = ({ product, showCartControls = true }) => {
+const ProductCard = ({ product, showCartControls = true, showHeart = true }) => {
     const { addToCart, cartItems, updateQuantity } = useCart();
     const { savedProducts, toggleSaveProduct, stores } = useData();
     const { t } = useLanguage();
@@ -38,15 +38,25 @@ const ProductCard = ({ product, showCartControls = true }) => {
                         onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300?text=No+Image'; }}
                     />
                     {/* Heart Button */}
-                    <button
-                        onClick={handleToggleSave}
-                        className="absolute top-2 right-2 p-2 rounded-full bg-white/80 dark:bg-black/40 hover:bg-white dark:hover:bg-black/60 transition-colors shadow-sm z-10 pointer-events-auto"
-                    >
-                        <Bookmark
-                            size={18}
-                            className={`${isSaved ? 'text-blue-600 fill-current' : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'}`}
-                        />
-                    </button>
+                    {showHeart && (
+                        <button
+                            onClick={handleToggleSave}
+                            className="absolute top-2 right-2 p-2 rounded-full bg-white/80 dark:bg-black/40 hover:bg-white dark:hover:bg-black/60 transition-colors shadow-sm z-10 pointer-events-auto"
+                        >
+                            <Bookmark
+                                size={18}
+                                className={`${isSaved ? 'text-blue-600 fill-current' : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'}`}
+                            />
+                        </button>
+                    )}
+                    {/* Cart Quantity Badge - Always visible if in cart */}
+                    {cartItem && cartItem.quantity > 0 && (
+                        <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg flex items-center gap-1 z-20 pointer-events-none">
+                            <Store size={12} className="hidden" /> {/* Hidden store icon to match height usage if needed, or use ShoppingCart */}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-shopping-cart"><circle cx="8" cy="21" r="1" /><circle cx="19" cy="21" r="1" /><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" /></svg>
+                            {cartItem.quantity}
+                        </div>
+                    )}
                     {!isAvailable && (
                         <div className="absolute inset-0 bg-black/10 flex items-center justify-center backdrop-blur-[1px]">
                             <span className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm">
@@ -86,7 +96,7 @@ const ProductCard = ({ product, showCartControls = true }) => {
                         }
 
                         return (
-                            <h3 className={`font-semibold text-gray-800 dark:text-white line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-1 ${isLongTitle ? 'text-sm' : 'text-base md:text-lg'}`} title={fullTitle}>
+                            <h3 className={`font-semibold text-gray-800 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-1 ${isLongTitle ? 'text-sm' : 'text-base md:text-lg'}`} title={fullTitle}>
                                 {fullTitle}
                             </h3>
                         );

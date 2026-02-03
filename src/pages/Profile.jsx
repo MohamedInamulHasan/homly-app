@@ -69,50 +69,50 @@ const Profile = () => {
             )}
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
                 {/* Profile Header */}
-                <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 mb-6 flex items-center gap-4 sm:gap-6 transition-colors duration-200">
-                    <div className="bg-blue-100 dark:bg-blue-900/30 p-3 sm:p-4 rounded-full flex-shrink-0">
-                        <User size={40} className="text-blue-600 dark:text-blue-400 sm:w-12 sm:h-12" />
+                <div className="relative bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-800 dark:via-gray-800 dark:to-blue-900/20 rounded-3xl shadow-lg shadow-blue-100 dark:shadow-blue-900/20 border border-blue-100 dark:border-gray-700 p-6 mb-6 flex items-center gap-4 sm:gap-6 transition-all duration-300 hover:shadow-xl hover:shadow-blue-200 dark:hover:shadow-blue-900/30">
+                    <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-3 sm:p-4 rounded-2xl flex-shrink-0 shadow-lg shadow-blue-300 dark:shadow-blue-900/50">
+                        <User size={40} className="text-white sm:w-12 sm:h-12" />
                     </div>
                     <div className="flex-1 min-w-0 pr-16">
-                        <h1 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate">{user?.name || 'Guest User'}</h1>
-                        <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 truncate">{user?.email || 'Not logged in'}</p>
+                        <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent truncate">{user?.name || 'Guest User'}</h1>
+                        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 truncate">{user?.email || 'Not logged in'}</p>
                     </div>
 
                     {/* Coin Badge - Absolute Top Right */}
-                    <div className="absolute top-6 right-6 inline-flex items-center px-3 py-1.5 rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 text-sm font-bold border border-yellow-200 dark:border-yellow-700">
+                    <div className="absolute top-6 right-6 inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 text-white text-sm font-bold shadow-lg shadow-yellow-300 dark:shadow-yellow-900/50">
                         <span className="mr-1.5">🪙</span>
                         {user.coins || 0}
                     </div>
                 </div>
 
                 {/* Order Dashboard */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden mb-6 transition-colors duration-200">
-                    <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                        <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <div className="bg-gradient-to-br from-white via-blue-50/30 to-white dark:from-gray-800 dark:via-blue-900/10 dark:to-gray-800 rounded-3xl shadow-lg shadow-blue-100 dark:shadow-blue-900/20 border border-blue-100 dark:border-gray-700 overflow-hidden mb-6 transition-all duration-300 hover:shadow-xl">
+                    <div className="p-6 border-b border-blue-100 dark:border-gray-700 flex justify-between items-center bg-gradient-to-r from-blue-50/50 to-transparent dark:from-blue-900/10 dark:to-transparent">
+                        <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent flex items-center gap-2">
                             <Package className="text-blue-600 dark:text-blue-400" size={20} />
                             {t('Orders Dashboard')}
                         </h2>
-                        <Link to="/orders" className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium hover:underline">
+                        <Link to="/orders" className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-bold hover:underline px-3 py-1.5 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all">
                             {t('View All Orders')}
                         </Link>
                     </div>
                     <div className="p-6">
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-                            <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
-                                <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{processingOrders}</p>
-                                <p className="text-xs text-gray-600 dark:text-gray-400 font-medium mt-1">{t('Processing')}</p>
+                            <div className="p-4 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl shadow-lg shadow-amber-200 dark:shadow-amber-900/30 hover:scale-105 transition-transform duration-300">
+                                <p className="text-3xl font-bold text-white drop-shadow-lg">{processingOrders}</p>
+                                <p className="text-xs text-amber-50 font-semibold mt-1">{t('Processing')}</p>
                             </div>
-                            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-                                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{shippedOrders}</p>
-                                <p className="text-xs text-gray-600 dark:text-gray-400 font-medium mt-1">{t('Shipped')}</p>
+                            <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg shadow-blue-200 dark:shadow-blue-900/30 hover:scale-105 transition-transform duration-300">
+                                <p className="text-3xl font-bold text-white drop-shadow-lg">{shippedOrders}</p>
+                                <p className="text-xs text-blue-50 font-semibold mt-1">{t('Shipped')}</p>
                             </div>
-                            <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
-                                <p className="text-2xl font-bold text-green-600 dark:text-green-400">{deliveredOrders}</p>
-                                <p className="text-xs text-gray-600 dark:text-gray-400 font-medium mt-1">{t('Delivered')}</p>
+                            <div className="p-4 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg shadow-green-200 dark:shadow-green-900/30 hover:scale-105 transition-transform duration-300">
+                                <p className="text-3xl font-bold text-white drop-shadow-lg">{deliveredOrders}</p>
+                                <p className="text-xs text-green-50 font-semibold mt-1">{t('Delivered')}</p>
                             </div>
-                            <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">
-                                <p className="text-2xl font-bold text-red-600 dark:text-red-400">{cancelledOrders}</p>
-                                <p className="text-xs text-gray-600 dark:text-gray-400 font-medium mt-1">{t('Cancelled')}</p>
+                            <div className="p-4 bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl shadow-lg shadow-red-200 dark:shadow-red-900/30 hover:scale-105 transition-transform duration-300">
+                                <p className="text-3xl font-bold text-white drop-shadow-lg">{cancelledOrders}</p>
+                                <p className="text-xs text-red-50 font-semibold mt-1">{t('Cancelled')}</p>
                             </div>
                         </div>
                         <div className="mt-6">
@@ -140,34 +140,34 @@ const Profile = () => {
                     </div>
                 </div>
                 {/* News & Offers */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden mb-6 transition-colors duration-200">
-                    <Link to="/news" className="p-6 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group">
+                <div className="bg-gradient-to-br from-pink-50 via-white to-rose-50 dark:from-gray-800 dark:via-gray-800 dark:to-pink-900/10 rounded-3xl shadow-lg shadow-pink-100 dark:shadow-pink-900/20 border border-pink-100 dark:border-gray-700 overflow-hidden mb-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
+                    <Link to="/news" className="p-6 flex items-center justify-between hover:bg-pink-50/50 dark:hover:bg-pink-900/10 transition-colors group">
                         <div className="flex items-center gap-4">
-                            <div className="p-3 bg-pink-50 dark:bg-pink-900/20 rounded-xl">
-                                <Globe className="text-pink-600 dark:text-pink-400" size={24} />
+                            <div className="p-3 bg-gradient-to-br from-pink-500 to-rose-600 rounded-2xl shadow-lg shadow-pink-300 dark:shadow-pink-900/50">
+                                <Globe className="text-white" size={24} />
                             </div>
                             <div>
-                                <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('News & Offers')}</h2>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">{t('Check out latest deals and updates')}</p>
+                                <h2 className="text-lg font-bold bg-gradient-to-r from-pink-600 to-rose-600 dark:from-pink-400 dark:to-rose-400 bg-clip-text text-transparent">{t('News & Offers')}</h2>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">{t('Check out latest deals and updates')}</p>
                             </div>
                         </div>
-                        <ChevronRight className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300" size={20} />
+                        <ChevronRight className="text-pink-500 group-hover:translate-x-1 transition-transform" size={20} />
                     </Link>
                 </div>
 
                 {/* Services */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden mb-6 transition-colors duration-200">
-                    <Link to="/services" className="p-6 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group">
+                <div className="bg-gradient-to-br from-purple-50 via-white to-indigo-50 dark:from-gray-800 dark:via-gray-800 dark:to-purple-900/10 rounded-3xl shadow-lg shadow-purple-100 dark:shadow-purple-900/20 border border-purple-100 dark:border-gray-700 overflow-hidden mb-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
+                    <Link to="/services" className="p-6 flex items-center justify-between hover:bg-purple-50/50 dark:hover:bg-purple-900/10 transition-colors group">
                         <div className="flex items-center gap-4">
-                            <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
-                                <Wrench className="text-purple-600 dark:text-purple-400" size={24} />
+                            <div className="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg shadow-purple-300 dark:shadow-purple-900/50">
+                                <Wrench className="text-white" size={24} />
                             </div>
                             <div>
-                                <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('Services')}</h2>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">{t('Explore our additional services')}</p>
+                                <h2 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400 bg-clip-text text-transparent">{t('Services')}</h2>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">{t('Explore our additional services')}</p>
                             </div>
                         </div>
-                        <ChevronRight className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300" size={20} />
+                        <ChevronRight className="text-purple-500 group-hover:translate-x-1 transition-transform" size={20} />
                     </Link>
                 </div>
 
@@ -198,51 +198,51 @@ const Profile = () => {
                 )}
 
                 {/* Saved Products */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden mb-6 transition-colors duration-200">
-                    <Link to="/saved-products" className="p-6 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group">
+                <div className="bg-gradient-to-br from-blue-50 via-white to-cyan-50 dark:from-gray-800 dark:via-gray-800 dark:to-blue-900/10 rounded-3xl shadow-lg shadow-blue-100 dark:shadow-blue-900/20 border border-blue-100 dark:border-gray-700 overflow-hidden mb-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
+                    <Link to="/saved-products" className="p-6 flex items-center justify-between hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-colors group">
                         <div className="flex items-center gap-4">
-                            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-                                <Bookmark className="text-blue-600 dark:text-blue-400 fill-current" size={24} />
+                            <div className="p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl shadow-lg shadow-blue-300 dark:shadow-blue-900/50">
+                                <Bookmark className="text-white fill-current" size={24} />
                             </div>
                             <div>
-                                <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('Saved Products')}</h2>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">{t('View your favorite items')}</p>
+                                <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent">{t('Saved Products')}</h2>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">{t('View your favorite items')}</p>
                             </div>
                         </div>
-                        <ChevronRight className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300" size={20} />
+                        <ChevronRight className="text-blue-500 group-hover:translate-x-1 transition-transform" size={20} />
                     </Link>
                 </div>
 
                 {/* Settings */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-200">
-                    <div className="p-6 border-b border-gray-100 dark:border-gray-700">
-                        <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                            <Settings className="text-gray-600 dark:text-gray-400" size={20} />
+                <div className="bg-gradient-to-br from-gray-50 via-white to-slate-50 dark:from-gray-800 dark:via-gray-800 dark:to-slate-900/10 rounded-3xl shadow-lg shadow-gray-100 dark:shadow-gray-900/20 border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:shadow-xl">
+                    <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50/50 to-transparent dark:from-gray-700/30 dark:to-transparent">
+                        <h2 className="text-lg md:text-xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent flex items-center gap-2">
+                            <Settings className="text-gray-600 dark:text-gray-400" size={22} />
                             {t('Settings')}
                         </h2>
                     </div>
                     <div className="divide-y divide-gray-100 dark:divide-gray-700">
                         {/* Appearance Toggle */}
-                        <div className="p-4 sm:p-6 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer" onClick={toggleTheme}>
+                        <div className="p-4 sm:p-6 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer group" onClick={toggleTheme}>
                             <div className="flex items-center gap-4">
-                                <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                                <div className="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg shadow-purple-300 dark:shadow-purple-900/50 group-hover:scale-110 transition-transform">
                                     {theme === 'dark' ? (
-                                        <Moon className="text-purple-600 dark:text-purple-400" size={20} />
+                                        <Moon className="text-white" size={20} />
                                     ) : (
-                                        <Sun className="text-purple-600 dark:text-purple-400" size={20} />
+                                        <Sun className="text-white" size={20} />
                                     )}
                                 </div>
                                 <div>
-                                    <p className="font-medium text-gray-900 dark:text-white">{t('Appearance')}</p>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    <p className="font-bold text-gray-900 dark:text-white">{t('Appearance')}</p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
                                         {theme === 'dark' ? t('Dark Mode') : t('Light Mode')}
                                     </p>
                                 </div>
                             </div>
-                            <div className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 bg-gray-200 dark:bg-purple-600">
+                            <div className="relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 shadow-inner bg-gray-200 dark:bg-gradient-to-r dark:from-purple-600 dark:to-indigo-600">
                                 <span
                                     className={`${theme === 'dark' ? 'translate-x-6' : 'translate-x-1'
-                                        } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                                        } inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition-transform`}
                                 />
                             </div>
                         </div>
@@ -254,12 +254,12 @@ const Profile = () => {
 
 
 
-                    <div className="p-4 sm:p-6 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer text-red-600 dark:text-red-400" onClick={handleLogout}>
+                    <div className="p-4 sm:p-6 flex items-center justify-between hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors cursor-pointer text-red-600 dark:text-red-400 group" onClick={handleLogout}>
                         <div className="flex items-center gap-4">
-                            <div className="p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                                <LogOut className="text-red-600 dark:text-red-400" size={20} />
+                            <div className="p-3 bg-gradient-to-br from-red-500 to-rose-600 rounded-2xl shadow-lg shadow-red-300 dark:shadow-red-900/50 group-hover:scale-110 transition-transform">
+                                <LogOut className="text-white" size={20} />
                             </div>
-                            <p className="font-medium">{t('Sign Out')}</p>
+                            <p className="font-bold">{t('Sign Out')}</p>
                         </div>
                     </div>
                 </div>

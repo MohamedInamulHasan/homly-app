@@ -1,17 +1,21 @@
 import { useState, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, MapPin, Clock, Phone, ChevronRight, AlertCircle } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, MapPin, Clock, Phone, ChevronRight, AlertCircle, Zap, Search } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useLanguage } from '../context/LanguageContext';
 import { isStoreOpen } from '../utils/storeHelpers';
+import { API_BASE_URL } from '../utils/api';
 import ProductCard from '../components/ProductCard';
+import SimpleProductCard from '../components/SimpleProductCard';
 
 const StoreProducts = () => {
     const { id } = useParams();
-    const { products, stores, savedProducts } = useData();
+    const { products, stores, fastMode, toggleFastMode } = useData();
     const { t } = useLanguage();
     const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
     const storeId = id;
+    const navigate = useNavigate();
 
     // Find store and its products
     const store = stores.find(s => (s._id || s.id) === storeId);
@@ -38,10 +42,17 @@ const StoreProducts = () => {
         })).sort(); // Sort alphabetically
     }, [storeProducts]);
 
-    // Filter products to display based on selected subcategory
-    const displayedProducts = selectedSubcategory
+    // Filter products to display based on selected subcategory and search query
+    const filteredBySubcategory = selectedSubcategory
         ? storeProducts.filter(p => p.subcategory === selectedSubcategory)
-        : storeProducts; // Show all products by default
+        : storeProducts;
+
+    const displayedProducts = searchQuery.trim()
+        ? filteredBySubcategory.filter(p =>
+            p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase()))
+        )
+        : filteredBySubcategory;
 
     if (!store) {
         return (
@@ -79,35 +90,90 @@ const StoreProducts = () => {
                     )}
                 </nav>
 
-                {/* Store Closed Banner */}
-                {!storeIsOpen && (
-                    <div className="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 flex items-center gap-3">
-                        <AlertCircle className="text-red-600 dark:text-red-400 flex-shrink-0" size={24} />
-                        <div>
-                            <p className="font-semibold text-red-900 dark:text-red-200">{t('Store Currently Closed')}</p>
-                            <p className="text-sm text-red-700 dark:text-red-300">
-                                {t('Opens at')} {store.openingTime || '9:00 AM'}
-                            </p>
-                        </div>
+                {/* Fast Mode & Search Bar */}
+                <div className="flex flex-col gap-4">
+                    <div className="flex justify-between items-center">
+                        <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">{store.name}</h1>
+                        {/* Fast Mode Toggle */}
+                        <button
+                            onClick={toggleFastMode}
+                            className={`px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 font-medium shadow-sm border ${fastMode
+                                ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-transparent'
+                                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700'
+                                }`}
+                            title={fastMode ? t('Fast Mode ON') : t('Fast Mode')}
+                        >
+                            <Zap size={14} className={fastMode ? 'fill-white' : ''} />
+                            <span className="text-xs font-bold">{fastMode ? t('Fast ON') : t('Fast')}</span>
+                        </button>
                     </div>
-                )}
 
-                <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">{store.name}</h1>
-                    <div className="flex flex-wrap gap-4 text-sm">
-                        <div className="flex items-center text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 px-3 py-1.5 rounded-lg">
-                            <MapPin className="h-4 w-4 mr-2 text-blue-500" />
-                            <span>{store.address || t('No address available')}</span>
-                        </div>
-                        <div className="flex items-center text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 px-3 py-1.5 rounded-lg">
-                            <Clock className="h-4 w-4 mr-2 text-blue-500" />
-                            <span>{store.timing || '9:00 AM - 9:00 PM'}</span>
-                        </div>
-                        <div className="flex items-center text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 px-3 py-1.5 rounded-lg">
-                            <Phone className="h-4 w-4 mr-2 text-blue-500" />
-                            <span>{store.mobile || t('No phone number')}</span>
+                    <div className="flex items-center gap-3 relative z-20">
+                        {/* Search Bar */}
+                        <div className="relative flex-1">
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder={t('Search in store...')}
+                                className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-blue-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none shadow-lg focus:shadow-xl transition-all text-sm"
+                            />
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-blue-500 dark:text-blue-400" size={18} />
+
+                            {/* Search Results Dropdown */}
+                            {searchQuery.trim() && (
+                                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 max-h-80 overflow-y-auto overflow-x-hidden z-50">
+                                    {(() => {
+                                        const results = storeProducts.filter(p =>
+                                            p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                            (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase()))
+                                        ).slice(0, 5);
+
+                                        if (results.length === 0) {
+                                            return (
+                                                <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                                    {t('No products found')}
+                                                </div>
+                                            );
+                                        }
+
+                                        return results.map(product => (
+                                            <Link
+                                                key={product._id || product.id}
+                                                to={`/product/${product._id || product.id}`}
+                                                className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0"
+                                                onClick={() => setSearchQuery('')}
+                                            >
+                                                <img
+                                                    src={product.image || `${API_BASE_URL}/products/${product._id || product.id}/image`}
+                                                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
+                                                    alt={product.title}
+                                                    className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                                                />
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-medium text-sm text-gray-900 dark:text-white truncate">{t(product, 'title')}</p>
+                                                    <p className="text-xs text-blue-600 dark:text-blue-400 font-bold">₹{Number(product.price).toFixed(0)}</p>
+                                                </div>
+                                            </Link>
+                                        ));
+                                    })()}
+                                </div>
+                            )}
                         </div>
                     </div>
+
+                    {/* Store Closed Banner (Moved here) */}
+                    {!storeIsOpen && (
+                        <div className="mt-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-3 flex items-center gap-3">
+                            <AlertCircle className="text-red-600 dark:text-red-400 flex-shrink-0" size={20} />
+                            <div>
+                                <p className="font-semibold text-red-900 dark:text-red-200 text-sm">{t('Store Closed')}</p>
+                                <p className="text-xs text-red-700 dark:text-red-300">
+                                    {t('Opens')} {store.openingTime || '9:00 AM'}
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -149,15 +215,19 @@ const StoreProducts = () => {
                     <div>
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                                {selectedSubcategory ? t(selectedSubcategory) : t('All Products')}
+                                {selectedSubcategory ? t(selectedSubcategory) : (searchQuery ? t('Search Results') : t('All Products'))}
                             </h2>
                             <span className="text-gray-500 dark:text-gray-400 text-sm">
                                 {displayedProducts.length} {t('products')}
                             </span>
                         </div>
-                        <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+                        <div className={`grid gap-4 sm:gap-6 ${fastMode ? 'grid-cols-2 md:grid-cols-4 lg:grid-cols-6' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'}`}>
                             {displayedProducts.map((product) => (
-                                <ProductCard key={product._id || product.id} product={product} showHeart={false} />
+                                fastMode ? (
+                                    <SimpleProductCard key={product._id || product.id} product={product} isFastPurchase={true} />
+                                ) : (
+                                    <ProductCard key={product._id || product.id} product={product} showHeart={false} showCartControls={false} />
+                                )
                             ))}
                         </div>
                     </div>

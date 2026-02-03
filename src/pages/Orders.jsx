@@ -61,6 +61,16 @@ const Orders = () => {
         }
     };
 
+    const getCardBorderColor = (status) => {
+        switch (status) {
+            case 'Delivered': return 'border-l-green-500 dark:border-l-green-400 shadow-green-100 dark:shadow-green-900/20';
+            case 'Shipped': return 'border-l-blue-500 dark:border-l-blue-400 shadow-blue-100 dark:shadow-blue-900/20';
+            case 'Processing': return 'border-l-amber-500 dark:border-l-amber-400 shadow-amber-100 dark:shadow-amber-900/20';
+            case 'Cancelled': return 'border-l-red-500 dark:border-l-red-400 shadow-red-100 dark:shadow-red-900/20';
+            default: return 'border-l-gray-300 dark:border-l-gray-600 shadow-gray-100 dark:shadow-gray-900/20';
+        }
+    };
+
 
 
 
@@ -113,8 +123,8 @@ const Orders = () => {
                 <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('Order History')}</h1>
-                            <p className="text-gray-500 dark:text-gray-400 mt-1">{t('Manage and track your recent orders')}</p>
+                            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">{t('Order History')}</h1>
+                            <p className="text-gray-600 dark:text-gray-400 mt-1 font-medium">{t('Manage and track your recent orders')}</p>
                         </div>
 
                         <div className="relative">
@@ -123,9 +133,9 @@ const Orders = () => {
                                 placeholder={t('Search orders...')}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full md:w-64 pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                                className="w-full md:w-72 pl-11 pr-4 py-2.5 rounded-2xl border-2 border-blue-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all shadow-md focus:shadow-lg"
                             />
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-blue-500 dark:text-blue-400" size={20} />
                         </div>
                     </div>
 
@@ -135,9 +145,9 @@ const Orders = () => {
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${activeTab === tab
-                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-blue-900/20'
-                                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-100 dark:border-gray-700'
+                                className={`px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-300 shadow-md hover:shadow-lg ${activeTab === tab
+                                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-300 dark:shadow-blue-900/50 scale-105'
+                                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border-2 border-gray-200 dark:border-gray-700 hover:scale-105'
                                     }`}
                             >
                                 {t(tab)}
@@ -176,7 +186,7 @@ const Orders = () => {
                                 <div
                                     key={order._id || order.id}
                                     onClick={() => navigate(`/orders/${order._id || order.id}`)}
-                                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-md transition-all cursor-pointer group"
+                                    className={`bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 border-l-4 overflow-hidden hover:shadow-xl hover:scale-[1.02] transition-all duration-300 cursor-pointer group ${getCardBorderColor(order.status)}`}
                                 >
                                     <div className="p-6">
                                         <div className="flex justify-between items-start gap-2 mb-4">

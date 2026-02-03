@@ -26,31 +26,57 @@ const MobileFooter = () => {
     }
 
     return (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 z-50 transition-colors duration-200" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 8px)' }}>
-            <div className="flex justify-around items-center h-16 py-2">
-                {navItems.map((item) => {
-                    const active = isActive(item.path);
-                    return (
-                        <Link
-                            key={item.label} // Use label as key to avoid duplicates when paths are identical (e.g. /login)
-                            to={item.path}
-                            className={`relative flex flex-col items-center justify-center w-full h-full space-y-0.5 ${active
-                                ? 'text-blue-600 dark:text-blue-400'
-                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-                                }`}
-                        >
-                            <div className="relative">
-                                <item.icon size={16} strokeWidth={active ? 2.5 : 2} />
-                                {item.path === '/cart' && cartCount > 0 && (
-                                    <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-[8px] font-bold rounded-full h-3 w-3 flex items-center justify-center border-2 border-white dark:border-gray-900">
-                                        {cartCount}
-                                    </span>
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+            {/* Gap/Spacer at top */}
+            <div className="h-2 bg-gradient-to-b from-transparent to-white/50 dark:to-gray-900/50"></div>
+
+            {/* Footer Container */}
+            <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-2xl border-t border-gray-200/50 dark:border-gray-700/50 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
+                <div className="flex justify-around items-center px-1 py-2">
+                    {navItems.map((item) => {
+                        const active = isActive(item.path);
+                        return (
+                            <Link
+                                key={item.label}
+                                to={item.path}
+                                className="relative flex flex-col items-center justify-center gap-0.5 group"
+                            >
+                                {/* Icon Container */}
+                                <div className={`relative p-2 rounded-xl transition-all duration-300 ${active
+                                        ? 'bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 shadow-md shadow-blue-400/50 dark:shadow-blue-600/50 scale-105'
+                                        : 'bg-gray-100 dark:bg-gray-700/50 group-hover:bg-gray-200 dark:group-hover:bg-gray-600/50 group-hover:scale-105'
+                                    }`}>
+                                    <item.icon
+                                        size={18}
+                                        strokeWidth={active ? 2.5 : 2}
+                                        className={`transition-all duration-300 ${active
+                                                ? 'text-white'
+                                                : 'text-gray-600 dark:text-gray-300'
+                                            }`}
+                                    />
+                                    {item.path === '/cart' && cartCount > 0 && (
+                                        <span className="absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-[8px] font-bold rounded-full h-4 w-4 flex items-center justify-center border-2 border-white dark:border-gray-800 shadow-md animate-bounce">
+                                            {cartCount}
+                                        </span>
+                                    )}
+                                </div>
+
+                                {/* Label */}
+                                <span className={`text-[8px] font-semibold transition-all duration-300 ${active
+                                        ? 'text-blue-600 dark:text-blue-400'
+                                        : 'text-gray-500 dark:text-gray-400'
+                                    }`}>
+                                    {item.label}
+                                </span>
+
+                                {/* Active Indicator Dot */}
+                                {active && (
+                                    <div className="absolute -bottom-0.5 w-1 h-1 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
                                 )}
-                            </div>
-                            <span className="text-[8px] font-medium">{item.label}</span>
-                        </Link>
-                    );
-                })}
+                            </Link>
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );

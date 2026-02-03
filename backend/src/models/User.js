@@ -48,6 +48,10 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    isFastMode: {
+        type: Boolean,
+        default: false
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date
 }, {

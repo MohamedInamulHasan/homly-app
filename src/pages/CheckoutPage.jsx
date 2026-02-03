@@ -185,7 +185,7 @@ const Checkout = () => {
                     <span className="font-medium">{t('Back to Cart')}</span>
                 </button>
 
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
+                <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent mb-8 flex items-center gap-3">
                     <ShieldCheck className="text-blue-600 dark:text-blue-400" />
                     {t('Checkout')}
                 </h1>
@@ -195,7 +195,7 @@ const Checkout = () => {
                     <div className="lg:col-span-2 space-y-8">
                         {/* Shipping Address */}
                         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                            <h2 className="text-xl md:text-2xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-6 flex items-center gap-2">
                                 <MapPin className="text-blue-600 dark:text-blue-400" size={24} />
                                 {t('Shipping Details')}
                             </h2>
@@ -367,7 +367,7 @@ const Checkout = () => {
 
                         {/* Payment Method */}
                         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                            <h2 className="text-xl md:text-2xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-6 flex items-center gap-2">
                                 <CreditCard className="text-blue-600 dark:text-blue-400" size={24} />
                                 {t('Payment Method')}
                             </h2>
@@ -396,7 +396,7 @@ const Checkout = () => {
                     {/* Order Summary */}
                     <div className="lg:col-span-1">
                         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 sticky top-24">
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">{t('Order Summary')}</h2>
+                            <h2 className="text-xl md:text-2xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-6">{t('Order Summary')}</h2>
 
                             <div className="space-y-4 mb-6">
                                 {cartItems.map((item) => (

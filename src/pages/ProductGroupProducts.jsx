@@ -52,10 +52,10 @@ const ProductGroupProducts = () => {
 
                                         return (
                                             <div className="flex flex-col min-w-0">
-                                                <h1 className={`font-bold text-gray-900 dark:text-white capitalize truncate ${isLongTitle ? 'text-base sm:text-lg' : 'text-xl'}`} title={mainTitle}>
+                                                <h1 className={`font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent capitalize truncate ${isLongTitle ? 'text-base sm:text-lg' : 'text-xl md:text-2xl'}`} title={mainTitle}>
                                                     {mainTitle}
                                                 </h1>
-                                                <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate" title={bracketText}>
+                                                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium truncate" title={bracketText}>
                                                     {bracketText}
                                                 </span>
                                             </div>
@@ -64,7 +64,7 @@ const ProductGroupProducts = () => {
 
                                     const isLongTitle = fullTitle.length > 20;
                                     return (
-                                        <h1 className={`font-bold text-gray-900 dark:text-white capitalize truncate ${isLongTitle ? 'text-base sm:text-lg' : 'text-xl'}`} title={fullTitle}>
+                                        <h1 className={`font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent capitalize truncate ${isLongTitle ? 'text-base sm:text-lg' : 'text-xl md:text-2xl'}`} title={fullTitle}>
                                             {fullTitle}
                                         </h1>
                                     );
