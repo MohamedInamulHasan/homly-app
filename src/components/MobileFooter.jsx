@@ -26,13 +26,13 @@ const MobileFooter = () => {
     }
 
     return (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-            {/* Gap/Spacer at top */}
-            <div className="h-2 bg-gradient-to-b from-transparent to-white/50 dark:to-gray-900/50"></div>
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-800/95 backdrop-blur-2xl border-t border-gray-200/50 dark:border-gray-700/50 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.3)]" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+            {/* Gap/Spacer at top - Removed as it might conflict with edge-to-edge style, or keep if decorative */}
+            {/* <div className="h-2 bg-gradient-to-b from-transparent to-white/50 dark:to-gray-900/50"></div> */}
 
-            {/* Footer Container */}
-            <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-2xl border-t border-gray-200/50 dark:border-gray-700/50 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
-                <div className="flex justify-around items-center px-1 pt-2 pb-6">
+            {/* Content Container */}
+            <div className="w-full">
+                <div className="flex justify-around items-center px-1 pt-3 pb-4">
                     {navItems.map((item) => {
                         const active = isActive(item.path);
                         return (
