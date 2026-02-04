@@ -140,254 +140,277 @@ const OrderDetails = () => {
         }
     };
 
-    return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 pb-24 transition-colors duration-200">
-            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Back Button */}
-                <button
-                    onClick={() => navigate('/orders')}
-                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors flex-shrink-0 mb-6"
-                >
-                    <ChevronLeft className="text-gray-600 dark:text-white" size={24} />
-                </button>
+    // Timeline Helper
+    const getTimelineSteps = (status) => {
+        const steps = [
+            { id: 'Processing', label: 'Order Placed', icon: Package },
+            { id: 'Shipped', label: 'Out for Delivery', icon: Truck },
+            { id: 'Delivered', label: 'Delivered', icon: CheckCircle },
+        ];
 
-                {/* Header */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 mb-6">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        const statusOrder = ['Processing', 'Shipped', 'Delivered'];
+        const currentIdx = statusOrder.indexOf(status === 'Cancelled' ? 'Processing' : status);
+
+        return steps.map((step, idx) => ({
+            ...step,
+            completed: idx <= currentIdx && status !== 'Cancelled',
+            current: step.id === status
+        }));
+    };
+
+    const timelineSteps = getTimelineSteps(order.status);
+
+    return (
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-24 transition-colors duration-200">
+            {/* Header Background */}
+            <div className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 sticky top-0 z-30">
+                <div className="max-w-3xl mx-auto px-4 h-16 flex items-center gap-4">
+                    <button
+                        onClick={() => navigate('/orders')}
+                        className="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                    >
+                        <ChevronLeft className="text-gray-900 dark:text-white" size={24} />
+                    </button>
+                    <h1 className="text-lg font-bold text-gray-900 dark:text-white">{t('Order Details')}</h1>
+                </div>
+            </div>
+
+            <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+
+                {/* Status Card & Timeline */}
+                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    {/* Status Banner */}
+                    <div className={`p-6 ${order.status === 'Cancelled' ? 'bg-red-50 dark:bg-red-900/10' :
+                            order.status === 'Delivered' ? 'bg-green-50 dark:bg-green-900/10' :
+                                'bg-blue-50 dark:bg-blue-900/10'
+                        } flex items-center justify-between`}>
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{t('Order Details')}</h1>
-                            <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 whitespace-nowrap">{t('Order')} #{String(order._id || order.id).slice(-6).toUpperCase()}</p>
-                            {/* Order Placed Time */}
-                            {order.createdAt && (
-                                <p className="text-xs md:text-sm text-gray-400 dark:text-gray-500 mt-1">
-                                    {t('Placed on')} {new Date(order.createdAt).toLocaleDateString('en-US', {
-                                        month: 'short',
-                                        day: 'numeric',
-                                        year: 'numeric'
-                                    })} at {new Date(order.createdAt).toLocaleTimeString('en-US', {
-                                        hour: 'numeric',
-                                        minute: '2-digit',
-                                        hour12: true
-                                    })}
-                                </p>
-                            )}
-                        </div>
-                        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
-                            <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium border ${getStatusColor(order.status)}`}>
-                                {getStatusIcon(order.status)}
+                            <p className="text-sm font-medium opacity-80 mb-1 dark:text-gray-300">
+                                {t('Order ID')}: #{String(order._id || order.id).slice(-6).toUpperCase()}
+                            </p>
+                            <h2 className={`text-2xl font-black ${order.status === 'Cancelled' ? 'text-red-600 dark:text-red-400' :
+                                    order.status === 'Delivered' ? 'text-green-600 dark:text-green-400' :
+                                        'text-blue-600 dark:text-blue-400'
+                                }`}>
                                 {t(order.status)}
-                            </div>
+                            </h2>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                {new Date(order.createdAt).toLocaleDateString()} • {new Date(order.createdAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                            </p>
+                        </div>
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${order.status === 'Cancelled' ? 'bg-red-100 text-red-600 dark:bg-red-900/30' :
+                                order.status === 'Delivered' ? 'bg-green-100 text-green-600 dark:bg-green-900/30' :
+                                    'bg-blue-100 text-blue-600 dark:bg-blue-900/30'
+                            }`}>
+                            {getStatusIcon(order.status)}
                         </div>
                     </div>
+
+                    {/* Visual Timeline (Hidden for Cancelled) */}
+                    {order.status !== 'Cancelled' && (
+                        <div className="p-6 relative">
+                            {/* Connecting Line */}
+                            <div className="absolute top-[42px] left-6 right-6 h-1 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                <div
+                                    className="h-full bg-blue-500 transition-all duration-1000 ease-out"
+                                    style={{
+                                        width: `${timelineSteps.filter(s => s.completed).length === 1 ? '0%' :
+                                            timelineSteps.filter(s => s.completed).length === 2 ? '50%' : '100%'}`
+                                    }}
+                                />
+                            </div>
+
+                            <div className="relative flex justify-between">
+                                {timelineSteps.map((step, idx) => (
+                                    <div key={idx} className="flex flex-col items-center z-10">
+                                        <div className={`w-9 h-9 rounded-full flex items-center justify-center border-4 transition-all duration-300 ${step.completed
+                                                ? 'bg-blue-500 border-white dark:border-gray-800 text-white shadow-lg shadow-blue-500/30'
+                                                : 'bg-white dark:bg-gray-700 border-gray-100 dark:border-gray-600 text-gray-300'
+                                            }`}>
+                                            <step.icon size={14} strokeWidth={3} />
+                                        </div>
+                                        <p className={`text-xs mt-2 font-bold text-center w-20 leading-tight ${step.completed
+                                                ? 'text-gray-900 dark:text-white'
+                                                : 'text-gray-400 dark:text-gray-600'
+                                            }`}>
+                                            {t(step.label)}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
-                {/* Order Items */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden mb-6">
-                    <div className="p-6 border-b border-gray-50 dark:border-gray-700">
-                        <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-                            <Package size={20} className="mr-2 text-gray-400 dark:text-gray-500" />
-                            {t('Items')}
-                        </h2>
+                {/* Items Card */}
+                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    <div className="p-4 border-b border-gray-50 dark:border-gray-700 flex items-center gap-2">
+                        <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg text-indigo-600 dark:text-indigo-400">
+                            <Package size={18} />
+                        </div>
+                        <h3 className="font-bold text-gray-900 dark:text-white">{t('Items Ordered')}</h3>
                     </div>
                     <div className="divide-y divide-gray-50 dark:divide-gray-700">
                         {order.items?.map((item, index) => (
-                            <div key={index} className="p-6 flex items-start gap-4">
-                                <div className="h-20 w-20 flex-shrink-0 rounded-xl bg-white overflow-hidden border border-gray-100 dark:border-gray-600 relative">
+                            <div key={index} className="p-4 flex gap-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                                <div className="h-16 w-16 bg-gray-100 dark:bg-gray-700 rounded-xl overflow-hidden flex-shrink-0 border border-gray-200 dark:border-gray-600 relative">
                                     <img
                                         src={(item.product?._id || item.product) ? `${API_BASE_URL}/products/${item.product?._id || item.product}/image` : (item.image || "https://via.placeholder.com/150?text=No+Image")}
                                         alt={item.name}
                                         className="h-full w-full object-cover"
                                         onError={(e) => { e.target.src = "https://via.placeholder.com/150?text=Product"; }}
-                                        loading="lazy"
                                     />
-                                    {(() => {
-                                        const unitText = item.unit || item.product?.unit;
-                                        if (!unitText) return null;
-                                        return (
-                                            <div className="absolute bottom-0 right-0 bg-gray-900/80 backdrop-blur-sm px-1.5 py-0.5 rounded-tl-md rounded-br-xl z-10">
-                                                <span className="text-[10px] font-bold text-white leading-none block">
-                                                    {unitText}
-                                                </span>
-                                            </div>
-                                        );
-                                    })()}
+                                    {/* Unit Badge */}
+                                    {(item.unit || item.product?.unit) && (
+                                        <div className="absolute bottom-0 right-0 bg-black/60 backdrop-blur-[2px] px-1.5 py-0.5 rounded-tl-md text-[10px] font-bold text-white">
+                                            {item.unit || item.product?.unit}
+                                        </div>
+                                    )}
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                    {(() => {
-                                        const fullTitle = item.name || '';
-                                        const bracketIndex = fullTitle.indexOf('(');
+                                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                    <h4 className="font-bold text-gray-900 dark:text-white text-sm line-clamp-2 leading-snug mb-0.5">
+                                        {item.name}
+                                    </h4>
 
-                                        if (bracketIndex !== -1) {
-                                            const mainTitle = fullTitle.substring(0, bracketIndex).trim();
-                                            const bracketText = fullTitle.substring(bracketIndex).trim();
-
-                                            return (
-                                                <div className="mb-1">
-                                                    <h3 className="font-medium text-gray-900 dark:text-white truncate text-sm sm:text-base" title={mainTitle}>{mainTitle}</h3>
-                                                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate" title={bracketText}>{bracketText}</p>
-                                                </div>
-                                            );
-                                        }
-
-                                        return <h3 className="font-medium text-gray-900 dark:text-white mb-1 truncate text-sm sm:text-base" title={fullTitle}>{fullTitle}</h3>;
-                                    })()}
                                     {item.storeId && (
                                         <div className="flex items-center gap-1 mb-1">
-                                            <Store size={12} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
+                                            <Store size={10} className="text-gray-400" />
                                             <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                                                 {getStoreName(item.storeId, stores)}
                                             </p>
                                         </div>
                                     )}
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <p className="text-gray-500 dark:text-gray-400 text-sm">{t('Quantity')}: {item.quantity}</p>
-                                        {/* Unit display moved to image overlay */}
+
+                                    <div className="flex items-center justify-between mt-auto">
+                                        <div className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300">
+                                            x{item.quantity}
+                                        </div>
+                                        <span className="font-bold text-gray-900 dark:text-white text-sm">₹{Number(item.price * item.quantity).toFixed(0)}</span>
                                     </div>
-                                    <p className="font-semibold text-gray-900 dark:text-white">₹{Number(item.price || 0).toFixed(0)}</p>
                                 </div>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                {/* Order Info Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    {/* Scheduled Delivery Time - Prominent Display */}
+                {/* Delivery & Address Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Delivery Time */}
                     {order.scheduledDeliveryTime && (
-                        <div className="md:col-span-2 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl shadow-sm border-2 border-blue-200 dark:border-blue-800 p-6">
-                            <div className="flex items-center gap-3">
-                                <div className="p-3 bg-blue-600 rounded-xl">
-                                    <Clock size={24} className="text-white" />
-                                </div>
-                                <div className="flex-1">
-                                    <p className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-1">
-                                        {t('Scheduled Delivery Time')}
-                                    </p>
-                                    <p className="text-xl font-bold text-gray-900 dark:text-white">
-                                        {new Date(order.scheduledDeliveryTime).toLocaleDateString('en-US', {
-                                            weekday: 'long',
-                                            month: 'long',
-                                            day: 'numeric',
-                                            year: 'numeric'
-                                        })}
-                                    </p>
-                                    <p className="text-lg font-semibold text-blue-600 dark:text-blue-400 mt-1">
-                                        {new Date(order.scheduledDeliveryTime).toLocaleTimeString('en-US', {
-                                            hour: 'numeric',
-                                            minute: '2-digit',
-                                            hour12: true
-                                        })}
-                                    </p>
-                                </div>
+                        <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl p-6 text-white shadow-lg shadow-blue-500/20 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 p-4 opacity-10">
+                                <Clock size={100} />
+                            </div>
+                            <div className="relative z-10">
+                                <p className="text-blue-100 text-xs font-bold uppercase tracking-wider mb-2">{t('Estimated Delivery')}</p>
+                                <h3 className="text-2xl font-bold mb-1">
+                                    {new Date(order.scheduledDeliveryTime).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true })}
+                                </h3>
+                                <p className="text-blue-100 font-medium">
+                                    {new Date(order.scheduledDeliveryTime).toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}
+                                </p>
                             </div>
                         </div>
                     )}
 
-                    {/* Shipping Address */}
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-                        <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center mb-4">
-                            <MapPin size={20} className="mr-2 text-gray-400 dark:text-gray-500" />
-                            {t('Shipping Address')}
-                        </h2>
-                        <address className="not-italic text-gray-600 dark:text-gray-300 space-y-1">
-                            <p className="font-medium text-gray-900 dark:text-white">{order.shippingAddress?.name || 'N/A'}</p>
-                            <p>{order.shippingAddress?.street || ''}</p>
-                            <p>{order.shippingAddress?.city || ''}, {order.shippingAddress?.state || ''} {order.shippingAddress?.zip || ''}</p>
-                            <p>{order.shippingAddress?.country || ''}</p>
-                        </address>
-                    </div>
-
-                    {/* Payment Info */}
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-                        <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center mb-4">
-                            <CreditCard size={20} className="mr-2 text-gray-400 dark:text-gray-500" />
-                            {t('Payment Method')}
-                        </h2>
-                        <div className="flex items-center text-gray-600 dark:text-gray-300">
-                            <span className="font-medium text-gray-900 dark:text-white mr-2">{order.paymentMethod?.type || t('Card')}</span>
+                    {/* Address Card */}
+                    <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col justify-center">
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-full text-orange-600 dark:text-orange-400">
+                                <MapPin size={18} />
+                            </div>
+                            <h3 className="font-bold text-gray-900 dark:text-white">{t('Delivery To')}</h3>
                         </div>
+                        <address className="not-italic text-sm text-gray-600 dark:text-gray-300 pl-11">
+                            <p className="font-bold text-gray-900 dark:text-white mb-1">{order.shippingAddress?.name || 'User'}</p>
+                            <p className="line-clamp-2 leading-relaxed opacity-80">
+                                {order.shippingAddress?.street}, {order.shippingAddress?.city}
+                            </p>
+                            <p className="opacity-80">{order.shippingAddress?.zip}</p>
+                        </address>
                     </div>
                 </div>
 
-                {/* Order Summary */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">{t('Order Summary')}</h2>
-                    <div className="space-y-3">
-                        <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                            <span>{t('Subtotal')}</span>
-                            <span>₹{calculatedSubtotal.toFixed(0)}</span>
+                {/* Price Breakdown */}
+                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                        <CreditCard size={18} className="text-gray-400" />
+                        {t('Payment Summary')}
+                    </h3>
+                    <div className="space-y-3 text-sm">
+                        <div className="flex justify-between text-gray-500 dark:text-gray-400">
+                            <span>{t('Item Total')}</span>
+                            <span className="font-medium text-gray-900 dark:text-white">₹{calculatedSubtotal.toFixed(0)}</span>
                         </div>
-                        <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                            <span>{t('Delivery Charge')}</span>
+                        <div className="flex justify-between text-gray-500 dark:text-gray-400">
+                            <span>{t('Delivery Fee')}</span>
                             {Number(order.shipping) === 0 ? (
-                                <div className="text-right">
-                                    <span className="font-medium text-green-600 dark:text-green-400">FREE</span>
-                                    <p className="text-xs text-yellow-600 dark:text-yellow-500 flex items-center justify-end gap-1">
-                                        <span>🪙</span> Coin Applied
-                                    </p>
-                                </div>
+                                <span className="text-green-600 font-bold">{t('FREE')}</span>
                             ) : (
-                                <span>₹{(Number(order.shipping) || 20).toFixed(0)}</span>
+                                <span className="font-medium text-gray-900 dark:text-white">₹{Number(order.shipping || 20).toFixed(0)}</span>
                             )}
                         </div>
-
                         {order.discount > 0 && (
-                            <div className="flex justify-between text-green-600 dark:text-green-400">
+                            <div className="flex justify-between text-green-600">
                                 <span>{t('Discount')}</span>
                                 <span>-₹{Number(order.discount).toFixed(0)}</span>
                             </div>
                         )}
-                        <div className="pt-3 border-t border-gray-100 dark:border-gray-700 flex justify-between font-bold text-gray-900 dark:text-white text-lg">
-                            <span>{t('Total')}</span>
-                            {/* FIX: Recalculate total to be safe: Subtotal + Delivery - Discount */}
-                            <span>₹{(
-                                calculatedSubtotal +
-                                (order.shipping !== undefined && order.shipping !== null ? Number(order.shipping) : 20) -
-                                (Number(order.discount) || 0)
-                            ).toFixed(0)}</span>
+                        <div className="pt-3 border-t border-gray-100 dark:border-gray-700 mt-3 pt-3 flex justify-between items-end">
+                            <span className="font-bold text-gray-900 dark:text-white">{t('Grand Total')}</span>
+                            <span className="text-2xl font-black text-gray-900 dark:text-white">
+                                ₹{(
+                                    calculatedSubtotal +
+                                    (order.shipping !== undefined && order.shipping !== null ? Number(order.shipping) : 20) -
+                                    (Number(order.discount) || 0)
+                                ).toFixed(0)}
+                            </span>
                         </div>
                     </div>
                 </div>
 
-                {/* Cancel Button - Footer Area */}
+                {/* Footer Buttons */}
                 {order.status === 'Processing' && (
-                    <div className="mt-8 flex justify-center">
+                    <div className="pt-4">
                         <button
                             onClick={() => setCancelConfirmation(true)}
-                            className="w-full sm:w-auto px-8 py-3 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl font-bold text-base transition-colors border-2 border-red-100 dark:border-red-800 flex items-center justify-center gap-2"
+                            className="w-full py-4 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 rounded-2xl font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2"
                         >
-                            <RotateCcw size={20} />
+                            <RotateCcw size={18} />
                             {t('Cancel Order')}
                         </button>
                     </div>
                 )}
+            </div>
 
-                {/* Cancel Confirmation Modal */}
-                {cancelConfirmation && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-sm w-full p-6 transform transition-all scale-100">
-                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{t('Cancel Order?')}</h3>
-                            <p className="text-gray-600 dark:text-gray-300 mb-6">
-                                {t('Are you sure you want to cancel this order? This action cannot be undone.')}
-                            </p>
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => setCancelConfirmation(false)}
-                                    className="flex-1 py-3 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl font-medium transition-colors"
-                                >
-                                    {t('No, Keep Order')}
-                                </button>
-                                <button
-                                    onClick={confirmCancelOrder}
-                                    className="flex-1 py-3 text-white bg-red-600 hover:bg-red-700 rounded-xl font-bold shadow-lg shadow-red-200 dark:shadow-red-900/20 transition-colors"
-                                >
-                                    {t('Yes, Cancel')}
-                                </button>
-                            </div>
+            {/* Cancel Confirmation Modal */}
+            {cancelConfirmation && (
+                <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-sm w-full p-6 transform transition-all scale-100 animate-in zoom-in-95 duration-200 slide-in-from-bottom-10 sm:slide-in-from-bottom-0">
+                        <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <RotateCcw size={32} className="text-red-600 dark:text-red-400" />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-2">{t('Cancel Order?')}</h3>
+                        <p className="text-gray-500 dark:text-gray-400 text-center mb-8 text-sm leading-relaxed">
+                            {t('Are you sure you want to cancel? This action cannot be undone.')}
+                        </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setCancelConfirmation(false)}
+                                className="flex-1 py-3.5 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-2xl font-bold transition-colors"
+                            >
+                                {t('No, Keep')}
+                            </button>
+                            <button
+                                onClick={confirmCancelOrder}
+                                className="flex-1 py-3.5 text-white bg-red-600 hover:bg-red-700 rounded-2xl font-bold shadow-lg shadow-red-500/30 transition-colors"
+                            >
+                                {t('Yes, Cancel')}
+                            </button>
                         </div>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 };

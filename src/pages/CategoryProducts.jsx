@@ -89,7 +89,20 @@ const CategoryProducts = () => {
         : categoryProducts;
 
     // Always group products by name
-    const displayProducts = groupProductsByName(filteredBySubcategory);
+    const displayProducts = groupProductsByName(filteredBySubcategory).sort((a, b) => {
+        const getStatus = (item) => {
+            if (item.isGroup) return item.anyStoreOpen;
+            const sId = item.storeId?._id || item.storeId;
+            const s = stores.find(st => (st._id || st.id) === sId);
+            return s ? isStoreOpen(s) : false; // Default to false if store not found, or true? User wants closed last. Safer to default closed if missing.
+        };
+
+        const isOpenA = getStatus(a);
+        const isOpenB = getStatus(b);
+
+        if (isOpenA === isOpenB) return 0;
+        return isOpenA ? -1 : 1;
+    });
 
     // Get category image from first product
     const categoryImage = categoryProducts.length > 0 ? categoryProducts[0].image : null;

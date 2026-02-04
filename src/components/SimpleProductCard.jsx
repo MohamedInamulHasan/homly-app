@@ -103,7 +103,7 @@ const SimpleProductCard = ({ product, isFastPurchase }) => {
                         src={product.image || `${API_BASE_URL}/products/${product._id.replace('group-', '')}/image`}
                         alt={t(product, 'title')}
                         loading="lazy"
-                        className={`absolute top-0 left-0 w-full h-full object-cover transition-transform duration-300 ${isStoreOpenCheck || product.anyStoreOpen ? 'hover:scale-105' : ''}`}
+                        className={`absolute top-0 left-0 w-full h-full object-contain p-4 transition-transform duration-300 ${isStoreOpenCheck || product.anyStoreOpen ? 'hover:scale-105' : ''}`}
                         onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300?text=No+Image'; }}
                     />
                     {/* Show Closed Overlay for Group ONLY if ALL stores are closed */}
@@ -210,12 +210,12 @@ const SimpleProductCard = ({ product, isFastPurchase }) => {
             className={`bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden transition-all duration-300 flex flex-col h-full border border-gray-100 dark:border-gray-700 ${isStoreOpenCheck && isAvailable ? 'hover:shadow-2xl hover:scale-[1.02]' : 'opacity-75 grayscale-[0.5] cursor-not-allowed'
                 }`}
         >
-            <div className="relative pb-[100%] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700">
+            <div className="relative pb-[100%] overflow-hidden bg-white">
                 <img
                     src={product.image || `${API_BASE_URL}/products/${productId}/image`}
                     alt={t(product, 'title')}
                     loading="lazy"
-                    className={`absolute top-0 left-0 w-full h-full object-cover transition-transform duration-300 ${isStoreOpenCheck && isAvailable ? 'group-hover:scale-110' : ''}`}
+                    className={`absolute top-0 left-0 w-full h-full object-contain p-4 transition-transform duration-300 ${isStoreOpenCheck && isAvailable ? 'group-hover:scale-105' : ''}`}
                     onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300?text=No+Image'; }}
                 />
                 {/* Subtle gradient overlay for depth */}

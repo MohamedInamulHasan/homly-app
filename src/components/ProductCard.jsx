@@ -34,7 +34,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = true }) => 
                         src={product.image || `${API_BASE_URL}/products/${productId}/image`}
                         alt={t(product, 'title')}
                         loading="lazy"
-                        className={`absolute top-0 left-0 w-full h-full object-cover transform transition-transform duration-300 ${isAvailable ? 'group-hover:scale-105' : 'grayscale'}`}
+                        className={`absolute top-0 left-0 w-full h-full object-contain p-4 transform transition-transform duration-300 ${isAvailable ? 'group-hover:scale-105' : 'grayscale'}`}
                         onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300?text=No+Image'; }}
                     />
                     {/* Heart Button */}
@@ -117,37 +117,39 @@ const ProductCard = ({ product, showCartControls = true, showHeart = true }) => 
                     <div className="flex flex-col gap-3">
                         <span className="text-lg md:text-xl font-bold text-blue-600 dark:text-blue-400">₹{Number(product.price || 0).toFixed(0)}</span>
                         {cartItem && cartItem.quantity > 0 ? (
-                            <div className="flex items-center justify-between w-full h-10 gap-2 bg-blue-600 rounded-lg px-1 shadow-sm" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex items-center justify-between h-10 rounded-xl bg-gray-100 dark:bg-gray-700 p-1" onClick={(e) => e.stopPropagation()}>
                                 <button
                                     onClick={() => updateQuantity(productId, cartItem.quantity - 1)}
-                                    className="w-8 h-8 flex items-center justify-center text-white hover:bg-blue-700/50 rounded-lg transition-colors focus:outline-none"
+                                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-200 shadow-sm hover:text-red-600 border border-gray-100 dark:border-gray-500 transition-all active:scale-90"
                                     aria-label="Decrease quantity"
                                     disabled={!isAvailable}
                                 >
-                                    <Minus size={18} />
+                                    <Minus size={16} strokeWidth={3} />
                                 </button>
-                                <span className="font-bold text-white text-lg">{cartItem.quantity}</span>
+                                <span className="font-bold text-gray-900 dark:text-white text-base flex-1 text-center tabular-nums">
+                                    {cartItem.quantity}
+                                </span>
                                 <button
                                     onClick={() => updateQuantity(productId, cartItem.quantity + 1)}
-                                    className="w-8 h-8 flex items-center justify-center text-white hover:bg-blue-700/50 rounded-lg transition-colors focus:outline-none"
+                                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md hover:shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all active:scale-90"
                                     aria-label="Increase quantity"
                                     disabled={!isAvailable}
                                 >
-                                    <Plus size={18} />
+                                    <Plus size={16} strokeWidth={3} />
                                 </button>
                             </div>
                         ) : (
                             <button
                                 onClick={() => addToCart(product)}
                                 disabled={!isAvailable}
-                                className={`w-full h-10 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 flex items-center justify-center gap-2 ${isAvailable
-                                    ? 'bg-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-500'
+                                className={`w-full h-10 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 flex items-center justify-center gap-2 transform active:scale-95 ${isAvailable
+                                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md hover:shadow-lg hover:from-blue-700 hover:to-indigo-700'
                                     : 'bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed'
                                     }`}
                                 aria-label={isAvailable ? "Add to cart" : "Out of stock"}
                             >
                                 <Plus size={20} />
-                                <span className="text-sm font-medium">{isAvailable ? 'Add' : 'Out of Stock'}</span>
+                                <span className="text-sm font-bold tracking-wide">{isAvailable ? 'ADD' : 'Out of Stock'}</span>
                             </button>
                         )}
                     </div>

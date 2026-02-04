@@ -298,15 +298,15 @@ const Home = () => {
                                         to={`/category/${encodeURIComponent(category.name)}`}
                                         className="flex flex-col items-center gap-2 md:gap-3 group"
                                     >
-                                        <div className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 ring-4 ring-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 group-hover:ring-blue-500 dark:group-hover:ring-blue-400 group-hover:scale-110">
+                                        <div className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full overflow-hidden shadow-[0_10px_20px_rgba(0,0,0,0.15)] dark:shadow-[0_10px_20px_rgba(0,0,0,0.4)] hover:shadow-[0_20px_30px_rgba(37,99,235,0.3)] dark:hover:shadow-[0_20px_30px_rgba(37,99,235,0.2)] transition-all duration-300 group-hover:scale-110 bg-white dark:bg-gray-800">
                                             <img
                                                 src={category.image || `${API_BASE_URL}/categories/${category._id || category.id}/image`}
                                                 alt={category.name}
-                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                                className="w-full h-full object-cover transition-transform duration-300 transform group-hover:scale-110"
                                                 loading="lazy"
                                             />
                                             {/* Gradient overlay on hover */}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-blue-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                            <div className="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-colors duration-300"></div>
                                         </div>
                                         {(() => {
                                             const fullName = t(category.name);
@@ -342,7 +342,7 @@ const Home = () => {
                 ) : null}
 
                 {/* Mobile Search Bar - Below Categories */}
-                <section className="md:hidden bg-gradient-to-r from-blue-50 via-white to-indigo-50 dark:from-gray-800 dark:via-gray-800 dark:to-blue-900/10 py-4 sticky top-0 z-20 shadow-lg border-b border-blue-100 dark:border-gray-700">
+                <section className="md:hidden bg-white dark:bg-gray-800 py-0 sticky top-0 z-20 shadow-none border-none">
                     <div className="max-w-7xl mx-auto px-4">
                         <div className="relative">
                             <form
@@ -361,7 +361,7 @@ const Home = () => {
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder={t('Search products...')}
-                                    className="w-full pl-12 pr-4 py-3.5 rounded-2xl border-2 border-blue-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-all shadow-md focus:shadow-xl"
+                                    className="w-full pl-12 pr-4 py-3.5 rounded-2xl border-2 border-blue-100 dark:border-gray-700 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-500/10 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 shadow-md focus:shadow-xl transition-all duration-300"
                                 />
                                 <svg
                                     className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500 dark:text-blue-400"
@@ -495,7 +495,20 @@ const Home = () => {
                         <CategorySection
                             key={category}
                             category={category}
-                            products={groupProductsByName(categoryProducts).slice(0, 10)}
+                            products={groupProductsByName(categoryProducts).sort((a, b) => {
+                                // Helper to determine open status
+                                const getStatus = (item) => {
+                                    if (item.isGroup) return item.anyStoreOpen;
+                                    const sId = item.storeId?._id || item.storeId;
+                                    const s = stores.find(st => (st._id || st.id) === sId);
+                                    return s ? isStoreOpen(s) : false;
+                                };
+                                const isOpenA = getStatus(a);
+                                const isOpenB = getStatus(b);
+
+                                if (isOpenA === isOpenB) return 0;
+                                return isOpenA ? -1 : 1;
+                            }).slice(0, 10)}
                             t={t}
                             fastMode={fastMode}
                         />

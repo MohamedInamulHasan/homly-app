@@ -133,21 +133,21 @@ const Orders = () => {
                                 placeholder={t('Search orders...')}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full md:w-72 pl-11 pr-4 py-2.5 rounded-2xl border-2 border-blue-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all shadow-md focus:shadow-lg"
+                                className="w-full md:w-72 pl-11 pr-4 py-2.5 rounded-2xl border-2 border-blue-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 placeholder-gray-400 dark:placeholder-gray-500 shadow-md focus:shadow-xl transition-all duration-300"
                             />
                             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-blue-500 dark:text-blue-400" size={20} />
                         </div>
                     </div>
 
                     {/* Tabs */}
-                    <div className="flex overflow-x-auto pb-4 mb-4 scrollbar-hide gap-2">
+                    <div className="flex overflow-x-auto p-2 pb-4 mb-4 scrollbar-hide gap-3 -mx-2">
                         {tabs.map(tab => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-300 shadow-md hover:shadow-lg ${activeTab === tab
-                                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-300 dark:shadow-blue-900/50 scale-105'
-                                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border-2 border-gray-200 dark:border-gray-700 hover:scale-105'
+                                className={`px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-300 ${activeTab === tab
+                                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 scale-105'
+                                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 hover:text-blue-600'
                                     }`}
                             >
                                 {t(tab)}

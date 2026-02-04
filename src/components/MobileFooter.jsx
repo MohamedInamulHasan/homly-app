@@ -26,13 +26,11 @@ const MobileFooter = () => {
     }
 
     return (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-800/95 backdrop-blur-2xl border-t border-gray-200/50 dark:border-gray-700/50 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.3)]" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-            {/* Gap/Spacer at top - Removed as it might conflict with edge-to-edge style, or keep if decorative */}
-            {/* <div className="h-2 bg-gradient-to-b from-transparent to-white/50 dark:to-gray-900/50"></div> */}
+        <div className="md:hidden fixed bottom-0 left-0 w-full z-50 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-700 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
 
             {/* Content Container */}
             <div className="w-full">
-                <div className="flex justify-around items-center px-1 pt-3 pb-4">
+                <div className="flex justify-around items-center px-2 py-2">
                     {navItems.map((item) => {
                         const active = isActive(item.path);
                         return (

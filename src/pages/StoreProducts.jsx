@@ -116,7 +116,7 @@ const StoreProducts = () => {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder={t('Search in store...')}
-                                className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-blue-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none shadow-lg focus:shadow-xl transition-all text-sm"
+                                className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-blue-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 placeholder-gray-400 dark:placeholder-gray-500 shadow-md focus:shadow-xl transition-all duration-300 text-sm"
                             />
                             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-blue-500 dark:text-blue-400" size={18} />
 
@@ -179,24 +179,24 @@ const StoreProducts = () => {
 
             {/* Subcategories Scroller */}
             {subcategories.length > 0 && (
-                <div className="mb-8 overflow-x-auto pb-4 scrollbar-hide">
-                    <div className="flex space-x-4">
+                <div className="mb-8 overflow-x-auto p-2 pb-4 scrollbar-hide -mx-2">
+                    <div className="flex space-x-3">
                         <button
                             onClick={() => setSelectedSubcategory(null)}
-                            className={`flex-shrink-0 px-4 py-2 rounded-full border transition-all duration-300 ${!selectedSubcategory
-                                ? 'bg-blue-600 text-white border-blue-600'
-                                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-blue-500 hover:text-blue-500'
+                            className={`flex-shrink-0 px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 ${!selectedSubcategory
+                                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 scale-105'
+                                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:text-blue-600 dark:hover:text-blue-400'
                                 }`}
                         >
-                            <span className="font-medium whitespace-nowrap text-sm">{t('All')}</span>
+                            <span className="whitespace-nowrap">{t('All')}</span>
                         </button>
                         {subcategories.map((sub, idx) => (
                             <button
                                 key={idx}
                                 onClick={() => setSelectedSubcategory(sub.name)}
-                                className={`flex-shrink-0 px-4 py-2 rounded-full border transition-all duration-300 ${selectedSubcategory === sub.name
-                                    ? 'bg-blue-600 text-white border-blue-600'
-                                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-blue-500 hover:text-blue-500'
+                                className={`flex-shrink-0 px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 ${selectedSubcategory === sub.name
+                                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 scale-105'
+                                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:text-blue-600 dark:hover:text-blue-400'
                                     }`}
                             >
                                 <span className="font-medium whitespace-nowrap text-sm">

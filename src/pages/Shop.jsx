@@ -38,6 +38,12 @@ const Shop = () => {
                 : store.type && store.type.toLowerCase() === categoryFilter.toLowerCase());
 
         return matchesSearch && matchesCategory;
+    }).sort((a, b) => {
+        const isOpenA = isStoreOpen(a);
+        const isOpenB = isStoreOpen(b);
+        // Open stores (true) come first (-1), Closed (false) come last (1)
+        if (isOpenA === isOpenB) return 0;
+        return isOpenA ? -1 : 1;
     });
 
     const handleCategoryClick = (categoryName) => {
@@ -56,7 +62,7 @@ const Shop = () => {
                                 placeholder={t('Search by store name or location...')}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3.5 rounded-2xl border-2 border-blue-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-all focus:shadow-xl"
+                                className="w-full pl-12 pr-4 py-3.5 rounded-2xl border-2 border-blue-100 dark:border-gray-700 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-500/10 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 shadow-md focus:shadow-xl transition-all duration-300"
                             />
                             <Search className="absolute left-4 top-4 text-blue-500 dark:text-blue-400" size={22} />
                         </div>
@@ -69,19 +75,19 @@ const Shop = () => {
                         </div>
 
                         {/* Category Pills */}
-                        <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide">
+                        <div className="flex space-x-3 overflow-x-auto p-2 pb-4 scrollbar-hide -mx-2">
                             {categories.map((category) => {
                                 const isActive = category.name === categoryFilter;
                                 return (
                                     <button
                                         key={category.name}
                                         onClick={() => handleCategoryClick(category.name)}
-                                        className={`flex-shrink-0 px-5 py-2.5 rounded-full border-2 transition-all duration-300 shadow-md hover:shadow-lg ${isActive
-                                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-600 shadow-blue-300 dark:shadow-blue-900/50 scale-105'
-                                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-blue-500 hover:text-blue-500 hover:scale-105'
+                                        className={`flex-shrink-0 px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 ${isActive
+                                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 scale-105'
+                                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400'
                                             }`}
                                     >
-                                        <span className="font-bold whitespace-nowrap text-sm">
+                                        <span className="whitespace-nowrap">
                                             {t(category.name)}
                                         </span>
                                     </button>

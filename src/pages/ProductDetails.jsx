@@ -251,7 +251,7 @@ const ProductDetails = () => {
                                             <div className="w-full flex gap-4">
                                                 <button
                                                     onClick={() => addToCart(product)}
-                                                    className="flex-1 py-4 px-8 rounded-2xl font-bold text-xl shadow-lg border-2 border-blue-600 text-blue-600 bg-white hover:bg-blue-50 transition-all flex items-center justify-center gap-3"
+                                                    className="flex-1 py-4 px-8 rounded-2xl font-bold text-xl shadow-lg border-2 border-indigo-500 text-indigo-600 bg-white hover:bg-indigo-50 transition-all flex items-center justify-center gap-3 transform hover:-translate-y-1"
                                                 >
                                                     <ShoppingCart size={24} />
                                                     {t('Add to Cart')}
@@ -261,7 +261,7 @@ const ProductDetails = () => {
                                                         addToCart(product);
                                                         navigate('/checkout');
                                                     }}
-                                                    className="flex-1 py-4 px-8 rounded-2xl font-bold text-xl shadow-lg bg-blue-600 text-white hover:bg-blue-700 transition-all flex items-center justify-center gap-3"
+                                                    className="flex-1 py-4 px-8 rounded-2xl font-bold text-xl shadow-lg shadow-blue-500/30 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center gap-3 transform hover:-translate-y-1"
                                                 >
                                                     <ShoppingBag size={24} />
                                                     {t('Buy Now')}
@@ -271,17 +271,17 @@ const ProductDetails = () => {
                                             <div className="w-full flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
                                                 <div className="flex gap-4">
                                                     {/* Quantity Control Pill */}
-                                                    <div className="flex items-center justify-between bg-white dark:bg-gray-800 rounded-2xl border-2 border-blue-600 p-2 px-4 shadow-sm w-40 flex-shrink-0">
+                                                    <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 rounded-2xl p-2 px-2 w-48 flex-shrink-0">
                                                         <button
                                                             onClick={() => updateQuantity(productId, Math.max(0, quantity - 1))}
-                                                            className="w-10 h-10 flex items-center justify-center text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-xl transition-colors"
+                                                            className="w-12 h-12 flex items-center justify-center text-gray-600 dark:text-gray-200 bg-white dark:bg-gray-600 rounded-xl shadow-sm hover:text-red-500 transition-colors"
                                                         >
                                                             <Minus size={22} strokeWidth={2.5} />
                                                         </button>
-                                                        <span className="font-bold text-2xl text-gray-900 dark:text-white w-8 text-center">{quantity}</span>
+                                                        <span className="font-bold text-2xl text-gray-900 dark:text-white w-12 text-center tabular-nums">{quantity}</span>
                                                         <button
                                                             onClick={() => updateQuantity(productId, quantity + 1)}
-                                                            className="w-10 h-10 flex items-center justify-center text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-xl transition-colors"
+                                                            className="w-12 h-12 flex items-center justify-center text-white bg-blue-600 rounded-xl shadow-sm hover:bg-blue-700 transition-colors"
                                                         >
                                                             <Plus size={22} strokeWidth={2.5} />
                                                         </button>
@@ -290,7 +290,7 @@ const ProductDetails = () => {
                                                     {/* Buy Now Button (Consistent Look) */}
                                                     <button
                                                         onClick={handleCheckout}
-                                                        className="flex-1 py-4 px-6 rounded-2xl font-bold text-lg shadow-xl flex items-center justify-center gap-2 bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                                        className="flex-1 py-4 px-6 rounded-2xl font-bold text-lg shadow-xl shadow-blue-500/30 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1"
                                                     >
                                                         <ShoppingBag size={24} />
                                                         {t('Buy Now')}
@@ -298,9 +298,9 @@ const ProductDetails = () => {
                                                 </div>
 
                                                 {/* Total Price Display - Below Buttons */}
-                                                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-2xl border border-gray-100 dark:border-gray-600">
-                                                    <span className="font-medium text-gray-600 dark:text-gray-300">{t('Total Amount')}</span>
-                                                    <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                                                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl border border-blue-100 dark:border-blue-900/50">
+                                                    <span className="font-bold text-gray-600 dark:text-gray-300">{t('Total Amount')}</span>
+                                                    <span className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
                                                         ₹{(Number(product.price) * quantity).toFixed(0)}
                                                     </span>
                                                 </div>
@@ -319,13 +319,13 @@ const ProductDetails = () => {
 
 
             {/* Sticky Action Footer - Mobile Only */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50 md:hidden">
+            <div className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border-t border-gray-200 dark:border-gray-700 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-[0_-4px_20px_-1px_rgba(0,0,0,0.1)] z-50 md:hidden">
                 <div className="max-w-7xl mx-auto">
                     {quantity === 0 ? (
                         <div className="w-full flex gap-3 px-2">
                             <button
                                 onClick={() => addToCart(product)}
-                                className="flex-1 py-3 px-4 rounded-xl font-bold text-base shadow-lg border border-blue-600 text-blue-600 bg-white flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                                className="flex-1 py-3.5 px-4 rounded-2xl font-bold text-base shadow-md border-2 border-indigo-500 text-indigo-600 bg-white active:scale-95 transition-transform flex items-center justify-center gap-2"
                             >
                                 <ShoppingCart size={20} />
                                 {t('Add to Cart')}
@@ -335,7 +335,7 @@ const ProductDetails = () => {
                                     addToCart(product);
                                     navigate('/checkout');
                                 }}
-                                className="flex-1 py-3 px-4 rounded-xl font-bold text-base shadow-lg bg-blue-600 text-white flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                                className="flex-1 py-3.5 px-4 rounded-2xl font-bold text-base shadow-lg shadow-blue-500/30 bg-gradient-to-r from-blue-600 to-indigo-600 text-white active:scale-95 transition-transform flex items-center justify-center gap-2"
                             >
                                 <ShoppingBag size={20} />
                                 {t('Buy Now')}
@@ -345,17 +345,17 @@ const ProductDetails = () => {
                         <div className="w-full flex flex-col gap-3">
                             <div className="flex gap-3 px-2">
                                 {/* Mobile Quantity Pill */}
-                                <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 p-1 w-32 flex-shrink-0">
+                                <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 rounded-2xl p-1.5 w-36 flex-shrink-0">
                                     <button
                                         onClick={() => updateQuantity(productId, Math.max(0, quantity - 1))}
-                                        className="w-10 h-10 flex items-center justify-center text-blue-600 bg-white dark:bg-gray-800 rounded-lg shadow-sm"
+                                        className="w-10 h-10 flex items-center justify-center text-gray-600 bg-white dark:bg-gray-600 rounded-xl shadow-sm active:scale-90 transition-transform"
                                     >
                                         <Minus size={18} strokeWidth={2.5} />
                                     </button>
-                                    <span className="font-bold text-lg text-gray-900 dark:text-white">{quantity}</span>
+                                    <span className="font-bold text-xl text-gray-900 dark:text-white tabular-nums">{quantity}</span>
                                     <button
                                         onClick={() => updateQuantity(productId, quantity + 1)}
-                                        className="w-10 h-10 flex items-center justify-center text-blue-600 bg-white dark:bg-gray-800 rounded-lg shadow-sm"
+                                        className="w-10 h-10 flex items-center justify-center text-white bg-blue-600 rounded-xl shadow-sm active:scale-90 transition-transform"
                                     >
                                         <Plus size={18} strokeWidth={2.5} />
                                     </button>
@@ -364,7 +364,7 @@ const ProductDetails = () => {
                                 {/* Mobile Buy Now Button (Consistent) */}
                                 <button
                                     onClick={handleCheckout}
-                                    className="flex-1 py-3 px-4 rounded-xl font-bold text-sm shadow-lg flex items-center justify-center gap-2 bg-blue-600 text-white active:scale-95 transition-transform"
+                                    className="flex-1 py-3 px-4 rounded-2xl font-bold text-base shadow-lg shadow-blue-500/30 bg-gradient-to-r from-blue-600 to-indigo-600 text-white active:scale-95 transition-transform flex items-center justify-center gap-2"
                                 >
                                     <ShoppingBag size={20} />
                                     {t('Buy Now')}
@@ -372,9 +372,9 @@ const ProductDetails = () => {
                             </div>
 
                             {/* Mobile Total Price - Below Buttons */}
-                            <div className="mx-2 flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-600">
-                                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">{t('Total')}:</span>
-                                <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                            <div className="mx-2 flex items-center justify-between py-2.5 px-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-100 dark:border-blue-900/30">
+                                <span className="text-sm font-bold text-gray-600 dark:text-gray-300">{t('Total')}:</span>
+                                <span className="text-xl font-extrabold text-blue-600 dark:text-blue-400">
                                     ₹{(Number(product.price) * quantity).toFixed(0)}
                                 </span>
                             </div>

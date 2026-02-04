@@ -19,21 +19,33 @@ const SavedProducts = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
-            <div className="max-w-7xl mx-auto">
-                {/* Header */}
-                <div className="flex items-center gap-4 mb-8">
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="p-2 -ml-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-                    >
-                        <ArrowLeft size={24} />
-                    </button>
-                    <h1 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent flex items-center gap-2">
-                        <Bookmark className="text-blue-600 dark:text-blue-400 fill-current" size={28} />
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+            {/* Header Section */}
+            <div className="relative bg-white dark:bg-gray-800 pb-12 pt-8 rounded-b-[3rem] shadow-sm mb-8 overflow-hidden">
+                <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+                    <Bookmark size={200} className="text-blue-500 transform rotate-12" />
+                </div>
+
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="flex items-center justify-between mb-6">
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="p-2 -ml-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                        >
+                            <ArrowLeft className="h-6 w-6" />
+                        </button>
+                    </div>
+
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 mb-4 tracking-tight">
                         {t('Saved Products')}
                     </h1>
+                    <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl font-medium">
+                        {t('Your personal collection of favorites.')}
+                    </p>
                 </div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
 
                 {savedProducts.length === 0 ? (
                     <div className="text-center py-16">
