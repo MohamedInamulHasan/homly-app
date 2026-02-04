@@ -205,6 +205,11 @@ export const updateUserByAdmin = async (req, res, next) => {
         user.mobile = req.body.mobile || user.mobile;
         user.address = req.body.address || user.address;
 
+        // Update location if provided
+        if (req.body.location !== undefined) {
+            user.location = req.body.location;
+        }
+
         if (req.body.role) {
             user.role = req.body.role;
         }
@@ -253,6 +258,7 @@ export const updateUserByAdmin = async (req, res, next) => {
                 storeId: updatedUser.storeId,
                 mobile: updatedUser.mobile,
                 address: updatedUser.address,
+                location: updatedUser.location,
                 coins: updatedUser.coins || 0
             }
         });

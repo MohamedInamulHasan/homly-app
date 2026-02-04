@@ -68,9 +68,12 @@ app.use('/api/service-requests', serviceRequestRoutes);
 app.use('/api/settings', settingsRoutes);
 
 // Upload Route (Cloudinary)
-import { getUploadSignature } from './controllers/uploadController.js';
+import { getUploadSignature, uploadImage } from './controllers/uploadController.js';
+import upload from './middleware/uploadMiddleware.js'; // Import Multer
 import { protect } from './middleware/authMiddleware.js';
+
 app.get('/api/upload/signature', protect, getUploadSignature);
+app.post('/api/upload/image', protect, upload.single('image'), uploadImage);
 
 // Error handler middleware (must be last)
 app.use(errorHandler);

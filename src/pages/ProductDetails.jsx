@@ -132,13 +132,20 @@ const ProductDetails = () => {
                                 style={{ scrollBehavior: 'smooth' }}
                             >
                                 {images.map((img, idx) => (
-                                    <div key={idx} className="min-w-full h-full snap-center flex items-center justify-center bg-white relative">
+                                    <div key={idx} className={`min-w-full h-full snap-center flex items-center justify-center bg-white relative ${product.isGold ? 'border-4 border-yellow-400/50' : ''}`}>
                                         <img
                                             src={img || 'https://via.placeholder.com/400x400?text=No+Image'}
                                             alt={`${product.title} - ${t('View')} ${idx + 1}`}
                                             className="w-full h-full object-cover"
                                             onError={(e) => { e.target.src = 'https://via.placeholder.com/400x400?text=No+Image'; }}
                                         />
+                                        {product.isGold && (
+                                            <div className="absolute top-4 left-4 z-20">
+                                                <div className="bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 mr-2 rounded-full flex items-center gap-1 shadow-lg shadow-yellow-400/40">
+                                                    <span>⚡</span> {t('Gold Benefit')}
+                                                </div>
+                                            </div>
+                                        )}
                                         {/* Unit Overlay */}
                                         {product.unit && (
                                             <div className="absolute bottom-0 right-0 bg-gray-900/80 backdrop-blur-sm px-3 py-1.5 rounded-tl-xl z-20">

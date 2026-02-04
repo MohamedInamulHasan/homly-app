@@ -18,11 +18,17 @@ export const sendOrderTelegramNotification = async (order) => {
         const shippingAddr = order.shippingAddress || {};
         const customerName = shippingAddr.name || order.user?.name || 'Customer';
         const phone = shippingAddr.mobile || 'N/A';
-        const address = `${shippingAddr.street || ''}, ${shippingAddr.city || ''}, ${shippingAddr.zip || ''}`;
+        const customerLocation = order.user?.location || ''; // Get user's location from profile
+        const address = `${shippingAddr.street || ''}${customerLocation ? ` (${customerLocation})` : ''}, ${shippingAddr.city || ''}, ${shippingAddr.zip || ''}`;
 
         // Format delivery charge
         const deliveryCharge = order.shipping || 0;
-        const deliveryText = deliveryCharge === 0 ? 'FREE (Coin Applied)' : `₹${deliveryCharge}`;
+        let deliveryText;
+        if (deliveryCharge === 0) {
+            deliveryText = order.items.some(i => i.isGold) ? 'FREE (Gold Benefit) ⚡' : 'FREE (Coin Applied) 🪙';
+        } else {
+            deliveryText = `₹${deliveryCharge}`;
+        }
 
         // Format scheduled delivery time
         let deliveryTimeText = 'Not specified';
@@ -37,6 +43,9 @@ export const sendOrderTelegramNotification = async (order) => {
                 hour12: true
             });
         }
+
+        // Google Maps Link
+        const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 
         // Construct the message with MarkdownV2 or HTML
         // Using HTML for simpler bolding usually
@@ -53,6 +62,7 @@ export const sendOrderTelegramNotification = async (order) => {
 ${customerName}
 📞 ${phone}
 📍 ${address}
+🔗 <a href="${mapsLink}">View Location on Map</a>
 
 🛒 <b>Items:</b>
 ${order.items.map(item => `- ${item.quantity}x ${item.name || item.product?.title || 'Item'}\n  🏪 Store: ${item.storeId?.name || 'Homly'}`).join('\n\n')}

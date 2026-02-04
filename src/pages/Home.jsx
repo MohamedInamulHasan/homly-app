@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight, ShoppingCart, Zap, Bookmark } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingCart, Zap, Bookmark, Search } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext.jsx'; // Keep for now if other things need it, or remove if unused.
 import { useCart } from '../context/CartContext';
@@ -30,7 +30,9 @@ const Home = () => {
     const stores = Array.isArray(rawStores) ? rawStores : (rawStores?.data || []);
 
     // Map products from raw data (handling potential nesting)
-    const products = Array.isArray(rawProducts) ? rawProducts : (rawProducts?.data || []);
+    // Filter out unavailable products so they don't show up in groups or lists (even for Admins in client view)
+    const products = (Array.isArray(rawProducts) ? rawProducts : (rawProducts?.data || []))
+        .filter(p => p.isAvailable !== false);
 
     console.log('🏠 Home: Products Count:', products.length);
     console.log('🏠 Home: Loading:', loadingProducts);
@@ -158,6 +160,29 @@ const Home = () => {
         }
     };
 
+    const handleBuyAd = (ad) => {
+        const item = {
+            id: ad._id || ad.id,
+            _id: ad._id || ad.id,
+            title: ad.offerTitle || ad.title, // Prioritize offer title
+            image: ad.image || `${API_BASE_URL}/ads/${ad._id || ad.id}/image`,
+            price: Number(ad.price),
+            storeName: ad.storeName,
+            // If ad has a linked storeId, use it, otherwise keep it undefined
+            storeId: ad.storeId,
+            quantity: 1
+        };
+
+        navigate('/checkout', {
+            state: {
+                directPurchase: {
+                    items: [item],
+                    total: Number(ad.price)
+                }
+            }
+        });
+    };
+
     const allCategories = categories && categories.length > 0 ? categories : [];
 
     // LOADING STATE: Removed blocking spinner. Now we show the layout immediately.
@@ -237,6 +262,19 @@ const Home = () => {
                                     />
                                     {/* Gradient Overlay for better contrast */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+
+                                    {/* Buy Now Button - Only show if all fields are filled */}
+                                    {slide.storeName && slide.price && slide.offerTitle && (
+                                        <div className="absolute bottom-4 right-4 z-20">
+                                            <button
+                                                onClick={() => handleBuyAd(slide)}
+                                                className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-[0_4px_14px_0_rgba(255,69,0,0.39)] hover:shadow-[0_6px_20px_rgba(255,69,0,0.23)] transform hover:scale-105 transition-all duration-300 flex items-center gap-1.5"
+                                            >
+                                                <ShoppingCart size={16} />
+                                                <span>{t('Buy Now')}</span>
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -342,7 +380,7 @@ const Home = () => {
                 ) : null}
 
                 {/* Mobile Search Bar - Below Categories */}
-                <section className="md:hidden bg-white dark:bg-gray-800 py-0 sticky top-0 z-50 shadow-none border-none">
+                <section className="md:hidden bg-white dark:bg-gray-800 py-2 sticky top-16 z-40 shadow-none border-none">
                     <div className="mx-auto px-4">
                         <div className="relative">
                             <form
@@ -363,16 +401,7 @@ const Home = () => {
                                     placeholder={t('Search products...')}
                                     className="w-full pl-12 pr-4 py-3.5 rounded-2xl border-2 border-blue-100 dark:border-gray-700 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-500/10 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 shadow-md focus:shadow-xl transition-all duration-300"
                                 />
-                                <svg
-                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500 dark:text-blue-400"
-                                    width="22"
-                                    height="22"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500 dark:text-blue-400" size={22} />
                             </form>
 
                             {/* Search Results Dropdown */}

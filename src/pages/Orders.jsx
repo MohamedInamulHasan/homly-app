@@ -231,7 +231,11 @@ const Orders = () => {
                                                 <div key={idx} className="py-3 flex items-center gap-3">
                                                     <div className="h-12 w-12 rounded-lg bg-white overflow-hidden flex-shrink-0 relative">
                                                         <img
-                                                            src={(item.product?._id || item.product) ? `${API_BASE_URL}/products/${item.product._id || item.product}/image` : (item.image || "https://via.placeholder.com/150?text=No+Image")}
+                                                            src={item.image && (item.image.startsWith('http') || item.image.startsWith('data:'))
+                                                                ? item.image
+                                                                : ((item.product?._id || item.product)
+                                                                    ? `${API_BASE_URL}/products/${item.product._id || item.product}/image`
+                                                                    : "https://via.placeholder.com/150?text=No+Image")}
                                                             alt={item.name}
                                                             className="h-full w-full object-cover"
                                                             loading="lazy"
@@ -261,7 +265,7 @@ const Orders = () => {
                                                         <div className="flex items-center gap-1 mt-0.5">
                                                             <Store size={10} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
                                                             <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                                                                {item.storeId?.name || getStoreName(item.storeId, stores) || t('Unknown Store')}
+                                                                {item.storeId?.name || getStoreName(item.storeId, stores) || item.storeName || t('Unknown Store')}
                                                             </p>
                                                         </div>
                                                         <p className="text-xs text-gray-500 dark:text-gray-400">{t('Quantity')}: {item.quantity}</p>

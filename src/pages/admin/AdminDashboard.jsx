@@ -22,11 +22,13 @@ import {
     X,
     Edit2,
     Save,
+    Pencil,
 
     Trash2,
     Image as ImageIcon,
     RefreshCw,
     Wrench,
+    Zap,
     ClipboardList,
     Shield,
     Settings
@@ -44,7 +46,7 @@ import { useStores } from '../../hooks/queries/useStores';
 import { useNews, useCreateNews, useUpdateNews, useDeleteNews } from '../../hooks/queries/useNews';
 import { useUsers, useDeleteUser, useUpdateUser } from '../../hooks/queries/useUsers';
 import { useCategories, useCreateCategory, useDeleteCategory, useUpdateCategory } from '../../hooks/queries/useCategories';
-import { useAds, useCreateAd, useDeleteAd } from '../../hooks/queries/useAds';
+import { useAds, useCreateAd, useDeleteAd, useUpdateAd } from '../../hooks/queries/useAds';
 import { useServices, useCreateService, useDeleteService, useUpdateService } from '../../hooks/queries/useServices';
 import { useServiceRequests, useUpdateServiceRequestStatus, useDeleteServiceRequest } from '../../hooks/queries/useServiceRequests';
 import { useOrders, useUpdateOrderStatus, useDeleteOrder } from '../../hooks/queries/useOrders';
@@ -569,7 +571,28 @@ const ProductManagement = () => {
                                                         );
                                                     })()}
                                                 </td>
-                                                <td className="p-4 text-gray-500 dark:text-gray-400">{product.category}</td>
+                                                <td className="p-4 text-gray-500 dark:text-gray-400">
+                                                    {(() => {
+                                                        const fullCategory = product.category;
+                                                        const bracketIndex = fullCategory?.indexOf('(');
+
+                                                        if (bracketIndex !== -1) {
+                                                            const mainCategory = fullCategory.substring(0, bracketIndex).trim();
+                                                            const bracketText = fullCategory.substring(bracketIndex).trim();
+                                                            return (
+                                                                <div className="max-w-[120px]">
+                                                                    <div className="truncate" title={mainCategory}>{mainCategory}</div>
+                                                                    <div className="text-xs text-gray-400 dark:text-gray-500 truncate" title={bracketText}>{bracketText}</div>
+                                                                </div>
+                                                            );
+                                                        }
+                                                        return (
+                                                            <div className="max-w-[120px] truncate" title={fullCategory}>
+                                                                {fullCategory}
+                                                            </div>
+                                                        );
+                                                    })()}
+                                                </td>
                                                 <td className="p-4 font-medium text-gray-900 dark:text-white">₹{product.price}</td>
                                                 <td className="p-4">
                                                     <button
@@ -620,6 +643,25 @@ const ProductManagement = () => {
                                                 </td>
                                                 <td className="p-4">
                                                     <div className="flex gap-2">
+                                                        <button
+                                                            onClick={async () => {
+                                                                const currentIsGold = product.isGold === true;
+                                                                const productId = product._id || product.id;
+                                                                try {
+                                                                    await updateProduct({ id: productId, data: { isGold: !currentIsGold } });
+                                                                } catch (error) {
+                                                                    console.error("Failed to toggle gold status", error);
+                                                                    alert(t('Failed to update product status'));
+                                                                }
+                                                            }}
+                                                            className={`p-2 rounded-lg transition-colors ${product.isGold
+                                                                ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400'
+                                                                : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 hover:text-yellow-600 dark:hover:text-yellow-400'
+                                                                }`}
+                                                            title={t('Toggle Gold Card')}
+                                                        >
+                                                            <Zap size={18} fill={product.isGold ? "currentColor" : "none"} />
+                                                        </button>
                                                         <button
                                                             onClick={() => handleEdit(product)}
                                                             className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
@@ -1414,7 +1456,28 @@ const CategoryManagement = () => {
                                                 />
                                             </div>
                                         </td>
-                                        <td className="p-4 font-medium text-gray-900 dark:text-white">{category.name}</td>
+                                        <td className="p-4 font-medium text-gray-900 dark:text-white">
+                                            {(() => {
+                                                const fullName = category.name;
+                                                const bracketIndex = fullName?.indexOf('(');
+
+                                                if (bracketIndex !== -1) {
+                                                    const mainName = fullName.substring(0, bracketIndex).trim();
+                                                    const bracketText = fullName.substring(bracketIndex).trim();
+                                                    return (
+                                                        <div className="max-w-[150px]">
+                                                            <div className="truncate" title={mainName}>{mainName}</div>
+                                                            <div className="text-xs text-gray-500 dark:text-gray-400 truncate" title={bracketText}>{bracketText}</div>
+                                                        </div>
+                                                    );
+                                                }
+                                                return (
+                                                    <div className="max-w-[150px] truncate" title={fullName}>
+                                                        {fullName}
+                                                    </div>
+                                                );
+                                            })()}
+                                        </td>
                                         <td className="p-4">
                                             <div className="flex gap-2">
                                                 <button
@@ -1587,7 +1650,8 @@ const UserManagement = () => {
         mobile: '',
         address: '',
         role: 'customer',
-        storeId: ''
+        storeId: '',
+        location: ''
     });
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -1624,7 +1688,8 @@ const UserManagement = () => {
             address: user.address || '',
             role: user.role || 'customer',
             storeId: user.storeId?._id || user.storeId || '', // Handle populated object or direct ID
-            coins: user.coins || 0
+            coins: user.coins || 0,
+            location: user.location || ''
         });
     };
 
@@ -1743,7 +1808,7 @@ const UserManagement = () => {
                                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('User')}</th>
                                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Contact')}</th>
                                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Role')}</th>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Fast Mode')}</th>
+                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Location')}</th>
                                     <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Actions')}</th>
                                 </tr>
                             </thead>
@@ -1764,66 +1829,46 @@ const UserManagement = () => {
                                                     {user.name.charAt(0).toUpperCase()}
                                                 </div>
                                                 <div className="ml-4">
-                                                    <div className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</div>
-                                                    <div className="text-sm text-gray-500 dark:text-gray-400">{t('Joined')}: {new Date(user.createdAt).toLocaleDateString()}</div>
+                                                    <div className="text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">{user.name}</div>
+                                                    <div className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">{new Date(user.createdAt).toLocaleDateString()}</div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="text-sm text-gray-900 dark:text-white flex items-center gap-2">
-                                                <Mail size={14} className="text-gray-400" />
-                                                {user.email}
-                                            </div>
-                                            {user.mobile && (
-                                                <div className="text-sm text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-2">
-                                                    <Phone size={14} className="text-gray-400" />
-                                                    {user.mobile}
+                                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+                                                <div className="flex items-center gap-1 text-gray-900 dark:text-white whitespace-nowrap">
+                                                    <Mail size={14} className="text-gray-400" />
+                                                    <span>{user.email}</span>
                                                 </div>
-                                            )}
+                                                {user.mobile && (
+                                                    <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                                                        <span className="hidden sm:inline text-gray-300">|</span>
+                                                        <Phone size={14} className="text-gray-400" />
+                                                        <span>{user.mobile}</span>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                            <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap 
                                                 ${user.role === 'admin' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
                                                     user.role === 'store_admin' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' :
                                                         'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'}`}>
                                                 {t(user.role === 'store_admin' ? 'Store Admin' : user.role.charAt(0).toUpperCase() + user.role.slice(1))}
                                             </span>
                                             {user.role === 'store_admin' && user.storeId && (
-                                                <div className="text-xs text-gray-500 mt-1">
+                                                <div className="text-xs text-gray-500 mt-1 whitespace-nowrap">
                                                     {user.storeId.name || 'Store Linked'}
                                                 </div>
                                             )}
-
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <button
-                                                onClick={async () => {
-                                                    try {
-                                                        const newStatus = !user.isFastMode;
-                                                        await updateUser({
-                                                            id: user._id || user.id,
-                                                            data: { isFastMode: newStatus } // Send ONLY the changed field
-                                                        });
-                                                        // Optimistic update handled by React Query usually, but to be sure we can trigger refetch if needed
-                                                        // fetchUsers(); // React Query's onSuccess in useUpdateUser should handle invalidation
-                                                    } catch (error) {
-                                                        console.error('Failed to toggle Fast Mode:', error);
-                                                        alert(t('Failed to update Fast Mode'));
-                                                    }
-                                                }}
-                                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${user.isFastMode ? 'bg-orange-500' : 'bg-gray-200 dark:bg-gray-600'}`}
-                                                title={user.isFastMode ? t('Fast Mode ON') : t('Fast Mode OFF')}
-                                            >
-                                                <span
-                                                    className={`${user.isFastMode ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
-                                                />
-                                            </button>
+                                        <td className="px-6 py-4 text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                                            {user.location || ''}
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             {editingUser && (editingUser._id || editingUser.id) === (user._id || user.id) ? (
-                                                <div className="space-y-4">
+                                                <div className="space-y-4 text-left">
                                                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">{t('Edit User Role')}</h3>
-
                                                     <div className="space-y-4">
                                                         <div>
                                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Role')}</label>
@@ -1837,7 +1882,6 @@ const UserManagement = () => {
                                                                 <option value="admin">{t('Global Admin')}</option>
                                                             </select>
                                                         </div>
-
                                                         {formData.role === 'store_admin' && (
                                                             <div>
                                                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Assign Store')}</label>
@@ -1855,7 +1899,6 @@ const UserManagement = () => {
                                                                 </select>
                                                             </div>
                                                         )}
-
                                                         <div>
                                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Full Name')}</label>
                                                             <input
@@ -1865,25 +1908,37 @@ const UserManagement = () => {
                                                                 className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
                                                             />
                                                         </div>
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                            <div>
+                                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Email Address')}</label>
+                                                                <input
+                                                                    type="email"
+                                                                    value={formData.email}
+                                                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
+                                                                />
+                                                            </div>
+                                                            <div>
+                                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Location')}</label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={formData.location}
+                                                                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                                                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
+                                                                    placeholder={t('Enter location')}
+                                                                />
+                                                            </div>
+                                                        </div>
                                                         <div>
-                                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Email Address')}</label>
+                                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Bonus Coins')}</label>
                                                             <input
-                                                                type="email"
-                                                                value={formData.email}
-                                                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                                                type="number"
+                                                                min="0"
+                                                                value={formData.coins}
+                                                                onChange={(e) => setFormData({ ...formData, coins: parseInt(e.target.value) || 0 })}
                                                                 className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
                                                             />
                                                         </div>
-                                                    </div>
-                                                    <div>
-                                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Bonus Coins')}</label>
-                                                        <input
-                                                            type="number"
-                                                            min="0"
-                                                            value={formData.coins}
-                                                            onChange={(e) => setFormData({ ...formData, coins: parseInt(e.target.value) || 0 })}
-                                                            className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
-                                                        />
                                                     </div>
                                                     <div className="flex gap-2 justify-end">
                                                         <button
@@ -1924,7 +1979,7 @@ const UserManagement = () => {
                                     </tr>
                                 )) : (
                                     <tr>
-                                        <td colSpan="4" className="p-8 text-center text-gray-500 dark:text-gray-400">
+                                        <td colSpan="5" className="p-8 text-center text-gray-500 dark:text-gray-400">
                                             {t('No users found.')}
                                         </td>
                                     </tr>
@@ -1939,14 +1994,21 @@ const UserManagement = () => {
 };
 
 const AdsManagement = () => {
-    // const { ads, addAd, deleteAd } = useData();
+    // const {ads, addAd, deleteAd} = useData();
     // NEW HOOKS
     const { data: ads = [] } = useAds();
+    const { data: stores = [] } = useStores(); // Add useStores hook
     const { mutateAsync: addAd } = useCreateAd();
+    const { mutateAsync: updateAd } = useUpdateAd();
     const { mutateAsync: deleteAd } = useDeleteAd();
     const { t } = useLanguage();
     const [newAdUrl, setNewAdUrl] = useState('');
     const [newAdTitle, setNewAdTitle] = useState('');
+    const [storeName, setStoreName] = useState('');
+    const [storeId, setStoreId] = useState(''); // Add storeId state
+    const [price, setPrice] = useState('');
+    const [offerTitle, setOfferTitle] = useState('');
+    const [editingAdId, setEditingAdId] = useState(null); // Track editing state
     const { uploadImage, uploading: uploadingAd } = useCloudinaryUpload();
 
     const handleAdImageUpload = async (e) => {
@@ -1962,13 +2024,70 @@ const AdsManagement = () => {
         }
     };
 
-    const handleAddAd = (e) => {
+    const handleAddAd = async (e) => {
         e.preventDefault();
-        if (newAdUrl) {
-            addAd({ image: newAdUrl, title: newAdTitle || 'Ad' });
+
+        const isFallbackUrl = newAdUrl && newAdUrl.includes('/ads/') && newAdUrl.includes('/image');
+
+        const adData = {
+            title: newAdTitle || '',
+            storeName: storeName || '',
+            storeId: storeId || null,
+            price: price ? parseFloat(price) : null,
+            offerTitle: offerTitle || ''
+        };
+
+        // Only include image if it's NOT the fallback URL (i.e. user uploaded new one or it's a real external URL)
+        if (!isFallbackUrl && newAdUrl) {
+            adData.image = newAdUrl;
+        }
+
+        try {
+            if (editingAdId) {
+                await updateAd({ id: editingAdId, data: adData });
+                alert(t('Ad updated successfully!'));
+            } else {
+                if (newAdUrl) {
+                    await addAd(adData);
+                    alert(t('Ad added successfully!'));
+                }
+            }
+
+            // Reset Form and State
             setNewAdUrl('');
             setNewAdTitle('');
+            setStoreName('');
+            setStoreId('');
+            setPrice('');
+            setOfferTitle('');
+            setEditingAdId(null);
+        } catch (error) {
+            console.error('Error saving ad:', error);
+            alert(t('Failed to save ad. Please try again.'));
         }
+    };
+
+    const handleEditAd = (ad) => {
+        setEditingAdId(ad._id || ad.id);
+        setNewAdUrl(ad.image || `${API_BASE_URL}/ads/${ad._id || ad.id}/image`);
+        setNewAdTitle(ad.title || '');
+        setStoreName(ad.storeName || '');
+        setStoreId(ad.storeId?._id || ad.storeId || ''); // Handle populated or raw ID
+        setPrice(ad.price || '');
+        setOfferTitle(ad.offerTitle || '');
+
+        // Scroll to form
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCancelEdit = () => {
+        setNewAdUrl('');
+        setNewAdTitle('');
+        setStoreName('');
+        setStoreId('');
+        setPrice('');
+        setOfferTitle('');
+        setEditingAdId(null);
     };
 
     const handleDeleteAd = async (id) => {
@@ -1987,44 +2106,105 @@ const AdsManagement = () => {
         <div className="max-w-6xl">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">{t('Ads Slider Management')}</h2>
 
-            {/* Add New Ad Form */}
+            {/* Add New/Edit Ad Form */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 mb-8">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">{t('Add New Ad Image')}</h3>
-                <form onSubmit={handleAddAd} className="flex flex-col md:flex-row gap-4 items-end">
-                    <div className="flex-1 w-full">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Ad Image')}</label>
-                        <div className="flex items-center gap-4">
-                            {newAdUrl && (
-                                <img src={newAdUrl} alt="Preview" className="w-12 h-12 rounded-lg object-cover" />
-                            )}
-                            <label className="flex-1 cursor-pointer">
-                                <div className="w-full px-4 py-2 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2">
-                                    <Upload size={20} />
-                                    <span>{uploadingAd ? t('Uploading...') : t('Upload Image')}</span>
-                                </div>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleAdImageUpload}
-                                    className="hidden"
-                                    required={!newAdUrl}
-                                />
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                        {editingAdId ? t('Edit Ad') : t('Add New Ad Image')}
+                    </h3>
+                    {editingAdId && (
+                        <button
+                            onClick={handleCancelEdit}
+                            className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                        >
+                            {t('Cancel Edit')}
+                        </button>
+                    )}
+                </div>
+                <form onSubmit={handleAddAd} className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                {t('Ad Image')} <span className="text-red-500">*</span>
                             </label>
+                            <div className="flex items-center gap-4">
+                                {newAdUrl && (
+                                    <img src={newAdUrl} alt="Preview" className="w-20 h-20 rounded-lg object-cover" />
+                                )}
+                                <label className="flex-1 cursor-pointer">
+                                    <div className="w-full px-4 py-2 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2">
+                                        <Upload size={20} />
+                                        <span>{uploadingAd ? t('Uploading...') : t('Upload Image')}</span>
+                                    </div>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleAdImageUpload}
+                                        className="hidden"
+                                        required={!newAdUrl}
+                                    />
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                {t('Store')} <span className="text-gray-400 text-xs">({t('Optional')})</span>
+                            </label>
+                            <select
+                                value={storeId}
+                                onChange={(e) => {
+                                    const selectedId = e.target.value;
+                                    setStoreId(selectedId);
+                                    const selectedStore = stores.find(s => (s.id || s._id) === selectedId);
+                                    setStoreName(selectedStore ? selectedStore.name : '');
+                                }}
+                                className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                            >
+                                <option value="">{t('Select Store')}</option>
+                                {stores.map(store => (
+                                    <option key={store.id || store._id} value={store.id || store._id}>
+                                        {store.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                {t('Price')} <span className="text-gray-400 text-xs">({t('Optional')})</span>
+                            </label>
+                            <input
+                                type="number"
+                                value={price}
+                                onChange={(e) => setPrice(e.target.value)}
+                                className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                placeholder={t('e.g., 100')}
+                                min="0"
+                                step="0.01"
+                            />
+                        </div>
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                {t('Offer Title')} <span className="text-gray-400 text-xs">({t('Optional')})</span>
+                            </label>
+                            <input
+                                type="text"
+                                value={offerTitle}
+                                onChange={(e) => setOfferTitle(e.target.value)}
+                                className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                placeholder={t('e.g., Special offer shawarma + chicken = 100 offer')}
+                            />
                         </div>
                     </div>
-                    <div className="flex-1 w-full">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Title (Optional)')}</label>
-                        <input
-                            type="text"
-                            value={newAdTitle}
-                            onChange={(e) => setNewAdTitle(e.target.value)}
-                            className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
-                            placeholder={t('Ad Title')}
-                        />
+                    <div className="flex justify-end">
+                        <button
+                            type="submit"
+                            disabled={!newAdUrl || uploadingAd}
+                            className="px-6 py-2 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {editingAdId ? <Pencil size={20} /> : <Plus size={20} />}
+                            {editingAdId ? t('Update Ad') : t('Add Ad')}
+                        </button>
                     </div>
-                    <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors flex items-center gap-2 h-[42px]">
-                        <Plus size={20} /> {t('Add')}
-                    </button>
                 </form>
             </div>
 
@@ -2040,16 +2220,35 @@ const AdsManagement = () => {
                                 className="w-full h-full object-cover"
                             />
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                <button
-                                    onClick={() => handleDeleteAd(ad._id || ad.id)}
-                                    className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors"
-                                >
-                                    <Trash2 size={20} />
-                                </button>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => handleEditAd(ad)}
+                                        className="p-2 bg-white text-gray-900 rounded-full hover:bg-gray-100 transition-colors"
+                                    >
+                                        <Pencil size={20} />
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeleteAd(ad._id || ad.id)}
+                                        className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors"
+                                    >
+                                        <Trash2 size={20} />
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <div className="p-4">
-                            <p className="font-medium text-gray-900 dark:text-white">{ad.title}</p>
+                        <div className="p-4 space-y-2">
+                            {ad.storeName && (
+                                <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">{ad.storeName}</p>
+                            )}
+                            {ad.offerTitle && (
+                                <p className="font-medium text-gray-900 dark:text-white">{ad.offerTitle}</p>
+                            )}
+                            {ad.price && (
+                                <p className="text-lg font-bold text-green-600 dark:text-green-400">₹{ad.price}</p>
+                            )}
+                            {!ad.storeName && !ad.offerTitle && !ad.price && ad.title && (
+                                <p className="font-medium text-gray-900 dark:text-white">{ad.title}</p>
+                            )}
                         </div>
                     </div>
                 ))}
@@ -2060,7 +2259,7 @@ const AdsManagement = () => {
 
 
 const ServiceManagement = () => {
-    // const { services, addService, updateService, deleteService } = useData();
+    // const {services, addService, updateService, deleteService} = useData();
     // NEW HOOKS
     const { data: rawServices = [] } = useServices();
     const services = Array.isArray(rawServices) ? rawServices : (rawServices?.data || []);
@@ -2302,7 +2501,7 @@ const ServiceManagement = () => {
 };
 
 const ServiceRequestManagement = () => {
-    // const { fetchServiceRequests, updateServiceRequestStatus, deleteServiceRequest } = useData();
+    // const {fetchServiceRequests, updateServiceRequestStatus, deleteServiceRequest} = useData();
     // NEW HOOKS
     const { data: serviceRequestsData = [], isLoading } = useServiceRequests();
     const { mutateAsync: updateServiceRequestStatus } = useUpdateServiceRequestStatus();
@@ -2413,13 +2612,15 @@ const ServiceRequestManagement = () => {
                                                                 className="w-full h-full object-cover"
                                                             />
                                                         </div>
-                                                        <span className="font-medium text-gray-900 dark:text-white">
+                                                        <span className="font-medium text-gray-900 dark:text-white truncate block max-w-[200px]" title={request.service?.name || t('Unknown Service')}>
                                                             {request.service?.name || t('Unknown Service')}
                                                         </span>
                                                     </div>
                                                 </td>
                                                 <td className="p-4 text-gray-600 dark:text-gray-300">
-                                                    {request.user?.name || t('Unknown User')}
+                                                    <div className="truncate max-w-[150px]" title={request.user?.name || t('Unknown User')}>
+                                                        {request.user?.name || t('Unknown User')}
+                                                    </div>
                                                 </td>
                                                 <td className="p-4 text-gray-600 dark:text-gray-300">
                                                     {request.user?.mobile || t('N/A')}

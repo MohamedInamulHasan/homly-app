@@ -30,6 +30,14 @@ const orderSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Store',
             required: false
+        },
+        storeName: {
+            type: String,
+            required: false
+        },
+        isGold: {
+            type: Boolean,
+            default: false
         }
     }],
     shippingAddress: {

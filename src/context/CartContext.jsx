@@ -74,7 +74,8 @@ export const CartProvider = ({ children }) => {
                             image: product.image, // Update image if changed
                             unit: product.unit || item.unit || '', // update unit, keeping existing if backend misses it
                             storeId: product.storeId?._id || product.storeId || item.storeId,
-                            isAvailable: product.isAvailable // Update availability
+                            isAvailable: product.isAvailable, // Update availability
+                            isGold: product.isGold // Update gold status
                         };
                     } catch (err) {
                         console.warn(`Failed to refresh item ${item.id}`, err);
@@ -151,7 +152,8 @@ export const CartProvider = ({ children }) => {
             image: product.image,
             storeId: product.storeId || null, // Just save the storeId string
             quantity: 1,
-            unit: product.unit || product.size || ''
+            unit: product.unit || product.size || '',
+            isGold: product.isGold || false
         };
 
         setCartItems((prevItems) => {

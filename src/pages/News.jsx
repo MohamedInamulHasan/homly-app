@@ -172,14 +172,7 @@ const News = () => {
                                 {t(selectedNews, 'content') || t(selectedNews, 'description')}
                             </div>
 
-                            <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
-                                <button
-                                    onClick={closeNews}
-                                    className="w-full py-3.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-bold rounded-xl transition-colors"
-                                >
-                                    {t('Close')}
-                                </button>
-                            </div>
+
                         </div>
                     </div>
                 </div>

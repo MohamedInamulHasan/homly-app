@@ -3,7 +3,22 @@ import mongoose from 'mongoose';
 const adSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: [true, 'Please add a title'],
+        trim: true
+    },
+    storeName: {
+        type: String,
+        trim: true
+    },
+    storeId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Store',
+        required: false
+    },
+    price: {
+        type: Number
+    },
+    offerTitle: {
+        type: String,
         trim: true
     },
     image: {

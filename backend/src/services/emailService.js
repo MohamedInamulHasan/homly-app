@@ -58,6 +58,7 @@ export const sendOrderNotificationEmail = async (order) => {
         const customerAddress = shippingAddr.street || 'N/A';
         const customerCity = shippingAddr.city || 'N/A';
         const customerZip = shippingAddr.zip || 'N/A';
+        const customerLocation = order.user?.location || ''; // Get user's location from profile
 
         // Format phone number for WhatsApp (remove all non-digits, ensure it starts with country code)
         let whatsappNumber = customerMobile.replace(/[^0-9]/g, '');
@@ -84,7 +85,7 @@ export const sendOrderNotificationEmail = async (order) => {
                         <h3 style="margin-top: 0; color: #1f2937;">Customer Details</h3>
                         <p style="margin: 5px 0;"><strong>Name:</strong> ${customerName}</p>
                         <p style="margin: 5px 0;"><strong>Mobile:</strong> ${customerMobile}</p>
-                        <p style="margin: 5px 0;"><strong>Address:</strong> ${customerAddress}</p>
+                        <p style="margin: 5px 0;"><strong>Address:</strong> ${customerAddress}${customerLocation ? ` (${customerLocation})` : ''}</p>
                         <p style="margin: 5px 0;"><strong>City:</strong> ${customerCity}</p>
                         <p style="margin: 5px 0;"><strong>ZIP Code:</strong> ${customerZip}</p>
                     </div>
@@ -122,7 +123,9 @@ export const sendOrderNotificationEmail = async (order) => {
                                 <td style="padding: 5px 0;"><strong>Delivery Charge:</strong></td>
                                 <td style="padding: 5px 0; text-align: right;">
                                     ${order.shipping === 0
-                    ? '<span style="color: #10b981;">FREE (Coin Applied)</span>'
+                    ? (order.items.some(i => i.isGold)
+                        ? '<span style="color: #ca8a04; font-weight: bold;">FREE (Gold Benefit)</span>'
+                        : '<span style="color: #10b981;">FREE (Coin Applied)</span>')
                     : `₹${(order.shipping || 0).toFixed(0)}`}
                                 </td>
                             </tr>
@@ -146,9 +149,14 @@ export const sendOrderNotificationEmail = async (order) => {
                     
                     <div style="text-align: center; margin-top: 30px;">
                         <p style="margin-bottom: 15px;"><strong>Contact Customer:</strong></p>
-                        <a href="https://wa.me/${whatsappNumber}?text=Hello%20${encodeURIComponent(customerName)}%21%0A%0AYour%20order%20has%20been%20received%20from%20Homly.%0A%0A*Order%20Details%3A*%0AOrder%20ID%3A%20%23${order._id.toString().slice(-8).toUpperCase()}%0ATotal%20Amount%3A%20₹${order.total.toFixed(0)}%0ADelivery%20Charge%3A%20${order.shipping === 0 ? 'FREE%20(Coin%20Applied)' : `₹${(order.shipping || 0).toFixed(0)}`}%0APayment%3A%20${encodeURIComponent(order.paymentMethod?.type || 'Cash on Delivery')}%0A%0A*Delivery%20Address%3A*%0A${encodeURIComponent(customerAddress)}%2C%20${encodeURIComponent(customerCity)}%20-%20${customerZip}%0A%0A*Items%20Ordered%3A*%0A${order.items.map((item, idx) => `${idx + 1}.%20${encodeURIComponent(item.name || item.title || 'Product')}%20x${item.quantity}%20-%20₹${(item.price * item.quantity).toFixed(0)}`).join('%0A')}%0A%0AYour%20order%20is%20being%20processed%20and%20will%20be%20delivered%20soon.%20Thank%20you%20for%20shopping%20with%20Homly%21" 
-                           style="display: inline-block; padding: 12px 24px; background-color: #25D366; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                        <a href="https://wa.me/${whatsappNumber}?text=Hello%20${encodeURIComponent(customerName)}%21%0A%0AYour%20order%20has%20been%20received%20from%20Homly.%0A%0A*Order%20Details%3A*%0AOrder%20ID%3A%20%23${order._id.toString().slice(-8).toUpperCase()}%0ATotal%20Amount%3A%20₹${order.total.toFixed(0)}%0ADelivery%20Charge%3A%20${order.shipping === 0 ? (order.items.some(i => i.isGold) ? 'FREE%20(Gold%20Member)' : 'FREE%20(Coin%20Applied)') : `₹${(order.shipping || 0).toFixed(0)}`}%0APayment%3A%20${encodeURIComponent(order.paymentMethod?.type || 'Cash on Delivery')}%0A%0A*Delivery%20Address%3A*%0A${encodeURIComponent(customerAddress)}${customerLocation ? `%20(${encodeURIComponent(customerLocation)})` : ''}%2C%20${encodeURIComponent(customerCity)}%20-%20${customerZip}%0A%0A*Items%20Ordered%3A*%0A${order.items.map((item, idx) => `${idx + 1}.%20${encodeURIComponent(item.name || item.title || 'Product')}%20x${item.quantity}%20-%20₹${(item.price * item.quantity).toFixed(0)}`).join('%0A')}%0A%0AYour%20order%20is%20being%20processed%20and%20will%20be%20delivered%20soon.%20Thank%20you%20for%20shopping%20with%20Homly%21" 
+                           style="display: inline-block; padding: 12px 24px; background-color: #25D366; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin-bottom: 20px;">
                             📱 Contact via WhatsApp
+                        </a>
+                        <br/>
+                        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${customerAddress}, ${customerCity}, ${customerZip}`)}" 
+                           style="display: inline-block; padding: 12px 24px; background-color: #4285F4; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                            📍 View on Google Maps
                         </a>
                     </div>
                 </div>

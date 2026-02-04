@@ -50,6 +50,10 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+    isGold: {
+        type: Boolean,
+        default: false
+    },
     storeId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Store',

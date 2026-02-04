@@ -73,7 +73,7 @@ export const DataProvider = ({ children }) => {
         const checkUserPreference = () => {
             try {
                 const userInfoStr = localStorage.getItem('userInfo');
-                if (userInfoStr) {
+                if (userInfoStr && userInfoStr !== 'undefined') {
                     const userInfo = JSON.parse(userInfoStr);
                     const userId = userInfo._id || userInfo.id;
                     if (userId) {
@@ -82,32 +82,44 @@ export const DataProvider = ({ children }) => {
                         return;
                     }
                 }
+
+                // Default to false for guests (No persistence for guests)
+                setFastMode(false);
             } catch (e) {
                 console.error('Error parsing user info for fast mode:', e);
+                setFastMode(false);
             }
-            // Default to false if no user or no saved pref
-            setFastMode(false);
         };
 
         checkUserPreference();
         // Listen for storage events (login/logout updates)
         window.addEventListener('storage', checkUserPreference);
-        return () => window.removeEventListener('storage', checkUserPreference);
+        // Also listen for custom auth events
+        window.addEventListener('userChanged', checkUserPreference);
+
+        return () => {
+            window.removeEventListener('storage', checkUserPreference);
+            window.removeEventListener('userChanged', checkUserPreference);
+        };
     }, []);
 
     const toggleFastMode = () => {
         setFastMode(prev => {
             const newValue = !prev;
-            // Save to user-specific key
+            // Save to user-specific key ONLY if logged in
             try {
                 const userInfoStr = localStorage.getItem('userInfo');
-                if (userInfoStr) {
+                let userId = null;
+
+                if (userInfoStr && userInfoStr !== 'undefined') {
                     const userInfo = JSON.parse(userInfoStr);
-                    const userId = userInfo._id || userInfo.id;
-                    if (userId) {
-                        localStorage.setItem(`fastMode_${userId}`, String(newValue));
-                    }
+                    userId = userInfo._id || userInfo.id;
                 }
+
+                if (userId) {
+                    localStorage.setItem(`fastMode_${userId}`, String(newValue));
+                }
+                // Guests: State is updated in memory (newValue) but NOT saved to localStorage
             } catch (e) {
                 console.error('Error saving fast mode pref:', e);
             }

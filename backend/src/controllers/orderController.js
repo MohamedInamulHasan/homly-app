@@ -32,8 +32,31 @@ export const createOrder = async (req, res, next) => {
         let finalShipping = shipping;
         let finalTotal = total;
 
-        // Fetch user to check coins (if authenticated)
-        if (req.user?._id) {
+        // Check for Gold Products (Free Delivery) & persist isGold status
+        // Verify from DB to ensure integrity
+        const productIds = items.map(item => item.product || item.id);
+        const dbProducts = await import('../models/Product.js').then(m => m.default.find({ _id: { $in: productIds } }).select('isGold'));
+
+        // Prepare final items with persistent isGold status
+        const finalItems = items.map(item => {
+            const pId = (item.product || item.id).toString();
+            const dbProduct = dbProducts.find(p => p._id.toString() === pId);
+            return {
+                ...item,
+                isGold: dbProduct ? dbProduct.isGold : false
+            };
+        });
+
+        const hasGoldProduct = dbProducts.some(p => p.isGold);
+
+        if (hasGoldProduct) {
+            console.log('⚡ Gold Product found in order. Waiving delivery charge.');
+            finalShipping = 0;
+            // No need to deduct coins if Gold Product is present
+            // Recalculate total if shipping was included
+            finalTotal = Number(subtotal) + Number(tax) - Number(discount);
+        } else if (req.user?._id) {
+            // Check for bonus coins (Free Delivery) if NOT Gold
             const user = await User.findById(req.user._id);
             if (user && user.coins > 0 && Number(shipping) > 0) {
                 console.log(`💰 User ${user._id} used 1 coin for free delivery. Remaining: ${user.coins - 1}`);
@@ -48,7 +71,7 @@ export const createOrder = async (req, res, next) => {
 
         const order = await Order.create({
             user: req.user?._id, // Optional for guest checkout
-            items,
+            items: finalItems,
             shippingAddress,
             paymentMethod,
             subtotal,
@@ -84,7 +107,7 @@ export const createOrder = async (req, res, next) => {
         // We need deep population for store name in items
         await order.populate([
             { path: 'items.storeId', select: 'name' },
-            { path: 'user', select: 'name email' }
+            { path: 'user', select: 'name email location' }
         ]);
 
         // Send email notification to admin (non-blocking)
@@ -135,7 +158,7 @@ export const getOrders = async (req, res, next) => {
         }
 
         const orders = await Order.find(query)
-            .select('items.product items.name items.storeId items.quantity items.price total status createdAt user shippingAddress paymentMethod shipping') // Added shipping
+            .select('items.product items.name items.image items.storeId items.quantity items.price items.isGold total status createdAt user shippingAddress paymentMethod shipping') // Added items.image and items.isGold
             .populate({
                 path: 'items.product',
                 select: 'title', // Removed image from populate
@@ -170,7 +193,7 @@ export const getOrders = async (req, res, next) => {
 export const getOrder = async (req, res, next) => {
     try {
         const order = await Order.findById(req.params.id)
-            .populate('items.product', 'title price') // Removed image
+            .populate('items.product', 'title price isGold') // Removed image, added isGold
             .populate('items.storeId', 'name')
             .lean();
 
@@ -223,7 +246,11 @@ export const updateOrderStatus = async (req, res, next) => {
         if (req.body.status === 'Cancelled' && order.status !== 'Cancelled') {
             console.log(`❌ Cancelling order ${order._id}. Current shipping: ${order.shipping}, Status: ${order.status}`);
             // Check if coins were used (implied by shipping === 0)
-            if (order.shipping === 0) {
+            // But verify it wasn't a Gold Order
+            const isGoldOrder = order.items.some(item => item.isGold) ||
+                (await import('../models/Product.js').then(m => m.default.find({ _id: { $in: order.items.map(i => i.product) } }).select('isGold'))).some(p => p.isGold);
+
+            if (order.shipping === 0 && !isGoldOrder) {
                 const user = await User.findById(order.user);
                 if (user) {
                     const oldCoins = user.coins || 0;

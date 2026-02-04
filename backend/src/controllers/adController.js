@@ -45,13 +45,16 @@ export const getAd = async (req, res, next) => {
 // @access  Private/Admin
 export const createAd = async (req, res, next) => {
     try {
+        console.log('📝 Creating new ad with data:', req.body);
         const ad = await Ad.create(req.body);
+        console.log('✅ Ad created successfully:', ad);
 
         res.status(201).json({
             success: true,
             data: ad
         });
     } catch (error) {
+        console.error('❌ Error creating ad:', error);
         next(error);
     }
 };

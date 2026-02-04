@@ -18,7 +18,8 @@ const Cart = () => {
     // Use userProfile for fresh coin data, fallback to user from auth
     const currentUser = userProfile?.data || user;
     const hasCoins = currentUser?.coins > 0;
-    const deliveryCharge = hasCoins ? 0 : 20;
+    const hasGoldProduct = cartItems.some(item => item.isGold);
+    const deliveryCharge = (hasCoins || hasGoldProduct) ? 0 : 20;
     const finalTotal = cartTotal + deliveryCharge;
 
     if (cartItems.length === 0) {
@@ -171,14 +172,20 @@ const Cart = () => {
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <p className="text-sm text-gray-600 dark:text-gray-400">{t('Delivery Charge')}</p>
-                                    {hasCoins ? (
+                                    {(hasCoins || hasGoldProduct) ? (
                                         <div className="text-right">
                                             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
                                                 FREE
                                             </span>
-                                            <p className="text-[10px] text-yellow-600 dark:text-yellow-500 flex items-center justify-end gap-1 mt-0.5 font-medium">
-                                                <span>🪙</span> Coin Applied
-                                            </p>
+                                            {hasGoldProduct ? (
+                                                <p className="text-[10px] text-yellow-600 dark:text-yellow-400 flex items-center justify-end gap-1 mt-0.5 font-bold">
+                                                    <span>⚡</span> Gold Member Benefit
+                                                </p>
+                                            ) : (
+                                                <p className="text-[10px] text-yellow-600 dark:text-yellow-500 flex items-center justify-end gap-1 mt-0.5 font-medium">
+                                                    <span>🪙</span> Coin Applied
+                                                </p>
+                                            )}
                                         </div>
                                     ) : (
                                         <p className="text-sm font-semibold text-gray-900 dark:text-white">₹{deliveryCharge}</p>

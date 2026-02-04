@@ -14,35 +14,21 @@ const useCloudinaryUpload = () => {
         setError(null);
 
         try {
-            // 1. Get Signature from Backend (Cookie-based Auth handled by api instance)
-            const signatureData = await api.get('/upload/signature');
-
-            const { signature, timestamp, cloudName, apiKey, folder } = signatureData;
-
-            // 2. Prepare Form Data for Cloudinary
+            // Prepare FormData (Standard File Upload)
             const formData = new FormData();
-            formData.append('file', file);
-            formData.append('api_key', apiKey);
-            formData.append('timestamp', timestamp);
-            formData.append('signature', signature);
-            formData.append('folder', folder);
+            formData.append('image', file); // Field name must match upload.single('image')
 
-            // 3. Upload Directly to Cloudinary
-            const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
-
-            const response = await fetch(cloudinaryUrl, {
-                method: 'POST',
-                body: formData
+            // Upload to backend (backend handles Cloudinary auth)
+            // Upload to backend (backend handles Cloudinary auth)
+            // Explicitly Remove Content-Type so browser sets it with boundary
+            const response = await api.post('/upload/image', formData, {
+                headers: {
+                    'Content-Type': undefined
+                }
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error?.message || 'Cloudinary Upload Failed');
-            }
-
             setUploading(false);
-            return data.secure_url; // Return the hosted URL
+            return response.url;
 
         } catch (err) {
             console.error('Upload Error:', err);

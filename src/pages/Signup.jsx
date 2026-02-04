@@ -1,12 +1,11 @@
 import { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
-import { User, Mail, Lock, ArrowRight, Loader, Phone, Eye, EyeOff } from 'lucide-react';
+import { User, Mail, Lock, ArrowRight, Loader, Eye, EyeOff } from 'lucide-react';
 
 const Signup = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [mobile, setMobile] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -42,7 +41,7 @@ const Signup = () => {
         }
 
         setIsSubmitting(true);
-        const success = await register(name, email, password, mobile);
+        const success = await register(name, email, password);
         if (success) {
             // Check for saved redirect
             const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
@@ -184,27 +183,6 @@ const Signup = () => {
                                 >
                                     {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                 </button>
-                            </div>
-                        </div>
-                        <div className="group">
-                            <label htmlFor="mobile" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 transition-colors group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400">
-                                Mobile Number
-                            </label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Phone className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-                                </div>
-                                <input
-                                    id="mobile"
-                                    name="mobile"
-                                    type="tel"
-                                    autoComplete="tel"
-                                    required
-                                    className="appearance-none relative block w-full pl-11 pr-4 py-3.5 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:z-10 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 transition-all duration-200"
-                                    placeholder="+91 98765 43210"
-                                    value={mobile}
-                                    onChange={(e) => setMobile(e.target.value)}
-                                />
                             </div>
                         </div>
                     </div>

@@ -7,17 +7,18 @@ import {
     deleteProduct,
     getProductImage
 } from '../controllers/productController.js';
+import { protect, adminOnly, optionalAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 router.route('/')
-    .get(getProducts)
-    .post(createProduct);
+    .get(optionalAuth, getProducts)
+    .post(protect, adminOnly, createProduct);
 
 router.route('/:id')
-    .get(getProduct)
-    .put(updateProduct)
-    .delete(deleteProduct);
+    .get(optionalAuth, getProduct)
+    .put(protect, adminOnly, updateProduct)
+    .delete(protect, adminOnly, deleteProduct);
 
 
 router.get('/:id/image', getProductImage);

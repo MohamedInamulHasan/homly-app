@@ -23,14 +23,16 @@ const StoreProducts = () => {
     // Filter products for this store
     // Ensure we handle both string and number ID comparisons, and populated storeId objects
     const storeProducts = useMemo(() => {
-        return products.filter(p => {
-            // Handle both populated storeId (object with _id) and direct ID reference
-            const pStoreId = p.storeId?._id || p.storeId;
-            const targetId = storeId;
+        return products
+            .filter(p => p.isAvailable !== false) // Filter out unavailable products
+            .filter(p => {
+                // Handle both populated storeId (object with _id) and direct ID reference
+                const pStoreId = p.storeId?._id || p.storeId;
+                const targetId = storeId;
 
-            // Loose comparison to catch '1' vs 1, and also handle ObjectId comparison
-            return pStoreId == targetId || String(pStoreId) === String(targetId);
-        });
+                // Loose comparison to catch '1' vs 1, and also handle ObjectId comparison
+                return pStoreId == targetId || String(pStoreId) === String(targetId);
+            });
     }, [products, storeId]);
 
     // Extract unique subcategories from the store's products

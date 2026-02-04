@@ -40,3 +40,14 @@ export const useDeleteAd = () => {
         }
     });
 };
+
+export const useUpdateAd = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ id, data }) => apiService.updateAd(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries(adKeys.lists());
+        }
+    });
+};

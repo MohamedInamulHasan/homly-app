@@ -9,6 +9,22 @@ export const getProducts = async (req, res, next) => {
         const { category, search, featured, page, limit, fields } = req.query;
         let query = {};
 
+        // By default, only show available products
+        // Unless user is admin/store_admin AND explicitly asks for all (or we just show all for them?)
+        const isAdmin = req.user && (req.user.role === 'admin' || req.user.role === 'store_admin');
+
+        if (!isAdmin) {
+            query.isAvailable = true;
+        } else {
+            // If admin, they can filter by availability if they want, 
+            // but if they don't specify, maybe we show all?
+            // Let's check if 'isAvailable' param was passed? 
+            // Typically admin dashboard might want to see all.
+            if (req.query.isAvailable) {
+                query.isAvailable = req.query.isAvailable === 'true';
+            }
+        }
+
         if (category) {
             query.category = category;
         }
@@ -74,6 +90,13 @@ export const getProduct = async (req, res, next) => {
         const product = await Product.findById(req.params.id).populate('storeId', 'name');
 
         if (!product) {
+            res.status(404);
+            throw new Error('Product not found');
+        }
+
+        // Check availability logic
+        const isAdmin = req.user && (req.user.role === 'admin' || req.user.role === 'store_admin');
+        if (!product.isAvailable && !isAdmin) {
             res.status(404);
             throw new Error('Product not found');
         }

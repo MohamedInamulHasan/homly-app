@@ -1,5 +1,6 @@
 import { Plus, Minus, Bookmark, Store } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useData } from '../context/DataContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -10,6 +11,8 @@ const ProductCard = ({ product, showCartControls = true, showHeart = true }) => 
     const { addToCart, cartItems, updateQuantity } = useCart();
     const { savedProducts, toggleSaveProduct, stores } = useData();
     const { t } = useLanguage();
+    const { user } = useAuth();
+    const navigate = useNavigate();
 
     const productId = product._id || product.id;
     const cartItem = cartItems.find(item => item.id === productId);
@@ -27,9 +30,11 @@ const ProductCard = ({ product, showCartControls = true, showHeart = true }) => 
 
 
     return (
-        <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full border border-gray-100 dark:border-gray-700 relative group ${!isAvailable ? 'opacity-75' : ''}`}>
+        <div className={`rounded-lg overflow-hidden transition-all duration-300 flex flex-col h-full relative group ${!isAvailable ? 'opacity-75' : ''} ${product.isGold
+            ? 'bg-gradient-to-br from-yellow-300 via-yellow-100 to-yellow-400 dark:from-yellow-600 dark:via-yellow-400 dark:to-yellow-700 shadow-[0_0_25px_rgba(250,204,21,0.6)] hover:shadow-[0_0_40px_rgba(250,204,21,0.8)] transform hover:-translate-y-1'
+            : 'bg-white dark:bg-gray-800 shadow-md hover:shadow-lg border border-gray-100 dark:border-gray-700'}`}>
             <Link to={`/product/${productId}`} className={`flex-1 block ${!isAvailable ? 'pointer-events-none' : ''}`}>
-                <div className="relative pb-[100%] overflow-hidden bg-white">
+                <div className={`relative pb-[100%] overflow-hidden ${product.isGold ? 'bg-transparent' : 'bg-white'}`}>
                     <img
                         src={product.image || `${API_BASE_URL}/products/${productId}/image`}
                         alt={t(product, 'title')}
@@ -119,7 +124,13 @@ const ProductCard = ({ product, showCartControls = true, showHeart = true }) => 
                         {cartItem && cartItem.quantity > 0 ? (
                             <div className="flex items-center justify-between h-10 rounded-xl bg-gray-100 dark:bg-gray-700 p-1" onClick={(e) => e.stopPropagation()}>
                                 <button
-                                    onClick={() => updateQuantity(productId, cartItem.quantity - 1)}
+                                    onClick={() => {
+                                        if (!user) {
+                                            navigate('/login');
+                                            return;
+                                        }
+                                        updateQuantity(productId, cartItem.quantity - 1);
+                                    }}
                                     className="w-8 h-8 flex items-center justify-center rounded-lg bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-200 shadow-sm hover:text-red-600 border border-gray-100 dark:border-gray-500 transition-all active:scale-90"
                                     aria-label="Decrease quantity"
                                     disabled={!isAvailable}
@@ -130,7 +141,13 @@ const ProductCard = ({ product, showCartControls = true, showHeart = true }) => 
                                     {cartItem.quantity}
                                 </span>
                                 <button
-                                    onClick={() => updateQuantity(productId, cartItem.quantity + 1)}
+                                    onClick={() => {
+                                        if (!user) {
+                                            navigate('/login');
+                                            return;
+                                        }
+                                        updateQuantity(productId, cartItem.quantity + 1);
+                                    }}
                                     className="w-8 h-8 flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md hover:shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all active:scale-90"
                                     aria-label="Increase quantity"
                                     disabled={!isAvailable}
@@ -140,7 +157,13 @@ const ProductCard = ({ product, showCartControls = true, showHeart = true }) => 
                             </div>
                         ) : (
                             <button
-                                onClick={() => addToCart(product)}
+                                onClick={() => {
+                                    if (!user) {
+                                        navigate('/login');
+                                        return;
+                                    }
+                                    addToCart(product);
+                                }}
                                 disabled={!isAvailable}
                                 className={`w-full h-10 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 flex items-center justify-center gap-2 transform active:scale-95 ${isAvailable
                                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md hover:shadow-lg hover:from-blue-700 hover:to-indigo-700'

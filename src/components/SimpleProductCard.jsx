@@ -1,5 +1,6 @@
 import { Plus, Minus, Store, ShoppingCart, Zap, Bookmark } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
@@ -11,6 +12,8 @@ const SimpleProductCard = ({ product, isFastPurchase }) => {
     const { t } = useLanguage();
     const { stores, savedProducts, toggleSaveProduct } = useData();
     const { cartItems, addToCart, removeFromCart, updateQuantity } = useCart();
+    const { user } = useAuth();
+    const navigate = useNavigate();
     const productId = product._id || product.id;
     const [showQuantity, setShowQuantity] = useState(false);
 
@@ -44,6 +47,13 @@ const SimpleProductCard = ({ product, isFastPurchase }) => {
 
     const handleFastPurchaseClick = (e) => {
         e.preventDefault();
+        e.stopPropagation();
+
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+
         if (!isAvailable || !isStoreOpenCheck) return;
 
         if (cartQuantity > 0) {
@@ -57,7 +67,8 @@ const SimpleProductCard = ({ product, isFastPurchase }) => {
                 price: product.price,
                 image: product.image,
                 storeId: product.storeId,
-                quantity: 1
+                quantity: 1,
+                isGold: product.isGold // Pass isGold status
             });
             setShowQuantity(true);
         }
@@ -66,6 +77,10 @@ const SimpleProductCard = ({ product, isFastPurchase }) => {
     const handleIncrement = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        if (!user) {
+            navigate('/login');
+            return;
+        }
         if (cartQuantity > 0) {
             updateQuantity(productId, cartQuantity + 1);
         } else {
@@ -75,7 +90,8 @@ const SimpleProductCard = ({ product, isFastPurchase }) => {
                 price: product.price,
                 image: product.image,
                 storeId: product.storeId,
-                quantity: 1
+                quantity: 1,
+                isGold: product.isGold
             });
         }
     };
@@ -83,6 +99,10 @@ const SimpleProductCard = ({ product, isFastPurchase }) => {
     const handleDecrement = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        if (!user) {
+            navigate('/login');
+            return;
+        }
         if (cartQuantity > 1) {
             updateQuantity(productId, cartQuantity - 1);
         } else if (cartQuantity === 1) {
@@ -207,10 +227,12 @@ const SimpleProductCard = ({ product, isFastPurchase }) => {
                 }
                 handleClick(e);
             }}
-            className={`bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden transition-all duration-300 flex flex-col h-full border border-gray-100 dark:border-gray-700 ${isStoreOpenCheck && isAvailable ? 'hover:shadow-2xl hover:scale-[1.02]' : 'opacity-75 grayscale-[0.5] cursor-not-allowed'
+            className={`rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full ${product.isGold
+                ? 'bg-gradient-to-br from-yellow-300 via-yellow-100 to-yellow-400 dark:from-yellow-600 dark:via-yellow-400 dark:to-yellow-700 shadow-[0_0_25px_rgba(250,204,21,0.6)] hover:shadow-[0_0_40px_rgba(250,204,21,0.8)] transform hover:-translate-y-1'
+                : 'bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700'} ${isStoreOpenCheck && isAvailable ? 'hover:shadow-2xl hover:scale-[1.02]' : 'opacity-75 grayscale-[0.5] cursor-not-allowed'
                 }`}
         >
-            <div className="relative pb-[100%] overflow-hidden bg-white">
+            <div className={`relative pb-[100%] overflow-hidden ${product.isGold ? 'bg-transparent' : 'bg-white'}`}>
                 <img
                     src={product.image || `${API_BASE_URL}/products/${productId}/image`}
                     alt={t(product, 'title')}

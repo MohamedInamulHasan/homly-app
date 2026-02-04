@@ -112,10 +112,10 @@ const OrderDetails = () => {
 
     const getStatusIcon = (status) => {
         switch (status) {
-            case 'Delivered': return <CheckCircle size={20} className="mr-2" />;
-            case 'Shipped': return <Truck size={20} className="mr-2" />;
-            case 'Processing': return <Clock size={20} className="mr-2" />;
-            case 'Cancelled': return <RotateCcw size={20} className="mr-2" />;
+            case 'Delivered': return <CheckCircle size={20} />;
+            case 'Shipped': return <Truck size={20} />;
+            case 'Processing': return <Clock size={20} />;
+            case 'Cancelled': return <RotateCcw size={20} />;
             default: return null;
         }
     };
@@ -253,9 +253,13 @@ const OrderDetails = () => {
                     <div className="divide-y divide-gray-50 dark:divide-gray-700">
                         {order.items?.map((item, index) => (
                             <div key={index} className="p-4 flex gap-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                <div className="h-16 w-16 bg-gray-100 dark:bg-gray-700 rounded-xl overflow-hidden flex-shrink-0 border border-gray-200 dark:border-gray-600 relative">
+                                <div className={`h-16 w-16 bg-white rounded-xl overflow-hidden flex-shrink-0 border relative ${((item.isGold) || (item.product && item.product.isGold)) ? 'border-yellow-400 ring-2 ring-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.3)]' : 'border-gray-200 dark:border-gray-600'}`}>
                                     <img
-                                        src={(item.product?._id || item.product) ? `${API_BASE_URL}/products/${item.product?._id || item.product}/image` : (item.image || "https://via.placeholder.com/150?text=No+Image")}
+                                        src={item.image && (item.image.startsWith('http') || item.image.startsWith('data:'))
+                                            ? item.image
+                                            : ((item.product?._id || item.product)
+                                                ? `${API_BASE_URL}/products/${item.product?._id || item.product}/image`
+                                                : "https://via.placeholder.com/150?text=No+Image")}
                                         alt={item.name}
                                         className="h-full w-full object-cover"
                                         onError={(e) => { e.target.src = "https://via.placeholder.com/150?text=Product"; }}
@@ -295,11 +299,11 @@ const OrderDetails = () => {
                                         );
                                     })()}
 
-                                    {item.storeId && (
+                                    {(item.storeId || item.storeName) && (
                                         <div className="flex items-center gap-1 mb-1">
                                             <Store size={10} className="text-gray-400" />
                                             <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                                                {getStoreName(item.storeId, stores)}
+                                                {getStoreName(item.storeId, stores) || item.storeName}
                                             </p>
                                         </div>
                                     )}
@@ -368,7 +372,21 @@ const OrderDetails = () => {
                         <div className="flex justify-between text-gray-500 dark:text-gray-400">
                             <span>{t('Delivery Fee')}</span>
                             {Number(order.shipping) === 0 ? (
-                                <span className="text-green-600 font-bold">{t('FREE')}</span>
+                                order?.items?.some(item => item.isGold || (item.product && item.product.isGold)) ? (
+                                    <div className="text-right">
+                                        <span className="text-green-600 font-bold">{t('FREE')}</span>
+                                        <p className="text-[10px] text-yellow-600 dark:text-yellow-400 font-bold flex items-center justify-end gap-1">
+                                            <span>⚡</span> {t('Gold Benefit')}
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div className="text-right">
+                                        <span className="text-green-600 font-bold">{t('FREE')}</span>
+                                        <p className="text-[10px] text-yellow-600 dark:text-yellow-500 font-medium flex items-center justify-end gap-1">
+                                            <span>🪙</span> {t('Coin Applied')}
+                                        </p>
+                                    </div>
+                                )
                             ) : (
                                 <span className="font-medium text-gray-900 dark:text-white">₹{Number(order.shipping || 20).toFixed(0)}</span>
                             )}
@@ -408,7 +426,7 @@ const OrderDetails = () => {
 
             {/* Cancel Confirmation Modal */}
             {cancelConfirmation && (
-                <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
                     <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-sm w-full p-6 transform transition-all scale-100 animate-in zoom-in-95 duration-200 slide-in-from-bottom-10 sm:slide-in-from-bottom-0">
                         <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                             <RotateCcw size={32} className="text-red-600 dark:text-red-400" />

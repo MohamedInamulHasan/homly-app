@@ -52,6 +52,7 @@ const OrderConfirmation = () => {
                 // Only send the image if it is a URL (Cloudinary/HTTP). 
                 image: (item.image && item.image.length < 1000) ? item.image : null,
                 storeId: item.storeId?._id || item.storeId || null,
+                storeName: item.storeName || null, // Pass storeName for Ads
                 unit: item.unit // Pass unit to backend
             })),
 
@@ -99,8 +100,10 @@ const OrderConfirmation = () => {
             setShowConfirmModal(false);
             setShowSuccessModal(true);
 
-            // Instant update: Deduct coin locally if used
-            if (finalDeliveryCharge === 0 && deliveryCharge === 0) {
+            // Instant update: Deduct coin locally if used (AND not a Gold Product order)
+            // Note: Backend also handles this check, but we update UI immediately
+            const hasGoldProduct = cartItems.some(item => item.isGold);
+            if (finalDeliveryCharge === 0 && deliveryCharge === 0 && !hasGoldProduct) {
                 setUser(prev => ({ ...prev, coins: Math.max((prev?.coins || 0) - 1, 0) }));
                 queryClient.invalidateQueries(['user-profile']);
             }
@@ -204,18 +207,25 @@ const OrderConfirmation = () => {
                                 {cartItems.map((item) => (
                                     <div key={item.id} className="flex justify-between items-center">
                                         <div className="flex-1 min-w-0 flex items-center gap-4">
-                                            <div className="h-16 w-16 rounded-xl bg-white overflow-hidden relative">
+                                            <div className={`h-16 w-16 rounded-xl bg-white overflow-hidden relative border ${item.isGold ? 'border-yellow-400 ring-2 ring-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.3)]' : 'border-gray-100 dark:border-gray-700'}`}>
                                                 <img
-                                                    src={(item._id || item.id || item.product) ? `${API_BASE_URL}/products/${item._id || item.id || item.product}/image` : "https://via.placeholder.com/150?text=No+Image"}
+                                                    src={item.image || ((item._id || item.id || item.product) ? `${API_BASE_URL}/products/${item._id || item.id || item.product}/image` : "https://via.placeholder.com/150?text=No+Image")}
                                                     alt={item.title}
                                                     className="h-full w-full object-cover"
                                                     loading="lazy"
+                                                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
                                                 />
+                                                {/* Gold Badge */}
+                                                {item.isGold && (
+                                                    <div className="absolute top-0 left-0 right-0 h-4 bg-yellow-400/90 flex items-center justify-center z-10">
+                                                        <span className="text-[8px] font-bold text-yellow-950 uppercase tracking-tighter">Gold Benefit</span>
+                                                    </div>
+                                                )}
                                                 {(() => {
                                                     const unitText = item.unit;
                                                     if (!unitText) return null;
                                                     return (
-                                                        <div className="absolute bottom-0 right-0 bg-gray-900/80 backdrop-blur-sm px-1.5 py-0.5 rounded-tl-md rounded-br-xl z-10">
+                                                        <div className="absolute bottom-0 right-0 bg-gray-900/80 backdrop-blur-sm px-1.5 py-0.5 rounded-tl-md rounded-br-xl z-20">
                                                             <span className="text-[10px] font-bold text-white leading-none block">
                                                                 {unitText}
                                                             </span>
@@ -243,11 +253,11 @@ const OrderConfirmation = () => {
 
                                                     return <p className="font-medium text-gray-900 dark:text-white truncate" title={fullTitle}>{fullTitle}</p>;
                                                 })()}
-                                                {item.storeId && (
+                                                {(item.storeId || item.storeName) && (
                                                     <div className="flex items-center gap-1 mt-0.5">
                                                         <Store size={12} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
                                                         <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                                                            {getStoreName(item.storeId, stores)}
+                                                            {getStoreName(item.storeId, stores) || item.storeName}
                                                         </p>
                                                     </div>
                                                 )}
@@ -273,9 +283,15 @@ const OrderConfirmation = () => {
                                 {(deliveryCharge === 0 || deliveryCharge === null) ? (
                                     <div className="text-right">
                                         <span className="font-medium text-green-600 dark:text-green-400">FREE</span>
-                                        <p className="text-xs text-yellow-600 dark:text-yellow-500 flex items-center justify-end gap-1">
-                                            <span>🪙</span> Coin Applied
-                                        </p>
+                                        {cartItems.some(item => item.isGold) ? (
+                                            <p className="text-xs text-yellow-600 dark:text-yellow-400 flex items-center justify-end gap-1 font-bold">
+                                                <span>⚡</span> Gold Member Benefit
+                                            </p>
+                                        ) : (
+                                            <p className="text-xs text-yellow-600 dark:text-yellow-500 flex items-center justify-end gap-1">
+                                                <span>🪙</span> Coin Applied
+                                            </p>
+                                        )}
                                     </div>
                                 ) : (
                                     <span>₹{(deliveryCharge || 20).toFixed(0)}</span>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -11,6 +11,8 @@ import { API_BASE_URL } from '../utils/api';
 
 const Checkout = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const directPurchase = location.state?.directPurchase;
     const { cartItems, cartTotal, clearCart, removeFromCart } = useCart();
     const { user, setUser } = useAuth();
     const { data: userProfile } = useUserProfile(); // Fetch fresh user data with coins
@@ -158,7 +160,8 @@ const Checkout = () => {
         // Navigate immediately without waiting for API call
         const currentUser = userProfile?.data || user;
         const hasCoins = currentUser?.coins > 0;
-        const finalDeliveryCharge = hasCoins ? 0 : 20;
+        const hasGoldProduct = displayItems.some(item => item.isGold);
+        const finalDeliveryCharge = (hasCoins || hasGoldProduct) ? 0 : 20;
 
         navigate('/order-confirmation', {
             state: {
@@ -167,14 +170,19 @@ const Checkout = () => {
                     name: formData.fullName,
                     pincode: formData.zip
                 },
-                cartItems,
-                cartTotal,
-                deliveryCharge: finalDeliveryCharge
+                cartItems: displayItems,
+                cartTotal: displayTotal,
+                deliveryCharge: finalDeliveryCharge,
+                isDirectPurchase: !!directPurchase
             }
         });
     };
 
-    if (cartItems.length === 0) {
+    // Determine items to show (Direct Purchase or Cart)
+    const displayItems = directPurchase ? directPurchase.items : cartItems;
+    const displayTotal = directPurchase ? directPurchase.total : cartTotal;
+
+    if (displayItems.length === 0) {
         navigate('/cart');
         return null;
     }
@@ -182,8 +190,9 @@ const Checkout = () => {
     // Use userProfile for fresh coin data, fallback to user from auth
     const currentUser = userProfile?.data || user;
     const hasCoins = currentUser?.coins > 0;
-    const deliveryCharge = hasCoins ? 0 : 20;
-    const finalTotal = cartTotal + deliveryCharge;
+    const hasGoldProduct = displayItems.some(item => item.isGold) || location.state?.hasGoldProduct;
+    const deliveryCharge = (hasCoins || hasGoldProduct) ? 0 : 20;
+    const finalTotal = displayTotal + deliveryCharge;
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8 pb-24 transition-colors duration-200">
@@ -443,15 +452,21 @@ const Checkout = () => {
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">{t('Order Summary')}</h2>
 
                             <div className="space-y-4 mb-6">
-                                {cartItems.map((item) => (
+                                {displayItems.map((item) => (
                                     <div key={item.id} className="flex gap-4 group">
-                                        <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-600 bg-white relative">
+                                        <div className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border bg-white relative ${item.isGold ? 'border-yellow-400 ring-2 ring-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.3)]' : 'border-gray-200 dark:border-gray-600'}`}>
                                             <img
                                                 src={item.image || `${API_BASE_URL}/products/${item._id || item.id}/image`}
                                                 onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
                                                 alt={item.title}
                                                 className="h-full w-full object-cover object-center"
                                             />
+                                            {/* Gold Badge */}
+                                            {item.isGold && (
+                                                <div className="absolute top-0 left-0 right-0 h-4 bg-yellow-400/90 flex items-center justify-center">
+                                                    <span className="text-[8px] font-bold text-yellow-950 uppercase tracking-tighter">Gold</span>
+                                                </div>
+                                            )}
                                             {(() => {
                                                 const unitText = item.unit;
                                                 if (!unitText) return null;
@@ -487,11 +502,11 @@ const Checkout = () => {
                                                 }
                                                 return <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate" title={fullTitle}>{fullTitle}</h3>;
                                             })()}
-                                            {item.storeId && (
+                                            {(item.storeId || item.storeName) && (
                                                 <div className="flex items-center gap-1 mt-0.5">
                                                     <Store size={10} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
                                                     <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                                                        {getStoreName(item.storeId, stores)}
+                                                        {getStoreName(item.storeId, stores) || item.storeName}
                                                     </p>
                                                 </div>
                                             )}
@@ -501,14 +516,17 @@ const Checkout = () => {
                                             </div>
                                             <p className="text-sm font-medium text-gray-900 dark:text-white">₹{(item.price * item.quantity).toFixed(0)}</p>
                                         </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => removeFromCart(item.id)}
-                                            className="self-center p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100"
-                                            aria-label={t('Remove item')}
-                                        >
-                                            <Trash2 size={18} />
-                                        </button>
+                                        {/* Only show remove button if NOT a direct purchase */}
+                                        {!directPurchase && (
+                                            <button
+                                                type="button"
+                                                onClick={() => removeFromCart(item.id)}
+                                                className="self-center p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100"
+                                                aria-label={t('Remove item')}
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -516,16 +534,22 @@ const Checkout = () => {
                             <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3">
                                 <div className="flex items-center justify-between text-sm">
                                     <span className="text-gray-600 dark:text-gray-400">{t('Subtotal')}</span>
-                                    <span className="font-medium text-gray-900 dark:text-white">₹{cartTotal.toFixed(0)}</span>
+                                    <span className="font-medium text-gray-900 dark:text-white">₹{displayTotal.toFixed(0)}</span>
                                 </div>
                                 <div className="flex items-center justify-between text-sm">
                                     <span className="text-gray-600 dark:text-gray-400">{t('Delivery Charge')}</span>
-                                    {hasCoins ? (
+                                    {(hasCoins || hasGoldProduct) ? (
                                         <div className="text-right">
                                             <span className="font-medium text-green-600 dark:text-green-400">FREE</span>
-                                            <p className="text-xs text-yellow-600 dark:text-yellow-500 flex items-center justify-end gap-1">
-                                                <span>🪙</span> Coin Applied
-                                            </p>
+                                            {hasGoldProduct ? (
+                                                <p className="text-xs text-yellow-600 dark:text-yellow-400 flex items-center justify-end gap-1 font-bold">
+                                                    <span>⚡</span> Gold Benefit
+                                                </p>
+                                            ) : (
+                                                <p className="text-xs text-yellow-600 dark:text-yellow-500 flex items-center justify-end gap-1">
+                                                    <span>🪙</span> Coin Applied
+                                                </p>
+                                            )}
                                         </div>
                                     ) : (
                                         <span className="font-medium text-gray-900 dark:text-white">₹20</span>
