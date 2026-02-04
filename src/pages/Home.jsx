@@ -342,8 +342,8 @@ const Home = () => {
                 ) : null}
 
                 {/* Mobile Search Bar - Below Categories */}
-                <section className="md:hidden bg-white dark:bg-gray-800 py-0 sticky top-0 z-20 shadow-none border-none">
-                    <div className="max-w-7xl mx-auto px-4">
+                <section className="md:hidden bg-white dark:bg-gray-800 py-0 sticky top-0 z-50 shadow-none border-none">
+                    <div className="mx-auto px-4">
                         <div className="relative">
                             <form
                                 onSubmit={(e) => {
@@ -353,7 +353,7 @@ const Home = () => {
                                         setSearchQuery('');
                                     }
                                 }}
-                                className="relative"
+                                className="relative z-50"
                             >
                                 <input
                                     type="text"

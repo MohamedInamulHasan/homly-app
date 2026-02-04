@@ -181,16 +181,16 @@ const OrderDetails = () => {
                 <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                     {/* Status Banner */}
                     <div className={`p-6 ${order.status === 'Cancelled' ? 'bg-red-50 dark:bg-red-900/10' :
-                            order.status === 'Delivered' ? 'bg-green-50 dark:bg-green-900/10' :
-                                'bg-blue-50 dark:bg-blue-900/10'
+                        order.status === 'Delivered' ? 'bg-green-50 dark:bg-green-900/10' :
+                            'bg-blue-50 dark:bg-blue-900/10'
                         } flex items-center justify-between`}>
                         <div>
                             <p className="text-sm font-medium opacity-80 mb-1 dark:text-gray-300">
                                 {t('Order ID')}: #{String(order._id || order.id).slice(-6).toUpperCase()}
                             </p>
                             <h2 className={`text-2xl font-black ${order.status === 'Cancelled' ? 'text-red-600 dark:text-red-400' :
-                                    order.status === 'Delivered' ? 'text-green-600 dark:text-green-400' :
-                                        'text-blue-600 dark:text-blue-400'
+                                order.status === 'Delivered' ? 'text-green-600 dark:text-green-400' :
+                                    'text-blue-600 dark:text-blue-400'
                                 }`}>
                                 {t(order.status)}
                             </h2>
@@ -199,8 +199,8 @@ const OrderDetails = () => {
                             </p>
                         </div>
                         <div className={`w-12 h-12 rounded-full flex items-center justify-center ${order.status === 'Cancelled' ? 'bg-red-100 text-red-600 dark:bg-red-900/30' :
-                                order.status === 'Delivered' ? 'bg-green-100 text-green-600 dark:bg-green-900/30' :
-                                    'bg-blue-100 text-blue-600 dark:bg-blue-900/30'
+                            order.status === 'Delivered' ? 'bg-green-100 text-green-600 dark:bg-green-900/30' :
+                                'bg-blue-100 text-blue-600 dark:bg-blue-900/30'
                             }`}>
                             {getStatusIcon(order.status)}
                         </div>
@@ -224,14 +224,14 @@ const OrderDetails = () => {
                                 {timelineSteps.map((step, idx) => (
                                     <div key={idx} className="flex flex-col items-center z-10">
                                         <div className={`w-9 h-9 rounded-full flex items-center justify-center border-4 transition-all duration-300 ${step.completed
-                                                ? 'bg-blue-500 border-white dark:border-gray-800 text-white shadow-lg shadow-blue-500/30'
-                                                : 'bg-white dark:bg-gray-700 border-gray-100 dark:border-gray-600 text-gray-300'
+                                            ? 'bg-blue-500 border-white dark:border-gray-800 text-white shadow-lg shadow-blue-500/30'
+                                            : 'bg-white dark:bg-gray-700 border-gray-100 dark:border-gray-600 text-gray-300'
                                             }`}>
                                             <step.icon size={14} strokeWidth={3} />
                                         </div>
                                         <p className={`text-xs mt-2 font-bold text-center w-20 leading-tight ${step.completed
-                                                ? 'text-gray-900 dark:text-white'
-                                                : 'text-gray-400 dark:text-gray-600'
+                                            ? 'text-gray-900 dark:text-white'
+                                            : 'text-gray-400 dark:text-gray-600'
                                             }`}>
                                             {t(step.label)}
                                         </p>
@@ -268,9 +268,32 @@ const OrderDetails = () => {
                                     )}
                                 </div>
                                 <div className="flex-1 min-w-0 flex flex-col justify-center">
-                                    <h4 className="font-bold text-gray-900 dark:text-white text-sm line-clamp-2 leading-snug mb-0.5">
-                                        {item.name}
-                                    </h4>
+                                    {(() => {
+                                        const fullName = item.name;
+                                        const bracketIndex = fullName.indexOf('(');
+
+                                        if (bracketIndex !== -1) {
+                                            const mainName = fullName.substring(0, bracketIndex).trim();
+                                            const bracketText = fullName.substring(bracketIndex).trim();
+
+                                            return (
+                                                <div className="mb-0.5">
+                                                    <h4 className="font-bold text-gray-900 dark:text-white text-sm truncate" title={mainName}>
+                                                        {mainName}
+                                                    </h4>
+                                                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate" title={bracketText}>
+                                                        {bracketText}
+                                                    </p>
+                                                </div>
+                                            );
+                                        }
+
+                                        return (
+                                            <h4 className="font-bold text-gray-900 dark:text-white text-sm truncate mb-0.5" title={fullName}>
+                                                {fullName}
+                                            </h4>
+                                        );
+                                    })()}
 
                                     {item.storeId && (
                                         <div className="flex items-center gap-1 mb-1">

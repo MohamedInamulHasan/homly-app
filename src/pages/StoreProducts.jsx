@@ -108,7 +108,7 @@ const StoreProducts = () => {
                         </button>
                     </div>
 
-                    <div className="flex items-center gap-3 relative z-20">
+                    <div className="flex items-center gap-3 relative z-50">
                         {/* Search Bar */}
                         <div className="relative flex-1">
                             <input

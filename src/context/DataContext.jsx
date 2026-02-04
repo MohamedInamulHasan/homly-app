@@ -65,70 +65,57 @@ export const DataProvider = ({ children }) => {
         maintenanceMode: false // Default false
     });
 
-    // Global Fast Purchase Mode State
-    // Global Fast Purchase Mode State
-    // Initialize from localStorage default, but override with user preference if available
-    const [fastMode, setFastMode] = useState(() => localStorage.getItem('fastMode') === 'true');
+    // Global Fast Purchase Mode State (User-Specific)
+    const [fastMode, setFastMode] = useState(false);
 
-    // Sync Fast Mode with User Profile
+    // Initialize/Update Fast Mode based on User
     useEffect(() => {
-        const checkUserInfo = () => {
-            const userInfoStr = localStorage.getItem('userInfo');
-            if (userInfoStr) {
-                try {
-                    const userInfo = JSON.parse(userInfoStr);
-                    if (userInfo && typeof userInfo.isFastMode !== 'undefined') {
-                        // Avoid setting state if identical to prevent re-renders
-                        setFastMode(prev => {
-                            if (prev !== userInfo.isFastMode) {
-                                localStorage.setItem('fastMode', String(userInfo.isFastMode));
-                                return userInfo.isFastMode;
-                            }
-                            return prev;
-                        });
-                    }
-                } catch (e) {
-                    console.error('Error parsing userInfo for fastMode:', e);
-                }
-            }
-        };
-
-        checkUserInfo(); // Check on mount
-
-        const handleUserUpdate = () => {
-            checkUserInfo();
-        };
-
-        window.addEventListener('userChanged', handleUserUpdate);
-        return () => window.removeEventListener('userChanged', handleUserUpdate);
-    }, []);
-
-    const toggleFastMode = async () => {
-        // Toggle state
-        const newState = !fastMode;
-        setFastMode(newState);
-        localStorage.setItem('fastMode', String(newState));
-
-        // If logged in, update backend
-        const userInfoStr = localStorage.getItem('userInfo');
-        if (userInfoStr) {
+        const checkUserPreference = () => {
             try {
-                const userInfo = JSON.parse(userInfoStr);
-                if (userInfo && userInfo._id) {
-                    // Optimistically update local storage user info
-                    userInfo.isFastMode = newState;
-                    localStorage.setItem('userInfo', JSON.stringify(userInfo));
-
-                    // Call API to update backend
-                    apiService.updateProfile({ isFastMode: newState }).catch(err => {
-                        console.warn('Failed to sync fast mode to backend:', err);
-                    });
+                const userInfoStr = localStorage.getItem('userInfo');
+                if (userInfoStr) {
+                    const userInfo = JSON.parse(userInfoStr);
+                    const userId = userInfo._id || userInfo.id;
+                    if (userId) {
+                        const savedMode = localStorage.getItem(`fastMode_${userId}`);
+                        setFastMode(savedMode === 'true');
+                        return;
+                    }
                 }
             } catch (e) {
-                console.warn('Failed to sync fast mode to backend:', e);
+                console.error('Error parsing user info for fast mode:', e);
             }
-        }
+            // Default to false if no user or no saved pref
+            setFastMode(false);
+        };
+
+        checkUserPreference();
+        // Listen for storage events (login/logout updates)
+        window.addEventListener('storage', checkUserPreference);
+        return () => window.removeEventListener('storage', checkUserPreference);
+    }, []);
+
+    const toggleFastMode = () => {
+        setFastMode(prev => {
+            const newValue = !prev;
+            // Save to user-specific key
+            try {
+                const userInfoStr = localStorage.getItem('userInfo');
+                if (userInfoStr) {
+                    const userInfo = JSON.parse(userInfoStr);
+                    const userId = userInfo._id || userInfo.id;
+                    if (userId) {
+                        localStorage.setItem(`fastMode_${userId}`, String(newValue));
+                    }
+                }
+            } catch (e) {
+                console.error('Error saving fast mode pref:', e);
+            }
+            return newValue;
+        });
     };
+
+
 
     // Initial Loading State - for intro animation
     const [initialLoading, setInitialLoading] = useState(true);
