@@ -174,18 +174,20 @@ export const updateProduct = async (req, res, next) => {
 export const getProductImage = async (req, res, next) => {
     try {
         console.log(`🖼️ Fetching image for product: ${req.params.id}`);
-        const product = await Product.findById(req.params.id).select('image');
+        const product = await Product.findById(req.params.id).select('image images');
 
-        if (!product || !product.image) {
+        if (!product || (!product.image && (!product.images || product.images.length === 0))) {
             console.warn(`⚠️ Image not found for product: ${req.params.id}`);
             return res.status(404).send('Image not found');
         }
 
-        console.log(`✅ Image found for product: ${req.params.id}, length: ${product.image.length}`);
+        const imageToServe = product.image || product.images[0];
+
+        console.log(`✅ Image found for product: ${req.params.id}, length: ${imageToServe.length}`);
 
         // Check if it's a Base64 string
-        if (product.image.startsWith('data:image')) {
-            const matches = product.image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+        if (imageToServe.startsWith('data:image')) {
+            const matches = imageToServe.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
             if (matches.length !== 3) {
                 return res.status(404).send('Invalid image data');
             }

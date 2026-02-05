@@ -190,7 +190,7 @@ const Checkout = () => {
     // Use userProfile for fresh coin data, fallback to user from auth
     const currentUser = userProfile?.data || user;
     const hasCoins = currentUser?.coins > 0;
-    const hasGoldProduct = displayItems.some(item => item.isGold) || location.state?.hasGoldProduct;
+    const hasGoldProduct = displayItems.some(item => item.isGold || (item.product && item.product.isGold)) || location.state?.hasGoldProduct;
     const deliveryCharge = (hasCoins || hasGoldProduct) ? 0 : 20;
     const finalTotal = displayTotal + deliveryCharge;
 

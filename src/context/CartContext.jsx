@@ -73,7 +73,7 @@ export const CartProvider = ({ children }) => {
                             ...item,
                             title: product.title || item.title,
                             price: product.price, // Update price if changed
-                            image: product.image, // Update image if changed
+                            image: product.image || (product.images && product.images.length > 0 ? product.images[0] : item.image), // Update image if changed, fallback to existing
                             unit: product.unit || item.unit || '', // update unit, keeping existing if backend misses it
                             storeId: product.storeId?._id || product.storeId || item.storeId,
                             isAvailable: product.isAvailable, // Update availability
@@ -195,7 +195,7 @@ export const CartProvider = ({ children }) => {
             id: productId,
             title: product.title || product.name,
             price: product.price,
-            image: product.image,
+            image: product.image || (product.images && product.images.length > 0 ? product.images[0] : null),
             storeId: product.storeId || null, // Just save the storeId string
             quantity: 1,
             unit: product.unit || product.size || '',
