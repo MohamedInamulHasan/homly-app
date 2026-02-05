@@ -18,22 +18,26 @@ import { LanguageProvider } from './context/LanguageContext.jsx'
 //     },
 // })
 
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
         <ErrorBoundary>
-            <QueryClientProvider client={queryClient}>
-                <ThemeProvider>
-                    <LanguageProvider>
-                        <DataProvider>
-                            <CartProvider>
-                                <App />
-                            </CartProvider>
-                        </DataProvider>
-                    </LanguageProvider>
-                </ThemeProvider>
-            </QueryClientProvider>
+            <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+                <QueryClientProvider client={queryClient}>
+                    <ThemeProvider>
+                        <LanguageProvider>
+                            <DataProvider>
+                                <CartProvider>
+                                    <App />
+                                </CartProvider>
+                            </DataProvider>
+                        </LanguageProvider>
+                    </ThemeProvider>
+                </QueryClientProvider>
+            </GoogleOAuthProvider>
         </ErrorBoundary>
     </StrictMode>,
 )

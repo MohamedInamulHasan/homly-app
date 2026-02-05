@@ -154,10 +154,12 @@ export const sendOrderNotificationEmail = async (order) => {
                             📱 Contact via WhatsApp
                         </a>
                         <br/>
-                        <a href="${customerLocation && (customerLocation.startsWith('http://') || customerLocation.startsWith('https://')) ? customerLocation : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${customerAddress}, ${customerCity}, ${customerZip}`)}`}" 
+                        <br/>
+                        ${(customerLocation && (customerLocation.startsWith('http://') || customerLocation.startsWith('https://'))) ? `
+                        <a href="${customerLocation}" 
                            style="display: inline-block; padding: 12px 24px; background-color: #4285F4; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
                             📍 View on Google Maps
-                        </a>
+                        </a>` : ''}
                     </div>
                 </div>
             `

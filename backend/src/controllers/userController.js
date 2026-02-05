@@ -1,7 +1,11 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import axios from 'axios';
 import { sendPasswordResetEmail } from '../services/emailService.js';
+import { OAuth2Client } from 'google-auth-library';
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Generate JWT Token
 const generateToken = (id) => {
@@ -68,6 +72,68 @@ export const registerUser = async (req, res, next) => {
 
         if (user) {
             sendTokenResponse(user, 201, res);
+        }
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+
+// @desc    Google Authentication (Login/Signup)
+// @route   POST /api/users/google
+// @access  Public
+export const googleAuth = async (req, res, next) => {
+    try {
+        const { credential, accessToken } = req.body;
+        let name, email, picture, sub;
+
+        if (credential) {
+            // Verify Google ID Token
+            const ticket = await client.verifyIdToken({
+                idToken: credential,
+                audience: process.env.GOOGLE_CLIENT_ID,
+            });
+            const payload = ticket.getPayload();
+            name = payload.name;
+            email = payload.email;
+            picture = payload.picture;
+            sub = payload.sub;
+        } else if (accessToken) {
+            // Verify/Fetch via Access Token (Implicit Flow)
+            const response = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: { Authorization: `Bearer ${accessToken}` }
+            });
+            name = response.data.name;
+            email = response.data.email;
+            picture = response.data.picture;
+            sub = response.data.sub;
+        } else {
+            res.status(400);
+            throw new Error('No Google token provided');
+        }
+
+        // Check if user exists
+        let user = await User.findOne({ email });
+
+        if (user) {
+            // User exists - Login
+            sendTokenResponse(user, 200, res);
+        } else {
+            // User doesn't exist - Signup
+            const randomPassword = crypto.randomBytes(16).toString('hex');
+
+            user = await User.create({
+                name,
+                email,
+                password: randomPassword,
+                role: 'customer',
+                mobile: '' // Placeholder
+            });
+
+            if (user) {
+                sendTokenResponse(user, 201, res);
+            }
         }
     } catch (error) {
         next(error);

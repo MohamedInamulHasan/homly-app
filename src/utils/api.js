@@ -123,6 +123,7 @@ export const apiService = {
 
     // Users
     register: (data) => api.post('/users/register', data),
+    googleAuth: (data) => api.post('/users/google', data),
     login: (data) => api.post('/users/login', data),
     logout: () => api.post('/users/logout'),
     forgotPassword: (email) => api.post('/users/forgotpassword', { email }),

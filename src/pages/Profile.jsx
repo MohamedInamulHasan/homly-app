@@ -172,7 +172,7 @@ const Profile = () => {
                 </div>
 
                 {/* Admin Dashboard / My Store (Visible to Admin, Store Admin, or Specific User) */}
-                {user && (user.role === 'admin' || user.role === 'store_admin' || user.email === 'mohamedinamulhasan0@gmail.com' || user.email === 'mohamedinamulhasan28052004@gmail.com') && (
+                {user && (user.role === 'admin' || user.role === 'store_admin') && (
                     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden mb-6 transition-colors duration-200">
                         <Link to={user.role === 'store_admin' ? '/my-store' : '/admin'} className="p-6 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group">
                             <div className="flex items-center gap-4">

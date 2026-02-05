@@ -9,10 +9,11 @@ import {
     deleteUser,
     getSavedProducts,
     toggleSavedProduct,
-    forgotPassword,
     resetPassword,
+    forgotPassword,
     logoutUser,
-    testEmailController
+    testEmailController,
+    googleAuth
 } from '../controllers/userController.js';
 
 import { protect, adminOnly } from '../middleware/authMiddleware.js';
@@ -21,6 +22,7 @@ const router = express.Router();
 
 router.post('/register', registerUser);
 router.post('/login', loginUser);
+router.post('/google', googleAuth);
 router.post('/forgotpassword', forgotPassword);
 router.put('/resetpassword/:resettoken', resetPassword);
 router.post('/logout', logoutUser);

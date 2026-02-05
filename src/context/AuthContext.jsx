@@ -145,6 +145,30 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const googleLogin = async (authData) => {
+        try {
+            setError(null);
+            // Support both structure: { credential } or { accessToken }
+            const data = await apiService.googleAuth(authData);
+
+            setUser(data.data);
+            localStorage.setItem('userInfo', JSON.stringify(data.data));
+            if (data.token) {
+                localStorage.setItem('authToken', data.token); // Store token for Hybrid Auth
+            }
+            // Dispatch custom event to notify cart of user change
+            window.dispatchEvent(new Event('userChanged'));
+            return true;
+        } catch (err) {
+            setError(
+                err.response && err.response.data.message
+                    ? err.response.data.message
+                    : err.message
+            );
+            return false;
+        }
+    };
+
     const logout = async () => {
         try {
             await apiService.logout();
@@ -177,7 +201,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, setUser: updateUserState, login, register, logout, loading, error, refreshUser }}>
+        <AuthContext.Provider value={{ user, setUser: updateUserState, login, register, googleLogin, logout, loading, error, refreshUser }}>
             {children}
         </AuthContext.Provider>
     );

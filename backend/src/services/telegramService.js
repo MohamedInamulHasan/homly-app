@@ -44,12 +44,10 @@ export const sendOrderTelegramNotification = async (order) => {
             });
         }
 
-        // Google Maps Link - Use Admin-provided location URL if available, else search by address
-        let mapsLink;
+        // Google Maps Link - ONLY use Admin-provided location URL
+        let mapsLink = null;
         if (customerLocation && (customerLocation.startsWith('http://') || customerLocation.startsWith('https://'))) {
             mapsLink = customerLocation;
-        } else {
-            mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
         }
 
         // Construct the message with MarkdownV2 or HTML
@@ -67,7 +65,7 @@ export const sendOrderTelegramNotification = async (order) => {
 ${customerName}
 📞 ${phone}
 📍 ${address}
-🔗 <a href="${mapsLink}">View Location on Map</a>
+${mapsLink ? `🔗 <a href="${mapsLink}">View Location on Map</a>` : ''}
 
 🛒 <b>Items:</b>
 ${order.items.map(item => `- ${item.quantity}x ${item.name || item.product?.title || 'Item'}\n  🏪 Store: ${item.storeId?.name || 'Homly'}`).join('\n\n')}
