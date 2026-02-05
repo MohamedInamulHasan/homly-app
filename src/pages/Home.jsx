@@ -168,7 +168,7 @@ const Home = () => {
             id: ad._id || ad.id,
             _id: ad._id || ad.id,
             title: ad.offerTitle || ad.title, // Prioritize offer title
-            image: ad.image || `${API_BASE_URL}/ads/${ad._id || ad.id}/image`,
+            image: `${API_BASE_URL}/ads/${ad._id || ad.id}/image`, // Always use URL to avoid Base64 stripping in checkout
             price: Number(ad.price),
             storeName: ad.storeName,
             // If ad has a linked storeId, use it, otherwise keep it undefined
