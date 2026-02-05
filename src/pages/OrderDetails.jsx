@@ -264,6 +264,12 @@ const OrderDetails = () => {
                                         className="h-full w-full object-cover"
                                         onError={(e) => { e.target.src = "https://via.placeholder.com/150?text=Product"; }}
                                     />
+                                    {/* Gold Badge */}
+                                    {((item.isGold) || (item.product && item.product.isGold)) && (
+                                        <div className="absolute top-0 left-0 right-0 h-4 bg-yellow-400/90 flex items-center justify-center z-10">
+                                            <span className="text-[8px] font-bold text-yellow-950 uppercase tracking-tighter">{t('Gold Benefit')}</span>
+                                        </div>
+                                    )}
                                     {/* Unit Badge */}
                                     {(item.unit || item.product?.unit) && (
                                         <div className="absolute bottom-0 right-0 bg-black/60 backdrop-blur-[2px] px-1.5 py-0.5 rounded-tl-md text-[10px] font-bold text-white">
@@ -323,22 +329,25 @@ const OrderDetails = () => {
                 {/* Delivery & Address Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Delivery Time */}
-                    {order.scheduledDeliveryTime && (
-                        <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl p-6 text-white shadow-lg shadow-blue-500/20 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-4 opacity-10">
-                                <Clock size={100} />
-                            </div>
-                            <div className="relative z-10">
-                                <p className="text-blue-100 text-xs font-bold uppercase tracking-wider mb-2">{t('Estimated Delivery')}</p>
-                                <h3 className="text-2xl font-bold mb-1">
-                                    {new Date(order.scheduledDeliveryTime).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true })}
-                                </h3>
-                                <p className="text-blue-100 font-medium">
-                                    {new Date(order.scheduledDeliveryTime).toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}
-                                </p>
-                            </div>
+                    {/* Delivery Time */}
+                    <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl p-6 text-white shadow-lg shadow-blue-500/20 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-10">
+                            <Clock size={100} />
                         </div>
-                    )}
+                        <div className="relative z-10">
+                            <p className="text-blue-100 text-xs font-bold uppercase tracking-wider mb-2">{t('Scheduled Delivery')}</p>
+                            <h3 className="text-2xl font-bold mb-1">
+                                {order.scheduledDeliveryTime
+                                    ? new Date(order.scheduledDeliveryTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+                                    : t('Standard Delivery')}
+                            </h3>
+                            <p className="text-blue-100 font-medium">
+                                {order.scheduledDeliveryTime
+                                    ? new Date(order.scheduledDeliveryTime).toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })
+                                    : t('By End of Day')}
+                            </p>
+                        </div>
+                    </div>
 
                     {/* Address Card */}
                     <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col justify-center">
@@ -350,7 +359,7 @@ const OrderDetails = () => {
                         </div>
                         <address className="not-italic text-sm text-gray-600 dark:text-gray-300 pl-11">
                             <p className="font-bold text-gray-900 dark:text-white mb-1">{order.shippingAddress?.name || 'User'}</p>
-                            <p className="line-clamp-2 leading-relaxed opacity-80">
+                            <p className="leading-relaxed opacity-80 whitespace-pre-wrap">
                                 {order.shippingAddress?.street}, {order.shippingAddress?.city}
                             </p>
                             <p className="opacity-80">{order.shippingAddress?.zip}</p>

@@ -132,7 +132,10 @@ const ProductDetails = () => {
                                 style={{ scrollBehavior: 'smooth' }}
                             >
                                 {images.map((img, idx) => (
-                                    <div key={idx} className={`min-w-full h-full snap-center flex items-center justify-center bg-white relative ${product.isGold ? 'border-4 border-yellow-400/50' : ''}`}>
+                                    <div key={idx} className="min-w-full h-full snap-center flex items-center justify-center bg-white relative">
+                                        {product.isGold && (
+                                            <div className="absolute inset-0 border-4 border-yellow-400/50 pointer-events-none rounded-t-[1.5rem] lg:rounded-l-[1.5rem] lg:rounded-tr-none z-10" />
+                                        )}
                                         <img
                                             src={img || 'https://via.placeholder.com/400x400?text=No+Image'}
                                             alt={`${product.title} - ${t('View')} ${idx + 1}`}
@@ -194,7 +197,7 @@ const ProductDetails = () => {
                         {/* Product Info Section */}
                         <div className="p-8 lg:p-12 flex flex-col h-full">
                             <div className="mb-auto">
-                                <div className="flex items-center gap-2 mb-4">
+                                <div className="flex flex-col items-start gap-3 mb-4">
                                     <span className="px-4 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-md">
                                         {t(product, 'category')}
                                     </span>
@@ -268,7 +271,7 @@ const ProductDetails = () => {
                                                         addToCart(product);
                                                         navigate('/checkout');
                                                     }}
-                                                    className="flex-1 py-4 px-8 rounded-2xl font-bold text-xl shadow-lg shadow-blue-500/30 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center gap-3 transform hover:-translate-y-1"
+                                                    className="flex-1 py-4 px-8 rounded-2xl font-bold text-xl shadow-md shadow-blue-500/10 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center gap-3 transform hover:-translate-y-1"
                                                 >
                                                     <ShoppingBag size={24} />
                                                     {t('Buy Now')}
@@ -278,17 +281,17 @@ const ProductDetails = () => {
                                             <div className="w-full flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
                                                 <div className="flex gap-4">
                                                     {/* Quantity Control Pill */}
-                                                    <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 rounded-2xl p-2 px-2 w-48 flex-shrink-0">
+                                                    <div className={`flex items-center justify-between h-14 rounded-2xl p-1.5 w-48 flex-shrink-0 ${product.isGold ? 'bg-white/60 border border-slate-200' : 'bg-gray-100 dark:bg-gray-700'}`}>
                                                         <button
                                                             onClick={() => updateQuantity(productId, Math.max(0, quantity - 1))}
-                                                            className="w-12 h-12 flex items-center justify-center text-gray-600 dark:text-gray-200 bg-white dark:bg-gray-600 rounded-xl shadow-sm hover:text-red-500 transition-colors"
+                                                            className={`w-12 h-12 flex items-center justify-center rounded-xl shadow-sm transition-colors ${product.isGold ? 'bg-white text-slate-700 hover:text-red-600 border border-slate-100' : 'bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-200 hover:text-red-600 border border-gray-100 dark:border-gray-500'}`}
                                                         >
                                                             <Minus size={22} strokeWidth={2.5} />
                                                         </button>
-                                                        <span className="font-bold text-2xl text-gray-900 dark:text-white w-12 text-center tabular-nums">{quantity}</span>
+                                                        <span className={`font-bold text-2xl w-12 text-center tabular-nums ${product.isGold ? 'text-slate-800' : 'text-gray-900 dark:text-white'}`}>{quantity}</span>
                                                         <button
                                                             onClick={() => updateQuantity(productId, quantity + 1)}
-                                                            className="w-12 h-12 flex items-center justify-center text-white bg-blue-600 rounded-xl shadow-sm hover:bg-blue-700 transition-colors"
+                                                            className={`w-12 h-12 flex items-center justify-center rounded-xl shadow-sm transition-colors ${product.isGold ? 'bg-gradient-to-br from-slate-200 to-slate-300 text-slate-800 hover:from-slate-300 hover:to-slate-400' : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700'}`}
                                                         >
                                                             <Plus size={22} strokeWidth={2.5} />
                                                         </button>
@@ -297,7 +300,7 @@ const ProductDetails = () => {
                                                     {/* Buy Now Button (Consistent Look) */}
                                                     <button
                                                         onClick={handleCheckout}
-                                                        className="flex-1 py-4 px-6 rounded-2xl font-bold text-lg shadow-xl shadow-blue-500/30 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1"
+                                                        className="flex-1 py-4 px-6 rounded-2xl font-bold text-lg shadow-md shadow-blue-500/10 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1"
                                                     >
                                                         <ShoppingBag size={24} />
                                                         {t('Buy Now')}
@@ -342,7 +345,7 @@ const ProductDetails = () => {
                                     addToCart(product);
                                     navigate('/checkout');
                                 }}
-                                className="flex-1 py-3.5 px-4 rounded-2xl font-bold text-base shadow-lg shadow-blue-500/30 bg-gradient-to-r from-blue-600 to-indigo-600 text-white active:scale-95 transition-transform flex items-center justify-center gap-2"
+                                className="flex-1 py-3.5 px-4 rounded-2xl font-bold text-base shadow-md shadow-blue-500/10 bg-gradient-to-r from-blue-600 to-indigo-600 text-white active:scale-95 transition-transform flex items-center justify-center gap-2"
                             >
                                 <ShoppingBag size={20} />
                                 {t('Buy Now')}
@@ -352,17 +355,17 @@ const ProductDetails = () => {
                         <div className="w-full flex flex-col gap-3">
                             <div className="flex gap-3 px-2">
                                 {/* Mobile Quantity Pill */}
-                                <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 rounded-2xl p-1.5 w-36 flex-shrink-0">
+                                <div className={`flex items-center justify-between rounded-2xl p-1.5 w-36 flex-shrink-0 ${product.isGold ? 'bg-white/60 border border-slate-200' : 'bg-gray-100 dark:bg-gray-700'}`}>
                                     <button
                                         onClick={() => updateQuantity(productId, Math.max(0, quantity - 1))}
-                                        className="w-10 h-10 flex items-center justify-center text-gray-600 bg-white dark:bg-gray-600 rounded-xl shadow-sm active:scale-90 transition-transform"
+                                        className={`w-10 h-10 flex items-center justify-center rounded-xl shadow-sm active:scale-90 transition-transform ${product.isGold ? 'bg-white text-slate-700 border border-slate-100' : 'bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-200 border border-gray-100 dark:border-gray-500'}`}
                                     >
                                         <Minus size={18} strokeWidth={2.5} />
                                     </button>
-                                    <span className="font-bold text-xl text-gray-900 dark:text-white tabular-nums">{quantity}</span>
+                                    <span className={`font-bold text-xl tabular-nums ${product.isGold ? 'text-slate-800' : 'text-gray-900 dark:text-white'}`}>{quantity}</span>
                                     <button
                                         onClick={() => updateQuantity(productId, quantity + 1)}
-                                        className="w-10 h-10 flex items-center justify-center text-white bg-blue-600 rounded-xl shadow-sm active:scale-90 transition-transform"
+                                        className={`w-10 h-10 flex items-center justify-center rounded-xl shadow-sm active:scale-90 transition-transform ${product.isGold ? 'bg-gradient-to-br from-slate-200 to-slate-300 text-slate-800' : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'}`}
                                     >
                                         <Plus size={18} strokeWidth={2.5} />
                                     </button>
@@ -371,7 +374,7 @@ const ProductDetails = () => {
                                 {/* Mobile Buy Now Button (Consistent) */}
                                 <button
                                     onClick={handleCheckout}
-                                    className="flex-1 py-3 px-4 rounded-2xl font-bold text-base shadow-lg shadow-blue-500/30 bg-gradient-to-r from-blue-600 to-indigo-600 text-white active:scale-95 transition-transform flex items-center justify-center gap-2"
+                                    className="flex-1 py-3 px-4 rounded-2xl font-bold text-base shadow-md shadow-blue-500/10 bg-gradient-to-r from-blue-600 to-indigo-600 text-white active:scale-95 transition-transform flex items-center justify-center gap-2"
                                 >
                                     <ShoppingBag size={20} />
                                     {t('Buy Now')}

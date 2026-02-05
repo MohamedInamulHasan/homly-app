@@ -612,7 +612,9 @@ const StoreManagement = () => {
                                     <tr>
                                         <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Image')}</th>
                                         <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Title')}</th>
+                                        <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Category')}</th>
                                         <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Price')}</th>
+                                        <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Gold')}</th>
                                         <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Status')}</th>
                                         <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Actions')}</th>
                                     </tr>
@@ -654,7 +656,59 @@ const StoreManagement = () => {
                                                     );
                                                 })()}
                                             </td>
+                                            <td className="p-4 font-medium text-gray-900 dark:text-white">
+                                                <div className="flex flex-col">
+                                                    <span className="text-sm">{t(product.category)}</span>
+                                                    {product.subcategory && (
+                                                        <span className="text-xs text-gray-500 dark:text-gray-400">{t(product.subcategory)}</span>
+                                                    )}
+                                                </div>
+                                            </td>
                                             <td className="p-4 font-medium text-gray-900 dark:text-white">₹{product.price}</td>
+                                            <td className="p-4">
+                                                <button
+                                                    onClick={async () => {
+                                                        const currentGold = product.isGold || false;
+                                                        const productId = product._id || product.id;
+
+                                                        // Optimistic update
+                                                        queryClient.setQueryData(['products'], (old) => {
+                                                            const oldData = Array.isArray(old) ? old : (old?.data || []);
+                                                            return oldData.map(p =>
+                                                                (p._id || p.id) === productId
+                                                                    ? { ...p, isGold: !currentGold }
+                                                                    : p
+                                                            );
+                                                        });
+
+                                                        try {
+                                                            await updateProduct({
+                                                                id: productId,
+                                                                data: { ...product, isGold: !currentGold }
+                                                            });
+                                                        } catch (error) {
+                                                            // Rollback
+                                                            queryClient.setQueryData(['products'], (old) => {
+                                                                const oldData = Array.isArray(old) ? old : (old?.data || []);
+                                                                return oldData.map(p =>
+                                                                    (p._id || p.id) === productId
+                                                                        ? { ...p, isGold: currentGold }
+                                                                        : p
+                                                                );
+                                                            });
+                                                            console.error('Failed to toggle gold status:', error);
+                                                            alert(t('Failed to update status'));
+                                                        }
+                                                    }}
+                                                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 ${product.isGold ? 'bg-yellow-400' : 'bg-gray-200 dark:bg-gray-600'}`}
+                                                    title={product.isGold ? t('Gold Product') : t('Standard Product')}
+                                                >
+                                                    <span
+                                                        className={`${product.isGold ? 'translate-x-6' : 'translate-x-1'
+                                                            } inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ease-in-out`}
+                                                    />
+                                                </button>
+                                            </td>
                                             <td className="p-4">
                                                 <button
                                                     onClick={async () => {

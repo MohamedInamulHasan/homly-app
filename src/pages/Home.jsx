@@ -9,6 +9,7 @@ import { useCategories } from '../hooks/queries/useCategories';
 import { useStores } from '../hooks/queries/useStores';
 import { useLanguage } from '../context/LanguageContext';
 import { isStoreOpen } from '../utils/storeHelpers';
+import { sortProductsByGoldAndOpen } from '../utils/productSorting';
 import { API_BASE_URL } from '../utils/api';
 import SimpleProductCard from '../components/SimpleProductCard';
 import PullToRefreshLayout from '../components/PullToRefreshLayout';
@@ -24,7 +25,7 @@ const Home = () => {
     const { fastMode, toggleFastMode } = useData();
     const { data: ads = [], isLoading: loadingAds } = useAds();
     const { data: rawCategories = [], isLoading: loadingCategories } = useCategories();
-    const { data: rawStores = [] } = useStores();
+    const { data: rawStores = [], isLoading: storesLoading } = useStores();
 
     const categories = Array.isArray(rawCategories) ? rawCategories : (rawCategories?.data || []);
     const stores = Array.isArray(rawStores) ? rawStores : (rawStores?.data || []);
@@ -35,11 +36,13 @@ const Home = () => {
         .filter(p => p.isAvailable !== false);
 
     console.log('🏠 Home: Products Count:', products.length);
-    console.log('🏠 Home: Loading:', loadingProducts);
+    console.log('🏠 Home: Loading:', loadingProducts, 'Stores Loading:', storesLoading);
 
     const { t } = useLanguage();
     const navigate = useNavigate();
     const { cartItems, savedProducts } = useCart();
+
+    const loadingAll = loadingProducts || storesLoading;
 
     // Use ads from backend only
     const slides = (ads && ads.length > 0) ? ads : [];
@@ -92,7 +95,7 @@ const Home = () => {
                 const anyStoreOpen = group.some(p => {
                     const pStoreId = p.storeId?._id || p.storeId;
                     const pStore = stores.find(s => (s._id || s.id) === pStoreId);
-                    return pStore ? isStoreOpen(pStore) : true;
+                    return pStore ? isStoreOpen(pStore) : false;
                 });
 
                 result.push({
@@ -205,7 +208,7 @@ const Home = () => {
     */
 
     // Show error state if backend is unreachable
-    if (!loadingProducts && products.length === 0 && errorProducts) {
+    if (!loadingAll && products.length === 0 && errorProducts) {
         return (
             <PullToRefreshLayout>
                 <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center">
@@ -495,7 +498,8 @@ const Home = () => {
 
                     {/* Loading State for Products - Inline */}
                     {/* Loading State for Products - Skeleton Grid */}
-                    {loadingProducts && (
+                    {/* Loading State for Products - Skeleton Grid */}
+                    {loadingAll && (
                         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
                                 <div key={i} className="bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-sm border border-gray-100 dark:border-gray-700 animate-pulse flex flex-col h-full">
@@ -514,7 +518,7 @@ const Home = () => {
                     )}
 
                     {/* Product Sections by Category */}
-                    {!loadingProducts && Object.entries(groupedProducts).length === 0 && (
+                    {!loadingAll && Object.entries(groupedProducts).length === 0 && (
                         <div className="text-center py-12 text-gray-500">
                             {t('No products found')}
                         </div>
@@ -524,20 +528,7 @@ const Home = () => {
                         <CategorySection
                             key={category}
                             category={category}
-                            products={groupProductsByName(categoryProducts).sort((a, b) => {
-                                // Helper to determine open status
-                                const getStatus = (item) => {
-                                    if (item.isGroup) return item.anyStoreOpen;
-                                    const sId = item.storeId?._id || item.storeId;
-                                    const s = stores.find(st => (st._id || st.id) === sId);
-                                    return s ? isStoreOpen(s) : false;
-                                };
-                                const isOpenA = getStatus(a);
-                                const isOpenB = getStatus(b);
-
-                                if (isOpenA === isOpenB) return 0;
-                                return isOpenA ? -1 : 1;
-                            }).slice(0, 10)}
+                            products={sortProductsByGoldAndOpen(groupProductsByName(categoryProducts), stores).slice(0, 10)}
                             t={t}
                             fastMode={fastMode}
                         />

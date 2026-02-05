@@ -87,7 +87,7 @@ const Navbar = () => {
 
                         {!isAdmin && (
                             <Link to="/cart" className="group transition-transform active:scale-95 hover:scale-105 duration-200">
-                                {cartCount > 0 ? (
+                                {user && cartCount > 0 ? (
                                     <div className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 pl-3 pr-2 py-1.5 rounded-full shadow-md hover:shadow-lg transition-all">
                                         <span className="text-white font-bold text-sm">₹{cartTotal.toFixed(0)}</span>
                                         <div className="bg-white/20 p-1.5 rounded-full backdrop-blur-sm relative">

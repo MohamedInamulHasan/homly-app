@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { apiService } from '../utils/api';
+import { useData } from './DataContext';
+import { isStoreOpen } from '../utils/storeHelpers';
 
 const CartContext = createContext();
 
@@ -95,6 +97,50 @@ export const CartProvider = ({ children }) => {
         refreshCartData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); // Run once on mount
+
+    // NEW: Auto-remove items if store closes or product becomes unavailable
+    const { products, stores, loading } = useData();
+
+    useEffect(() => {
+        // Skip validation if data is still loading to prevent accidental clearing
+        if (loading.products || loading.stores || products.length === 0) return;
+
+        if (cartItems.length === 0) return;
+
+        let itemsRemoved = false;
+        const validatedItems = cartItems.filter(item => {
+            // 1. Check Product Availability (using fresh data from DataContext)
+            const freshProduct = products.find(p => (p._id || p.id) === item.id);
+            if (freshProduct) {
+                // If product exists, check its explicit availability status
+                if (freshProduct.isAvailable === false) {
+                    return false; // Remove: Product is toggled OFF
+                }
+            }
+            // Note: If freshProduct is NOT found, we keep the item. 
+            // It might be a momentary sync issue or product deleted (which is handled elsewhere/rarer).
+            // Safest to only remove if we KNOW it's unavailable.
+
+            // 2. Check Store Status
+            const sId = item.storeId?._id || item.storeId;
+            if (sId) {
+                const store = stores.find(s => (s._id || s.id) === sId);
+                // If store found and is CLOSED, remove item
+                if (store && !isStoreOpen(store)) {
+                    return false; // Remove: Store is CLOSED
+                }
+            }
+
+            return true; // Keep item
+        });
+
+        if (validatedItems.length !== cartItems.length) {
+            console.log('🧹 Cart cleanup: Removed unavailable items', cartItems.length - validatedItems.length);
+            setCartItems(validatedItems);
+            itemsRemoved = true;
+        }
+
+    }, [products, stores, loading, cartItems]);
 
     // Listen for user changes (login/logout)
     useEffect(() => {

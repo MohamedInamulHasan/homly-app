@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { MapPin, Search, Star, Clock, Phone, Store } from 'lucide-react';
 import { useData } from '../context/DataContext';
@@ -12,6 +12,9 @@ const Shop = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const { stores, categories: dbCategories, loading } = useData();
     const { t } = useLanguage();
+
+    // Create a Set of valid category names for filtering store tags
+    const validCategoryNames = useMemo(() => new Set((dbCategories || []).map(c => c.name.toLowerCase())), [dbCategories]);
     const navigate = useNavigate();
 
     const categoryFilter = searchParams.get('category') || 'All';
@@ -122,7 +125,7 @@ const Shop = () => {
                                         <img
                                             src={store.image || `${API_BASE_URL}/stores/${store._id || store.id}/image`}
                                             alt={store.name}
-                                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500 ease-out"
+                                            className={`w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500 ease-out ${!isStoreOpen(store) ? 'grayscale-[1]' : ''}`}
                                             loading="lazy"
                                             onError={(e) => {
                                                 e.target.onerror = null;
@@ -144,20 +147,30 @@ const Shop = () => {
                                             )}
                                         </div>
 
+                                        {!isStoreOpen(store) && (
+                                            <div className="absolute inset-0 bg-black/10 flex items-center justify-center z-0 backdrop-blur-[1px]">
+                                                <span className="bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg transform -rotate-12 border-2 border-white">
+                                                    {t('STORE CLOSED')}
+                                                </span>
+                                            </div>
+                                        )}
+
                                         {/* Store Type Badge (Bottom Left of Image) */}
                                         {store.type && (
                                             <div className="absolute bottom-3 left-3 z-10 flex flex-wrap gap-1">
-                                                {Array.isArray(store.type) ? (
-                                                    store.type.map((type, idx) => (
+                                                {(() => {
+                                                    const types = Array.isArray(store.type) ? store.type : [store.type];
+                                                    // Filter types that exist in valid categories (case-insensitive)
+                                                    const validTypes = types.filter(type => validCategoryNames.has(type.toLowerCase()));
+
+                                                    if (validTypes.length === 0) return null;
+
+                                                    return validTypes.map((type, idx) => (
                                                         <span key={idx} className="px-3 py-1.5 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm text-gray-800 dark:text-white text-xs font-bold rounded-full shadow-lg">
                                                             {type}
                                                         </span>
-                                                    ))
-                                                ) : (
-                                                    <span className="px-3 py-1.5 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm text-gray-800 dark:text-white text-xs font-bold rounded-full shadow-lg">
-                                                        {store.type}
-                                                    </span>
-                                                )}
+                                                    ));
+                                                })()}
                                             </div>
                                         )}
                                     </div>

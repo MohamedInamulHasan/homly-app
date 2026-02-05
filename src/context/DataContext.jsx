@@ -70,61 +70,14 @@ export const DataProvider = ({ children }) => {
 
     // Initialize/Update Fast Mode based on User
     useEffect(() => {
-        const checkUserPreference = () => {
-            try {
-                const userInfoStr = localStorage.getItem('userInfo');
-                if (userInfoStr && userInfoStr !== 'undefined') {
-                    const userInfo = JSON.parse(userInfoStr);
-                    const userId = userInfo._id || userInfo.id;
-                    if (userId) {
-                        const savedMode = localStorage.getItem(`fastMode_${userId}`);
-                        setFastMode(savedMode === 'true');
-                        return;
-                    }
-                }
-
-                // Default to false for guests (No persistence for guests)
-                setFastMode(false);
-            } catch (e) {
-                console.error('Error parsing user info for fast mode:', e);
-                setFastMode(false);
-            }
-        };
-
-        checkUserPreference();
-        // Listen for storage events (login/logout updates)
-        window.addEventListener('storage', checkUserPreference);
-        // Also listen for custom auth events
-        window.addEventListener('userChanged', checkUserPreference);
-
-        return () => {
-            window.removeEventListener('storage', checkUserPreference);
-            window.removeEventListener('userChanged', checkUserPreference);
-        };
-    }, []);
+        // User requested Fast Mode to be OFF by default on login/signup.
+        // We ensure it starts as false and is NOT loaded from persistence.
+        setFastMode(false);
+    }, []); // Only run on mount to set initial state
 
     const toggleFastMode = () => {
-        setFastMode(prev => {
-            const newValue = !prev;
-            // Save to user-specific key ONLY if logged in
-            try {
-                const userInfoStr = localStorage.getItem('userInfo');
-                let userId = null;
-
-                if (userInfoStr && userInfoStr !== 'undefined') {
-                    const userInfo = JSON.parse(userInfoStr);
-                    userId = userInfo._id || userInfo.id;
-                }
-
-                if (userId) {
-                    localStorage.setItem(`fastMode_${userId}`, String(newValue));
-                }
-                // Guests: State is updated in memory (newValue) but NOT saved to localStorage
-            } catch (e) {
-                console.error('Error saving fast mode pref:', e);
-            }
-            return newValue;
-        });
+        setFastMode(prev => !prev);
+        // Persistence removed to satisfy "make the fast button in off state first" requirement
     };
 
 

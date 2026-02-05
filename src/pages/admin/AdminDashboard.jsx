@@ -945,8 +945,30 @@ const NewsManagement = () => {
             content: newsForm.content
         };
 
-        setEditingNews(null);
-        setView('list');
+        try {
+            if (editingNews) {
+                await updateNews({ id: editingNews._id || editingNews.id, data: newsItem });
+                alert(t('Post updated successfully!'));
+            } else {
+                await addNews(newsItem);
+                alert(t('Post published successfully!'));
+            }
+
+            setEditingNews(null);
+            setNewsForm({
+                headline: '',
+                type: 'Offer',
+                image: '',
+                sliderImages: [],
+                stock: 0,
+                unit: '',
+                content: '',
+            });
+            setView('list');
+        } catch (error) {
+            console.error('Error saving news:', error);
+            alert(t('Failed to save post. Please try again.'));
+        }
     };
 
     return (

@@ -4,10 +4,15 @@ import { useLanguage } from '../context/LanguageContext';
 import { ArrowLeft, Bookmark } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
+import { useStores } from '../hooks/queries/useStores';
+import { isStoreOpen } from '../utils/storeHelpers';
+import { sortProductsByGoldAndOpen } from '../utils/productSorting';
 
 const SavedProducts = () => {
     const navigate = useNavigate();
     const { savedProducts, loading } = useData();
+    const { data: rawStores = [] } = useStores();
+    const stores = Array.isArray(rawStores) ? rawStores : (rawStores?.data || []);
     const { t } = useLanguage();
 
     if (loading.users) { // Assuming saved products loading is tied to user profile fetching or similar
@@ -67,10 +72,10 @@ const SavedProducts = () => {
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                        {savedProducts.map((product) => {
+                        {sortProductsByGoldAndOpen(savedProducts, stores).map((product) => {
                             // Ensure product is an object (in case populate failed or mixed types)
                             if (!product || typeof product !== 'object') return null;
-                            return <ProductCard key={product._id || product.id} product={product} />;
+                            return <ProductCard key={product._id || product.id} product={product} stores={stores} />;
                         })}
                     </div>
                 )}

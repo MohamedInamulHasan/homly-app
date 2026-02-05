@@ -1,10 +1,12 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useCategories } from '../hooks/queries/useCategories';
 import { useProducts } from '../hooks/queries/useProducts';
 import { useStores } from '../hooks/queries/useStores';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { isStoreOpen } from '../utils/storeHelpers';
+import { sortProductsByGoldAndOpen } from '../utils/productSorting';
 import SimpleProductCard from '../components/SimpleProductCard';
 import PullToRefreshLayout from '../components/PullToRefreshLayout';
 import { ChevronLeft, Zap } from 'lucide-react';
@@ -13,8 +15,9 @@ import ProductCard from '../components/ProductCard';
 
 const CategoryProducts = () => {
     const { categoryName } = useParams();
-    const { data: rawProducts = [], isLoading } = useProducts();
-    const { data: rawStores = [] } = useStores();
+    const { data: rawProducts = [], isLoading: productsLoading } = useProducts();
+    const { data: rawStores = [], isLoading: storesLoading } = useStores();
+    const { data: rawCategories = [] } = useCategories();
     const { t } = useLanguage();
 
     const [searchQuery, setSearchQuery] = useState('');
@@ -22,8 +25,11 @@ const CategoryProducts = () => {
     const { fastMode, toggleFastMode } = useData(); // Use global state
     const navigate = useNavigate();
 
+    const isLoading = productsLoading || storesLoading;
+
     const products = Array.isArray(rawProducts) ? rawProducts : (rawProducts?.data || []);
     const stores = Array.isArray(rawStores) ? rawStores : (rawStores?.data || []);
+    const categories = Array.isArray(rawCategories) ? rawCategories : (rawCategories?.data || []);
 
     // Filter products by category AND search query
     const categoryProducts = products.filter(product => {
@@ -57,7 +63,7 @@ const CategoryProducts = () => {
                 const anyStoreOpen = group.some(p => {
                     const pStoreId = p.storeId?._id || p.storeId;
                     const pStore = stores.find(s => (s._id || s.id) === pStoreId);
-                    return pStore ? isStoreOpen(pStore) : true;
+                    return pStore ? isStoreOpen(pStore) : false;
                 });
 
                 result.push({
@@ -77,11 +83,20 @@ const CategoryProducts = () => {
         return result;
     };
 
-    // Extract unique subcategories from the category products
+    // Extract subcategories from the Category definition, fallback to products if missing
     const subcategories = useMemo(() => {
+        // 1. Try to find the category definition
+        const currentCategory = categories.find(c => c.name?.toLowerCase() === categoryName?.toLowerCase());
+
+        // 2. If category has explicit subcategories, use them
+        if (currentCategory?.subcategories && currentCategory.subcategories.length > 0) {
+            return currentCategory.subcategories;
+        }
+
+        // 3. Fallback: unique subcategories from the category products (legacy behavior)
         const uniqueSubcategories = [...new Set(categoryProducts.map(p => p.subcategory).filter(Boolean))];
         return uniqueSubcategories.sort();
-    }, [categoryProducts]);
+    }, [categories, categoryName, categoryProducts]);
 
     // Filter products based on selected subcategory
     const filteredBySubcategory = selectedSubcategory
@@ -89,20 +104,8 @@ const CategoryProducts = () => {
         : categoryProducts;
 
     // Always group products by name
-    const displayProducts = groupProductsByName(filteredBySubcategory).sort((a, b) => {
-        const getStatus = (item) => {
-            if (item.isGroup) return item.anyStoreOpen;
-            const sId = item.storeId?._id || item.storeId;
-            const s = stores.find(st => (st._id || st.id) === sId);
-            return s ? isStoreOpen(s) : false; // Default to false if store not found, or true? User wants closed last. Safer to default closed if missing.
-        };
-
-        const isOpenA = getStatus(a);
-        const isOpenB = getStatus(b);
-
-        if (isOpenA === isOpenB) return 0;
-        return isOpenA ? -1 : 1;
-    });
+    const groupedList = groupProductsByName(filteredBySubcategory);
+    const displayProducts = sortProductsByGoldAndOpen(groupedList, stores);
 
     // Get category image from first product
     const categoryImage = categoryProducts.length > 0 ? categoryProducts[0].image : null;
@@ -237,27 +240,29 @@ const CategoryProducts = () => {
                 {/* Subcategories Scroller */}
                 {subcategories.length > 0 && (
                     <div className="bg-white dark:bg-gray-800 pb-2 shadow-sm border-b border-gray-100 dark:border-gray-700 mb-4 sticky top-[138px] z-10 transition-colors duration-200">
-                        <div className="max-w-7xl mx-auto px-4 overflow-x-auto scrollbar-hide py-2">
+                        <div className="max-w-7xl mx-auto px-4 overflow-x-auto p-2 pb-4 scrollbar-hide -mx-2">
                             <div className="flex space-x-3">
                                 <button
                                     onClick={() => setSelectedSubcategory(null)}
-                                    className={`flex-shrink-0 px-4 py-1.5 rounded-full border text-sm font-medium transition-all duration-200 ${!selectedSubcategory
-                                        ? 'bg-blue-600 text-white border-blue-600'
-                                        : 'bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-blue-500 hover:text-blue-500'
+                                    className={`flex-shrink-0 px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 ${!selectedSubcategory
+                                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 scale-105'
+                                        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600 hover:text-blue-600 dark:hover:text-blue-400'
                                         }`}
                                 >
-                                    {t('All')}
+                                    <span className="whitespace-nowrap">{t('All')}</span>
                                 </button>
                                 {subcategories.map((sub, idx) => (
                                     <button
                                         key={idx}
                                         onClick={() => setSelectedSubcategory(sub)}
-                                        className={`flex-shrink-0 px-4 py-1.5 rounded-full border text-sm font-medium transition-all duration-200 ${selectedSubcategory === sub
-                                            ? 'bg-blue-600 text-white border-blue-600'
-                                            : 'bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-blue-500 hover:text-blue-500'
+                                        className={`flex-shrink-0 px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 ${selectedSubcategory === sub
+                                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 scale-105'
+                                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600 hover:text-blue-600 dark:hover:text-blue-400'
                                             }`}
                                     >
-                                        {t(sub)}
+                                        <span className="font-medium whitespace-nowrap text-sm">
+                                            {t(sub)}
+                                        </span>
                                     </button>
                                 ))}
                             </div>
@@ -284,22 +289,28 @@ const CategoryProducts = () => {
                         </div>
                     ) : displayProducts.length > 0 ? (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                            {displayProducts.map(product => (
-                                fastMode ? (
-                                    <SimpleProductCard
-                                        key={product._id || product.id}
-                                        product={product}
-                                        isFastPurchase={true}
-                                    />
-                                ) : (
+                            {displayProducts.map(product => {
+                                // Use SimpleProductCard for:
+                                // 1. Fast Mode (standard fast purchase styling)
+                                // 2. Group Products (always use Simple to show price range/correct image)
+                                if (fastMode || product.isGroup) {
+                                    return (
+                                        <SimpleProductCard
+                                            key={product._id || product.id}
+                                            product={product}
+                                            isFastPurchase={fastMode}
+                                        />
+                                    );
+                                }
+                                return (
                                     <ProductCard
                                         key={product._id || product.id}
                                         product={product}
                                         showHeart={false}
                                         showCartControls={false}
                                     />
-                                )
-                            ))}
+                                );
+                            })}
                         </div>
                     ) : (
                         <div className="flex flex-col items-center justify-center h-64 text-center">

@@ -44,8 +44,13 @@ export const sendOrderTelegramNotification = async (order) => {
             });
         }
 
-        // Google Maps Link
-        const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+        // Google Maps Link - Use Admin-provided location URL if available, else search by address
+        let mapsLink;
+        if (customerLocation && (customerLocation.startsWith('http://') || customerLocation.startsWith('https://'))) {
+            mapsLink = customerLocation;
+        } else {
+            mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+        }
 
         // Construct the message with MarkdownV2 or HTML
         // Using HTML for simpler bolding usually
