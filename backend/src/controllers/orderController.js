@@ -162,6 +162,7 @@ export const getOrders = async (req, res, next) => {
             .populate({
                 path: 'items.product',
                 select: 'title unit', // Added unit to populate
+                model: 'Product', // Explicit model required since Schema is Mixed/No Ref
                 options: { lean: true } // Populate efficiently
             })
             .populate({
@@ -193,7 +194,11 @@ export const getOrders = async (req, res, next) => {
 export const getOrder = async (req, res, next) => {
     try {
         const order = await Order.findById(req.params.id)
-            .populate('items.product', 'title price isGold unit') // Added unit
+            .populate({
+                path: 'items.product',
+                select: 'title price isGold unit',
+                model: 'Product'
+            })
             .populate('items.storeId', 'name')
             .lean();
 
