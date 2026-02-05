@@ -316,7 +316,7 @@ const OrderDetails = () => {
 
                                     <div className="flex items-center justify-between mt-auto">
                                         <div className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300">
-                                            x{item.quantity}
+                                            {item.quantity} {item.unit || item.product?.unit ? `x ${item.unit || item.product?.unit}` : ''}
                                         </div>
                                         <span className="font-bold text-gray-900 dark:text-white text-sm">₹{Number(item.price * item.quantity).toFixed(0)}</span>
                                     </div>

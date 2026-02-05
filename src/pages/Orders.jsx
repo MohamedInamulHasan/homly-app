@@ -274,7 +274,7 @@ const Orders = () => {
                                                                 {item.storeId?.name || getStoreName(item.storeId, stores) || item.storeName || t('Unknown Store')}
                                                             </p>
                                                         </div>
-                                                        <p className="text-xs text-gray-500 dark:text-gray-400">{t('Quantity')}: {item.quantity}</p>
+                                                        <p className="text-xs text-gray-500 dark:text-gray-400">{t('Quantity')}: {item.quantity} {item.unit || item.product?.unit ? `x ${item.unit || item.product?.unit}` : ''}</p>
                                                     </div>
                                                 </div>
                                             ))}
