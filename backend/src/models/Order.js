@@ -35,6 +35,7 @@ const orderSchema = new mongoose.Schema({
             type: String,
             required: false
         },
+        unit: String,
         isGold: {
             type: Boolean,
             default: false
