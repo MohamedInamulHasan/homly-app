@@ -229,7 +229,7 @@ const Orders = () => {
                                         <div className="divide-y divide-gray-50 dark:divide-gray-700">
                                             {order.items?.slice(0, 2).map((item, idx) => (
                                                 <div key={idx} className="py-3 flex items-center gap-3">
-                                                    <div className="h-12 w-12 rounded-lg bg-white overflow-hidden flex-shrink-0 relative">
+                                                    <div className={`h-12 w-12 rounded-lg bg-white overflow-hidden flex-shrink-0 relative border ${((item.isGold) || (item.product && item.product.isGold)) ? 'border-yellow-400 ring-1 ring-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.3)]' : 'border-gray-200 dark:border-gray-700'}`}>
                                                         <img
                                                             src={item.image && (item.image.startsWith('http') || item.image.startsWith('data:'))
                                                                 ? item.image
@@ -248,6 +248,12 @@ const Orders = () => {
                                                                 }
                                                             }}
                                                         />
+                                                        {/* Gold Badge */}
+                                                        {((item.isGold) || (item.product && item.product.isGold)) && (
+                                                            <div className="absolute top-0 left-0 right-0 h-3 bg-yellow-400/90 flex items-center justify-center z-10">
+                                                                <span className="text-[6px] font-bold text-yellow-950 uppercase tracking-tighter">Gold</span>
+                                                            </div>
+                                                        )}
                                                         {(() => {
                                                             const unitText = item.unit || item.product?.unit;
                                                             if (!unitText) return null;
