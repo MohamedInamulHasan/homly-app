@@ -105,7 +105,7 @@ const Login = () => {
                         Welcome Back
                     </h2>
                     <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                        Sign in to access your account
+                        Sign in to access your account <span className="text-xs text-blue-500">(v2.0 Beta)</span>
                     </p>
                 </div>
 

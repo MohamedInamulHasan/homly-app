@@ -149,7 +149,7 @@ app.listen(PORT, '0.0.0.0', () => {
 
     const keepAlive = () => {
         if (process.env.NODE_ENV === 'production') {
-            const url = `https://homly-backend-8616.onrender.com/`;
+            const url = `https://homly-backend-00kk.onrender.com/`;
             axios.get(url)
                 .then(() => console.log(`🔥 [Keep-Warm] Ping successful: ${new Date().toISOString()}`))
                 .catch(error => console.error(`⚠️ [Keep-Warm] Ping failed: ${error.message}`));
