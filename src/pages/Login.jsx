@@ -14,27 +14,50 @@ const Login = () => {
 
     const googleLoginHandler = useGoogleLogin({
         onSuccess: async (codeResponse) => {
-            setIsSubmitting(true);
-            // Pass access_token for Implicit Flow verification
-            const success = await googleLogin({ accessToken: codeResponse.access_token });
-            if (success) {
-                // Check for saved redirect
-                const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
-                if (savedRedirect) {
-                    sessionStorage.removeItem('redirectAfterLogin');
-                    navigate(savedRedirect);
-                } else {
-                    // Force reload to ensure Navbar updates
-                    window.location.href = '/';
-                }
-            }
-            setIsSubmitting(false);
+            console.log("Google Login Success (Popup):", codeResponse);
+            await handleGoogleAuthSuccess(codeResponse.access_token);
         },
         onError: (error) => {
             console.error('Login Failed:', error);
             setIsSubmitting(false);
-        }
+        },
+        flow: 'implicit', // Explicitly use implicit flow
+        ux_mode: 'redirect', // Use redirect to support Android WebView
+        redirect_uri: window.location.origin // Redirect back to same page
     });
+
+    const handleGoogleAuthSuccess = async (accessToken) => {
+        setIsSubmitting(true);
+        // Pass access_token for Implicit Flow verification
+        const success = await googleLogin({ accessToken });
+        if (success) {
+            // Check for saved redirect
+            const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
+            if (savedRedirect) {
+                sessionStorage.removeItem('redirectAfterLogin');
+                navigate(savedRedirect);
+            } else {
+                // Force reload to ensure Navbar updates
+                window.location.href = '/';
+            }
+        }
+        setIsSubmitting(false);
+    };
+
+    // Handle Google Redirect Response (Implicit Flow puts token in URL hash)
+    useEffect(() => {
+        const hash = window.location.hash;
+        if (hash && hash.includes('access_token')) {
+            const params = new URLSearchParams(hash.substring(1)); // Remove #
+            const accessToken = params.get('access_token');
+            if (accessToken) {
+                console.log("Found Google Access Token in URL", accessToken);
+                // Clear hash to clean URL
+                window.history.replaceState(null, '', window.location.pathname);
+                handleGoogleAuthSuccess(accessToken);
+            }
+        }
+    }, [googleLogin, navigate]);
 
 
     // Get redirect param from URL
