@@ -335,85 +335,110 @@ const Checkout = () => {
 
                             {/* Delivery Time - Always Visible */}
                             <div className="mt-6">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                                     {t('Preferred Delivery Time')} <span className="text-red-500">*</span>
                                 </label>
-                                <select
-                                    name="deliveryTime"
-                                    required
-                                    value={formData.deliveryTime}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
-                                >
-                                    <option value="">{t('Select a time slot')}</option>
-                                    {(() => {
-                                        const now = new Date();
-                                        // Start from current time + 30 minutes
-                                        const startTime = new Date(now.getTime() + 30 * 60000);
+                                {(() => {
+                                    const now = new Date();
+                                    const startTime = new Date(now.getTime() + 30 * 60000);
 
-                                        // Round to next 30-minute slot
-                                        const minutes = startTime.getMinutes();
-                                        if (minutes < 30) {
-                                            startTime.setMinutes(30, 0, 0);
-                                        } else {
-                                            startTime.setMinutes(0, 0, 0);
-                                            startTime.setHours(startTime.getHours() + 1);
-                                        }
+                                    // Round to next 30-minute slot
+                                    const minutes = startTime.getMinutes();
+                                    if (minutes < 30) {
+                                        startTime.setMinutes(30, 0, 0);
+                                    } else {
+                                        startTime.setMinutes(0, 0, 0);
+                                        startTime.setHours(startTime.getHours() + 1);
+                                    }
 
-                                        // Set end of day to 11:30 PM
-                                        const endOfDay = new Date(startTime);
-                                        endOfDay.setHours(23, 30, 0, 0);
+                                    const endOfDay = new Date(startTime);
+                                    endOfDay.setHours(23, 30, 0, 0);
 
-                                        // If we're past 11:30 PM, start from 9 AM tomorrow
-                                        if (startTime.getHours() >= 23 && startTime.getMinutes() > 30) {
-                                            startTime.setDate(startTime.getDate() + 1);
-                                            startTime.setHours(9, 0, 0, 0);
-                                            endOfDay.setDate(endOfDay.getDate() + 1);
-                                        }
+                                    if (startTime.getHours() >= 23 && startTime.getMinutes() > 30) {
+                                        startTime.setDate(startTime.getDate() + 1);
+                                        startTime.setHours(9, 0, 0, 0);
+                                        endOfDay.setDate(endOfDay.getDate() + 1);
+                                    }
 
-                                        // Generate potential slots (Data only)
-                                        const potentialSlots = [];
-                                        const currentSlot = new Date(startTime);
-                                        let slotCount = 0;
+                                    // Generate all slots
+                                    const allSlots = [];
+                                    const currentSlot = new Date(startTime);
+                                    let slotCount = 0;
 
-                                        while (currentSlot <= endOfDay && slotCount < 50) {
-                                            const hours = currentSlot.getHours();
-                                            const mins = currentSlot.getMinutes();
-                                            const timeString = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
-                                            const displayTime = currentSlot.toLocaleTimeString('en-US', {
-                                                hour: 'numeric',
-                                                minute: '2-digit',
-                                                hour12: true
-                                            });
-
-                                            potentialSlots.push({
-                                                value: timeString,
-                                                label: displayTime
-                                            });
-
-                                            currentSlot.setMinutes(currentSlot.getMinutes() + 30);
-                                            slotCount++;
-                                        }
-
-                                        // Filter slots based on Admin Settings
-                                        const allowedSlots = settings?.deliveryTimes || [];
-
-                                        // Iterate and render
-                                        return potentialSlots.map(slot => {
-                                            if (allowedSlots.length > 0 && !allowedSlots.includes(slot.value)) {
-                                                return null;
-                                            }
-
-                                            return (
-                                                <option key={slot.value} value={slot.value}>
-                                                    {slot.label}
-                                                </option>
-                                            );
+                                    while (currentSlot <= endOfDay && slotCount < 50) {
+                                        const hours = currentSlot.getHours();
+                                        const mins = currentSlot.getMinutes();
+                                        const timeString = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+                                        const displayTime = currentSlot.toLocaleTimeString('en-US', {
+                                            hour: 'numeric',
+                                            minute: '2-digit',
+                                            hour12: true
                                         });
-                                    })()}
-                                </select>
-                                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                    {t('Choose your preferred delivery time (available slots from now until 11:30 PM)')}
+
+                                        allSlots.push({
+                                            value: timeString,
+                                            label: displayTime,
+                                            hour: hours
+                                        });
+
+                                        currentSlot.setMinutes(currentSlot.getMinutes() + 30);
+                                        slotCount++;
+                                    }
+
+                                    // Filter by admin settings
+                                    const allowedSlots = settings?.deliveryTimes || [];
+                                    const availableSlots = allSlots.filter(slot =>
+                                        allowedSlots.length === 0 || allowedSlots.includes(slot.value)
+                                    );
+
+                                    // Group by time periods
+                                    const morning = availableSlots.filter(s => s.hour >= 6 && s.hour < 12);
+                                    const afternoon = availableSlots.filter(s => s.hour >= 12 && s.hour < 17);
+                                    const evening = availableSlots.filter(s => s.hour >= 17 && s.hour < 21);
+                                    const night = availableSlots.filter(s => s.hour >= 21 || s.hour < 6);
+
+                                    const periods = [
+                                        { name: t('Morning'), slots: morning, icon: '🌅' },
+                                        { name: t('Afternoon'), slots: afternoon, icon: '☀️' },
+                                        { name: t('Evening'), slots: evening, icon: '🌆' },
+                                        { name: t('Night'), slots: night, icon: '🌙' }
+                                    ].filter(p => p.slots.length > 0);
+
+                                    return (
+                                        <div className="space-y-4">
+                                            {periods.map((period) => (
+                                                <div key={period.name} className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-4">
+                                                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                                                        <span>{period.icon}</span>
+                                                        {period.name}
+                                                    </h3>
+                                                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                                                        {period.slots.map((slot) => (
+                                                            <button
+                                                                key={slot.value}
+                                                                type="button"
+                                                                onClick={() => setFormData({ ...formData, deliveryTime: slot.value })}
+                                                                className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${formData.deliveryTime === slot.value
+                                                                    ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-400 ring-offset-1 dark:ring-offset-gray-700'
+                                                                    : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600'
+                                                                    }`}
+                                                            >
+                                                                {slot.label}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            {availableSlots.length === 0 && (
+                                                <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
+                                                    {t('No delivery slots available for today. Please try again tomorrow.')}
+                                                </p>
+                                            )}
+                                        </div>
+                                    );
+                                })()}
+                                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                    {t('Select your preferred delivery time')}
                                 </p>
                             </div>
                         </div>
@@ -454,17 +479,23 @@ const Checkout = () => {
                             <div className="space-y-4 mb-6">
                                 {displayItems.map((item) => (
                                     <div key={item.id} className="flex gap-4 group">
-                                        <div className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border bg-white relative ${item.isGold ? 'border-yellow-400 ring-2 ring-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.3)]' : 'border-gray-200 dark:border-gray-600'}`}>
+                                        <div className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border bg-white relative ${item.isGold ? 'border-yellow-400 ring-2 ring-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.3)]' : item.isFromAd ? 'border-orange-400 ring-2 ring-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.3)]' : 'border-gray-200 dark:border-gray-600'}`}>
                                             <img
                                                 src={item.image || `${API_BASE_URL}/products/${item._id || item.id}/image`}
                                                 onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
-                                                alt={item.title}
+                                                alt={item.adTitle || item.title}
                                                 className="h-full w-full object-cover object-center"
                                             />
                                             {/* Gold Badge */}
                                             {item.isGold && (
                                                 <div className="absolute top-0 left-0 right-0 h-4 bg-yellow-400/90 flex items-center justify-center">
                                                     <span className="text-[8px] font-bold text-yellow-950 uppercase tracking-tighter">Gold</span>
+                                                </div>
+                                            )}
+                                            {/* Special Offer Badge */}
+                                            {item.isFromAd && !item.isGold && (
+                                                <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-r from-orange-500 to-red-600 flex items-center justify-center">
+                                                    <span className="text-[8px] font-bold text-white uppercase tracking-tighter">Special Offer</span>
                                                 </div>
                                             )}
                                             {(() => {
@@ -481,10 +512,14 @@ const Checkout = () => {
                                         </div>
                                         <div className="flex flex-1 flex-col justify-center min-w-0">
                                             {(() => {
-                                                const fullTitle = t(item, 'title') || item.title || item.name || t('Product');
+                                                // Use adTitle if available, otherwise use regular title
+                                                const displayTitle = item.adTitle || item.title || item.name || t('Product');
+                                                const fullTitle = t(item, 'title') || displayTitle;
                                                 // Support multiple bracket types: (, [, {, （
-                                                const bracketMatch = fullTitle.match(/[(（\[\{]/);
+                                                const bracketMatch = fullTitle.match(/[(（\[{]/);
                                                 const bracketIndex = bracketMatch ? bracketMatch.index : -1;
+                                                // Use line-clamp-2 for ads to show full title, truncate for regular items
+                                                const titleClass = item.isFromAd ? 'line-clamp-2' : 'truncate';
 
                                                 if (bracketIndex !== -1) {
                                                     const mainTitle = fullTitle.substring(0, bracketIndex).trim();
@@ -495,12 +530,12 @@ const Checkout = () => {
                                                     const bracketText = fullTitle.substring(bracketIndex).trim();
                                                     return (
                                                         <div>
-                                                            <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate" title={mainTitle}>{mainTitle}</h3>
+                                                            <h3 className={`text-sm font-medium text-gray-900 dark:text-white ${titleClass}`} title={mainTitle}>{mainTitle}</h3>
                                                             <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5" title={bracketText}>{bracketText}</p>
                                                         </div>
                                                     );
                                                 }
-                                                return <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate" title={fullTitle}>{fullTitle}</h3>;
+                                                return <h3 className={`text-sm font-medium text-gray-900 dark:text-white ${titleClass}`} title={fullTitle}>{fullTitle}</h3>;
                                             })()}
                                             {(item.storeId || item.storeName) && (
                                                 <div className="flex items-center gap-1 mt-0.5">

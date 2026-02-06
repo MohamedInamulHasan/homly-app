@@ -29,9 +29,10 @@ const Home = () => {
 
     const categories = Array.isArray(rawCategories) ? rawCategories : (rawCategories?.data || []);
     const stores = Array.isArray(rawStores) ? rawStores : (rawStores?.data || []);
+    const allCategories = categories && categories.length > 0 ? categories : [];
 
     // Map products from raw data (handling potential nesting)
-    // Filter out unavailable products so they don't show up in groups or lists (even for Admins in client view)
+    // Filter out unavailable products so they don't show up in groups or lists
     const products = (Array.isArray(rawProducts) ? rawProducts : (rawProducts?.data || []))
         .filter(p => p.isAvailable !== false);
 
@@ -47,6 +48,7 @@ const Home = () => {
     // Use ads from backend only
     const slides = (ads && ads.length > 0) ? ads : [];
 
+    // ... (lines 47-50)
 
     // Filter products to only show from open stores
     // TEMPORARILY DISABLED - Show all products regardless of store hours
@@ -54,17 +56,7 @@ const Home = () => {
         ? products
         : [];
 
-    /* Original code with store hours filter:
-    const openStoreProducts = (products && Array.isArray(products) && stores)
-        ? products.filter(product => {
-            // Find the store for this product
-            const productStoreId = product.storeId?._id || product.storeId;
-            const productStore = stores.find(s => (s._id || s.id) === productStoreId);
-            // Only include products from open stores
-            return productStore && isStoreOpen(productStore);
-        })
-        : [];
-    */
+    /* ... */
 
     // Helper to group products by name
     const groupProductsByName = (productList) => {
@@ -82,21 +74,47 @@ const Home = () => {
         const result = [];
         Object.values(groups).forEach(group => {
             if (group.length > 1) {
+                // Determine if any store is open
+                const anyStoreOpen = group.some(p => {
+                    const pStoreId = p.storeId?._id || p.storeId;
+                    const pStore = stores.find(s => (s._id || s.id) === pStoreId);
+                    return pStore ? isStoreOpen(pStore) : false;
+                });
+
+                // Sort group: Open stores first, then by price (low to high)
+                group.sort((a, b) => {
+                    const storeA = stores.find(s => (s._id || s.id) === (a.storeId?._id || a.storeId));
+                    const storeB = stores.find(s => (s._id || s.id) === (b.storeId?._id || b.storeId));
+                    const isOpenA = storeA ? isStoreOpen(storeA) : false;
+                    const isOpenB = storeB ? isStoreOpen(storeB) : false;
+
+                    if (isOpenA && !isOpenB) return -1;
+                    if (!isOpenA && isOpenB) return 1;
+                    return Number(a.price) - Number(b.price);
+                });
+
+                // Debug "Ginger" specifically
+                if (group[0].title.toLowerCase().includes('ginger')) {
+                    console.log('🔍 Debug Ginger Group:', {
+                        count: group.length,
+                        anyOpen: anyStoreOpen,
+                        stores: group.map(p => {
+                            const pStoreId = p.storeId?._id || p.storeId;
+                            const pStore = stores.find(s => (s._id || s.id) === pStoreId);
+                            const isOpen = pStore ? isStoreOpen(pStore) : 'N/A';
+                            return { id: p._id, storeId: pStoreId, storeName: pStore?.name, isOpen };
+                        })
+                    });
+                }
+
                 // Create a "group" product
-                // Select the first product to ensure stable rendering (no flickering)
+                // Select the first product (now the best/open one) to ensure stable rendering
                 const displayProduct = group[0];
 
                 // Calculate price range
                 const prices = group.map(p => Number(p.price));
                 const minPrice = Math.min(...prices);
                 const maxPrice = Math.max(...prices);
-
-                // Check if ANY store in this group is open
-                const anyStoreOpen = group.some(p => {
-                    const pStoreId = p.storeId?._id || p.storeId;
-                    const pStore = stores.find(s => (s._id || s.id) === pStoreId);
-                    return pStore ? isStoreOpen(pStore) : false;
-                });
 
                 result.push({
                     ...displayProduct,
@@ -125,6 +143,15 @@ const Home = () => {
         acc[category].push(product);
         return acc;
     }, {});
+
+    // Filter out categories that don't exist in the official list (e.g. "Grocery" vs "Grocery (Tamil)")
+    // This removes "Ghost" categories created by bad product data
+    const validCategoryNames = new Set(allCategories.map(c => c.name));
+
+    // Only apply filter if we actually have categories loaded
+    const filteredGroupedProducts = allCategories.length > 0
+        ? Object.fromEntries(Object.entries(groupedProducts).filter(([cat]) => validCategoryNames.has(cat)))
+        : groupedProducts;
 
     // Auto-scroll functionality for hero slider
     useEffect(() => {
@@ -173,7 +200,10 @@ const Home = () => {
             storeName: ad.storeName,
             // If ad has a linked storeId, use it, otherwise keep it undefined
             storeId: ad.storeId,
-            quantity: 1
+            quantity: 1,
+            // Ad tracking fields
+            isFromAd: true,
+            adTitle: ad.offerTitle || ad.title
         };
 
         navigate('/checkout', {
@@ -186,7 +216,7 @@ const Home = () => {
         });
     };
 
-    const allCategories = categories && categories.length > 0 ? categories : [];
+
 
     // LOADING STATE: Removed blocking spinner. Now we show the layout immediately.
     // The spinner will appear inside the product lists instead.
@@ -518,13 +548,13 @@ const Home = () => {
                     )}
 
                     {/* Product Sections by Category */}
-                    {!loadingAll && Object.entries(groupedProducts).length === 0 && (
+                    {!loadingAll && Object.entries(filteredGroupedProducts).length === 0 && (
                         <div className="text-center py-12 text-gray-500">
                             {t('No products found')}
                         </div>
                     )}
 
-                    {Object.entries(groupedProducts).map(([category, categoryProducts]) => (
+                    {Object.entries(filteredGroupedProducts).map(([category, categoryProducts]) => (
                         <CategorySection
                             key={category}
                             category={category}

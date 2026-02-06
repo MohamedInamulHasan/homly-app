@@ -253,14 +253,14 @@ const OrderDetails = () => {
                     <div className="divide-y divide-gray-50 dark:divide-gray-700">
                         {order.items?.map((item, index) => (
                             <div key={index} className="p-4 flex gap-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                <div className={`h-16 w-16 bg-white rounded-xl overflow-hidden flex-shrink-0 border relative ${((item.isGold) || (item.product && item.product.isGold)) ? 'border-yellow-400 ring-2 ring-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.3)]' : 'border-gray-200 dark:border-gray-600'}`}>
+                                <div className={`h-16 w-16 bg-white rounded-xl overflow-hidden flex-shrink-0 border relative ${((item.isGold) || (item.product && item.product.isGold)) ? 'border-yellow-400 ring-2 ring-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.3)]' : item.isFromAd ? 'border-orange-400 ring-2 ring-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.3)]' : 'border-gray-200 dark:border-gray-600'}`}>
                                     <img
                                         src={item.image && (item.image.startsWith('http') || item.image.startsWith('data:'))
                                             ? item.image
                                             : ((item.product?._id || item.product)
                                                 ? `${API_BASE_URL}/products/${item.product?._id || item.product}/image`
                                                 : "https://via.placeholder.com/150?text=No+Image")}
-                                        alt={item.name}
+                                        alt={item.adTitle || item.name}
                                         className="h-full w-full object-cover"
                                         onError={(e) => { e.target.src = "https://via.placeholder.com/150?text=Product"; }}
                                     />
@@ -268,6 +268,12 @@ const OrderDetails = () => {
                                     {((item.isGold) || (item.product && item.product.isGold)) && (
                                         <div className="absolute top-0 left-0 right-0 h-4 bg-yellow-400/90 flex items-center justify-center z-10">
                                             <span className="text-[8px] font-bold text-yellow-950 uppercase tracking-tighter">{t('Gold Benefit')}</span>
+                                        </div>
+                                    )}
+                                    {/* Special Offer Badge */}
+                                    {item.isFromAd && !item.isGold && !(item.product && item.product.isGold) && (
+                                        <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-r from-orange-500 to-red-600 flex items-center justify-center z-10">
+                                            <span className="text-[8px] font-bold text-white uppercase tracking-tighter">Special Offer</span>
                                         </div>
                                     )}
                                     {/* Unit Badge */}
@@ -279,8 +285,10 @@ const OrderDetails = () => {
                                 </div>
                                 <div className="flex-1 min-w-0 flex flex-col justify-center">
                                     {(() => {
-                                        const fullName = item.name;
+                                        const fullName = item.adTitle || item.name;
                                         const bracketIndex = fullName.indexOf('(');
+                                        // Use line-clamp-2 for ads to show full title, truncate for regular items
+                                        const titleClass = item.isFromAd ? 'line-clamp-2' : 'truncate';
 
                                         if (bracketIndex !== -1) {
                                             const mainName = fullName.substring(0, bracketIndex).trim();
@@ -288,7 +296,7 @@ const OrderDetails = () => {
 
                                             return (
                                                 <div className="mb-0.5">
-                                                    <h4 className="font-bold text-gray-900 dark:text-white text-sm truncate" title={mainName}>
+                                                    <h4 className={`font-bold text-gray-900 dark:text-white text-sm ${titleClass}`} title={mainName}>
                                                         {mainName}
                                                     </h4>
                                                     <p className="text-xs text-gray-500 dark:text-gray-400 truncate" title={bracketText}>
@@ -299,7 +307,7 @@ const OrderDetails = () => {
                                         }
 
                                         return (
-                                            <h4 className="font-bold text-gray-900 dark:text-white text-sm truncate mb-0.5" title={fullName}>
+                                            <h4 className={`font-bold text-gray-900 dark:text-white text-sm ${titleClass} mb-0.5`} title={fullName}>
                                                 {fullName}
                                             </h4>
                                         );

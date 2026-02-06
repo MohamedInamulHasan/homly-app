@@ -44,14 +44,14 @@ const ProductCard = ({ product, showCartControls = true, showHeart = true, store
     return (
         <div className={`rounded-lg overflow-hidden transition-all duration-300 flex flex-col h-full relative group ${!isAvailable ? 'opacity-75' : ''} ${product.isGold
             ? 'bg-gradient-to-br from-yellow-300 via-yellow-100 to-yellow-400 dark:from-yellow-600 dark:via-yellow-400 dark:to-yellow-700 shadow-[0_0_15px_rgba(250,204,21,0.3)] hover:shadow-[0_0_25px_rgba(250,204,21,0.5)] border border-yellow-400 dark:border-yellow-500 transform hover:-translate-y-1'
-            : 'bg-white dark:bg-gray-800 shadow-md hover:shadow-lg border border-gray-100 dark:border-gray-700'} ${!isStoreOpenCheck && isAvailable ? 'grayscale-[0.5]' : ''}`}>
-            <Link to={`/product/${productId}`} onClick={handleCardClick} className={`flex-1 block ${!isAvailable ? 'pointer-events-none' : ''}`}>
+            : 'bg-white dark:bg-gray-800 shadow-md hover:shadow-lg border border-gray-100 dark:border-gray-700'} ${!isStoreOpenCheck && isAvailable ? 'grayscale-[0.5] opacity-75 cursor-not-allowed' : ''}`}>
+            <Link to={`/product/${productId}`} onClick={handleCardClick} className={`flex-1 block ${!isAvailable || !isStoreOpenCheck ? 'pointer-events-none' : ''}`}>
                 <div className={`relative pb-[100%] overflow-hidden ${product.isGold ? 'bg-transparent' : 'bg-white'}`}>
                     <img
                         src={product.image || `${API_BASE_URL}/products/${productId}/image`}
                         alt={t(product, 'title')}
                         loading="lazy"
-                        className={`absolute top-0 left-0 w-full h-full object-contain transform transition-transform duration-300 ${isAvailable ? 'group-hover:scale-105' : 'grayscale'}`}
+                        className={`absolute top-0 left-0 w-full h-full object-contain transform transition-transform duration-300 ${isAvailable && isStoreOpenCheck ? 'group-hover:scale-105' : 'grayscale'}`}
                         onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300?text=No+Image'; }}
                     />
                     {/* Heart Button */}
@@ -148,8 +148,17 @@ const ProductCard = ({ product, showCartControls = true, showHeart = true, store
             {showCartControls && (
                 <div className="p-4 pt-2 mt-auto">
                     <div className="flex flex-col gap-3">
-                        <span className={`text-lg md:text-xl font-bold ${product.isGold ? 'text-slate-800' : 'text-blue-600 dark:text-blue-400'}`}>₹{Number(product.price || 0).toFixed(0)}</span>
-                        {cartItem && cartItem.quantity > 0 ? (
+                        <span className={`text-lg md:text-xl font-bold ${!isStoreOpenCheck ? 'text-gray-400' : (product.isGold ? 'text-slate-800' : 'text-blue-600 dark:text-blue-400')}`}>₹{Number(product.price || 0).toFixed(0)}</span>
+                        {!isStoreOpenCheck ? (
+                            <button
+                                disabled
+                                className="w-full h-10 rounded-lg bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed flex items-center justify-center gap-2"
+                                aria-label="Store closed"
+                            >
+                                <Plus size={20} className="text-gray-400" />
+                                <span className="text-sm font-bold tracking-wide text-gray-500">{t('ADD')}</span>
+                            </button>
+                        ) : cartItem && cartItem.quantity > 0 ? (
                             <div className={`flex items-center justify-between h-10 rounded-xl p-1 ${product.isGold ? 'bg-white/60 border border-slate-200' : 'bg-gray-100 dark:bg-gray-700'}`} onClick={(e) => e.stopPropagation()}>
                                 <button
                                     onClick={() => {
@@ -208,7 +217,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = true, store
             )}
             {!showCartControls && (
                 <div className="p-4 pt-2 mt-auto">
-                    <span className="text-lg md:text-xl font-bold text-blue-600 dark:text-blue-400">₹{Number(product.price || 0).toFixed(0)}</span>
+                    <span className={`text-lg md:text-xl font-bold ${!isStoreOpenCheck ? 'text-gray-400' : (product.isGold ? 'text-slate-800' : 'text-blue-600 dark:text-blue-400')}`}>₹{Number(product.price || 0).toFixed(0)}</span>
                 </div>
             )}
         </div>

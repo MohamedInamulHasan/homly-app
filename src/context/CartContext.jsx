@@ -77,7 +77,11 @@ export const CartProvider = ({ children }) => {
                             unit: product.unit || item.unit || '', // update unit, keeping existing if backend misses it
                             storeId: product.storeId?._id || product.storeId || item.storeId,
                             isAvailable: product.isAvailable, // Update availability
-                            isGold: product.isGold // Update gold status
+                            isGold: product.isGold, // Update gold status
+                            // Preserve ad-related fields from original cart item
+                            isFromAd: item.isFromAd || false,
+                            adTitle: item.adTitle || null,
+                            storeName: item.storeName || product.storeName || null
                         };
                     } catch (err) {
                         console.warn(`Failed to refresh item ${item.id}`, err);
@@ -199,7 +203,11 @@ export const CartProvider = ({ children }) => {
             storeId: product.storeId || null, // Just save the storeId string
             quantity: 1,
             unit: product.unit || product.size || '',
-            isGold: product.isGold || false
+            isGold: product.isGold || false,
+            // Ad-related fields
+            isFromAd: product.isFromAd || false,
+            adTitle: product.adTitle || null,
+            storeName: product.storeName || null
         };
 
         setCartItems((prevItems) => {

@@ -39,6 +39,15 @@ const orderSchema = new mongoose.Schema({
         isGold: {
             type: Boolean,
             default: false
+        },
+        // Ad-related fields for tracking products from slider ads
+        isFromAd: {
+            type: Boolean,
+            default: false
+        },
+        adTitle: {
+            type: String,
+            required: false
         }
     }],
     shippingAddress: {

@@ -53,7 +53,10 @@ const OrderConfirmation = () => {
                 image: (item.image && item.image.length < 1000) ? item.image : null,
                 storeId: item.storeId?._id || item.storeId || null,
                 storeName: item.storeName || null, // Pass storeName for Ads
-                unit: item.unit // Pass unit to backend
+                unit: item.unit, // Pass unit to backend
+                // Ad-related fields for special offer tracking
+                isFromAd: item.isFromAd || false,
+                adTitle: item.adTitle || null
             })),
 
             subtotal: cartTotal,
@@ -204,72 +207,88 @@ const OrderConfirmation = () => {
                         <div className="border-b border-gray-100 dark:border-gray-700 pb-8 mb-8">
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">{t('Order Summary')}</h2>
                             <div className="space-y-4">
-                                {cartItems.map((item) => (
-                                    <div key={item.id} className="flex justify-between items-center">
-                                        <div className="flex-1 min-w-0 flex items-center gap-4">
-                                            <div className={`h-16 w-16 rounded-xl bg-white overflow-hidden relative border ${item.isGold ? 'border-yellow-400 ring-2 ring-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.3)]' : 'border-gray-100 dark:border-gray-700'}`}>
-                                                <img
-                                                    src={item.image || ((item._id || item.id || item.product) ? `${API_BASE_URL}/products/${item._id || item.id || item.product}/image` : "https://via.placeholder.com/150?text=No+Image")}
-                                                    alt={item.title}
-                                                    className="h-full w-full object-cover"
-                                                    loading="lazy"
-                                                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
-                                                />
-                                                {/* Gold Badge */}
-                                                {item.isGold && (
-                                                    <div className="absolute top-0 left-0 right-0 h-4 bg-yellow-400/90 flex items-center justify-center z-10">
-                                                        <span className="text-[8px] font-bold text-yellow-950 uppercase tracking-tighter">Gold Benefit</span>
-                                                    </div>
-                                                )}
-                                                {(() => {
-                                                    const unitText = item.unit;
-                                                    if (!unitText) return null;
-                                                    return (
-                                                        <div className="absolute bottom-0 right-0 bg-gray-900/80 backdrop-blur-sm px-1.5 py-0.5 rounded-tl-md rounded-br-xl z-20">
-                                                            <span className="text-[10px] font-bold text-white leading-none block">
-                                                                {unitText}
-                                                            </span>
+                                {cartItems.map((item) => {
+                                    console.log('🔍 OrderConfirmation - Cart Item:', item);
+                                    console.log('  - isFromAd:', item.isFromAd);
+                                    console.log('  - adTitle:', item.adTitle);
+                                    console.log('  - title:', item.title);
+                                    return (
+                                        <div key={item.id} className="flex justify-between items-center">
+                                            <div className="flex-1 min-w-0 flex items-center gap-4">
+                                                <div className={`h-16 w-16 rounded-xl bg-white overflow-hidden relative border ${item.isGold ? 'border-yellow-400 ring-2 ring-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.3)]' : item.isFromAd ? 'border-orange-400 ring-2 ring-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.3)]' : 'border-gray-100 dark:border-gray-700'}`}>
+                                                    <img
+                                                        src={item.image || ((item._id || item.id || item.product) ? `${API_BASE_URL}/products/${item._id || item.id || item.product}/image` : "https://via.placeholder.com/150?text=No+Image")}
+                                                        alt={item.adTitle || item.title}
+                                                        className="h-full w-full object-cover"
+                                                        loading="lazy"
+                                                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
+                                                    />
+                                                    {/* Gold Badge */}
+                                                    {item.isGold && (
+                                                        <div className="absolute top-0 left-0 right-0 h-4 bg-yellow-400/90 flex items-center justify-center z-10">
+                                                            <span className="text-[8px] font-bold text-yellow-950 uppercase tracking-tighter">Gold Benefit</span>
                                                         </div>
-                                                    );
-                                                })()}
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                {(() => {
-                                                    const fullTitle = t(item, 'title') || item.title || item.name || t('Product');
-                                                    const bracketMatch = fullTitle.match(/[(（\[\{]/);
-                                                    const bracketIndex = bracketMatch ? bracketMatch.index : -1;
-
-                                                    if (bracketIndex !== -1) {
-                                                        const mainTitle = fullTitle.substring(0, bracketIndex).trim();
-                                                        const bracketText = fullTitle.substring(bracketIndex).trim();
-
+                                                    )}
+                                                    {/* Special Offer Badge */}
+                                                    {item.isFromAd && !item.isGold && (
+                                                        <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-r from-orange-500 to-red-600 flex items-center justify-center z-10">
+                                                            <span className="text-[8px] font-bold text-white uppercase tracking-tighter">Special Offer</span>
+                                                        </div>
+                                                    )}
+                                                    {(() => {
+                                                        const unitText = item.unit;
+                                                        if (!unitText) return null;
                                                         return (
-                                                            <div className="flex flex-col min-w-0">
-                                                                <p className="font-medium text-gray-900 dark:text-white truncate" title={mainTitle}>{mainTitle}</p>
-                                                                <span className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5" title={bracketText}>{bracketText}</span>
+                                                            <div className="absolute bottom-0 right-0 bg-gray-900/80 backdrop-blur-sm px-1.5 py-0.5 rounded-tl-md rounded-br-xl z-20">
+                                                                <span className="text-[10px] font-bold text-white leading-none block">
+                                                                    {unitText}
+                                                                </span>
                                                             </div>
                                                         );
-                                                    }
+                                                    })()}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    {(() => {
+                                                        // Use adTitle if available, otherwise use regular title
+                                                        const displayTitle = item.adTitle || item.title || item.name || t('Product');
+                                                        const fullTitle = t(item, 'title') || displayTitle;
+                                                        const bracketMatch = fullTitle.match(/[(（\[{]/);
+                                                        const bracketIndex = bracketMatch ? bracketMatch.index : -1;
+                                                        // Use line-clamp-2 for ads to show full title, truncate for regular items
+                                                        const titleClass = item.isFromAd ? 'line-clamp-2' : 'truncate';
 
-                                                    return <p className="font-medium text-gray-900 dark:text-white truncate" title={fullTitle}>{fullTitle}</p>;
-                                                })()}
-                                                {(item.storeId || item.storeName) && (
-                                                    <div className="flex items-center gap-1 mt-0.5">
-                                                        <Store size={12} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
-                                                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                                                            {getStoreName(item.storeId, stores) || item.storeName}
-                                                        </p>
+                                                        if (bracketIndex !== -1) {
+                                                            const mainTitle = fullTitle.substring(0, bracketIndex).trim();
+                                                            const bracketText = fullTitle.substring(bracketIndex).trim();
+
+                                                            return (
+                                                                <div className="flex flex-col min-w-0">
+                                                                    <p className={`font-medium text-gray-900 dark:text-white ${titleClass}`} title={mainTitle}>{mainTitle}</p>
+                                                                    <span className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5" title={bracketText}>{bracketText}</span>
+                                                                </div>
+                                                            );
+                                                        }
+
+                                                        return <p className={`font-medium text-gray-900 dark:text-white ${titleClass}`} title={fullTitle}>{fullTitle}</p>;
+                                                    })()}
+                                                    {(item.storeId || item.storeName) && (
+                                                        <div className="flex items-center gap-1 mt-0.5">
+                                                            <Store size={12} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
+                                                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                                                {getStoreName(item.storeId, stores) || item.storeName}
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                    <div className="flex items-center gap-1.5">
+                                                        <p className="text-sm text-gray-500 dark:text-gray-400">{t('Qty')}: {item.quantity}</p>
+                                                        {/* Unit display moved to image overlay */}
                                                     </div>
-                                                )}
-                                                <div className="flex items-center gap-1.5">
-                                                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('Qty')}: {item.quantity}</p>
-                                                    {/* Unit display moved to image overlay */}
                                                 </div>
                                             </div>
+                                            <p className="text-sm font-medium text-gray-900 dark:text-white">₹{((item.price * item.quantity) || 0).toFixed(0)}</p>
                                         </div>
-                                        <p className="text-sm font-medium text-gray-900 dark:text-white">₹{((item.price * item.quantity) || 0).toFixed(0)}</p>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
 
@@ -364,79 +383,83 @@ const OrderConfirmation = () => {
             </div>
 
             {/* Confirmation Modal (Are you sure?) */}
-            {showConfirmModal && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md transition-opacity duration-300">
-                    <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-sm w-full p-8 transform transition-all scale-100 animate-bounce-subtle border border-gray-100 dark:border-gray-700">
-                        <div className="text-center">
-                            <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-blue-50 dark:bg-blue-900/40 mb-6 shadow-inner relative group">
-                                <div className="absolute inset-0 rounded-full bg-blue-400 opacity-20 animate-ping group-hover:animate-none"></div>
-                                <ShoppingBag className="h-10 w-10 text-blue-600 dark:text-blue-400 relative z-10" />
-                            </div>
-                            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                                {t('Ready to Wrap Up?')}
-                            </h3>
-                            <p className="text-base text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
-                                {t('You are just one step away from confirming your order. Do you want to proceed?')}
-                            </p>
-                            <div className="flex gap-4">
-                                <button
-                                    onClick={() => setShowConfirmModal(false)}
-                                    disabled={isSubmitting}
-                                    className="flex-1 px-4 py-3.5 text-sm font-bold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 transition-colors"
-                                >
-                                    {t('Cancel')}
-                                </button>
-                                <button
-                                    onClick={confirmOrderAction}
-                                    disabled={isSubmitting}
-                                    className="flex-1 px-4 py-3.5 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-xl shadow-lg shadow-blue-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 transform active:scale-95 transition-all"
-                                >
-                                    {isSubmitting ? (
-                                        <>
-                                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                            {t('Processing')}
-                                        </>
-                                    ) : (
-                                        t('Confirm Order')
-                                    )}
-                                </button>
+            {
+                showConfirmModal && (
+                    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md transition-opacity duration-300">
+                        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-sm w-full p-8 transform transition-all scale-100 animate-bounce-subtle border border-gray-100 dark:border-gray-700">
+                            <div className="text-center">
+                                <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-blue-50 dark:bg-blue-900/40 mb-6 shadow-inner relative group">
+                                    <div className="absolute inset-0 rounded-full bg-blue-400 opacity-20 animate-ping group-hover:animate-none"></div>
+                                    <ShoppingBag className="h-10 w-10 text-blue-600 dark:text-blue-400 relative z-10" />
+                                </div>
+                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                                    {t('Ready to Wrap Up?')}
+                                </h3>
+                                <p className="text-base text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
+                                    {t('You are just one step away from confirming your order. Do you want to proceed?')}
+                                </p>
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={() => setShowConfirmModal(false)}
+                                        disabled={isSubmitting}
+                                        className="flex-1 px-4 py-3.5 text-sm font-bold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 transition-colors"
+                                    >
+                                        {t('Cancel')}
+                                    </button>
+                                    <button
+                                        onClick={confirmOrderAction}
+                                        disabled={isSubmitting}
+                                        className="flex-1 px-4 py-3.5 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-xl shadow-lg shadow-blue-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 transform active:scale-95 transition-all"
+                                    >
+                                        {isSubmitting ? (
+                                            <>
+                                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                {t('Processing')}
+                                            </>
+                                        ) : (
+                                            t('Confirm Order')
+                                        )}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* Success Modal (With Design) */}
-            {showSuccessModal && (
-                <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-green-500/20 backdrop-blur-md">
-                    <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-sm w-full p-8 transform transition-all scale-100 animate-bounce-subtle">
-                        <div className="text-center">
-                            <div className="w-24 h-24 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400 animate-pulse" />
-                            </div>
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                                {t('Order Placed!')}
-                            </h2>
-                            <p className="text-gray-500 dark:text-gray-400 mb-6">
-                                {t('Your order has been placed successfully. Thank you for shopping with us!')}
-                            </p>
-                            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 mb-6">
-                                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('Order ID')}</p>
-                                <p className="font-mono font-bold text-gray-900 dark:text-white text-lg">
-                                    #{String(createdOrderId || '000').slice(-6).toUpperCase()}
+            {
+                showSuccessModal && (
+                    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-green-500/20 backdrop-blur-md">
+                        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-sm w-full p-8 transform transition-all scale-100 animate-bounce-subtle">
+                            <div className="text-center">
+                                <div className="w-24 h-24 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400 animate-pulse" />
+                                </div>
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                                    {t('Order Placed!')}
+                                </h2>
+                                <p className="text-gray-500 dark:text-gray-400 mb-6">
+                                    {t('Your order has been placed successfully. Thank you for shopping with us!')}
                                 </p>
+                                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 mb-6">
+                                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('Order ID')}</p>
+                                    <p className="font-mono font-bold text-gray-900 dark:text-white text-lg">
+                                        #{String(createdOrderId || '000').slice(-6).toUpperCase()}
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={handleCloseSuccess}
+                                    className="w-full bg-green-600 text-white py-3 px-6 rounded-xl font-bold shadow-lg hover:bg-green-700 transition-colors"
+                                >
+                                    {t('Go to Orders')}
+                                </button>
                             </div>
-                            <button
-                                onClick={handleCloseSuccess}
-                                className="w-full bg-green-600 text-white py-3 px-6 rounded-xl font-bold shadow-lg hover:bg-green-700 transition-colors"
-                            >
-                                {t('Go to Orders')}
-                            </button>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 };
 

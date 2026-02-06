@@ -124,7 +124,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores }) => {
                         src={product.image || `${API_BASE_URL}/products/${product._id.replace('group-', '')}/image`}
                         alt={t(product, 'title')}
                         loading="lazy"
-                        className={`absolute top-0 left-0 w-full h-full object-contain transition-transform duration-300 ${isStoreOpenCheck || product.anyStoreOpen ? 'hover:scale-105' : ''}`}
+                        className={`absolute top-0 left-0 w-full h-full object-contain transition-transform duration-300 ${isStoreOpenCheck || product.anyStoreOpen ? 'hover:scale-105' : 'grayscale'}`}
                         onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300?text=No+Image'; }}
                     />
                     {/* Show Closed Overlay for Group ONLY if ALL stores are closed */}
@@ -155,7 +155,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores }) => {
 
                             return (
                                 <div className="mb-1">
-                                    <h3 className={`${isMainTitleLong ? 'text-xs md:text-sm' : 'text-sm md:text-base'} font-semibold ${!product.anyStoreOpen ? 'text-gray-400' : 'text-gray-800 dark:text-white'} leading-tight truncate`}>
+                                    <h3 className={`${isMainTitleLong ? 'text-xs md:text-sm' : 'text-sm md:text-base'} font-semibold text-gray-800 dark:text-white leading-tight truncate`}>
                                         {mainTitle}
                                     </h3>
                                     {bracketContent && (
@@ -175,7 +175,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores }) => {
                         </div>
                     </div>
 
-                    <span className={`text-lg font-bold ${!product.anyStoreOpen ? 'text-gray-400' : 'text-blue-600 dark:text-blue-400'}`}>
+                    <span className={`text-lg font-bold ${!product.anyStoreOpen ? 'text-gray-400' : (product.isGold ? 'text-slate-800' : 'text-blue-600 dark:text-blue-400')}`}>
                         {(() => {
                             // Robust Price Logic
                             if (product.minPrice !== undefined && product.maxPrice !== undefined && product.minPrice !== product.maxPrice) {
@@ -246,7 +246,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores }) => {
                     src={product.image || `${API_BASE_URL}/products/${productId}/image`}
                     alt={t(product, 'title')}
                     loading="lazy"
-                    className={`absolute top-0 left-0 w-full h-full object-contain transition-transform duration-300 ${isStoreOpenCheck && isAvailable ? 'group-hover:scale-105' : ''}`}
+                    className={`absolute top-0 left-0 w-full h-full object-contain transition-transform duration-300 ${isStoreOpenCheck && isAvailable ? 'group-hover:scale-105' : 'grayscale'}`}
                     onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300?text=No+Image'; }}
                 />
                 {/* Subtle gradient overlay for depth */}
@@ -343,7 +343,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores }) => {
                         </div>
                     )}
                 </div>
-                <span className={`text-lg font-bold ${product.isGold ? 'text-slate-800' : (isStoreOpenCheck && isAvailable ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500')}`}>
+                <span className={`text-lg font-bold ${!isStoreOpenCheck || !isAvailable ? 'text-gray-400' : (product.isGold ? 'text-slate-800' : 'text-blue-600 dark:text-blue-400')}`}>
                     ₹{Number(product.price || 0).toFixed(0)}
                 </span>
 

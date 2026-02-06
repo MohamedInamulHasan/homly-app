@@ -43,7 +43,11 @@ export const createOrder = async (req, res, next) => {
             const dbProduct = dbProducts.find(p => p._id.toString() === pId);
             return {
                 ...item,
-                isGold: dbProduct ? dbProduct.isGold : false
+                isGold: dbProduct ? dbProduct.isGold : false,
+                // Preserve ad-related fields from frontend
+                isFromAd: item.isFromAd || false,
+                adTitle: item.adTitle || null,
+                storeName: item.storeName || null
             };
         });
 
@@ -158,7 +162,7 @@ export const getOrders = async (req, res, next) => {
         }
 
         const orders = await Order.find(query)
-            .select('items.product items.name items.image items.storeId items.quantity items.price items.isGold items.unit total status createdAt user shippingAddress paymentMethod shipping scheduledDeliveryTime deliveredAt') // Added items.unit
+            .select('items.product items.name items.image items.storeId items.quantity items.price items.isGold items.unit items.isFromAd items.adTitle items.storeName total status createdAt user shippingAddress paymentMethod shipping scheduledDeliveryTime deliveredAt') // Added ad fields
             .populate({
                 path: 'items.product',
                 select: 'title unit', // Added unit to populate

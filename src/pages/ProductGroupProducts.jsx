@@ -7,6 +7,8 @@ import SimpleProductCard from '../components/SimpleProductCard';
 import ProductCard from '../components/ProductCard';
 import PullToRefreshLayout from '../components/PullToRefreshLayout';
 import { ChevronLeft, Zap } from 'lucide-react';
+import { isStoreOpen } from '../utils/storeHelpers';
+import { useStores } from '../hooks/queries/useStores';
 
 const ProductGroupProducts = () => {
     const { productName } = useParams();
@@ -15,17 +17,36 @@ const ProductGroupProducts = () => {
     const [searchParams] = useSearchParams();
     const { fastMode, toggleFastMode } = useData(); // Global state
 
+    // Fetch stores for status check
+    const { data: rawStores = [] } = useStores();
+    const stores = Array.isArray(rawStores) ? rawStores : (rawStores?.data || []);
+
     // Fetch all products - we catch them from cache/query
     const { data: rawProducts = [], isLoading } = useProducts();
     const products = Array.isArray(rawProducts) ? rawProducts : (rawProducts?.data || []);
 
     // Filter products by name (case-insensitive)
-    // DecodeURIComponent is handled by router usually, but let's be safe if manual decoding needed
     const decodedName = decodeURIComponent(productName);
 
-    const groupProducts = products.filter(product =>
-        product.title?.toLowerCase().trim() === decodedName.toLowerCase().trim()
-    );
+    const groupProducts = products
+        .filter(product => {
+            const matchesName = product.title?.toLowerCase().trim() === decodedName.toLowerCase().trim();
+            const isAvailable = product.isAvailable !== false;
+            return matchesName && isAvailable;
+        })
+        .sort((a, b) => {
+            // Sort: Open stores first, then by price
+            const storeA = stores.find(s => (s._id || s.id) === (a.storeId?._id || a.storeId));
+            const storeB = stores.find(s => (s._id || s.id) === (b.storeId?._id || b.storeId));
+
+            // Default to TRUE (Open) if store is missing
+            const isOpenA = storeA ? isStoreOpen(storeA) : true;
+            const isOpenB = storeB ? isStoreOpen(storeB) : true;
+
+            if (isOpenA && !isOpenB) return -1;
+            if (!isOpenA && isOpenB) return 1;
+            return Number(a.price) - Number(b.price);
+        });
 
     return (
         <PullToRefreshLayout>

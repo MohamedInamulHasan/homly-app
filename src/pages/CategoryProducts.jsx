@@ -38,7 +38,10 @@ const CategoryProducts = () => {
             product.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             product.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
-        return matchesCategory && matchesSearch;
+        // Consistent availability check
+        const isAvailable = product.isAvailable !== false;
+
+        return matchesCategory && matchesSearch && isAvailable;
     });
 
     // Helper to group products by name (Adapted from Home.jsx)
@@ -56,14 +59,30 @@ const CategoryProducts = () => {
         const result = [];
         Object.values(groups).forEach(group => {
             if (group.length > 1) {
+                // Sort group: Open stores first, then by price (low to high)
+                group.sort((a, b) => {
+                    const storeA = stores.find(s => (s._id || s.id) === (a.storeId?._id || a.storeId));
+                    const storeB = stores.find(s => (s._id || s.id) === (b.storeId?._id || b.storeId));
+
+                    // Default to TRUE (Open) if store is missing to match ProductCard logic
+                    const isOpenA = storeA ? isStoreOpen(storeA) : true;
+                    const isOpenB = storeB ? isStoreOpen(storeB) : true;
+
+                    if (isOpenA && !isOpenB) return -1;
+                    if (!isOpenA && isOpenB) return 1;
+                    return Number(a.price) - Number(b.price);
+                });
+
                 const displayProduct = group[0];
                 const prices = group.map(p => Number(p.price));
                 const minPrice = Math.min(...prices);
                 const maxPrice = Math.max(...prices);
+
+                // Default to TRUE (Open) if store is missing
                 const anyStoreOpen = group.some(p => {
                     const pStoreId = p.storeId?._id || p.storeId;
                     const pStore = stores.find(s => (s._id || s.id) === pStoreId);
-                    return pStore ? isStoreOpen(pStore) : false;
+                    return pStore ? isStoreOpen(pStore) : true;
                 });
 
                 result.push({
@@ -72,6 +91,9 @@ const CategoryProducts = () => {
                     storeCount: group.length,
                     anyStoreOpen: anyStoreOpen,
                     minPrice: minPrice,
+                    maxPrice: maxPrice,
+                    _id: `group-${displayProduct._id || displayProduct.id}`,
+                    id: `group-${displayProduct._id || displayProduct.id}`,
                     maxPrice: maxPrice,
                     _id: `group-${displayProduct._id || displayProduct.id}`,
                     id: `group-${displayProduct._id || displayProduct.id}`

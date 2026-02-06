@@ -229,14 +229,14 @@ const Orders = () => {
                                         <div className="divide-y divide-gray-50 dark:divide-gray-700">
                                             {order.items?.slice(0, 2).map((item, idx) => (
                                                 <div key={idx} className="py-3 flex items-center gap-3">
-                                                    <div className={`h-12 w-12 rounded-lg bg-white overflow-hidden flex-shrink-0 relative border ${((item.isGold) || (item.product && item.product.isGold)) ? 'border-yellow-400 ring-1 ring-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.3)]' : 'border-gray-200 dark:border-gray-700'}`}>
+                                                    <div className={`h-12 w-12 rounded-lg bg-white overflow-hidden flex-shrink-0 relative border ${((item.isGold) || (item.product && item.product.isGold)) ? 'border-yellow-400 ring-1 ring-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.3)]' : item.isFromAd ? 'border-orange-400 ring-1 ring-orange-400 shadow-[0_0_8px_rgba(249,115,22,0.3)]' : 'border-gray-200 dark:border-gray-700'}`}>
                                                         <img
                                                             src={item.image && (item.image.startsWith('http') || item.image.startsWith('data:'))
                                                                 ? item.image
                                                                 : ((item.product?._id || item.product)
                                                                     ? `${API_BASE_URL}/products/${item.product._id || item.product}/image`
                                                                     : "https://via.placeholder.com/150?text=No+Image")}
-                                                            alt={item.name}
+                                                            alt={item.adTitle || item.name}
                                                             className="h-full w-full object-cover"
                                                             loading="lazy"
                                                             onError={(e) => {
@@ -254,6 +254,12 @@ const Orders = () => {
                                                                 <span className="text-[6px] font-bold text-yellow-950 uppercase tracking-tighter">Gold</span>
                                                             </div>
                                                         )}
+                                                        {/* Special Offer Badge */}
+                                                        {item.isFromAd && !item.isGold && !(item.product && item.product.isGold) && (
+                                                            <div className="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-orange-500 to-red-600 flex items-center justify-center z-10">
+                                                                <span className="text-[6px] font-bold text-white uppercase tracking-tighter">Offer</span>
+                                                            </div>
+                                                        )}
                                                         {(() => {
                                                             const unitText = item.unit || item.product?.unit;
                                                             if (!unitText) return null;
@@ -267,7 +273,7 @@ const Orders = () => {
                                                         })()}
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{item.name}</p>
+                                                        <p className={`text-sm font-medium text-gray-900 dark:text-white ${item.isFromAd ? 'line-clamp-2' : 'truncate'}`}>{item.adTitle || item.name}</p>
                                                         <div className="flex items-center gap-1 mt-0.5">
                                                             <Store size={10} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
                                                             <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
