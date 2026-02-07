@@ -72,6 +72,19 @@ const Cart = () => {
                                         className="h-full w-full object-cover object-center transform group-hover:scale-105 transition-transform duration-500"
                                         onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/100x100?text=No+Image'; }}
                                     />
+                                    {/* Status Tags */}
+                                    <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
+                                        {item.isGold && (
+                                            <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
+                                                Gold Benefit
+                                            </span>
+                                        )}
+                                        {item.isFromAd && (
+                                            <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-br-lg shadow-sm">
+                                                Special Offer
+                                            </span>
+                                        )}
+                                    </div>
                                     {(() => {
                                         const unitText = item.unit;
                                         if (!unitText) return null;

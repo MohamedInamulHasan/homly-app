@@ -116,6 +116,9 @@ const Home = () => {
                 const minPrice = Math.min(...prices);
                 const maxPrice = Math.max(...prices);
 
+                // Determine if ALL products in the group are Gold
+                const isGroupGold = group.every(p => p.isGold);
+
                 result.push({
                     ...displayProduct,
                     isGroup: true,
@@ -123,6 +126,7 @@ const Home = () => {
                     anyStoreOpen: anyStoreOpen,
                     minPrice: minPrice,
                     maxPrice: maxPrice,
+                    isGold: isGroupGold, // Override individual isGold with group status
                     // Use a unique ID for the group
                     _id: `group-${displayProduct._id || displayProduct.id}`,
                     id: `group-${displayProduct._id || displayProduct.id}`
@@ -148,10 +152,23 @@ const Home = () => {
     // This removes "Ghost" categories created by bad product data
     const validCategoryNames = new Set(allCategories.map(c => c.name));
 
-    // Only apply filter if we actually have categories loaded
+    // Only apply filter if we actually have categories loaded, BUT LOG WARNINGS
     const filteredGroupedProducts = allCategories.length > 0
-        ? Object.fromEntries(Object.entries(groupedProducts).filter(([cat]) => validCategoryNames.has(cat)))
+        ? Object.fromEntries(Object.entries(groupedProducts).filter(([cat]) => {
+            const isValid = validCategoryNames.has(cat);
+            if (!isValid) {
+                console.warn(`⚠️ Filtering out category "${cat}" because it is not in validCategoryNames:`, [...validCategoryNames]);
+            }
+            return isValid;
+        }))
         : groupedProducts;
+
+    console.log('📊 Home Debug:', {
+        totalProducts: products.length,
+        totalCategories: allCategories.length,
+        groupedCategories: Object.keys(groupedProducts),
+        visibleCategories: Object.keys(filteredGroupedProducts)
+    });
 
     // Auto-scroll functionality for hero slider
     useEffect(() => {
@@ -507,7 +524,7 @@ const Home = () => {
                 </section>
 
                 {/* Fast Mode Toggle - Below Search Bar */}
-                <div className="md:hidden px-4 -mt-2 mb-4">
+                <div className="md:hidden px-4 -mt-2 mb-4 flex justify-end">
                     <button
                         onClick={toggleFastMode}
                         className={`p-2 rounded-full transition-all flex items-center gap-1.5 text-xs font-medium ${fastMode

@@ -418,7 +418,7 @@ const Checkout = () => {
                                                                 key={slot.value}
                                                                 type="button"
                                                                 onClick={() => setFormData({ ...formData, deliveryTime: slot.value })}
-                                                                className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${formData.deliveryTime === slot.value
+                                                                className={`px-2 py-1.5 md:px-3 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-all ${formData.deliveryTime === slot.value
                                                                     ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-400 ring-offset-1 dark:ring-offset-gray-700'
                                                                     : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600'
                                                                     }`}
@@ -515,18 +515,20 @@ const Checkout = () => {
                                                 // Use adTitle if available, otherwise use regular title
                                                 const displayTitle = item.adTitle || item.title || item.name || t('Product');
                                                 const fullTitle = t(item, 'title') || displayTitle;
-                                                // Support multiple bracket types: (, [, {, （
-                                                const bracketMatch = fullTitle.match(/[(（\[{]/);
-                                                const bracketIndex = bracketMatch ? bracketMatch.index : -1;
                                                 // Use line-clamp-2 for ads to show full title, truncate for regular items
                                                 const titleClass = item.isFromAd ? 'line-clamp-2' : 'truncate';
 
+                                                // For special offers, show full title without bracket splitting
+                                                if (item.isFromAd) {
+                                                    return <h3 className={`text-sm font-medium text-gray-900 dark:text-white ${titleClass}`} title={fullTitle}>{fullTitle}</h3>;
+                                                }
+
+                                                // For regular items, apply bracket splitting logic
+                                                const bracketMatch = fullTitle.match(/[(（\[{]/);
+                                                const bracketIndex = bracketMatch ? bracketMatch.index : -1;
+
                                                 if (bracketIndex !== -1) {
                                                     const mainTitle = fullTitle.substring(0, bracketIndex).trim();
-                                                    // Remove the opening bracket but keep the content and closing bracket? 
-                                                    // Usually we want just the content inside? 
-                                                    // Existing logic was substring(bracketIndex). -> which includes the bracket.
-                                                    // Let's keep it consistent: "(1kg)"
                                                     const bracketText = fullTitle.substring(bracketIndex).trim();
                                                     return (
                                                         <div>

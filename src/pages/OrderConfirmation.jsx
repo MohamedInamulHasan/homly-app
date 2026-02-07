@@ -257,6 +257,11 @@ const OrderConfirmation = () => {
                                                         // Use line-clamp-2 for ads to show full title, truncate for regular items
                                                         const titleClass = item.isFromAd ? 'line-clamp-2' : 'truncate';
 
+                                                        // For special offers, skip bracket parsing and show full title
+                                                        if (item.isFromAd) {
+                                                            return <p className={`font-medium text-gray-900 dark:text-white ${titleClass}`} title={fullTitle}>{fullTitle}</p>;
+                                                        }
+
                                                         if (bracketIndex !== -1) {
                                                             const mainTitle = fullTitle.substring(0, bracketIndex).trim();
                                                             const bracketText = fullTitle.substring(bracketIndex).trim();
