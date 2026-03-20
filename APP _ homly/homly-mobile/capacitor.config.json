@@ -1,0 +1,25 @@
+{
+  "appId": "com.homly.app",
+  "appName": "Homly",
+  "webDir": "public",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "https://homly-app.vercel.app/",
+    "androidScheme": "https",
+    "cleartext": true,
+    "allowNavigation": [
+      "*.google.com",
+      "*.googleapis.com",
+      "*.gstatic.com",
+      "*.googleusercontent.com"
+    ]
+  },
+  "plugins": {
+    "Geolocation": {
+      "permissions": [
+        "location"
+      ]
+    }
+  },
+  "androidUserAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
+}

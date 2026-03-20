@@ -1,0 +1,219 @@
+import { useState, useEffect } from 'react';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useProducts } from '../hooks/queries/useProducts';
+import { useLanguage } from '../context/LanguageContext';
+import { useData } from '../context/DataContext'; // Import useData
+import SimpleProductCard from '../components/SimpleProductCard';
+import ProductCard from '../components/ProductCard';
+import PullToRefreshLayout from '../components/PullToRefreshLayout';
+import { ChevronLeft, Zap } from 'lucide-react';
+import { isStoreOpen } from '../utils/storeHelpers';
+import { useStores } from '../hooks/queries/useStores';
+
+const ProductGroupProducts = () => {
+    const { productName } = useParams();
+    const { t } = useLanguage();
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const { fastMode, toggleFastMode } = useData(); // Global state
+
+    // Fetch stores for status check
+    const { data: rawStores = [] } = useStores();
+    const stores = Array.isArray(rawStores) ? rawStores : (rawStores?.data || []);
+
+    // Fetch all products - we catch them from cache/query
+    const { data: rawProducts = [], isLoading } = useProducts();
+    const products = Array.isArray(rawProducts) ? rawProducts : (rawProducts?.data || []);
+
+    // Filter products by name (case-insensitive)
+    const decodedName = decodeURIComponent(productName);
+
+    const storeIdParam = searchParams.get('storeId');
+
+    const groupProducts = products
+        .filter(product => {
+            const productTitle = (product.title || '').trim();
+            const searchTitle = decodedName.trim();
+            const isExactTitleSearch = searchTitle.includes('(');
+
+            let matchesName;
+            if (isExactTitleSearch) {
+                // URL has brackets e.g. "Pizza (100)"
+                // Try 1: exact full-title match  → "Pizza (100)" === "Pizza (100)"
+                const exactMatch = productTitle.toLowerCase() === searchTitle.toLowerCase();
+
+                if (!exactMatch) {
+                    // Try 2: synthetically built title — DB has "Pizza" + unit "100"
+                    const searchBase = searchTitle.substring(0, searchTitle.indexOf('(')).trim().toLowerCase();
+                    const searchBracket = searchTitle.match(/\(([^)]+)\)/)?.[1]?.toLowerCase() || '';
+
+                    const productBase = productTitle.split('(')[0].trim().toLowerCase();
+                    const productBracketFromTitle = productTitle.match(/\(([^)]+)\)/)?.[1]?.toLowerCase() || '';
+                    const productBracketFromUnit = (product.unit || '').toLowerCase();
+
+                    matchesName = productBase === searchBase &&
+                        (productBracketFromTitle === searchBracket || productBracketFromUnit === searchBracket);
+                } else {
+                    matchesName = true;
+                }
+            } else {
+                // Plain base name: match by base title (before any bracket)
+                const baseProductTitle = productTitle.split('(')[0].trim().toLowerCase();
+                matchesName = baseProductTitle === searchTitle.toLowerCase();
+            }
+
+            const isAvailable = product.isAvailable !== false;
+
+            // Apply storeId filter when present in the URL.
+            // - From store page: storeId IS set → only show that store's products ✅
+            // - From Home page group click: no storeId in URL → show all stores ✅
+            let matchesStore = true;
+            if (storeIdParam) {
+                const pStoreId = product.storeId?._id || product.storeId;
+                matchesStore = pStoreId && (String(pStoreId) === String(storeIdParam));
+            }
+
+            return matchesName && isAvailable && matchesStore;
+        })
+        .sort((a, b) => {
+            // Sort: Open stores first, then by price
+            const storeA = stores.find(s => (s._id || s.id) === (a.storeId?._id || a.storeId));
+            const storeB = stores.find(s => (s._id || s.id) === (b.storeId?._id || b.storeId));
+
+            // Default to TRUE (Open) if store is missing
+            const isOpenA = storeA ? isStoreOpen(storeA) : true;
+            const isOpenB = storeB ? isStoreOpen(storeB) : true;
+
+            if (isOpenA && !isOpenB) return -1;
+            if (!isOpenA && isOpenB) return 1;
+            return Number(a.price) - Number(b.price);
+        });
+
+    return (
+        <PullToRefreshLayout>
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20 transition-colors duration-200">
+                {/* Header */}
+                <div className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-10">
+                    <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
+                        <div className="flex-1 min-w-0 flex items-center gap-4">
+                            <button
+                                onClick={() => navigate(-1)}
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                            >
+                                <ChevronLeft className="text-gray-600 dark:text-white" size={24} />
+                            </button>
+                            <div className="flex-1 min-w-0">
+                                {(() => {
+                                    const fullTitle = t(decodedName);
+                                    const bracketIndex = fullTitle.indexOf('(');
+
+                                    // If URL already contains bracket text, use it directly
+                                    if (bracketIndex !== -1) {
+                                        const mainTitle = fullTitle.substring(0, bracketIndex).trim();
+                                        const bracketText = fullTitle.substring(bracketIndex).trim();
+                                        const isLongTitle = mainTitle.length > 20;
+
+                                        return (
+                                            <div className="flex flex-col min-w-0">
+                                                <h1 className={`font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent capitalize truncate ${isLongTitle ? 'text-base sm:text-lg' : 'text-xl md:text-2xl'}`} title={mainTitle}>
+                                                    {mainTitle}
+                                                </h1>
+                                                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium truncate" title={bracketText}>
+                                                    {bracketText}
+                                                </span>
+                                            </div>
+                                        );
+                                    }
+
+                                    // Fallback: extract bracket text from first loaded product's title or translation fields
+                                    const firstProduct = groupProducts[0];
+                                    let bracketText = '';
+
+                                    if (firstProduct) {
+                                        const pTitle = firstProduct.title || '';
+                                        const pTitleTa = firstProduct.title_ta || '';
+                                        const bracketMatch = pTitle.match(/\(([^)]+)\)/);
+
+                                        if (bracketMatch) {
+                                            bracketText = bracketMatch[0];
+                                        } else if (pTitleTa && pTitleTa !== pTitle) {
+                                            bracketText = `(${pTitleTa})`;
+                                        }
+                                    }
+
+                                    const isLongTitle = fullTitle.length > 20;
+
+                                    if (bracketText) {
+                                        return (
+                                            <div className="flex flex-col min-w-0">
+                                                <h1 className={`font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent capitalize truncate ${isLongTitle ? 'text-base sm:text-lg' : 'text-xl md:text-2xl'}`} title={fullTitle}>
+                                                    {fullTitle}
+                                                </h1>
+                                                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium truncate" title={bracketText}>
+                                                    {bracketText}
+                                                </span>
+                                            </div>
+                                        );
+                                    }
+
+                                    return (
+                                        <h1 className={`font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent capitalize truncate ${isLongTitle ? 'text-base sm:text-lg' : 'text-xl md:text-2xl'}`} title={fullTitle}>
+                                            {fullTitle}
+                                        </h1>
+                                    );
+                                })()}
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+
+                <div className="max-w-7xl mx-auto px-4 py-6">
+                    {isLoading ? (
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                            {[...Array(10)].map((_, i) => (
+                                <div key={i} className="bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-sm border border-gray-100 dark:border-gray-700 animate-pulse flex flex-col h-full">
+                                    <div className="w-full aspect-square bg-gray-200 dark:bg-gray-700 rounded-xl mb-3"></div>
+                                    <div className="space-y-2 flex-grow">
+                                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mt-2"></div>
+                                    </div>
+                                    <div className="mt-3">
+                                        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-lg w-full"></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : groupProducts.length > 0 ? (
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                            {groupProducts.map(product => (
+                                fastMode ? (
+                                    <SimpleProductCard key={product._id || product.id} product={product} isFastPurchase={true} />
+                                ) : (
+                                    <ProductCard key={product._id || product.id} product={product} showCartControls={false} />
+                                )
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center h-64 text-center">
+                            <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                                <span className="text-4xl">🛍️</span>
+                            </div>
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                                {t('No products found')}
+                            </h2>
+                            <p className="text-gray-500 dark:text-gray-400">
+                                {t('We couldn\'t find any products with this name.')}
+                            </p>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </PullToRefreshLayout>
+    );
+};
+
+export default ProductGroupProducts;

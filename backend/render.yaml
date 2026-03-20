@@ -1,0 +1,16 @@
+# Render configuration
+# This file is optional but helps Render auto-detect your service
+
+services:
+  - type: web
+    name: homly-backend
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
