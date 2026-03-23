@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config(); // Must be first!
 
 import express from 'express';
+import mongoose from 'mongoose';
 import cors from 'cors';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
@@ -56,6 +57,31 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // Routes
 app.get('/', (req, res) => {
     res.send(`API is running... (Restarted: ${new Date().toISOString()})`);
+});
+
+// Health Check
+app.get('/api/health', async (req, res) => {
+    try {
+        const dbStatus = mongoose.connection.readyState;
+        const dbStatusMap = ['disconnected', 'connected', 'connecting', 'disconnecting'];
+        
+        res.json({
+            status: 'online',
+            timestamp: new Date().toISOString(),
+            database: {
+                status: dbStatusMap[dbStatus],
+                readyState: dbStatus,
+                host: mongoose.connection.host || 'unknown'
+            },
+            environment: {
+                node_env: process.env.NODE_ENV,
+                has_mongo_uri: !!process.env.MONGODB_URI,
+                has_jwt_secret: !!process.env.JWT_SECRET
+            }
+        });
+    } catch (err) {
+        res.status(500).json({ status: 'error', message: err.message });
+    }
 });
 
 app.use('/api/products', productRoutes);
