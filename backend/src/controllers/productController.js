@@ -83,7 +83,6 @@ export const getProducts = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            dbStatus: mongoose.connection.readyState, // 1 = connected
             count: products.length,
             total,
             page: pageNum,

@@ -99,19 +99,6 @@ const Home = () => {
     }, [openStoreProducts]);
 
     // Create a list of sections to display (Stores + Orphan Category fallbacks)
-    useEffect(() => {
-        if (!loadingProducts && rawProducts) {
-            console.log("💎 Diagnostic: rawProducts arrived, length:", Array.isArray(rawProducts) ? rawProducts.length : (rawProducts.data?.length || 0));
-            console.log("💎 Diagnostic: first 5 rawProducts:", (Array.isArray(rawProducts) ? rawProducts : (rawProducts.data || [])).slice(0, 5));
-        }
-        if (!loadingCategories && rawCategories) {
-            console.log("💎 Diagnostic: rawCategories arrived, length:", rawCategories.length);
-        }
-        if (!storesLoading && rawStores) {
-            console.log("💎 Diagnostic: stores arrived, length:", rawStores.length);
-        }
-    }, [loadingProducts, rawProducts, loadingCategories, rawCategories, storesLoading, rawStores]);
-
     const displaySections = useMemo(() => {
         const sections = [];
 
@@ -407,7 +394,7 @@ const Home = () => {
     */
 
     // Show error state if backend is unreachable
-    if (!loadingAll && products.length === 0 && (errorProducts || errorCategories)) {
+    if (!loadingAll && products.length === 0 && errorProducts) {
         return (
             <PullToRefreshLayout>
                 <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center">
@@ -417,27 +404,21 @@ const Home = () => {
                         </svg>
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                        {t('Connection Error')}
+                        {t('No Internet Connection')}
                     </h2>
-                    <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-100 dark:border-red-800/50 mb-8 max-w-md w-full">
-                        <p className="text-red-700 dark:text-red-400 text-sm font-medium mb-2">
-                             Debug Info:
-                        </p>
-                        <div className="text-left space-y-2 text-xs font-mono text-red-600 dark:text-red-300 break-all">
-                            <p>URL: {API_BASE_URL}</p>
-                            <p>Status: {errorProducts?.status || errorCategories?.status || 'Unknown'}</p>
-                            <p>Error: {errorProducts?.message || errorCategories?.message || 'Unknown'}</p>
-                        </div>
-                    </div>
+                    <p className="text-gray-600 dark:text-gray-400 max-w-md mb-8">
+                        {t('Please check your internet connection and try again.')}
+                        <br />
+                        <span className="text-sm font-mono mt-2 block bg-gray-100 dark:bg-gray-800 p-2 rounded">
+                            {errorProducts?.message || 'Network Error'}
+                        </span>
+                    </p>
                     <button
                         onClick={() => window.location.reload()}
                         className="bg-blue-600 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-blue-700 transition"
                     >
                         {t('Retry Connection')}
                     </button>
-                    <p className="mt-4 text-xs text-gray-500">
-                        Check your Vercel Environment Variables if the URL above is incorrect.
-                    </p>
                 </div>
             </PullToRefreshLayout>
         );
