@@ -99,6 +99,19 @@ const Home = () => {
     }, [openStoreProducts]);
 
     // Create a list of sections to display (Stores + Orphan Category fallbacks)
+    useEffect(() => {
+        if (!loadingProducts && rawProducts) {
+            console.log("💎 Diagnostic: rawProducts arrived, length:", Array.isArray(rawProducts) ? rawProducts.length : (rawProducts.data?.length || 0));
+            console.log("💎 Diagnostic: first 5 rawProducts:", (Array.isArray(rawProducts) ? rawProducts : (rawProducts.data || [])).slice(0, 5));
+        }
+        if (!loadingCategories && rawCategories) {
+            console.log("💎 Diagnostic: rawCategories arrived, length:", rawCategories.length);
+        }
+        if (!storesLoading && rawStores) {
+            console.log("💎 Diagnostic: stores arrived, length:", rawStores.length);
+        }
+    }, [loadingProducts, rawProducts, loadingCategories, rawCategories, storesLoading, rawStores]);
+
     const displaySections = useMemo(() => {
         const sections = [];
 
