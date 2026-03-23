@@ -15,8 +15,8 @@ export const useAds = () => {
             const response = await apiService.getAds();
             return response.data;
         },
-        staleTime: 10 * 60 * 1000, // 10 minutes (ads change infrequently)
-        refetchInterval: 5000,
+        staleTime: 10 * 60 * 1000,
+        refetchInterval: 60000,
     });
 };
 

@@ -15,8 +15,8 @@ export const useStores = () => {
             const response = await apiService.getStores();
             return response.data;
         },
-        staleTime: 60 * 1000, // 1 minute
-        refetchInterval: 2000,
+        staleTime: 60 * 1000,
+        refetchInterval: 60000,
     });
 };
 

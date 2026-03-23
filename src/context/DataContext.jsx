@@ -395,11 +395,11 @@ export const DataProvider = ({ children }) => {
             // Start interval loop
             const intervalId = setInterval(() => {
                 backgroundRefresh();
-            }, 2000); // Poll every 2 seconds for snappier updates
+            }, 60000); // Poll every 60 seconds (reduced from 2s)
 
             // Cleanup
             return () => clearInterval(intervalId);
-        }, 2000);
+        }, 5000); // Increased initial delay to 5s
 
         return () => clearTimeout(initialTimer);
     }, []);

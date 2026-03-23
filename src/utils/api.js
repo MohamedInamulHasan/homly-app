@@ -7,11 +7,12 @@ import axios from 'axios';
 // 2. Localhost (desktop): http://127.0.0.1:5173 -> http://127.0.0.1:5000/api
 // 3. Mobile LAN (dynamic): http://192.168.x.x:5173 -> http://192.168.x.x:5000/api
 const hostname = window.location.hostname;
-const isProduction = hostname.includes('vercel.app') || hostname.includes('onrender.com');
+const isProduction = hostname.includes('vercel.app') || hostname.includes('onrender.com') || (import.meta.env.MODE === 'production');
 
+// Prioritize environment variable, then production fallback, then localhost
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (
     isProduction
-        ? 'https://homly-backend-00kk.onrender.com/api' // Fallback for Vercel
+        ? 'https://homly-backend-00kk.onrender.com/api' 
         : (hostname === 'localhost' || hostname === '127.0.0.1'
             ? 'http://127.0.0.1:5000/api'
             : `http://${hostname}:5000/api`)

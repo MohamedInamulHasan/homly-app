@@ -22,10 +22,9 @@ export const useProducts = (params = DEFAULT_PARAMS) => {
             // Handle both { data: [...] } and direct [...] responses
             return response?.data || (Array.isArray(response) ? response : []);
         },
-        staleTime: 30 * 1000, // 30 seconds (reduced from 5 mins to ensure fresh data)
-        refetchInterval: 2000, // Auto-refresh every 2 seconds for faster updates
-        keepPreviousData: true,
-        retry: false, // Stop infinite retries on error
+        staleTime: 60 * 1000, 
+        refetchInterval: 60000, // Reduced from 2s to 60s to prevent API spam
+        retry: 1, 
         onError: (err) => console.error("❌ useProducts Fetch Error:", err)
     });
 };
