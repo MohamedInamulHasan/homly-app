@@ -476,7 +476,7 @@ const OrderDetails = () => {
                                 {t('No, Keep')}
                             </button>
                             <button
-                                onClick={confirmOrderAction}
+                                onClick={confirmCancelOrder}
                                 className="flex-1 py-3.5 text-white bg-red-600 hover:bg-red-700 rounded-2xl font-bold shadow-md shadow-red-500/10 transition-colors"
                             >
                                 {t('Yes, Cancel')}
