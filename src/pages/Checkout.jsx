@@ -66,6 +66,7 @@ const Checkout = () => {
     // }, []);
     const [isEditingAddress, setIsEditingAddress] = useState(false); // Default to FALSE to prevent form blink
     const [isInitialized, setIsInitialized] = useState(false);
+    const [isDeliveryTimeOpen, setIsDeliveryTimeOpen] = useState(false);
 
     // Check if user is authenticated
     useEffect(() => {
@@ -681,8 +682,6 @@ const Checkout = () => {
                                     availableSlots.sort((a, b) => a.value.localeCompare(b.value));
 
                                     // Simple list without grouping
-
-                                    const [isOpen, setIsOpen] = useState(false);
                                     const selectedSlot = availableSlots.find(s => s.value === formData.deliveryTime);
 
                                     return (
@@ -690,7 +689,7 @@ const Checkout = () => {
                                             {/* Dropdown Trigger */}
                                             <button
                                                 type="button"
-                                                onClick={() => setIsOpen(!isOpen)}
+                                                onClick={() => setIsDeliveryTimeOpen(!isDeliveryTimeOpen)}
                                                 className={`w-full relative overflow-hidden rounded-2xl border transition-all duration-300 group ${formData.deliveryTime
                                                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                                                     : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300 dark:hover:border-blue-700'
@@ -710,7 +709,7 @@ const Checkout = () => {
                                                             </h3>
                                                         </div>
                                                     </div>
-                                                    <div className={`transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+                                                    <div className={`transform transition-transform duration-300 ${isDeliveryTimeOpen ? 'rotate-180' : ''}`}>
                                                         <div className="bg-white dark:bg-gray-700 rounded-full p-1.5 border border-gray-100 dark:border-gray-600">
                                                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-gray-500">
                                                                 <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -727,7 +726,7 @@ const Checkout = () => {
 
                                             {/* Dropdown Content */}
                                             <AnimatePresence>
-                                                {isOpen && (
+                                                {isDeliveryTimeOpen && (
                                                     <motion.div
                                                         initial={{ opacity: 0, y: -10, scale: 0.98 }}
                                                         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -745,7 +744,7 @@ const Checkout = () => {
                                                                 </div>
                                                             ) : (
                                                                 <div className="p-3">
-                                                                    {periods.length === 0 ? (
+                                                                    {availableSlots.length === 0 ? (
                                                                         <div className="p-8 text-center text-gray-500">
                                                                             <div className="bg-gray-50 dark:bg-gray-700/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
                                                                                 <Clock size={24} className="opacity-50" />
@@ -760,7 +759,7 @@ const Checkout = () => {
                                                                                     type="button"
                                                                                     onClick={() => {
                                                                                         setFormData({ ...formData, deliveryTime: slot.value });
-                                                                                        setIsOpen(false);
+                                                                                        setIsDeliveryTimeOpen(false);
                                                                                     }}
                                                                                     className={`py-3 px-2 rounded-xl text-[11px] sm:text-sm font-medium whitespace-nowrap transition-all duration-200 border ${formData.deliveryTime === slot.value
                                                                                         ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200 dark:shadow-blue-900/20 scale-[0.98]'
@@ -780,7 +779,7 @@ const Checkout = () => {
                                             </AnimatePresence>
 
                                             {/* Instructions - Only show when closed/empty */}
-                                            {!formData.deliveryTime && !isOpen && (
+                                            {!formData.deliveryTime && !isDeliveryTimeOpen && (
                                                 <p className="mt-2 text-xs text-center text-gray-400 animate-pulse">
                                                     {t('Tap the box above to see available times')}
                                                 </p>
