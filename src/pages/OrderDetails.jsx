@@ -60,31 +60,7 @@ const OrderDetails = () => {
 
     // Show spinner ONLY if we don't have the order AND we are loading.
     // If we have the order, show it immediately even if background refresh is happening.
-    // Timeout safety for loading state
-    const [showTimeout, setShowTimeout] = useState(false);
-    useEffect(() => {
-        const timer = setTimeout(() => setShowTimeout(true), 8000); // Show help after 8 seconds
-        return () => clearTimeout(timer);
-    }, []);
-
     if (!order && (loading.orders || loadingSingle)) {
-        if (showTimeout) {
-            return (
-                <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center p-4">
-                    <LoadingSpinner />
-                    <p className="mt-4 text-gray-500 text-center">Loading is taking longer than expected...</p>
-                    <button
-                        onClick={() => window.location.reload()}
-                        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                    >
-                        {t('Reload Page')}
-                    </button>
-                    <Link to="/orders" className="mt-4 text-blue-600 hover:underline">
-                        {t('Back to Orders List')}
-                    </Link>
-                </div>
-            );
-        }
         return <LoadingSpinner />;
     }
 

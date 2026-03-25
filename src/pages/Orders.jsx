@@ -90,15 +90,6 @@ const Orders = () => {
 
 
 
-    // Safety timeout to prevent infinite spinner
-    const [showTimeout, setShowTimeout] = useState(false);
-    useEffect(() => {
-        if (loadingOrders) {
-            const timer = setTimeout(() => setShowTimeout(true), 5000); // Reduced to 5s for faster feedback
-            return () => clearTimeout(timer);
-        }
-    }, [loadingOrders]);
-
     // Helper for emergency logout
     const handleEmergencyLogout = () => {
         localStorage.removeItem('userInfo');
@@ -107,31 +98,7 @@ const Orders = () => {
     };
 
     // NO BLOCKING LOADER: Allow the page structure to render immediately
-    // We will handle 'loadingOrders' state inside the return block by showing a skeleton or spinner in the list area.
-
-    // Just show timeout logic as a toast/banner if needed, or rely on internal list loading state.
-    if (showTimeout && loadingOrders) {
-        return (
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center p-4">
-                <LoadingSpinner />
-                <p className="mt-4 text-gray-500 text-center">{t('Loading is taking longer than expected...')}</p>
-                <div className="flex flex-col gap-3 mt-6 w-full max-w-xs">
-                    <button
-                        onClick={() => window.location.reload()}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
-                    >
-                        {t('Reload Page')}
-                    </button>
-                    <button
-                        onClick={handleEmergencyLogout}
-                        className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                    >
-                        {t('Sign Out')}
-                    </button>
-                </div>
-            </div>
-        );
-    }
+    // We handle 'loadingOrders' state inside the return block by showing a beautiful skeleton loader.
 
     return (
         <PullToRefreshLayout>
