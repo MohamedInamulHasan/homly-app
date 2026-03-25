@@ -285,8 +285,8 @@ const OrderDetails = () => {
                                     </div>
                                     {/* Unit Badge */}
                                     {(item.unit || item.product?.unit) && (
-                                        <div className="absolute bottom-0 right-0 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-tl-lg z-10 pointer-events-none shadow-sm">
-                                            <span className="text-[9px] font-bold text-gray-900 leading-none block">
+                                        <div className="absolute bottom-0 right-0 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-tl-xl rounded-br-[11px] z-10 pointer-events-none shadow-[0_-2px_4px_rgba(0,0,0,0.05)] border-t border-l border-white/50">
+                                            <span className="text-[10px] font-extrabold text-gray-900 tracking-tight leading-none block">
                                                 {item.unit || item.product?.unit}
                                             </span>
                                         </div>
