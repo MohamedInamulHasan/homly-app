@@ -2,6 +2,8 @@ import ServiceRequest from '../models/ServiceRequest.js';
 import Service from '../models/Service.js';
 import { sendServiceRequestNotification } from '../services/emailService.js';
 import { sendServiceRequestTelegramNotification } from '../services/telegramService.js';
+import { sendServiceRequestVoiceAlert } from '../services/voiceService.js';
+
 
 // @desc    Create a new service request
 // @route   POST /api/service-requests
@@ -61,6 +63,16 @@ export const createServiceRequest = async (req, res) => {
             console.error('❌ Failed to send service request Telegram notification:', telegramError);
             // Don't fail the request if Telegram fails
         }
+
+        // Send Voice alert via IFTTT (non-blocking)
+        try {
+            sendServiceRequestVoiceAlert(createdRequest)
+                .then(result => console.log('📞 Voice alert service result:', result))
+                .catch(err => console.error('❌ Failed to send Voice alert:', err));
+        } catch (voiceError) {
+            console.error('❌ Voice alert trigger error:', voiceError);
+        }
+
 
         res.status(201).json(createdRequest);
     } catch (error) {

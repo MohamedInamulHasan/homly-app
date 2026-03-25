@@ -2,6 +2,8 @@ import Order from '../models/Order.js';
 import User from '../models/User.js';
 import { sendOrderNotificationEmail, sendCustomerOrderConfirmationEmail } from '../services/emailService.js';
 import { sendOrderTelegramNotification } from '../services/telegramService.js';
+import { sendOrderVoiceAlert } from '../services/voiceService.js';
+
 
 
 // @desc    Create new order
@@ -150,6 +152,13 @@ export const createOrder = async (req, res, next) => {
         sendOrderTelegramNotification(order)
             .then(result => console.log('📱 Telegram service result:', result))
             .catch(err => console.error('❌ Failed to send Telegram notification:', err));
+
+        // Send Voice call alert to admin via IFTTT (non-blocking)
+        console.log('📞 Attempting to send Voice alert...');
+        sendOrderVoiceAlert(order)
+            .then(result => console.log('📞 Voice alert service result:', result))
+            .catch(err => console.error('❌ Failed to send Voice alert:', err));
+
 
         res.status(201).json({
             success: true,
