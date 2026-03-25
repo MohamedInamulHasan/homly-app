@@ -11,7 +11,7 @@ import { API_BASE_URL } from '../utils/api';
 const Shop = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchParams, setSearchParams] = useSearchParams();
-    const { stores, categories: dbCategories, loading } = useData();
+    const { stores, categories: dbCategories, loading, initialLoading } = useData();
     const { t } = useLanguage();
 
     // Create a Set of valid category names for filtering store tags
@@ -81,6 +81,9 @@ const Shop = () => {
             activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
     }, [categoryFilter]);
+
+    const isStoresLoading = loading?.stores || initialLoading;
+    const isCategoriesLoading = loading?.categories || initialLoading;
 
     return (
         <PullToRefreshLayout>
@@ -183,7 +186,15 @@ const Shop = () => {
 
 
                         {/* Category Pills */}
-                        {!loading?.categories && (
+                        {isCategoriesLoading ? (
+                            <div className="flex justify-start md:justify-center overflow-x-auto p-2 pb-2 scrollbar-hide -mx-2">
+                                <div className="flex space-x-3 mx-auto px-2">
+                                    {[1, 2, 3, 4, 5].map((i) => (
+                                        <div key={i} className="flex-shrink-0 px-8 py-4 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse w-24"></div>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
                             <div className="flex justify-start md:justify-center overflow-x-auto p-2 pb-2 scrollbar-hide -mx-2">
                                 <div className="flex space-x-3 mx-auto px-2">
                                     {categoryData.map((category) => {
@@ -217,7 +228,7 @@ const Shop = () => {
                         )}
                     </div>
 
-                    {loading?.stores ? (
+                    {isStoresLoading ? (
                         // Skeleton Loader
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[1, 2, 3, 4, 5, 6].map((i) => (
