@@ -107,10 +107,70 @@ ${order.items.map((item, idx) => `${idx + 1}. ${item.name || item.product?.title
         });
 
         console.log('✅ Telegram notification sent successfully.');
+        
+        // Also notify delivery boys who are on duty
+        await notifyDeliveryBoys(order);
+        
         return true;
     } catch (error) {
         console.error('❌ Failed to send Telegram notification:', error.response?.data || error.message);
         return false;
+    }
+};
+
+/**
+ * Notifies all on-duty delivery boys about a new order
+ * @param {Object} order - The order object
+ */
+export const notifyDeliveryBoys = async (order) => {
+    try {
+        const token = process.env.TELEGRAM_BOT_TOKEN;
+        if (!token || token === 'REPLACE_TOKEN') return;
+
+        // Import User model dynamically to avoid circular dependencies if any
+        const User = (await import('../models/User.js')).default;
+
+        // Find all active delivery boys
+        const deliveryBoys = await User.find({
+            role: 'delivery_boy',
+            'deliverySettings.isActive': true,
+            'deliverySettings.telegramChatId': { $exists: true, $ne: '' }
+        });
+
+        if (deliveryBoys.length === 0) {
+            console.log('ℹ️ No active delivery boys found for Telegram notification.');
+            return;
+        }
+
+        for (const boy of deliveryBoys) {
+            // Notify all active delivery boys regardless of time
+            console.log(`📱 Notifying delivery boy: ${boy.name} (${boy.deliverySettings.telegramChatId})`);
+            
+            const boyMessage = `
+🚚 <b>NEW DELIVERY ASSIGNMENT AVAILABLE</b>
+━━━━━━━━━━━━━━━━━━━━
+📦 <b>Order ID:</b> #${order._id.toString().slice(-8).toUpperCase()}
+💰 <b>Total Amount:</b> ₹${order.total.toFixed(0)}
+👤 <b>Customer:</b> ${order.shippingAddress?.name || order.user?.name || 'Customer'}
+📍 <b>Location:</b> ${order.shippingAddress?.street}, ${order.shippingAddress?.city}
+📱 <b>Phone:</b> ${order.shippingAddress?.mobile || 'N/A'}
+
+🔗 <b><a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/admin">Open Admin Panel to Accept</a></b>
+━━━━━━━━━━━━━━━━━━━━
+`.trim();
+
+            try {
+                await axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
+                    chat_id: boy.deliverySettings.telegramChatId,
+                    text: boyMessage,
+                    parse_mode: 'HTML'
+                });
+            } catch (err) {
+                console.error(`❌ Failed to notify delivery boy ${boy.name}:`, err.response?.data || err.message);
+            }
+        }
+    } catch (error) {
+        console.error('❌ Error in notifyDeliveryBoys:', error.message);
     }
 };
 

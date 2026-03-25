@@ -180,6 +180,9 @@ export const getOrders = async (req, res, next) => {
 
         if (req.user && req.user.role === 'admin') {
             query = {}; // Admin sees all orders
+        } else if (req.user && req.user.role === 'delivery_boy') {
+            // Delivery boy sees all orders, exactly like the admin panel
+            query = {};
         } else if (req.user && req.user.role === 'store_admin' && req.user.storeId) {
             // Store Admin sees:
             // 1. Orders containing items from their store (Sales)
@@ -211,6 +214,11 @@ export const getOrders = async (req, res, next) => {
             .populate({
                 path: 'user',
                 select: 'name email mobile',
+                options: { lean: true }
+            })
+            .populate({
+                path: 'deliveredBy',
+                select: 'name mobile',
                 options: { lean: true }
             })
             .sort({ createdAt: -1 })
@@ -249,6 +257,7 @@ export const getOrder = async (req, res, next) => {
         // Note: With lean(), order.user is an ObjectId, so we use string comparison
         const isOwner = order.user.toString() === req.user._id.toString();
         const isAdmin = req.user.role === 'admin';
+        const isDeliveryBoy = req.user.role === 'delivery_boy';
 
         let isStoreAdmin = false;
         if (req.user.role === 'store_admin' && req.user.storeId) {
@@ -259,7 +268,7 @@ export const getOrder = async (req, res, next) => {
             );
         }
 
-        if (!isAdmin && !isOwner && !isStoreAdmin) {
+        if (!isAdmin && !isOwner && !isStoreAdmin && !isDeliveryBoy) {
             res.status(403);
             throw new Error('Not authorized to view this order');
         }
@@ -283,6 +292,13 @@ export const updateOrderStatus = async (req, res, next) => {
         if (!order) {
             res.status(404);
             throw new Error('Order not found');
+        }
+
+        // Security Guard: Customers can only cancel if status is 'Processing'
+        const isCustomer = req.user.role === 'customer' || !req.user.role;
+        if (isCustomer && req.body.status === 'Cancelled' && order.status !== 'Processing') {
+            res.status(403);
+            throw new Error(`Order cannot be cancelled once it is ${order.status}`);
         }
 
         // Check if we are cancelling the order
@@ -309,6 +325,17 @@ export const updateOrderStatus = async (req, res, next) => {
         }
 
         order.status = req.body.status || order.status;
+        
+        // Handle delivery boy assignment
+        if (req.body.deliveredBy) {
+            order.deliveredBy = req.body.deliveredBy;
+        }
+
+        // If a delivery boy accepts an order, set status to 'Out for Delivery' automatically if it was Processing/Shipped
+        if (req.user.role === 'delivery_boy' && (order.status === 'Processing' || order.status === 'Shipped') && !order.deliveredBy) {
+            order.deliveredBy = req.user._id;
+            order.status = 'Out for Delivery';
+        }
 
         if (req.body.status === 'Delivered') {
             order.deliveredAt = Date.now();
@@ -330,12 +357,22 @@ export const updateOrderStatus = async (req, res, next) => {
 // @access  Private
 export const deleteOrder = async (req, res, next) => {
     try {
-        const order = await Order.findByIdAndDelete(req.params.id);
+        const order = await Order.findById(req.params.id);
 
         if (!order) {
             res.status(404);
             throw new Error('Order not found');
         }
+
+        // Security Guard: Customers can only delete Cancelled or Failed orders
+        const isCustomer = req.user.role === 'customer' || !req.user.role;
+        const restrictedStatuses = ['Processing', 'Shipped', 'Out for Delivery', 'Delivered'];
+        if (isCustomer && restrictedStatuses.includes(order.status)) {
+            res.status(403);
+            throw new Error(`Active or completed orders cannot be deleted. Current status: ${order.status}`);
+        }
+
+        await order.deleteOne();
 
         res.status(200).json({
             success: true,

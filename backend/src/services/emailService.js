@@ -219,6 +219,10 @@ export const sendOrderNotificationEmail = async (order) => {
         console.log('✅ Order notification email sent successfully!');
         console.log('✅ Message ID:', info.messageId);
         console.log('✅ Response:', info.response);
+
+        // Also notify delivery boys who are on duty
+        await notifyDeliveryBoysEmail(order);
+
         return { success: true, messageId: info.messageId };
     } catch (error) {
         console.error('❌ Failed to send order notification email:', error);
@@ -228,6 +232,71 @@ export const sendOrderNotificationEmail = async (order) => {
             command: error.command
         });
         throw error;
+    }
+};
+
+/**
+ * Notifies all on-duty delivery boys via email
+ * @param {Object} order - The order object
+ */
+export const notifyDeliveryBoysEmail = async (order) => {
+    try {
+        const User = (await import('../models/User.js')).default;
+        
+        // Find all active delivery boys with emails
+        const deliveryBoys = await User.find({
+            role: 'delivery_boy',
+            'deliverySettings.isActive': true,
+            email: { $exists: true, $ne: '' }
+        });
+
+        if (deliveryBoys.length === 0) return;
+
+        const now = new Date();
+        const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+        for (const boy of deliveryBoys) {
+            const { start, end } = boy.deliverySettings.workTimings;
+            if (currentTime >= start && currentTime <= end) {
+                console.log(`📧 Sending email alert to delivery boy: ${boy.name} (${boy.email})`);
+                
+                const shippingAddr = order.shippingAddress || {};
+                const customerName = shippingAddr.name || order.user?.name || 'Customer';
+                
+                const mailOptions = {
+                    from: `"ILY mart Orders" <${process.env.EMAIL_USER}>`,
+                    to: boy.email,
+                    subject: `New Delivery Assignment: Order #${order._id.toString().slice(-8).toUpperCase()}`,
+                    html: `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px;">
+                            <h2 style="color: #2563eb; margin-top: 0;">🚚 New Delivery Available</h2>
+                            <p>Hello ${boy.name}, a new order is ready for delivery.</p>
+                            
+                            <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                                <p style="margin: 5px 0;"><strong>Order ID:</strong> #${order._id.toString().slice(-8).toUpperCase()}</p>
+                                <p style="margin: 5px 0;"><strong>Total Amount:</strong> ₹${order.total.toFixed(0)}</p>
+                            </div>
+                            
+                            <h3 style="color: #1f2937;">Customer Details</h3>
+                            <p style="margin: 5px 0;"><strong>Name:</strong> ${customerName}</p>
+                            <p style="margin: 5px 0;"><strong>Phone:</strong> ${shippingAddr.mobile || 'N/A'}</p>
+                            <p style="margin: 5px 0;"><strong>Address:</strong> ${shippingAddr.street}, ${shippingAddr.city}</p>
+                            
+                            <div style="margin-top: 30px; text-align: center;">
+                                <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/admin" 
+                                   style="display: inline-block; padding: 12px 24px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                                    View in Admin Panel
+                                </a>
+                            </div>
+                        </div>
+                    `
+                };
+
+                await getTransporter().sendMail(mailOptions);
+            }
+        }
+    } catch (error) {
+        console.error('❌ Failed to send delivery boy email notifications:', error);
     }
 };
 

@@ -13,7 +13,7 @@ const OrderDetails = () => {
     const navigate = useNavigate();
     const { t } = useLanguage();
     const { orders, loading, stores, cancelOrder, setIsFooterHidden } = useData();
-    const { refreshUser } = useAuth();
+    const { user, refreshUser } = useAuth();
     const [cancelConfirmation, setCancelConfirmation] = useState(false);
 
     // Hide footer when cancel confirmation modal is open
@@ -85,7 +85,8 @@ const OrderDetails = () => {
     const getStatusColor = (status) => {
         switch (status) {
             case 'Delivered': return 'text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/30 border-green-200 dark:border-green-800';
-            case 'Shipped': return 'text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800';
+            case 'Shipped':
+            case 'Out for Delivery': return 'text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800';
             case 'Processing': return 'text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30 border-amber-200 dark:border-amber-800';
             case 'Cancelled': return 'text-red-700 dark:text-red-400 bg-red-100 dark:bg-red-900/30 border-red-200 dark:border-red-800';
             default: return 'text-gray-700 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700';
@@ -95,7 +96,8 @@ const OrderDetails = () => {
     const getStatusIcon = (status) => {
         switch (status) {
             case 'Delivered': return <CheckCircle size={20} />;
-            case 'Shipped': return <Truck size={20} />;
+            case 'Shipped':
+            case 'Out for Delivery': return <Truck size={20} />;
             case 'Processing': return <Clock size={20} />;
             case 'Cancelled': return <RotateCcw size={20} />;
             default: return null;
@@ -126,17 +128,17 @@ const OrderDetails = () => {
     const getTimelineSteps = (status) => {
         const steps = [
             { id: 'Processing', label: 'Order Placed', icon: Package },
-            { id: 'Shipped', label: 'Out for Delivery', icon: Truck },
+            { id: 'Out for Delivery', id2: 'Shipped', label: 'Out for Delivery', icon: Truck },
             { id: 'Delivered', label: 'Delivered', icon: CheckCircle },
         ];
 
-        const statusOrder = ['Processing', 'Shipped', 'Delivered'];
+        const statusOrder = ['Processing', 'Shipped', 'Out for Delivery', 'Delivered'];
         const currentIdx = statusOrder.indexOf(status === 'Cancelled' ? 'Processing' : status);
 
         return steps.map((step, idx) => ({
             ...step,
-            completed: idx <= currentIdx && status !== 'Cancelled',
-            current: step.id === status
+            completed: idx <= (currentIdx === 2 ? 1 : currentIdx >= 3 ? 2 : currentIdx) && status !== 'Cancelled',
+            current: step.id === status || step.id2 === status
         }));
     };
 
@@ -148,7 +150,13 @@ const OrderDetails = () => {
             <div className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 sticky top-0 z-30">
                 <div className="max-w-3xl mx-auto px-4 h-16 flex items-center gap-4">
                     <button
-                        onClick={() => navigate('/orders')}
+                        onClick={() => {
+                            if (user?.role === 'delivery_boy') {
+                                navigate('/admin');
+                            } else {
+                                navigate('/orders');
+                            }
+                        }}
                         className="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
                     >
                         <ArrowLeft className="text-gray-900 dark:text-white" size={24} />

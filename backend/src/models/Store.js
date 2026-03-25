@@ -17,7 +17,7 @@ const storeSchema = new mongoose.Schema({
     },
     city: {
         type: String,
-        required: true
+        default: 'Local'
     },
     timing: {
         type: String,

@@ -64,9 +64,10 @@ const Checkout = () => {
     //     };
     //     preFetchLocation();
     // }, []);
-    const [isEditingAddress, setIsEditingAddress] = useState(false); // Default to FALSE to prevent form blink
+    const [isEditingAddress, setIsEditingAddress] = useState(false);
     const [isInitialized, setIsInitialized] = useState(false);
     const [isDeliveryTimeOpen, setIsDeliveryTimeOpen] = useState(false);
+
 
     // Check if user is authenticated
     useEffect(() => {
@@ -658,31 +659,30 @@ const Checkout = () => {
                                 </label>
                                 {(() => {
                                     const now = new Date();
-                                    const todayThreshold = new Date(now.getTime() + 30 * 60000); // 30 min buffer
+                                    // 30-min buffer: never show a slot starting in < 30 mins
+                                    const threshold = new Date(now.getTime() + 30 * 60000);
+                                    // 3-hour window: only show slots within the next 3 hours
+                                    const windowEnd = new Date(now.getTime() + 3 * 60 * 60000);
 
-                                    const isPermanent = settings?.deliveryTimingType === 'permanent';
+                                    // Only use slots that admin has enabled in Settings
                                     const allowedSlots = settings?.deliveryTimes || [];
                                     const availableSlots = [];
 
                                     allowedSlots.forEach(timeValue => {
                                         const [hours, mins] = timeValue.split(':').map(Number);
-                                        const slotDateToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, mins);
-
-                                        // If permanent, show all slots. If dynamic, filter by current time buffer.
-                                        if (isPermanent || slotDateToday > todayThreshold) {
+                                        const slotTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, mins);
+                                        // Show only future slots within the 3-hour window
+                                        if (slotTime > threshold && slotTime <= windowEnd) {
                                             availableSlots.push({
-                                                value: timeValue, // Simplified value without prefix
+                                                value: timeValue,
                                                 label: formatDeliveryRange(timeValue),
-                                                hour: hours
                                             });
                                         }
                                     });
 
-                                    // Sort slots by time
                                     availableSlots.sort((a, b) => a.value.localeCompare(b.value));
-
-                                    // Simple list without grouping
-                                    const selectedSlot = availableSlots.find(s => s.value === formData.deliveryTime);
+                                    const displaySlots = availableSlots; // No artificial cap — show all in the 3-hr window
+                                    const selectedSlot = displaySlots.find(s => s.value === formData.deliveryTime);
 
                                     return (
                                         <div className="relative">
@@ -735,7 +735,7 @@ const Checkout = () => {
                                                         className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 z-50 overflow-hidden max-h-80 overflow-y-auto scrollbar-hide ring-1 ring-black/5"
                                                     >
                                                         <div className="p-2 space-y-2">
-                                                            {availableSlots.length === 0 ? (
+                                                            {displaySlots.length === 0 ? (
                                                                 <div className="p-8 text-center text-gray-500">
                                                                     <div className="bg-gray-50 dark:bg-gray-700/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
                                                                         <Clock size={24} className="opacity-50" />
@@ -744,7 +744,7 @@ const Checkout = () => {
                                                                 </div>
                                                             ) : (
                                                                 <div className="p-3">
-                                                                    {availableSlots.length === 0 ? (
+                                                                    {displaySlots.length === 0 ? (
                                                                         <div className="p-8 text-center text-gray-500">
                                                                             <div className="bg-gray-50 dark:bg-gray-700/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
                                                                                 <Clock size={24} className="opacity-50" />
@@ -753,7 +753,7 @@ const Checkout = () => {
                                                                         </div>
                                                                     ) : (
                                                                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                                                            {availableSlots.map((slot) => (
+                                                                            {displaySlots.map((slot) => (
                                                                                 <button
                                                                                     key={slot.value}
                                                                                     type="button"
@@ -786,7 +786,7 @@ const Checkout = () => {
                                             )}
                                         </div>
                                     );
-                                })()}
+                                })()} 
                             </div>
                         </div>
 

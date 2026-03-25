@@ -83,3 +83,34 @@ export const adminOrStoreAdmin = (req, res, next) => {
         return res.status(403).json({ message: 'Not authorized as admin or store admin' });
     }
 };
+
+// Admin OR Service Admin middleware
+export const adminOrServiceAdmin = (req, res, next) => {
+    if (req.user && (req.user.role === 'admin' || req.user.role === 'service_admin')) {
+        next();
+    } else {
+        console.error('⛔ Access Denied. User Role:', req.user ? req.user.role : 'No User');
+        return res.status(403).json({ message: 'Not authorized as admin or service admin' });
+    }
+};
+
+// Admin OR Delivery Boy middleware
+export const adminOrDelivery = (req, res, next) => {
+    if (req.user && (req.user.role === 'admin' || req.user.role === 'delivery_boy')) {
+        next();
+    } else {
+        console.error('⛔ Access Denied. User Role:', req.user ? req.user.role : 'No User');
+        return res.status(403).json({ message: 'Not authorized as admin or delivery boy' });
+    }
+};
+
+// Any Role with Admin Access (Admin, Store, Service, Delivery)
+export const anyAdmin = (req, res, next) => {
+    const roles = ['admin', 'store_admin', 'service_admin', 'delivery_boy'];
+    if (req.user && roles.includes(req.user.role)) {
+        next();
+    } else {
+        console.error('⛔ Access Denied. User Role:', req.user ? req.user.role : 'No User');
+        return res.status(403).json({ message: 'Not authorized' });
+    }
+};

@@ -331,53 +331,56 @@ const ProductDetails = () => {
                                         const desc = t(product, 'description');
                                         if (!desc) return null;
 
-                                        // 1. Initial Split & Flatten
-                                        let rawLines = desc.split('\n');
+                                        const normalizedDesc = desc.replace(/–|—/g, '-');
+                                        const groupedElements = [];
+
+                                        const firstPipe = normalizedDesc.indexOf('|');
+                                        const lastPipe = normalizedDesc.lastIndexOf('|');
+
+                                        let textBefore = normalizedDesc;
+                                        let textAfter = '';
+                                        let tableData = [];
+
+                                        if (firstPipe !== -1 && lastPipe > firstPipe) {
+                                            textBefore = normalizedDesc.substring(0, firstPipe);
+                                            textAfter = normalizedDesc.substring(lastPipe + 1);
+
+                                            const tableString = normalizedDesc.substring(firstPipe, lastPipe + 1);
+                                            const segments = tableString.split('|').map(s => s.trim()).filter(s => s.length > 0);
+                                            
+                                            segments.forEach(segment => {
+                                                const separatorIndex = segment.indexOf('-');
+                                                if (separatorIndex !== -1) {
+                                                    const col1 = segment.substring(0, separatorIndex).trim();
+                                                    const col2 = segment.substring(separatorIndex + 1).trim();
+                                                    tableData.push({ col1, col2 });
+                                                } else if (segment) {
+                                                    tableData.push({ col1: segment, col2: '' });
+                                                }
+                                            });
+                                        }
+
+                                        const textContent = (textBefore + (textBefore && textAfter ? '\n' : '') + textAfter).trim();
+                                        const rawLines = textContent ? textContent.split('\n') : [];
+
                                         let processedLines = rawLines.flatMap(line => {
                                             const trimmed = line.trim();
-                                            // Start/End with pipe usually indicates table row(s)
-                                            if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
-                                                return [line];
-                                            }
-                                            // Existing "Word - Value" split logic
+                                            if (!trimmed) return [];
                                             if (line.includes(' - ')) {
                                                 return line.split(/(?<!^)\s+(?=[a-zA-Z0-9]+\s+-)/);
                                             }
                                             return [line];
                                         });
 
-                                        // 2. Group Table Lines
-                                        const groupedElements = [];
-                                        let currentTableRows = [];
-
-                                        processedLines.forEach((line) => {
+                                        processedLines.forEach(line => {
                                             const trimmed = line.trim();
-                                            if (trimmed.startsWith('|') && trimmed.endsWith('|') && trimmed.includes('-')) {
-                                                // It's a table row (or multiple rows in one line)
-                                                // Split by pipe to get segments: "| A - B | C - D |" -> ["", " A - B ", " C - D ", ""]
-                                                const segments = trimmed.split('|').filter(s => s.trim().length > 0);
-                                                segments.forEach(segment => {
-                                                    const parts = segment.split('-');
-                                                    if (parts.length >= 2) {
-                                                        const col1 = parts[0].trim();
-                                                        const col2 = parts.slice(1).join('-').trim(); // Handle generic value with dashes?
-                                                        currentTableRows.push({ col1, col2 });
-                                                    }
-                                                });
-                                            } else {
-                                                // Flush table if exists
-                                                if (currentTableRows.length > 0) {
-                                                    groupedElements.push({ type: 'table', rows: currentTableRows });
-                                                    currentTableRows = [];
-                                                }
-                                                if (trimmed) {
-                                                    groupedElements.push({ type: 'text', content: line });
-                                                }
+                                            if (trimmed) {
+                                                groupedElements.push({ type: 'text', content: trimmed });
                                             }
                                         });
-                                        // Flush remaining table
-                                        if (currentTableRows.length > 0) {
-                                            groupedElements.push({ type: 'table', rows: currentTableRows });
+
+                                        if (tableData.length > 0) {
+                                            groupedElements.push({ type: 'table', rows: tableData });
                                         }
 
                                         // 3. Render
@@ -391,13 +394,21 @@ const ProductDetails = () => {
                                         return groupedElements.map((element, index) => {
                                             if (element.type === 'table') {
                                                 return (
-                                                    <div key={index} className="grid grid-cols-2 sm:grid-cols-3 gap-3 my-6">
-                                                        {element.rows.map((row, rIndex) => (
-                                                            <div key={rIndex} className="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col items-center justify-center text-center transition-all hover:shadow-md hover:-translate-y-1 hover:border-blue-200 dark:hover:border-blue-800">
-                                                                <span className="text-xs uppercase tracking-wider font-semibold text-gray-500 dark:text-gray-400 mb-1.5">{row.col1}</span>
-                                                                <span className="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300">{row.col2}</span>
-                                                            </div>
-                                                        ))}
+                                                    <div key={index} className="my-6 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                                                        <table className="min-w-full text-left border-collapse">
+                                                            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+                                                                {element.rows.map((row, rIndex) => (
+                                                                    <tr key={rIndex} className="hover:bg-gray-50 dark:hover:bg-gray-800/80 transition-colors">
+                                                                        <th scope="row" className="w-1/3 px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900/50 border-r border-gray-200 dark:border-gray-700 align-top">
+                                                                            {row.col1}
+                                                                        </th>
+                                                                        <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100">
+                                                                            {row.col2}
+                                                                        </td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 );
                                             }

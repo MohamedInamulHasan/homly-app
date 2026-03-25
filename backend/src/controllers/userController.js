@@ -41,7 +41,7 @@ const sendTokenResponse = (user, statusCode, res) => {
                 address: user.address,
                 mobile: user.mobile,
                 storeId: user.storeId,
-                storeId: user.storeId,
+                serviceId: user.serviceId,
                 coins: user.coins || 0,
                 isFastMode: user.isFastMode || false
             }
@@ -210,7 +210,10 @@ export const getUserProfile = async (req, res, next) => {
                     role: user.role,
                     mobile: user.mobile,
                     address: user.address,
-                    coins: user.coins || 0
+                    storeId: user.storeId,
+                    serviceId: user.serviceId,
+                    coins: user.coins || 0,
+                    deliverySettings: user.deliverySettings
                 }
             });
         } else {
@@ -245,8 +248,11 @@ export const updateUserProfile = async (req, res, next) => {
                 user.isFastMode = req.body.isFastMode;
             }
 
-            if (req.body.password) {
-                user.password = req.body.password;
+            if (req.body.deliverySettings) {
+                user.deliverySettings = {
+                    ...user.deliverySettings?.toObject(),
+                    ...req.body.deliverySettings
+                };
             }
 
             const updatedUser = await user.save();
@@ -265,7 +271,7 @@ export const updateUserProfile = async (req, res, next) => {
 // @access  Private/Admin
 export const getAllUsers = async (req, res, next) => {
     try {
-        const users = await User.find({}).select('-password').populate('storeId', 'name');
+        const users = await User.find({}).select('-password').populate('storeId', 'name').populate('serviceId', 'name');
 
         res.status(200).json({
             success: true,
@@ -294,6 +300,13 @@ export const updateUserByAdmin = async (req, res, next) => {
         user.mobile = req.body.mobile || user.mobile;
         user.address = req.body.address || user.address;
 
+        if (req.body.deliverySettings) {
+            user.deliverySettings = {
+                ...(user.deliverySettings?.toObject() || {}),
+                ...req.body.deliverySettings
+            };
+        }
+
         // Update location if provided
         if (req.body.location !== undefined) {
             user.location = req.body.location;
@@ -305,9 +318,16 @@ export const updateUserByAdmin = async (req, res, next) => {
 
         if (req.body.storeId) {
             user.storeId = req.body.storeId;
-        } else if (req.body.role === 'customer' || req.body.role === 'admin') {
-            // If role changed to non-store-admin, remove storeId
-            user.storeId = undefined;
+        } else if (req.body.role === 'customer' || req.body.role === 'admin' || req.body.role === 'service_admin') {
+            // Remove storeId if not store_admin
+            if (req.body.role !== 'store_admin') user.storeId = undefined;
+        }
+
+        if (req.body.serviceId) {
+            user.serviceId = req.body.serviceId;
+        } else if (req.body.role === 'customer' || req.body.role === 'admin' || req.body.role === 'store_admin') {
+            // Remove serviceId if not service_admin
+            if (req.body.role !== 'service_admin') user.serviceId = undefined;
         }
 
         // Debug logging for coin updates
@@ -322,11 +342,6 @@ export const updateUserByAdmin = async (req, res, next) => {
             user.coins = Number(req.body.coins);
         }
 
-        if (req.body.coins !== undefined) {
-            console.log(`🪙 Updating coins for user ${user._id}: ${user.coins} -> ${req.body.coins}`);
-            user.coins = Number(req.body.coins);
-        }
-
         if (req.body.isFastMode !== undefined) {
             user.isFastMode = req.body.isFastMode;
         }
@@ -335,7 +350,8 @@ export const updateUserByAdmin = async (req, res, next) => {
             user.password = req.body.password;
         }
 
-        const updatedUser = await user.save();
+        await user.save();
+        const updatedUser = await User.findById(user._id).populate('storeId', 'name').populate('serviceId', 'name');
 
         res.status(200).json({
             success: true,
@@ -345,10 +361,12 @@ export const updateUserByAdmin = async (req, res, next) => {
                 email: updatedUser.email,
                 role: updatedUser.role,
                 storeId: updatedUser.storeId,
+                serviceId: updatedUser.serviceId,
                 mobile: updatedUser.mobile,
                 address: updatedUser.address,
                 location: updatedUser.location,
-                coins: updatedUser.coins || 0
+                coins: updatedUser.coins || 0,
+                deliverySettings: updatedUser.deliverySettings
             }
         });
     } catch (error) {

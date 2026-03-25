@@ -60,7 +60,8 @@ const Orders = () => {
     const getStatusColor = (status) => {
         switch (status) {
             case 'Delivered': return 'text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/30 border-green-200 dark:border-green-800';
-            case 'Shipped': return 'text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800';
+            case 'Shipped':
+            case 'Out for Delivery': return 'text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800';
             case 'Processing': return 'text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30 border-amber-200 dark:border-amber-800';
             case 'Cancelled': return 'text-red-700 dark:text-red-400 bg-red-100 dark:bg-red-900/30 border-red-200 dark:border-red-800';
             default: return 'text-gray-700 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700';
@@ -70,7 +71,8 @@ const Orders = () => {
     const getStatusIcon = (status) => {
         switch (status) {
             case 'Delivered': return <CheckCircle size={16} className="mr-1.5" />;
-            case 'Shipped': return <Truck size={16} className="mr-1.5" />;
+            case 'Shipped':
+            case 'Out for Delivery': return <Truck size={16} className="mr-1.5" />;
             case 'Processing': return <Clock size={16} className="mr-1.5" />;
             case 'Cancelled': return <RotateCcw size={16} className="mr-1.5" />;
             default: return null;
@@ -80,7 +82,8 @@ const Orders = () => {
     const getCardBorderColor = (status) => {
         switch (status) {
             case 'Delivered': return 'border-l-green-500 dark:border-l-green-400 shadow-green-100 dark:shadow-green-900/20';
-            case 'Shipped': return 'border-l-blue-500 dark:border-l-blue-400 shadow-blue-100 dark:shadow-blue-900/20';
+            case 'Shipped':
+            case 'Out for Delivery': return 'border-l-blue-500 dark:border-l-blue-400 shadow-blue-100 dark:shadow-blue-900/20';
             case 'Processing': return 'border-l-amber-500 dark:border-l-amber-400 shadow-amber-100 dark:shadow-amber-900/20';
             case 'Cancelled': return 'border-l-red-500 dark:border-l-red-400 shadow-red-100 dark:shadow-red-900/20';
             default: return 'border-l-gray-300 dark:border-l-gray-600 shadow-gray-100 dark:shadow-gray-900/20';
@@ -203,7 +206,7 @@ const Orders = () => {
                                                     {getStatusIcon(order.status)}
                                                     <span className="ml-1">{t(order.status)}</span>
                                                 </div>
-                                                {!['Processing', 'Shipped', 'Delivered'].includes(order.status) && (
+                                                {!['Processing', 'Shipped', 'Out for Delivery', 'Delivered'].includes(order.status) && (
                                                     <button
                                                         onClick={(e) => {
                                                             e.stopPropagation();

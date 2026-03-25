@@ -19,4 +19,11 @@ input[type="password"]::-ms-clear {
         scrollbar-width: none;
         /* Firefox */
     }
+
+    /* Full-screen blur for modals (Navbar, Footer, WhatsApp icon) */
+    .modal-open-blur {
+        filter: blur(4px);
+        pointer-events: none;
+        transition: filter 0.3s ease-in-out;
+    }
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard,
     Package,
@@ -33,8 +34,11 @@ import {
     Settings,
     Download,
     GripVertical,
-    Copy // Added Copy
+    Truck,
+    Copy,
+    LogOut
 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import { apiService, API_BASE_URL } from '../../utils/api';
 import { useData } from '../../context/DataContext'; // Retain for now, remove piecemeal
 import { useLanguage } from '../../context/LanguageContext';
@@ -63,18 +67,38 @@ import { SortableAdCard, SortableProductRow, DragHandle, SortableItemContext, So
 import { CSS } from '@dnd-kit/utilities';
 
 const AdminDashboard = () => {
-    const { user } = useData(); // Get current user
+    const { user, logout } = useAuth(); // Get current user & logout method
+    const navigate = useNavigate();
     const isStoreAdmin = user?.role === 'store_admin';
-    const [activeTab, setActiveTab] = useState(isStoreAdmin ? 'stores' : 'products'); // products, stores, news, orders, users, categories, ads, services, service-requests, settings, cities
+    const isServiceAdmin = user?.role === 'service_admin';
+    const isDeliveryBoy = user?.role === 'delivery_boy';
+    const isAdmin = user?.role === 'admin';
+    const defaultTab = isStoreAdmin ? 'stores' : isServiceAdmin ? 'services' : isDeliveryBoy ? 'orders' : 'products';
+    const [activeTab, setActiveTab] = useState(defaultTab);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { t } = useLanguage();
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-    // Redirect Store Admin to 'stores' tab if they try to go elsewhere (basic protection)
+    // Redirect Store Admin to allowed tabs only
     useEffect(() => {
         if (isStoreAdmin && activeTab !== 'stores' && activeTab !== 'products' && activeTab !== 'orders') {
             setActiveTab('stores');
         }
     }, [isStoreAdmin, activeTab]);
+
+    // Redirect Service Admin to allowed tabs only
+    useEffect(() => {
+        if (isServiceAdmin && activeTab !== 'services') {
+            setActiveTab('services');
+        }
+    }, [isServiceAdmin, activeTab]);
+
+    // Redirect Delivery Boy to allowed tabs only
+    useEffect(() => {
+        if (isDeliveryBoy && activeTab !== 'orders') {
+            setActiveTab('orders');
+        }
+    }, [isDeliveryBoy, activeTab]);
 
     const handleExport = async () => {
         try {
@@ -105,13 +129,17 @@ const AdminDashboard = () => {
             case 'ads':
                 return <AdsManagement />;
             case 'services':
-                return <ServiceManagement />;
+                return isServiceAdmin
+                    ? <ServiceManagement serviceAdminMode={true} myServiceId={user?.serviceId} />
+                    : <ServiceManagement />;
             case 'service-requests':
                 return <ServiceRequestManagement />;
             case 'cities':
                 return <CityManagement />;
             case 'settings':
                 return <SettingsManagement />;
+            case 'delivery-boys':
+                return <DeliveryBoyManagement />;
             default:
                 return <ProductManagement />;
         }
@@ -142,7 +170,7 @@ const AdminDashboard = () => {
                 {/* Simplified Sidebar for Store Admin */}
                 <div className={`
                     fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 
-                    transform transition-transform duration-300 ease-in-out md:translate-x-0 md:hidden flex flex-col
+                    transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:flex flex-col
                     ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
                 `}>
                     <div className="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -204,6 +232,183 @@ const AdminDashboard = () => {
         );
     }
 
+    // --- SERVICE ADMIN VIEW ---
+    if (isServiceAdmin) {
+        return (
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-colors duration-200 relative">
+                {/* Mobile Menu Button */}
+                <button
+                    onClick={toggleMobileMenu}
+                    className="md:hidden fixed top-4 right-4 z-50 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md text-gray-600 dark:text-gray-300"
+                >
+                    {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+
+                {isMobileMenuOpen && (
+                    <div
+                        className="fixed inset-0 bg-black/50 z-30 md:hidden"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    />
+                )}
+
+                {/* Simplified Sidebar for Service Admin */}
+                <div className={`
+                    fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
+                    transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:flex flex-col
+                    ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+                `}>
+                    <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <Wrench className="text-blue-600 dark:text-blue-400" />
+                            {t('My Service')}
+                        </h1>
+                    </div>
+                    <nav className="flex-1 p-4 space-y-2">
+                        <SidebarItem
+                            icon={<Wrench size={20} />}
+                            label={t('My Service')}
+                            id="services"
+                            active={activeTab === 'services'}
+                            onClick={setActiveTab}
+                        />
+                    </nav>
+                </div>
+
+                {/* Main Content */}
+                <div className="flex-1 overflow-auto w-full">
+                    <div className="p-4 md:p-8 pt-16 md:pt-8">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="flex items-center justify-between mb-8">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                                        <Wrench className="text-blue-600 dark:text-blue-400" size={24} />
+                                    </div>
+                                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                        {t('My Service')}
+                                    </h1>
+                                </div>
+                                <div className="text-sm text-gray-500 dark:text-gray-400 hidden md:block">
+                                    {user?.name}
+                                </div>
+                            </div>
+                            {renderContent()}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // --- DELIVERY BOY VIEW ---
+    if (isDeliveryBoy) {
+        return (
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-colors duration-200 relative">
+                {/* Logout Confirmation Modal */}
+                {showLogoutModal && (
+                    <div className="fixed inset-0 bg-black/50 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+                        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl transform transition-all scale-100 opacity-100 flex flex-col items-center">
+                            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-4">
+                                <LogOut size={32} className="text-red-600 dark:text-red-400" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-2">{t('Sign Out')}</h3>
+                            <p className="text-gray-500 dark:text-gray-400 text-center mb-6">
+                                {t('Are you sure you want to sign out?')}
+                            </p>
+                            <div className="flex gap-4 w-full">
+                                <button
+                                    onClick={() => setShowLogoutModal(false)}
+                                    className="flex-1 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                                >
+                                    {t('Cancel')}
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        logout();
+                                        navigate('/login');
+                                    }}
+                                    className="flex-1 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 shadow-md shadow-red-500/20 transition-colors"
+                                >
+                                    {t('Sign Out')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Mobile Menu Button */}
+                <button
+                    onClick={toggleMobileMenu}
+                    className="md:hidden fixed top-4 right-4 z-50 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md text-gray-600 dark:text-gray-300"
+                >
+                    {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+
+                {isMobileMenuOpen && (
+                    <div
+                        className="fixed inset-0 bg-black/50 z-30 md:hidden"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    />
+                )}
+
+                {/* Simplified Sidebar for Delivery Boy */}
+                <div className={`
+                    fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
+                    transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:flex flex-col
+                    ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+                `}>
+                    <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <ShoppingBag className="text-blue-600 dark:text-blue-400" />
+                            {t('Deliveries')}
+                        </h1>
+                    </div>
+                    <nav className="flex-1 p-4 space-y-2 flex flex-col">
+                        <SidebarItem
+                            icon={<ShoppingBag size={20} />}
+                            label={t('Manage Orders')}
+                            id="orders"
+                            active={activeTab === 'orders'}
+                            onClick={setActiveTab}
+                        />
+                        
+                        {/* Delivery Boy Logout */}
+                        <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <button
+                                onClick={() => setShowLogoutModal(true)}
+                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-bold"
+                            >
+                                <LogOut size={20} />
+                                {t('Sign Out')}
+                            </button>
+                        </div>
+                    </nav>
+                </div>
+
+                {/* Main Content */}
+                <div className="flex-1 overflow-auto w-full">
+                    <div className="p-4 md:p-8 pt-16 md:pt-8">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="flex items-center justify-between mb-8">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                                        <ShoppingBag className="text-blue-600 dark:text-blue-400" size={24} />
+                                    </div>
+                                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                        {t('Deliveries')}
+                                    </h1>
+                                </div>
+                                <div className="text-sm text-gray-500 dark:text-gray-400 hidden md:block">
+                                    {user?.name}
+                                </div>
+                            </div>
+                            {renderContent()}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     // --- GLOBAL ADMIN VIEW ---
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-colors duration-200 relative">
@@ -236,20 +441,24 @@ const AdminDashboard = () => {
                     </h1>
                 </div>
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-                    <SidebarItem
-                        icon={<Store size={20} />}
-                        label={t('Stores')}
-                        id="stores"
-                        active={activeTab === 'stores'}
-                        onClick={setActiveTab}
-                    />
-                    <SidebarItem
-                        icon={<Package size={20} />}
-                        label={t('Products')}
-                        id="products"
-                        active={activeTab === 'products'}
-                        onClick={setActiveTab}
-                    />
+                    {(isAdmin || isStoreAdmin) && (
+                        <SidebarItem
+                            icon={<Store size={20} />}
+                            label={t('Stores')}
+                            id="stores"
+                            active={activeTab === 'stores'}
+                            onClick={setActiveTab}
+                        />
+                    )}
+                    {(isAdmin || isStoreAdmin) && (
+                        <SidebarItem
+                            icon={<Package size={20} />}
+                            label={t('Products')}
+                            id="products"
+                            active={activeTab === 'products'}
+                            onClick={setActiveTab}
+                        />
+                    )}
                     <SidebarItem
                         icon={<ShoppingBag size={20} />}
                         label={t('Orders')}
@@ -259,48 +468,63 @@ const AdminDashboard = () => {
                     />
 
                     {/* Admin Only Sections */}
-                    <SidebarItem
-                        icon={<Newspaper size={20} />}
-                        label={t('News')}
-                        id="news"
-                        active={activeTab === 'news'}
-                        onClick={setActiveTab}
-                    />
-                    <SidebarItem
-                        icon={<Users size={20} />}
-                        label={t('Users')}
-                        id="users"
-                        active={activeTab === 'users'}
-                        onClick={setActiveTab}
-                    />
-                    <SidebarItem
-                        icon={<List size={20} />}
-                        label={t('Categories')}
-                        id="categories"
-                        active={activeTab === 'categories'}
-                        onClick={setActiveTab}
-                    />
-                    <SidebarItem
-                        icon={<ImageIcon size={20} />}
-                        label={t('Ads')}
-                        id="ads"
-                        active={activeTab === 'ads'}
-                        onClick={setActiveTab}
-                    />
-                    <SidebarItem
-                        icon={<Wrench size={20} />}
-                        label={t('Services')}
-                        id="services"
-                        active={activeTab === 'services'}
-                        onClick={setActiveTab}
-                    />
-                    <SidebarItem
-                        icon={<ClipboardList size={20} />}
-                        label={t('Service Requests')}
-                        id="service-requests"
-                        active={activeTab === 'service-requests'}
-                        onClick={setActiveTab}
-                    />
+                    {isAdmin && (
+                        <>
+                            <SidebarItem
+                                icon={<Newspaper size={20} />}
+                                label={t('News')}
+                                id="news"
+                                active={activeTab === 'news'}
+                                onClick={setActiveTab}
+                            />
+                            <SidebarItem
+                                icon={<Users size={20} />}
+                                label={t('Users')}
+                                id="users"
+                                active={activeTab === 'users'}
+                                onClick={setActiveTab}
+                            />
+                            <SidebarItem
+                                icon={<Truck size={20} />}
+                                label={t('Delivery Boys')}
+                                id="delivery-boys"
+                                active={activeTab === 'delivery-boys'}
+                                onClick={setActiveTab}
+                            />
+                            <SidebarItem
+                                icon={<List size={20} />}
+                                label={t('Categories')}
+                                id="categories"
+                                active={activeTab === 'categories'}
+                                onClick={setActiveTab}
+                            />
+                            <SidebarItem
+                                icon={<ImageIcon size={20} />}
+                                label={t('Ads')}
+                                id="ads"
+                                active={activeTab === 'ads'}
+                                onClick={setActiveTab}
+                            />
+                        </>
+                    )}
+                    {(isAdmin || isServiceAdmin) && (
+                        <>
+                            <SidebarItem
+                                icon={<Wrench size={20} />}
+                                label={t('Services')}
+                                id="services"
+                                active={activeTab === 'services'}
+                                onClick={setActiveTab}
+                            />
+                            <SidebarItem
+                                icon={<ClipboardList size={20} />}
+                                label={t('Service Requests')}
+                                id="service-requests"
+                                active={activeTab === 'service-requests'}
+                                onClick={setActiveTab}
+                            />
+                        </>
+                    )}
                     <div className="my-2 border-t border-gray-100 dark:border-gray-700"></div>
                     <SidebarItem
                         icon={<Download size={20} />}
@@ -1281,6 +1505,14 @@ const NewsManagement = () => {
 
 const OrderManagement = () => {
     const { data: orders = [] } = useOrders();
+    const { data: rawUsers = [] } = useUsers();
+    const users = Array.isArray(rawUsers) ? rawUsers : (rawUsers?.data || []);
+    const deliveryBoys = users.filter(u => u.role === 'delivery_boy');
+    const { user } = useAuth();
+    const isStoreAdmin = user?.role === 'store_admin';
+    const isServiceAdmin = user?.role === 'service_admin';
+    const isDeliveryBoy = user?.role === 'delivery_boy';
+
     const { mutateAsync: updateOrderStatus } = useUpdateOrderStatus();
     const { mutateAsync: deleteOrder } = useDeleteOrder();
     const { t } = useLanguage();
@@ -1296,10 +1528,10 @@ const OrderManagement = () => {
         setTimeout(() => setIsRefreshing(false), 1000);
     };
 
-    const updateStatus = async (id, newStatus) => {
+    const updateStatus = async (id, newStatus, deliveredBy = undefined) => {
         try {
-            await updateOrderStatus({ id, status: newStatus });
-            alert(t('Order status updated successfully!'));
+            await updateOrderStatus({ id, status: newStatus, deliveredBy });
+            alert(t('Order updated successfully!'));
         } catch (error) {
             console.error('Error updating status:', error);
             alert(t('Failed to update status'));
@@ -1361,8 +1593,8 @@ const OrderManagement = () => {
     };
 
     // Group orders by status
-    const processingOrders = orders.filter(o => o.status === 'Processing');
-    const shippedOrders = orders.filter(o => o.status === 'Shipped');
+    const processingOrders = orders.filter(o => o.status === 'Processing' || o.status === 'Shipped');
+    const outForDeliveryOrders = orders.filter(o => o.status === 'Out for Delivery');
     const deliveredOrders = orders.filter(o => o.status === 'Delivered');
     const cancelledOrders = orders.filter(o => o.status === 'Cancelled');
 
@@ -1397,18 +1629,27 @@ const OrderManagement = () => {
                                     <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Order ID')}</th>
                                     <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Customer')}</th>
                                     <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Mobile')}</th>
-                                    <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Address')}</th>
-                                    <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Location')}</th>
+                                    <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Address & Location')}</th>
                                     <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Date & Time')}</th>
                                     <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Total')}</th>
                                     <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Status')}</th>
-                                    <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Actions')}</th>
+                                    {!isDeliveryBoy && (
+                                        <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Actions')}</th>
+                                    )}
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                                 {ordersList.map(order => (
                                     <tr key={order._id || order.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                                        <td className="p-4 font-medium text-gray-900 dark:text-white">#{String(order._id || order.id).slice(-6).toUpperCase()}</td>
+                                        <td className="p-4 font-medium">
+                                            <Link 
+                                                to={`/orders/${order._id || order.id}`}
+                                                className="text-blue-600 dark:text-blue-400 hover:underline"
+                                                title={t('View Order Details')}
+                                            >
+                                                #{String(order._id || order.id).slice(-6).toUpperCase()}
+                                            </Link>
+                                        </td>
                                         <td className="p-4 text-gray-600 dark:text-gray-300">{order.shippingAddress?.name || order.user}</td>
                                         <td className="p-4 text-gray-600 dark:text-gray-300">{order.shippingAddress?.mobile || 'N/A'}</td>
                                         <td className="p-4 text-gray-500 dark:text-gray-400 text-sm max-w-xs">
@@ -1420,24 +1661,22 @@ const OrderManagement = () => {
                                                     className="w-full px-2 py-1 border rounded"
                                                 />
                                             ) : (
-                                                <span className="truncate block" title={`${order.shippingAddress?.street}, ${order.shippingAddress?.city}`}>
-                                                    {order.shippingAddress ? `${order.shippingAddress.street}, ${order.shippingAddress.city}` : 'N/A'}
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="p-4 text-gray-500 dark:text-gray-400 text-sm">
-                                            {order.shippingAddress?.location ? (
-                                                <a
-                                                    href={order.shippingAddress.location}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline"
-                                                >
-                                                    <MapPin size={14} />
-                                                    View Map
-                                                </a>
-                                            ) : (
-                                                <span className="text-gray-400">-</span>
+                                                <>
+                                                    <span className="truncate block font-medium text-gray-900 dark:text-white" title={`${order.shippingAddress?.street}, ${order.shippingAddress?.city}`}>
+                                                        {order.shippingAddress ? `${order.shippingAddress.street}, ${order.shippingAddress.city}` : 'N/A'}
+                                                    </span>
+                                                    {order.shippingAddress?.location && (
+                                                        <a
+                                                            href={order.shippingAddress.location}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline mt-1 text-xs"
+                                                        >
+                                                            <MapPin size={12} />
+                                                            View Map
+                                                        </a>
+                                                    )}
+                                                </>
                                             )}
                                         </td>
                                         <td className="p-4 text-gray-500 dark:text-gray-400 text-sm">
@@ -1449,47 +1688,73 @@ const OrderManagement = () => {
                                             (Number(order.discount) || 0)
                                         ).toFixed(0)}</td>
                                         <td className="p-4">
-                                            <select
-                                                value={order.status}
-                                                onChange={(e) => updateStatus(order._id || order.id, e.target.value)}
-                                                className="text-sm border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
-                                            >
-                                                {/* Current status is always shown */}
-                                                <option value={order.status}>{t(order.status)}</option>
+                                            <div className="flex flex-col gap-2">
+                                                <select
+                                                    value={order.status}
+                                                    disabled={isDeliveryBoy && (order.status === 'Delivered' || order.status === 'Cancelled')}
+                                                    onChange={(e) => updateStatus(order._id || order.id, e.target.value)}
+                                                    className={`px-3 py-1.5 rounded-lg border-2 text-sm font-semibold transition-colors outline-none
+                                                        ${order.status === 'Delivered' ? 'border-green-100 bg-green-50 text-green-700' :
+                                                            order.status === 'Out for Delivery' ? 'border-blue-100 bg-blue-50 text-blue-700' :
+                                                                order.status === 'Shipped' ? 'border-blue-100 bg-blue-50 text-blue-700' :
+                                                                    order.status === 'Cancelled' ? 'border-red-100 bg-red-50 text-red-700' :
+                                                                        'border-yellow-100 bg-yellow-50 text-yellow-700'}`}
+                                                >
+                                                    <option
+                                                        value="Processing"
+                                                        disabled={isDeliveryBoy && (order.status === 'Out for Delivery' || order.status === 'Delivered' || order.status === 'Cancelled')}
+                                                    >
+                                                        {t('Processing')}
+                                                    </option>
+                                                    {/* Shipped removed as per request */}
+                                                    <option
+                                                        value="Out for Delivery"
+                                                        disabled={isDeliveryBoy && (order.status === 'Delivered' || order.status === 'Cancelled')}
+                                                    >
+                                                        {t('Out for Delivery')}
+                                                    </option>
+                                                    <option
+                                                        value="Delivered"
+                                                        disabled={isDeliveryBoy && order.status === 'Cancelled'}
+                                                    >
+                                                        {t('Delivered')}
+                                                    </option>
+                                                    <option
+                                                        value="Cancelled"
+                                                        disabled={isDeliveryBoy && order.status !== 'Processing'}
+                                                    >
+                                                        {t('Cancelled')}
+                                                    </option>
+                                                </select>
 
-                                                {/* Show valid next statuses based on current status */}
-                                                {order.status === 'Processing' && (
-                                                    <>
-                                                        <option value="Shipped">{t('Shipped')}</option>
-                                                        <option value="Cancelled">{t('Cancelled')}</option>
-                                                    </>
+                                                {/* Delivery Boy Assignment (Admin Only) - Removed as per request */}
+
+                                                
+                                                {/* Show Assigned Delivery Boy (Admin Only) */}
+                                                {order.deliveredBy && !isDeliveryBoy && (
+                                                    <div className="flex items-center gap-1 text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                                                        <ShoppingBag size={10} />
+                                                        {order.deliveredBy?.name || t('Assigned')}
+                                                    </div>
                                                 )}
-                                                {order.status === 'Shipped' && (
-                                                    <>
-                                                        <option value="Delivered">{t('Delivered')}</option>
-                                                        <option value="Cancelled">{t('Cancelled')}</option>
-                                                    </>
+                                            </div>
+                                        </td>
+                                        {!isDeliveryBoy && (
+                                            <td className="p-4">
+                                                {editingOrder === (order._id || order.id) ? (
+                                                    <div className="flex gap-2">
+                                                        <button onClick={() => saveOrder(order._id || order.id)} className="text-green-600 hover:text-green-700"><CheckCircle size={18} /></button>
+                                                        <button onClick={() => setEditingOrder(null)} className="text-red-600 hover:text-red-700"><XCircle size={18} /></button>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex gap-2">
+                                                        <button onClick={() => handleDeleteOrder(order._id || order.id)} className="text-red-600 hover:text-red-700">
+                                                            <Trash2 size={18} />
+                                                        </button>
+                                                    </div>
                                                 )}
-                                                {/* Delivered and Cancelled are final states - no changes allowed */}
-                                            </select>
-                                        </td>
-                                        <td className="p-4">
-                                            {editingOrder === (order._id || order.id) ? (
-                                                <div className="flex gap-2">
-                                                    <button onClick={() => saveOrder(order._id || order.id)} className="text-green-600 hover:text-green-700"><CheckCircle size={18} /></button>
-                                                    <button onClick={() => setEditingOrder(null)} className="text-red-600 hover:text-red-700"><XCircle size={18} /></button>
-                                                </div>
-                                            ) : (
-                                                <div className="flex gap-2">
-                                                    <button onClick={() => handleEditOrder(order)} className="text-blue-600 hover:text-blue-700">
-                                                        <Edit2 size={18} />
-                                                    </button>
-                                                    <button onClick={() => handleDeleteOrder(order._id || order.id)} className="text-red-600 hover:text-red-700">
-                                                        <Trash2 size={18} />
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </td>
+                                            </td>
+                                        )}
                                     </tr>
                                 ))}
                             </tbody>
@@ -1505,7 +1770,7 @@ const OrderManagement = () => {
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('Manage Orders')}</h2>
                 <div className="flex gap-2">
-                    {orders.length > 0 && (
+                    {orders.length > 0 && !isDeliveryBoy && (
                         <button
                             onClick={handleDeleteAllOrders}
                             className="p-2 sm:px-4 sm:py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors flex items-center gap-2 font-medium"
@@ -1527,7 +1792,7 @@ const OrderManagement = () => {
 
             {/* Render orders grouped by status */}
             {renderOrderTable(processingOrders, 'Processing Orders', 'text-amber-700 dark:text-amber-400')}
-            {renderOrderTable(shippedOrders, 'Shipped Orders', 'text-blue-700 dark:text-blue-400')}
+            {renderOrderTable(outForDeliveryOrders, 'Out for Delivery Orders', 'text-blue-700 dark:text-blue-400')}
             {renderOrderTable(deliveredOrders, 'Delivered Orders', 'text-green-700 dark:text-green-400')}
             {renderOrderTable(cancelledOrders, 'Cancelled Orders', 'text-red-700 dark:text-red-400')}
 
@@ -1961,6 +2226,24 @@ const CategoryManagement = () => {
     );
 };
 
+const ServiceIdSelect = ({ value, onChange, t }) => {
+    const { data: services = [] } = useServices();
+    return (
+        <select
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
+        >
+            <option value="">{t('Select Service')}</option>
+            {services.map(service => (
+                <option key={service._id || service.id} value={service._id || service.id}>
+                    {service.name}
+                </option>
+            ))}
+        </select>
+    );
+};
+
 const UserManagement = () => {
     // const {users, fetchUsers, updateUser, deleteUser, stores} = useData();
     // NEW HOOKS
@@ -1970,6 +2253,7 @@ const UserManagement = () => {
     const { data: stores = [] } = useStores();
 
     const { t } = useLanguage();
+    const { user: currentUser, refreshUser } = useAuth();
     const [editingUser, setEditingUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -1980,15 +2264,26 @@ const UserManagement = () => {
         address: '',
         role: 'customer',
         storeId: '',
-        location: ''
+        serviceId: '',
+        location: '',
+        deliverySettings: {
+            workTimings: { start: '09:00', end: '21:00' },
+            telegramChatId: '',
+            isActive: true
+        }
     });
     const [searchQuery, setSearchQuery] = useState('');
 
     // Stats for Top Card
-    const totalUsers = users.length;
-    const adminCount = users.filter(u => u.role === 'admin').length;
-    const storeAdminCount = users.filter(u => u.role === 'store_admin').length;
-    const customerCount = users.filter(u => u.role === 'customer').length;
+    // Filter out delivery boys from general user management
+    const filteredUsers = users.filter(u => u.role !== 'delivery_boy');
+
+    // Stats for Top Card
+    const totalUsers = filteredUsers.length;
+    const adminCount = filteredUsers.filter(u => u.role === 'admin').length;
+    const storeAdminCount = filteredUsers.filter(u => u.role === 'store_admin').length;
+    const serviceAdminCount = filteredUsers.filter(u => u.role === 'service_admin').length;
+    const customerCount = filteredUsers.filter(u => u.role === 'customer').length;
 
     useEffect(() => {
         const loadUsers = async () => {
@@ -2016,9 +2311,15 @@ const UserManagement = () => {
             mobile: user.mobile || '',
             address: user.address || '',
             role: user.role || 'customer',
-            storeId: user.storeId?._id || user.storeId || '', // Handle populated object or direct ID
+            storeId: user.storeId?._id || user.storeId || '',
+            serviceId: user.serviceId?._id || user.serviceId || '',
             coins: user.coins || 0,
-            location: user.location || ''
+            location: user.location || '',
+            deliverySettings: user.deliverySettings || {
+                workTimings: { start: '09:00', end: '21:00' },
+                telegramChatId: '',
+                isActive: true
+            }
         });
     };
 
@@ -2027,6 +2328,13 @@ const UserManagement = () => {
             console.log('Updating user:', { id: editingUser._id || editingUser.id, data: formData });
             // useUpdateUser hook expects {id, data} payload
             await updateUser({ id: editingUser._id || editingUser.id, data: formData });
+
+            // If the user being edited is the CURRENT user, refresh the profile to reflect changes (like role/serviceId)
+            if (currentUser?._id === (editingUser._id || editingUser.id)) {
+                console.log('🔄 Refreshing current user profile...');
+                await refreshUser();
+            }
+
             alert(t('User updated successfully!'));
             setEditingUser(null);
             fetchUsers();
@@ -2057,7 +2365,7 @@ const UserManagement = () => {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">{t('User Database')}</h2>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
                 <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-2">
                         <div className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-lg">
@@ -2084,6 +2392,15 @@ const UserManagement = () => {
                         <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">{t('Store Admins')}</span>
                     </div>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{storeAdminCount}</p>
+                </div>
+                <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-lg">
+                            <Wrench size={20} />
+                        </div>
+                        <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">{t('Service Admins')}</span>
+                    </div>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{serviceAdminCount}</p>
                 </div>
                 <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-2">
@@ -2142,11 +2459,11 @@ const UserManagement = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                                {users.filter(user => {
+                                {filteredUsers.filter(user => {
                                     const query = searchQuery.toLowerCase();
                                     return user.name?.toLowerCase().includes(query) ||
                                         user.email?.toLowerCase().includes(query);
-                                }).length > 0 ? users.filter(user => {
+                                }).length > 0 ? filteredUsers.filter(user => {
                                     const query = searchQuery.toLowerCase();
                                     return user.name?.toLowerCase().includes(query) ||
                                         user.email?.toLowerCase().includes(query);
@@ -2182,12 +2499,18 @@ const UserManagement = () => {
                                             <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap 
                                                 ${user.role === 'admin' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
                                                     user.role === 'store_admin' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' :
+                                                    user.role === 'service_admin' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
                                                         'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'}`}>
-                                                {t(user.role === 'store_admin' ? 'Store Admin' : user.role.charAt(0).toUpperCase() + user.role.slice(1))}
+                                                {t(user.role === 'store_admin' ? 'Store Admin' : user.role === 'service_admin' ? 'Service Admin' : user.role.charAt(0).toUpperCase() + user.role.slice(1))}
                                             </span>
                                             {user.role === 'store_admin' && user.storeId && (
                                                 <div className="text-xs text-gray-500 mt-1 whitespace-nowrap">
                                                     {user.storeId.name || 'Store Linked'}
+                                                </div>
+                                            )}
+                                            {user.role === 'service_admin' && user.serviceId && (
+                                                <div className="text-xs text-gray-500 mt-1 whitespace-nowrap">
+                                                    {user.serviceId.name || 'Service Linked'}
                                                 </div>
                                             )}
                                         </td>
@@ -2228,9 +2551,76 @@ const UserManagement = () => {
                                                             >
                                                                 <option value="customer">{t('Customer')}</option>
                                                                 <option value="store_admin">{t('Store Admin')}</option>
+                                                                <option value="service_admin">{t('Service Admin')}</option>
+                                                                <option value="delivery_boy">{t('Delivery Boy')}</option>
                                                                 <option value="admin">{t('Global Admin')}</option>
                                                             </select>
                                                         </div>
+                                                        {formData.role === 'delivery_boy' && (
+                                                            <div className="p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-900/30 space-y-4">
+                                                                <h4 className="font-semibold text-blue-900 dark:text-blue-300 flex items-center gap-2">
+                                                                    <Wrench size={16} /> {t('Delivery Settings')}
+                                                                </h4>
+                                                                <div className="grid grid-cols-2 gap-4">
+                                                                    <div>
+                                                                        <label className="block text-xs font-medium text-gray-500 mb-1">{t('Work Start')}</label>
+                                                                        <input
+                                                                            type="time"
+                                                                            value={formData.deliverySettings?.workTimings?.start || '09:00'}
+                                                                            onChange={(e) => setFormData({
+                                                                                ...formData,
+                                                                                deliverySettings: {
+                                                                                    ...formData.deliverySettings,
+                                                                                    workTimings: { ...formData.deliverySettings?.workTimings, start: e.target.value }
+                                                                                }
+                                                                            })}
+                                                                            className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm"
+                                                                        />
+                                                                    </div>
+                                                                    <div>
+                                                                        <label className="block text-xs font-medium text-gray-500 mb-1">{t('Work End')}</label>
+                                                                        <input
+                                                                            type="time"
+                                                                            value={formData.deliverySettings?.workTimings?.end || '21:00'}
+                                                                            onChange={(e) => setFormData({
+                                                                                ...formData,
+                                                                                deliverySettings: {
+                                                                                    ...formData.deliverySettings,
+                                                                                    workTimings: { ...formData.deliverySettings?.workTimings, end: e.target.value }
+                                                                                }
+                                                                            })}
+                                                                            className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm"
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                                <div>
+                                                                    <label className="block text-xs font-medium text-gray-500 mb-1">{t('Telegram Chat ID')}</label>
+                                                                    <input
+                                                                        type="text"
+                                                                        placeholder="e.g. 123456789"
+                                                                        value={formData.deliverySettings?.telegramChatId || ''}
+                                                                        onChange={(e) => setFormData({
+                                                                            ...formData,
+                                                                            deliverySettings: { ...formData.deliverySettings, telegramChatId: e.target.value }
+                                                                        })}
+                                                                        className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm"
+                                                                    />
+                                                                </div>
+                                                                <div className="flex items-center gap-2">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        id="isActive"
+                                                                        checked={formData.deliverySettings?.isActive ?? true}
+                                                                        onChange={(e) => setFormData({
+                                                                            ...formData,
+                                                                            deliverySettings: { ...formData.deliverySettings, isActive: e.target.checked }
+                                                                        })}
+                                                                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                                    />
+                                                                    <label htmlFor="isActive" className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('Active for Deliveries')}</label>
+                                                                </div>
+                                                            </div>
+                                                        )}
                                                         {formData.role === 'store_admin' && (
                                                             <div>
                                                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Assign Store')}</label>
@@ -2246,6 +2636,16 @@ const UserManagement = () => {
                                                                         </option>
                                                                     ))}
                                                                 </select>
+                                                            </div>
+                                                        )}
+                                                        {formData.role === 'service_admin' && (
+                                                            <div>
+                                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Assign Service')}</label>
+                                                                <ServiceIdSelect
+                                                                    value={formData.serviceId || ''}
+                                                                    onChange={(val) => setFormData({ ...formData, serviceId: val })}
+                                                                    t={t}
+                                                                />
                                                             </div>
                                                         )}
                                                         <div>
@@ -2338,6 +2738,215 @@ const UserManagement = () => {
                     </div>
                 </div>
             )}
+        </div>
+    );
+};
+
+const DeliveryBoyManagement = () => {
+    const { data: users = [], refetch: fetchUsers } = useUsers();
+    const { mutateAsync: updateUser } = useUpdateUser();
+    const { mutateAsync: deleteUser } = useDeleteUser();
+    const { t } = useLanguage();
+    
+    const [editingUser, setEditingUser] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        mobile: '',
+        address: '',
+        deliverySettings: {
+            workTimings: { start: '09:00', end: '21:00' },
+            telegramChatId: '',
+            isActive: true
+        }
+    });
+
+    const deliveryBoys = users.filter(u => u.role === 'delivery_boy');
+
+    const handleEdit = (user) => {
+        setEditingUser(user);
+        setFormData({
+            name: user.name,
+            email: user.email,
+            mobile: user.mobile || '',
+            address: user.address || '',
+            deliverySettings: user.deliverySettings || {
+                workTimings: { start: '09:00', end: '21:00' },
+                telegramChatId: '',
+                isActive: true
+            }
+        });
+    };
+
+    const handleSave = async () => {
+        try {
+            await updateUser({ id: editingUser._id || editingUser.id, data: { ...formData, role: 'delivery_boy' } });
+            alert(t('Delivery boy updated successfully!'));
+            setEditingUser(null);
+            fetchUsers();
+        } catch (error) {
+            alert(t('Failed to update delivery boy'));
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (window.confirm(t('Are you sure you want to delete this delivery boy?'))) {
+            try {
+                await deleteUser(id);
+                alert(t('Delivery boy deleted successfully!'));
+                fetchUsers();
+            } catch (error) {
+                alert(t('Failed to delete delivery boy'));
+            }
+        }
+    };
+
+    return (
+        <div className="max-w-6xl">
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('Delivery Boys')}</h2>
+                <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 px-4 py-2 rounded-xl flex items-center gap-2 font-semibold">
+                    <Truck size={20} />
+                    {deliveryBoys.length} {t('Active Personnel')}
+                </div>
+            </div>
+
+            {/* Search Bar */}
+            <div className="mb-6">
+                <div className="relative">
+                    <input
+                        type="text"
+                        placeholder={t('Search delivery boys...')}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                </div>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead className="bg-gray-50 dark:bg-gray-700/50">
+                            <tr>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Personnel')}</th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Work Timing')}</th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Status')}</th>
+                                <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Actions')}</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                            {deliveryBoys.filter(u => u.name?.toLowerCase().includes(searchQuery.toLowerCase())).map((boy) => (
+                                <tr key={boy._id || boy.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center">
+                                            <div className="h-10 w-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 font-bold">
+                                                {boy.name.charAt(0).toUpperCase()}
+                                            </div>
+                                            <div className="ml-4">
+                                                <div className="text-sm font-medium text-gray-900 dark:text-white">{boy.name}</div>
+                                                <div className="text-xs text-gray-500 dark:text-gray-400">{boy.email}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="text-sm text-gray-900 dark:text-white flex items-center gap-2">
+                                            <RefreshCw size={14} className="text-blue-500" />
+                                            {boy.deliverySettings?.workTimings?.start || '09:00'} - {boy.deliverySettings?.workTimings?.end || '21:00'}
+                                        </div>
+                                        <div className="text-xs text-gray-500 mt-1">
+                                            Telegram ID: {boy.deliverySettings?.telegramChatId || 'Not Set'}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className={`px-3 py-1 text-xs font-semibold rounded-full ${boy.deliverySettings?.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                            {boy.deliverySettings?.isActive ? t('Available') : t('Unavailable')}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 text-right">
+                                        {(editingUser?._id || editingUser?.id) === (boy._id || boy.id) ? (
+                                            <div className="text-left bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl space-y-4">
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <label className="block text-xs font-medium text-gray-500 mb-1">{t('Start Time')}</label>
+                                                        <input
+                                                            type="time"
+                                                            value={formData.deliverySettings.workTimings.start}
+                                                            onChange={(e) => setFormData({
+                                                                ...formData,
+                                                                deliverySettings: {
+                                                                    ...formData.deliverySettings,
+                                                                    workTimings: { ...formData.deliverySettings.workTimings, start: e.target.value }
+                                                                }
+                                                            })}
+                                                            className="w-full px-3 py-1.5 rounded-lg border dark:bg-gray-800 text-sm"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-xs font-medium text-gray-500 mb-1">{t('End Time')}</label>
+                                                        <input
+                                                            type="time"
+                                                            value={formData.deliverySettings.workTimings.end}
+                                                            onChange={(e) => setFormData({
+                                                                ...formData,
+                                                                deliverySettings: {
+                                                                    ...formData.deliverySettings,
+                                                                    workTimings: { ...formData.deliverySettings.workTimings, end: e.target.value }
+                                                                }
+                                                            })}
+                                                            className="w-full px-3 py-1.5 rounded-lg border dark:bg-gray-800 text-sm"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label className="block text-xs font-medium text-gray-500 mb-1">{t('Telegram Chat ID')}</label>
+                                                    <input
+                                                        type="text"
+                                                        value={formData.deliverySettings.telegramChatId}
+                                                        onChange={(e) => setFormData({
+                                                            ...formData,
+                                                            deliverySettings: { ...formData.deliverySettings, telegramChatId: e.target.value }
+                                                        })}
+                                                        className="w-full px-3 py-1.5 rounded-lg border dark:bg-gray-800 text-sm"
+                                                        placeholder="e.g., 123456789"
+                                                    />
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={formData.deliverySettings.isActive}
+                                                        onChange={(e) => setFormData({
+                                                            ...formData,
+                                                            deliverySettings: { ...formData.deliverySettings, isActive: e.target.checked }
+                                                        })}
+                                                        className="rounded text-blue-600"
+                                                    />
+                                                    <span className="text-sm font-medium">{t('Active for Deliveries')}</span>
+                                                </div>
+                                                <div className="flex justify-end gap-2 pt-2">
+                                                    <button onClick={() => setEditingUser(null)} className="text-gray-500 hover:text-gray-700 text-sm font-medium">{t('Cancel')}</button>
+                                                    <button onClick={handleSave} className="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium">{t('Save Changes')}</button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="flex justify-end gap-2">
+                                                <button onClick={() => handleEdit(boy)} className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg">
+                                                    <Edit2 size={18} />
+                                                </button>
+                                                <button onClick={() => handleDelete(boy._id || boy.id)} className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </div>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     );
 };
@@ -2834,16 +3443,15 @@ const ServiceRequestManagement = () => {
                                                 <td className="p-4 text-gray-500 dark:text-gray-400 text-sm">
                                                     {formatDateTime(request.createdAt)}
                                                 </td>
-                                                <td className="p-4">
+                                                <td className="p-4 flex flex-col gap-2">
                                                     <select
                                                         value={request.status}
                                                         onChange={(e) => handleStatusUpdate(request._id || request.id, e.target.value)}
-                                                        className={`text-sm border rounded-lg px-2 py-1 outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer font-medium
-                                                            ${request.status === 'Pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
-                                                                request.status === 'In Progress' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                                                    request.status === 'Completed' ? 'bg-green-50 text-green-700 border-green-200' :
-                                                                        'bg-red-50 text-red-700 border-red-200'
-                                                            }`}
+                                                        className={`px-3 py-1.5 rounded-lg border-2 text-sm font-semibold transition-colors outline-none
+                                                            ${request.status === 'Completed' ? 'border-green-100 bg-green-50 text-green-700' :
+                                                                request.status === 'In Progress' ? 'border-blue-100 bg-blue-50 text-blue-700' :
+                                                                    request.status === 'Cancelled' ? 'border-red-100 bg-red-50 text-red-700' :
+                                                                        'border-yellow-100 bg-yellow-50 text-yellow-700'}`}
                                                     >
                                                         <option value="Pending">{t('Pending')}</option>
                                                         <option value="In Progress">{t('In Progress')}</option>

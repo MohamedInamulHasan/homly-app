@@ -1,5 +1,6 @@
 import { API_BASE_URL } from '../../utils/api';
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import {
     Wrench,
     Plus,
@@ -12,7 +13,9 @@ import {
     List,
     Save,
     Phone,
-    GripVertical
+    GripVertical,
+    Copy,
+    Package
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import {
@@ -35,11 +38,20 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStr
 import { CSS } from '@dnd-kit/utilities';
 import { SortableServiceItemRow, DragHandle } from './AdminDashboard_Sortables';
 
-const ServiceManagement = () => {
+const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => {
     const { t } = useLanguage();
 
     // Hooks
-    const { data: services = [] } = useServices();
+    const { data: allServices = [], isLoading: loadingServices } = useServices();
+
+    // Filter services if in service admin mode
+    const services = (serviceAdminMode && myServiceId)
+        ? allServices.filter(s => {
+            const sid = s._id || s.id;
+            const targetId = myServiceId?._id || myServiceId?.id || myServiceId;
+            return String(sid) === String(targetId);
+        })
+        : allServices;
 
     // Mutations for Services
     const { mutateAsync: addService } = useCreateService();
@@ -69,6 +81,23 @@ const ServiceManagement = () => {
             setItems(services);
         }
     }, [services]);
+
+    // Auto-select and go to service items view for service admin
+    // Removed to show service card first as requested
+    /*
+    useEffect(() => {
+        if (serviceAdminMode && myServiceId && services.length > 0) {
+            const myService = services.find(
+                s => (s._id || s.id) === myServiceId ||
+                     String(s._id || s.id) === String(myServiceId)
+            );
+            if (myService && !selectedService) {
+                setSelectedService(myService);
+                setView('serviceItems');
+            }
+        }
+    }, [serviceAdminMode, myServiceId, services, selectedService]);
+    */
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -198,8 +227,13 @@ const ServiceManagement = () => {
                 alert(t('Service added successfully!'));
             }
             setServiceForm({ name: '', category: '', description: '', image: '', address: '', mobile: '' });
-            setEditingService(null);
-            setView('list');
+            // If service admin edited their service, return to items view; otherwise back to list
+            if (serviceAdminMode && editingService) {
+                setView('serviceItems');
+            } else {
+                setEditingService(null);
+                setView('list');
+            }
         } catch (error) {
             console.error('Error saving service:', error);
             alert(t('Failed to save service.'));
@@ -213,7 +247,7 @@ const ServiceManagement = () => {
 
     // Item Handlers
     const handleAddItem = () => {
-        setItemForm({ name: '', image: '' });
+        setItemForm({ name: '', image: '', isAvailable: true });
         setEditingItem(null);
         setView('itemForm');
     };
@@ -223,6 +257,9 @@ const ServiceManagement = () => {
         setItemForm({
             name: item.name,
             image: item.image,
+            isAvailable: item.isAvailable !== false,
+            description: item.description || '',
+            price: item.price || ''
         });
         setView('itemForm');
     };
@@ -265,6 +302,24 @@ const ServiceManagement = () => {
         s?.category?.toLowerCase().includes(searchQuery.toLowerCase())
     ) : [];
 
+    const handleDuplicateItem = async (item) => {
+        if (!window.confirm(t('Duplicate this item?'))) return;
+        try {
+            const { _id, id, createdAt, updatedAt, __v, ...rest } = item;
+            await addItem({
+                serviceId: selectedService._id || selectedService.id,
+                data: {
+                    ...rest,
+                    name: `${rest.name} (Copy)`
+                }
+            });
+            alert(t('Item duplicated successfully!'));
+        } catch (error) {
+            console.error('Error duplicating item:', error);
+            alert(t('Failed to duplicate item.'));
+        }
+    };
+
     const isSearching = searchQuery.length > 0;
 
     return (
@@ -272,7 +327,7 @@ const ServiceManagement = () => {
             {/* Header */}
             <div className="flex justify-between items-center mb-6 gap-3">
                 <div className="flex items-center gap-2 min-w-0 flex-1">
-                    {view !== 'list' && (
+                    {view !== 'list' && !(serviceAdminMode && view === 'serviceItems') && (
                         <button
                             onClick={() => {
                                 if (view === 'itemForm') setView('serviceItems');
@@ -292,7 +347,7 @@ const ServiceManagement = () => {
                 </div>
 
                 <div className="flex gap-2">
-                    {view === 'list' && (
+                    {view === 'list' && !serviceAdminMode && (
                         <button
                             onClick={() => {
                                 setEditingService(null);
@@ -303,6 +358,15 @@ const ServiceManagement = () => {
                         >
                             <Plus size={20} />
                             {t('Add Service')}
+                        </button>
+                    )}
+                    {view === 'serviceItems' && serviceAdminMode && selectedService && (
+                        <button
+                            onClick={() => handleEditService(selectedService)}
+                            className="flex items-center gap-2 px-3 py-2 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm"
+                        >
+                            <Edit2 size={16} />
+                            {t('Edit Details')}
                         </button>
                     )}
                     {view === 'serviceItems' && (
@@ -351,6 +415,7 @@ const ServiceManagement = () => {
                                         handleEditService={handleEditService}
                                         handleDeleteService={handleDeleteService}
                                         t={t}
+                                        serviceAdminMode={serviceAdminMode}
                                     />
                                 ))}
                             </div>
@@ -450,19 +515,22 @@ const ServiceManagement = () => {
 
             {/* View: Service Items List */}
             {view === 'serviceItems' && selectedService && (
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
                     <div className="overflow-x-auto">
                         <DndContext
                             sensors={sensors}
                             collisionDetection={closestCenter}
                             onDragEnd={handleItemDragEnd}
                         >
-                            <table className="w-full text-left">
-                                <thead className="bg-gray-50 dark:bg-gray-700/50">
-                                    <tr>
-                                        <th className="p-4 w-10"></th>
-                                        <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Name')}</th>
-                                        <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Actions')}</th>
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="bg-gray-50/50 dark:bg-gray-700/30 border-b border-gray-100 dark:border-gray-700">
+                                        <th className="p-4 w-12"></th>
+                                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Image')}</th>
+                                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Name')}</th>
+                                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Price')}</th>
+                                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Available')}</th>
+                                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Actions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -473,32 +541,78 @@ const ServiceManagement = () => {
                                         {Array.isArray(displayServiceItems) && displayServiceItems.map(item => (
                                             <SortableServiceItemRow key={item._id || item.id} item={item}>
                                                 <td className="p-4">
-                                                    <DragHandle className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors text-gray-400">
+                                                    <DragHandle className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors text-gray-400">
                                                         <GripVertical size={18} />
                                                     </DragHandle>
                                                 </td>
-                                                <td className="p-4 font-medium text-gray-900 dark:text-white">
-                                                    <div className="flex items-center gap-3">
+                                                <td className="p-4">
+                                                    <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 dark:border-gray-700">
                                                         <img
                                                             src={item.image}
                                                             alt={item.name}
-                                                            className="w-12 h-12 rounded-lg object-cover bg-white"
+                                                            className="w-full h-full object-cover"
                                                             onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100?text=No+Image'; }}
                                                         />
-                                                        {item.name}
                                                     </div>
+                                                </td>
+                                                <td className="p-4 font-bold text-gray-900 dark:text-white">
+                                                    <div className="truncate max-w-[200px]" title={item.name}>{item.name}</div>
+                                                    <div className="text-[10px] text-gray-400 font-medium truncate max-w-[200px]">{item.description}</div>
+                                                </td>
+                                                <td className="p-4 font-black text-gray-900 dark:text-white">
+                                                    {item.price ? `₹${item.price}` : t('Price on Request')}
+                                                </td>
+                                                <td className="p-4">
+                                                    <button
+                                                        onClick={async () => {
+                                                            const currentStatus = item.isAvailable !== false;
+                                                            const itemId = item._id || item.id;
+
+                                                            // Optimistic update
+                                                            // Since we don't have a global state for service items here, 
+                                                            // we rely on the component's state if possible.
+                                                            // Actually, let's just toggle and let the mutation handle it.
+                                                            // We'll update the item directly in local display list if needed.
+                                                            
+                                                            try {
+                                        await updateItem({
+                                            itemId: itemId,
+                                            data: { isAvailable: !currentStatus }
+                                        });
+                                    } catch (error) {
+                                        console.error('Failed to toggle availability:', error);
+                                    }
+                                }}
+                                                        className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${item.isAvailable !== false ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'}`}
+                                                    >
+                                                        <motion.span
+                                                            layout
+                                                            transition={{ type: "spring", stiffness: 700, damping: 30 }}
+                                                            animate={{ x: item.isAvailable !== false ? 22 : 2 }}
+                                                            className="inline-block h-5 w-5 transform rounded-full bg-white shadow-md"
+                                                        />
+                                                    </button>
                                                 </td>
                                                 <td className="p-4">
                                                     <div className="flex gap-2">
                                                         <button
+                                                            onClick={() => handleDuplicateItem(item)}
+                                                            className="p-2 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-xl transition-colors"
+                                                            title={t('Duplicate')}
+                                                        >
+                                                            <Copy size={18} />
+                                                        </button>
+                                                        <button
                                                             onClick={() => handleEditItem(item)}
-                                                            className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                                                            className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-colors"
+                                                            title={t('Edit')}
                                                         >
                                                             <Edit2 size={18} />
                                                         </button>
                                                         <button
                                                             onClick={() => handleDeleteItem(item._id || item.id)}
-                                                            className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                                            className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors"
+                                                            title={t('Delete')}
                                                         >
                                                             <Trash2 size={18} />
                                                         </button>
@@ -509,8 +623,11 @@ const ServiceManagement = () => {
                                     </SortableContext>
                                     {(!displayServiceItems || displayServiceItems.length === 0) && (
                                         <tr>
-                                            <td colSpan="4" className="p-8 text-center text-gray-500 dark:text-gray-400">
-                                                {t('No items found. Add one to get started!')}
+                                            <td colSpan="6" className="p-12 text-center">
+                                                <div className="flex flex-col items-center gap-3 text-gray-500 dark:text-gray-400">
+                                                    <Package size={48} className="opacity-20" />
+                                                    <p className="font-bold">{t('No items found. Add one to get started!')}</p>
+                                                </div>
                                             </td>
                                         </tr>
                                     )}
@@ -536,6 +653,18 @@ const ServiceManagement = () => {
                                     placeholder="e.g., General Service"
                                     required
                                 />
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    id="isAvailable"
+                                    checked={itemForm.isAvailable !== false}
+                                    onChange={(e) => setItemForm({ ...itemForm, isAvailable: e.target.checked })}
+                                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                />
+                                <label htmlFor="isAvailable" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    {t('Available')}
+                                </label>
                             </div>
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Item Image')}</label>
@@ -582,7 +711,7 @@ const ServiceManagement = () => {
 
 
 
-const SortableServiceCard = ({ service, handleManageItems, handleEditService, handleDeleteService, t }) => {
+const SortableServiceCard = ({ service, handleManageItems, handleEditService, handleDeleteService, t, serviceAdminMode }) => {
     const {
         attributes,
         listeners,
@@ -599,60 +728,107 @@ const SortableServiceCard = ({ service, handleManageItems, handleEditService, ha
         opacity: isDragging ? 0.8 : 1,
     };
 
+    const isActive = service.isActive !== false;
+
     return (
         <div
             ref={setNodeRef}
             style={style}
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden group relative"
+            className={`group relative bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-xl hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-500 overflow-hidden border border-gray-100 dark:border-gray-700 flex flex-col h-full ${!isActive ? 'grayscale opacity-80' : ''}`}
         >
-            {/* Drag Handle */}
-            <div
-                {...attributes}
-                {...listeners}
-                className="absolute top-2 left-2 z-20 p-2 bg-white/80 dark:bg-black/50 backdrop-blur-sm rounded-lg cursor-grab hover:bg-white dark:hover:bg-black/70 text-gray-700 dark:text-gray-200"
-            >
-                <GripVertical size={16} />
-            </div>
+            <div className="relative h-40 overflow-hidden cursor-pointer" onClick={() => handleManageItems(service)}>
+                {/* Drag Handle (Only for global admin) */}
+                {!serviceAdminMode && (
+                    <div
+                        {...attributes}
+                        {...listeners}
+                        className="absolute top-3 left-3 z-30 p-2 bg-black/50 hover:bg-black/70 text-white rounded-xl backdrop-blur-md transition-all cursor-grab active:cursor-grabbing border border-white/10 shadow-lg"
+                    >
+                        <GripVertical size={18} />
+                    </div>
+                )}
 
-            <div className="h-48 overflow-hidden relative">
                 <img
                     src={service.image || `${API_BASE_URL}/services/${service._id || service.id}/image`}
-                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/300x200?text=No+Image'; }}
+                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/400x300?text=No+Image'; }}
                     alt={service.name}
-                    className="w-full h-full object-cover"
+                    className={`w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${!isActive ? 'grayscale opacity-60' : ''}`}
                 />
-                <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
-                    {service.category}
+
+                {/* Advanced Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
+
+                {/* Status Badge - Floating Glassmorphism */}
+                <div className="absolute top-3 right-3 z-20">
+                    <div className={`backdrop-blur-md px-3 py-1.5 rounded-xl shadow-xl border border-white/20 flex items-center gap-2 ${isActive ? 'bg-emerald-500/80' : 'bg-gray-600/80'} text-white`}>
+                        <div className={`w-1.5 h-1.5 rounded-full animate-pulse bg-white`} />
+                        <span className="text-[9px] font-black uppercase tracking-widest whitespace-nowrap">
+                            {isActive ? t('Active') : t('Inactive')}
+                        </span>
+                    </div>
                 </div>
             </div>
-            <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{service.name}</h3>
-                <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-2">{service.description}</p>
 
-                <div className="flex flex-col gap-2 mb-4 text-sm text-gray-600 dark:text-gray-300">
-                    <div className="flex items-center gap-2"><MapPin size={16} /> {service.address}</div>
-                    <div className="flex items-center gap-2"><Phone size={16} /> {service.mobile}</div>
+            <div className="p-4 flex flex-col flex-grow gap-3">
+                <div className="space-y-0.5">
+                    <h3 className="text-xl font-black text-gray-900 dark:text-white leading-tight line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                        {service.name}
+                    </h3>
+                    <div className="flex flex-wrap gap-1.5">
+                        <span className="px-2 py-0.5 bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-[8px] uppercase tracking-widest font-black rounded-lg border border-gray-100 dark:border-gray-600">
+                            {service.category}
+                        </span>
+                    </div>
                 </div>
 
-                <div className="flex gap-2">
+                {/* Info Pill */}
+                <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-3 space-y-2 border border-gray-100 dark:border-gray-800/50">
+                    <div className="flex items-center gap-2 truncate">
+                        <div className="p-1.5 bg-blue-500/10 rounded-lg">
+                            <MapPin size={14} className="text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400 truncate opacity-80" title={service.address}>
+                            {service.address || t('No address')}
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="p-1.5 bg-orange-500/10 rounded-lg">
+                            <Phone size={14} className="text-orange-600 dark:text-orange-400" />
+                        </div>
+                        <span className="text-[10px] font-black text-gray-700 dark:text-gray-200">
+                            {service.mobile || t('No contact')}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Admin Actions */}
+                <div className="grid grid-cols-2 gap-2 mt-auto">
                     <button
                         onClick={() => handleManageItems(service)}
-                        className="flex-1 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium"
+                        className="col-span-2 py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[1.25rem] shadow-xl shadow-blue-500/10 hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group/btn"
                     >
-                        {t('Manage Items')}
+                        <Package size={16} className="transition-transform group-hover/btn:rotate-12" />
+                        <span className="text-[10px] font-black uppercase tracking-wider">{t('Manage Items')}</span>
                     </button>
-                    <button
-                        onClick={() => handleEditService(service)}
-                        className="p-2 border border-gray-200 dark:border-gray-700 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-                    >
-                        <Edit2 size={20} />
-                    </button>
-                    <button
-                        onClick={() => handleDeleteService(service._id || service.id)}
-                        className="p-2 border border-gray-200 dark:border-gray-700 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                    >
-                        <Trash2 size={20} />
-                    </button>
+
+                    <div className="col-span-2 flex items-center justify-center gap-4 mt-1 pt-3 border-t border-gray-100 dark:border-gray-700/50">
+                        <button
+                            onClick={() => handleEditService(service)}
+                            className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors px-2.5 py-1 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg"
+                        >
+                            <Edit2 size={12} />
+                            {t('Edit')}
+                        </button>
+                        {!serviceAdminMode && (
+                            <button
+                                onClick={() => handleDeleteService(service._id || service.id)}
+                                className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors px-2.5 py-1 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
+                            >
+                                <Trash2 size={12} />
+                                {t('Delete')}
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

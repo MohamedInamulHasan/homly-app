@@ -12,7 +12,7 @@ import {
     updateServicesOrder,
     updateServiceItemsOrder
 } from '../controllers/serviceController.js';
-import { protect, adminOnly } from '../middleware/authMiddleware.js';
+import { protect, adminOnly, adminOrServiceAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -25,15 +25,15 @@ router.put('/reorder', protect, adminOnly, updateServicesOrder);
 
 router.route('/:id')
     .get(getService)
-    .put(protect, adminOnly, updateService)
+    .put(protect, adminOrServiceAdmin, updateService)
     .delete(protect, adminOnly, deleteService);
 
 // Service Item Routes
 router.route('/:id/items')
     .get(getServiceItems)
-    .post(protect, adminOnly, createServiceItem);
+    .post(protect, adminOrServiceAdmin, createServiceItem);
 
-router.put('/:id/items/reorder', protect, adminOnly, updateServiceItemsOrder);
+router.put('/:id/items/reorder', protect, adminOrServiceAdmin, updateServiceItemsOrder);
 
 // Note: Item updates/deletes should probably be under a dedicated items route or nested.
 // For simplicity, defining them here but typical REST might be /items/:itemId. 
@@ -45,7 +45,7 @@ router.put('/:id/items/reorder', protect, adminOnly, updateServiceItemsOrder);
 // Let's add specific routes for item manipulation.
 
 router.route('/items/:itemId')
-    .put(protect, adminOnly, updateServiceItem)
-    .delete(protect, adminOnly, deleteServiceItem);
+    .put(protect, adminOrServiceAdmin, updateServiceItem)
+    .delete(protect, adminOrServiceAdmin, deleteServiceItem);
 
 export default router;

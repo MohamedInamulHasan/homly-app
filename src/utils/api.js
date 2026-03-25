@@ -121,7 +121,7 @@ export const apiService = {
     getOrders: () => api.get('/orders'),
     getOrder: (id) => api.get(`/orders/${id}`),
     createOrder: (data) => api.post('/orders', data),
-    updateOrderStatus: (id, status) => api.put(`/orders/${id}`, { status }),
+    updateOrderStatus: (id, status, deliveredBy) => api.put(`/orders/${id}`, { status, deliveredBy }),
     deleteOrder: (id) => api.delete(`/orders/${id}`),
 
     // Users

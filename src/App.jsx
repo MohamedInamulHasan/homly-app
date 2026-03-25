@@ -22,6 +22,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import MyService from './pages/MyService';
 
 import MobileFooter from './components/MobileFooter';
 import InstallPrompt from './components/InstallPrompt';
@@ -234,6 +235,14 @@ function App() {
                                     element={
                                         <PrivateRoute>
                                             <MyStore />
+                                        </PrivateRoute>
+                                    }
+                                />
+                                <Route
+                                    path="/my-service"
+                                    element={
+                                        <PrivateRoute>
+                                            <MyService />
                                         </PrivateRoute>
                                     }
                                 />

@@ -56,6 +56,11 @@ export const updateService = async (req, res) => {
     try {
         const service = await Service.findById(req.params.id);
         if (service) {
+            // Ownership check for service_admin
+            if (req.user.role === 'service_admin' && String(service._id) !== String(req.user.serviceId)) {
+                return res.status(403).json({ message: 'Not authorized to manage this service' });
+            }
+
             service.name = req.body.name || service.name;
             service.description = req.body.description || service.description;
             service.image = req.body.image || service.image;
@@ -134,13 +139,19 @@ export const getServiceItems = async (req, res) => {
 // @access  Private/Admin
 export const createServiceItem = async (req, res) => {
     try {
-        const { name, description, price, image } = req.body;
+        // Ownership check for service_admin
+        if (req.user.role === 'service_admin' && String(req.params.id) !== String(req.user.serviceId)) {
+            return res.status(403).json({ message: 'Not authorized to add items to this service' });
+        }
+
+        const { name, description, price, image, isAvailable } = req.body;
         const item = await ServiceItem.create({
             serviceId: req.params.id,
             name,
             description,
             price,
-            image
+            image,
+            isAvailable: isAvailable !== undefined ? isAvailable : true
         });
         res.status(201).json(item);
     } catch (error) {
@@ -155,10 +166,16 @@ export const updateServiceItem = async (req, res) => {
     try {
         const item = await ServiceItem.findById(req.params.itemId);
         if (item) {
+            // Ownership check for service_admin
+            if (req.user.role === 'service_admin' && String(item.serviceId) !== String(req.user.serviceId)) {
+                return res.status(403).json({ message: 'Not authorized to manage this item' });
+            }
+
             item.name = req.body.name || item.name;
             item.description = req.body.description || item.description;
-            item.price = req.body.price || item.price;
+            item.price = req.body.price !== undefined ? req.body.price : item.price;
             item.image = req.body.image || item.image;
+            item.isAvailable = req.body.isAvailable !== undefined ? req.body.isAvailable : item.isAvailable;
 
             const updatedItem = await item.save();
             res.json(updatedItem);
@@ -175,6 +192,11 @@ export const updateServiceItem = async (req, res) => {
 // @access  Private/Admin
 export const updateServiceItemsOrder = async (req, res) => {
     try {
+        // Ownership check for service_admin
+        if (req.user.role === 'service_admin' && String(req.params.id) !== String(req.user.serviceId)) {
+            return res.status(403).json({ message: 'Not authorized to reorder items for this service' });
+        }
+
         const { orderedIds } = req.body;
 
         if (!orderedIds || !Array.isArray(orderedIds)) {
@@ -200,6 +222,11 @@ export const deleteServiceItem = async (req, res) => {
     try {
         const item = await ServiceItem.findById(req.params.itemId);
         if (item) {
+            // Ownership check for service_admin
+            if (req.user.role === 'service_admin' && String(item.serviceId) !== String(req.user.serviceId)) {
+                return res.status(403).json({ message: 'Not authorized' });
+            }
+
             await item.deleteOne();
             res.json({ message: 'Service Item removed' });
         } else {

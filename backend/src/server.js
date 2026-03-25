@@ -84,6 +84,11 @@ app.get('/api/health', async (req, res) => {
     }
 });
 
+// Server Time Endpoint - Returns current server time for accurate slot calculation
+app.get('/api/time', (req, res) => {
+    res.json({ success: true, serverTime: new Date().toISOString() });
+});
+
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);

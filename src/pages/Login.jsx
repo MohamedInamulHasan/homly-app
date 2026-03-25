@@ -27,8 +27,14 @@ const Login = () => {
                 sessionStorage.removeItem('redirectAfterLogin');
                 navigate(savedRedirect);
             } else {
-                // Always go to home page after login
-                navigate('/');
+                // Only force delivery boys directly to the admin dashboard. 
+                // Global admins, store admins, etc. may want to see the storefront first.
+                if (user.role === 'delivery_boy') {
+                    navigate('/admin');
+                } else {
+                    // Always go to home page after login for regular users and other admins
+                    navigate('/');
+                }
             }
         }
     }, [navigate, user]);
@@ -43,6 +49,9 @@ const Login = () => {
             if (savedRedirect) {
                 sessionStorage.removeItem('redirectAfterLogin');
                 navigate(savedRedirect);
+            } else {
+                // The Context doesn't return the full user immediately here in submitHandler, 
+                // but useEffect will catch it. If needed, we just let useEffect handle the default routing.
             }
         }
         setIsSubmitting(false);

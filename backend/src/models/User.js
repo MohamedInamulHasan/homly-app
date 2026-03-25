@@ -23,12 +23,24 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['customer', 'admin', 'store_admin'],
+        enum: ['customer', 'admin', 'store_admin', 'service_admin', 'delivery_boy'],
         default: 'customer'
+    },
+    deliverySettings: {
+        workTimings: {
+            start: { type: String, default: '09:00' },
+            end: { type: String, default: '21:00' }
+        },
+        telegramChatId: String,
+        isActive: { type: Boolean, default: true }
     },
     storeId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Store'
+    },
+    serviceId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Service'
     },
     mobile: {
         type: String

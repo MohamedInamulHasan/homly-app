@@ -159,7 +159,6 @@ const StoreManagement = () => {
         openingTime: '09:00',
         closingTime: '21:00',
         mobile: '',
-        city: '',
         timingType: 'daily',
         category: []
     });
@@ -267,7 +266,6 @@ const StoreManagement = () => {
             type: storeForm.category.length > 0 ? storeForm.category : ['General Store'], // Use selected categories
             address: storeForm.address,
             mobile: storeForm.mobile,
-            city: storeForm.city || storeForm.address.split(',').pop().trim() || 'Unknown', // Extract city from address or use manual field
             timing: timingString,
             openingTime: storeForm.openingTime,
             closingTime: storeForm.closingTime,
@@ -293,7 +291,7 @@ const StoreManagement = () => {
                 await addStore(storeData);
                 alert(t('Store added successfully!'));
             }
-            setStoreForm({ name: '', address: '', mobile: '', city: '', image: '', rating: 4.5, openingTime: '09:00', closingTime: '21:00', timingType: 'daily', category: [] });
+            setStoreForm({ name: '', address: '', mobile: '', image: '', rating: 4.5, openingTime: '09:00', closingTime: '21:00', timingType: 'daily', category: [] });
             setEditingStore(null);
             setView('list');
         } catch (error) {
@@ -578,8 +576,8 @@ const StoreManagement = () => {
                                                     </div>
                                                 </div>
 
-                                                <div className="p-6 flex flex-col flex-grow gap-5">
-                                                    <div className="space-y-1">
+                                                <div className="p-4 flex flex-col flex-grow gap-3">
+                                                    <div className="space-y-0.5">
                                                         <h3 className="text-2xl font-black text-gray-900 dark:text-white leading-tight line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
                                                             {store.name}
                                                         </h3>
@@ -598,7 +596,7 @@ const StoreManagement = () => {
                                                     </div>
 
                                                     {/* Info Pill */}
-                                                    <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-4 space-y-3 border border-gray-100 dark:border-gray-800/50">
+                                                    <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-3 space-y-2 border border-gray-100 dark:border-gray-800/50">
                                                         <div className="flex items-center gap-3 truncate">
                                                             <div className="p-2 bg-blue-500/10 rounded-xl">
                                                                 <MapPin size={16} className="text-blue-600 dark:text-blue-400" />
@@ -618,10 +616,10 @@ const StoreManagement = () => {
                                                     </div>
 
                                                     {/* Admin Actions */}
-                                                    <div className="grid grid-cols-2 gap-3 mt-auto">
+                                                    <div className="grid grid-cols-2 gap-2 mt-auto">
                                                         <button
                                                             onClick={(e) => { e.stopPropagation(); proceedToManageProducts(store); }}
-                                                            className="col-span-1 py-3.5 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[1.25rem] shadow-xl shadow-blue-500/10 hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group/btn"
+                                                            className="col-span-1 py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[1.25rem] shadow-xl shadow-blue-500/10 hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group/btn"
                                                         >
                                                             <Package size={18} className="transition-transform group-hover/btn:rotate-12" />
                                                             <span className="text-xs font-black uppercase tracking-wider">{t('Products')}</span>
@@ -630,7 +628,7 @@ const StoreManagement = () => {
                                                         {isTimeOpen ? (
                                                             <button
                                                                 onClick={(e) => { e.stopPropagation(); handleToggleStatus(store); }}
-                                                                className={`col-span-1 py-3.5 px-4 rounded-[1.25rem] shadow-xl transition-all duration-300 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 group/btn ${store.isManuallyClosed
+                                                                className={`col-span-1 py-3 px-4 rounded-[1.25rem] shadow-xl transition-all duration-300 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 group/btn ${store.isManuallyClosed
                                                                     ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-emerald-500/20'
                                                                     : 'bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-red-500/20'
                                                                     }`}
@@ -639,13 +637,13 @@ const StoreManagement = () => {
                                                                 <span className="text-xs font-black uppercase tracking-wider">{store.isManuallyClosed ? t('Open') : t('Close')}</span>
                                                             </button>
                                                         ) : (
-                                                            <div className="col-span-1 py-3.5 px-4 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 rounded-[1.25rem] border border-gray-200 dark:border-gray-700 flex items-center justify-center gap-2 cursor-not-allowed opacity-60">
+                                                            <div className="col-span-1 py-3 px-4 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 rounded-[1.25rem] border border-gray-200 dark:border-gray-700 flex items-center justify-center gap-2 cursor-not-allowed opacity-60">
                                                                 <Clock size={16} />
                                                                 <span className="text-xs font-black uppercase tracking-wider">{t('Closed')}</span>
                                                             </div>
                                                         )}
 
-                                                        <div className="col-span-2 flex items-center justify-center gap-6 mt-2 pt-4 border-t border-gray-100 dark:border-gray-700/50">
+                                                        <div className="col-span-2 flex items-center justify-center gap-4 mt-1 pt-3 border-t border-gray-100 dark:border-gray-700/50">
                                                             <button
                                                                 onClick={(e) => { e.stopPropagation(); handleEditStore(store); }}
                                                                 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors px-3 py-1.5 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl"
@@ -718,7 +716,7 @@ const StoreManagement = () => {
                                     value={storeForm.address}
                                     onChange={(e) => setStoreForm({ ...storeForm, address: e.target.value })}
                                     className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
-                                    placeholder="e.g., 123 Main St, City"
+                                    placeholder="e.g., 123 Main St"
                                     required
                                 />
                             </div>
@@ -787,18 +785,6 @@ const StoreManagement = () => {
                                     onChange={(e) => setStoreForm({ ...storeForm, mobile: e.target.value })}
                                     className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
                                     placeholder="e.g., +91 9876543210"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('City')}</label>
-                                <input
-                                    type="text"
-                                    value={storeForm.city}
-                                    onChange={(e) => setStoreForm({ ...storeForm, city: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
-                                    placeholder="e.g., Chennai"
                                     required
                                 />
                             </div>

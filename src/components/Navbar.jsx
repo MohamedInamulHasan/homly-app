@@ -39,6 +39,7 @@ const Navbar = () => {
 
                         <Link to="/orders" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('Orders')}</Link>
 
+
                         {user ? (
                             <Link to="/profile" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">
                                 {t('Profile')}
@@ -156,6 +157,7 @@ const Navbar = () => {
                             >
                                 {t('Orders')}
                             </Link>
+
 
                             {user ? (
                                 <Link

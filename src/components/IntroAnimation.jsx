@@ -22,7 +22,7 @@ const IntroAnimation = () => {
             if (isDataReady) {
                 setIsVisible(false);
             }
-        }, 3500); // 3.5s minimum
+        }, 2500); // 2.5s minimum for faster entry
 
         return () => clearTimeout(minTime);
     }, [isDataReady]);
@@ -46,14 +46,13 @@ const IntroAnimation = () => {
 
     // Animation Variants
     const letterVariants = {
-        hidden: { opacity: 0, y: 50 },
+        hidden: { opacity: 0 },
         visible: (i) => ({
             opacity: 1,
-            y: 0,
             transition: {
-                delay: i * 0.1, // Stagger effect
-                duration: 0.8,
-                ease: [0.2, 0.65, 0.3, 0.9], // Custom cubic bezier
+                delay: i * 0.05, // Faster stagger
+                duration: 1,
+                ease: "easeOut",
             },
         }),
     };
@@ -132,10 +131,10 @@ const IntroAnimation = () => {
 
                         {/* Subtle tagline with extra spacing */}
                         <motion.p
-                            initial={{ opacity: 0, letterSpacing: "0.1em" }}
-                            animate={{ opacity: 1, letterSpacing: "0.5em" }}
-                            transition={{ delay: 1.5, duration: 1 }}
-                            className="text-sm md:text-base font-medium text-blue-500/80 uppercase mt-4"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.8, duration: 1 }}
+                            className="text-sm md:text-base font-medium text-blue-500/80 uppercase mt-4 tracking-[0.2em]"
                         >
                             Experience Premium
                         </motion.p>

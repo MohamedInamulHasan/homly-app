@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { User, Package, Settings, ChevronRight, Globe, LogOut, Moon, Sun, Shield, Languages, Wrench, MessageCircle, Phone, Bookmark, Store } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
@@ -7,10 +7,13 @@ import AuthContext from '../context/AuthContext';
 import { useOrders } from '../hooks/queries/useOrders';
 import { useUserProfile } from '../hooks/queries/useUsers';
 import { formatOrderDate } from '../utils/dateUtils';
+import { useData } from '../context/DataContext';
+
 
 const Profile = () => {
     const { theme, toggleTheme } = useTheme();
     const { language, setLanguage, t } = useLanguage();
+    const { setIsFooterHidden } = useData();
     const { user: authUser, logout } = useContext(AuthContext);
 
     // React Query Hooks
@@ -21,6 +24,20 @@ const Profile = () => {
     const user = userProfile?.data || authUser;
     const navigate = useNavigate();
     const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+    // Manage footer visibility when modal is open
+    useEffect(() => {
+        if (showLogoutModal) {
+            setIsFooterHidden(true);
+        } else {
+            setIsFooterHidden(false); 
+        }
+
+        // Cleanup on unmount
+        return () => {
+            setIsFooterHidden(false);
+        };
+    }, [showLogoutModal, setIsFooterHidden]);
 
     // Calculate real-time order statistics
     const processingOrders = orders.filter(order => order.status === 'Processing').length;
@@ -44,22 +61,25 @@ const Profile = () => {
         <div className="bg-gray-50 dark:bg-gray-900 py-8 md:py-12 transition-colors duration-200">
             {/* Logout Confirmation Modal */}
             {showLogoutModal && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-sm w-full shadow-xl transform transition-all">
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{t('Sign Out')}</h3>
-                        <p className="text-gray-500 dark:text-gray-400 mb-6">
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl transform transition-all scale-100 opacity-100 flex flex-col items-center">
+                        <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-4">
+                            <LogOut size={32} className="text-red-600 dark:text-red-400" />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-2">{t('Sign Out')}</h3>
+                        <p className="text-gray-500 dark:text-gray-400 text-center mb-6">
                             {t('Are you sure you want to sign out?')}
                         </p>
-                        <div className="flex gap-4">
+                        <div className="flex gap-4 w-full">
                             <button
                                 onClick={() => setShowLogoutModal(false)}
-                                className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                                className="flex-1 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                             >
                                 {t('Cancel')}
                             </button>
                             <button
                                 onClick={confirmLogout}
-                                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-colors"
+                                className="flex-1 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 shadow-md shadow-red-500/20 transition-colors"
                             >
                                 {t('Sign Out')}
                             </button>
@@ -171,24 +191,37 @@ const Profile = () => {
                     </Link>
                 </div>
 
-                {/* Admin Dashboard / My Store (Visible to Admin, Store Admin, or Specific User) */}
-                {user && (user.role === 'admin' || user.role === 'store_admin') && (
+                {/* Admin Dashboard / My Store / My Service / Delivery Panel (Visible to Admin, Store Admin, Service Admin, or Delivery Boy) */}
+                {user && (user.role === 'admin' || user.role === 'store_admin' || user.role === 'service_admin' || user.role === 'delivery_boy') && (
                     <div className="bg-gradient-to-br from-teal-50 via-white to-emerald-50 dark:from-gray-800 dark:via-gray-800 dark:to-teal-900/10 rounded-3xl shadow-lg shadow-teal-100 dark:shadow-teal-900/20 border border-teal-100 dark:border-gray-700 overflow-hidden mb-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
-                        <Link to={user.role === 'store_admin' ? '/my-store' : '/admin'} className="p-6 flex items-center justify-between hover:bg-teal-50/50 dark:hover:bg-teal-900/10 transition-colors group">
+                        <Link to={
+                            user.role === 'store_admin' ? '/my-store' : 
+                            user.role === 'service_admin' ? '/my-service' : 
+                            user.role === 'delivery_boy' ? '/admin' : '/admin'
+                        } className="p-6 flex items-center justify-between hover:bg-teal-50/50 dark:hover:bg-teal-900/10 transition-colors group">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-2xl shadow-lg shadow-teal-300 dark:shadow-teal-900/50">
                                     {user.role === 'store_admin' ? (
                                         <Store className="text-white" size={24} />
+                                    ) : user.role === 'service_admin' ? (
+                                        <Wrench className="text-white" size={24} />
+                                    ) : user.role === 'delivery_boy' ? (
+                                        <Package className="text-white" size={24} />
                                     ) : (
                                         <Shield className="text-white" size={24} />
                                     )}
                                 </div>
                                 <div>
                                     <h2 className="text-lg font-bold bg-gradient-to-r from-teal-600 to-emerald-600 dark:from-teal-400 dark:to-emerald-400 bg-clip-text text-transparent">
-                                        {user.role === 'store_admin' ? t('My Store') : t('Admin Dashboard')}
+                                        {user.role === 'store_admin' ? t('My Store') : 
+                                         user.role === 'service_admin' ? t('My Service') : 
+                                         user.role === 'delivery_boy' ? t('Delivery Panel') : t('Admin Dashboard')}
                                     </h2>
                                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                                        {user.role === 'store_admin' ? t('Manage your store products and details') : t('Manage products, stores, and users')}
+                                        {user.role === 'store_admin' ? t('Manage your store products and details') : 
+                                         user.role === 'service_admin' ? t('Manage your service items and details') : 
+                                         user.role === 'delivery_boy' ? t('View and manage assigned deliveries') :
+                                         t('Manage products, stores, and users')}
                                     </p>
                                 </div>
                             </div>
