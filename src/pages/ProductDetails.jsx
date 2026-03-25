@@ -391,21 +391,13 @@ const ProductDetails = () => {
                                         return groupedElements.map((element, index) => {
                                             if (element.type === 'table') {
                                                 return (
-                                                    <div key={index} className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 my-4">
-                                                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                                            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                                                {element.rows.map((row, rIndex) => (
-                                                                    <tr key={rIndex} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                                                        <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800/80 w-1/3 border-r border-gray-200 dark:border-gray-700">
-                                                                            {row.col1}
-                                                                        </td>
-                                                                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
-                                                                            {row.col2}
-                                                                        </td>
-                                                                    </tr>
-                                                                ))}
-                                                            </tbody>
-                                                        </table>
+                                                    <div key={index} className="grid grid-cols-2 sm:grid-cols-3 gap-3 my-6">
+                                                        {element.rows.map((row, rIndex) => (
+                                                            <div key={rIndex} className="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col items-center justify-center text-center transition-all hover:shadow-md hover:-translate-y-1 hover:border-blue-200 dark:hover:border-blue-800">
+                                                                <span className="text-xs uppercase tracking-wider font-semibold text-gray-500 dark:text-gray-400 mb-1.5">{row.col1}</span>
+                                                                <span className="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300">{row.col2}</span>
+                                                            </div>
+                                                        ))}
                                                     </div>
                                                 );
                                             }
