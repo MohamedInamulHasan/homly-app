@@ -850,8 +850,8 @@ const Checkout = () => {
                                                 const unitText = item.unit;
                                                 if (!unitText) return null;
                                                 return (
-                                                    <div className="absolute bottom-0 right-0 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-tl-lg z-10 pointer-events-none shadow-sm">
-                                                        <span className="text-[9px] font-bold text-gray-900 leading-none block">
+                                                    <div className="absolute bottom-0 right-0 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-tl-xl rounded-br-[11px] z-10 pointer-events-none shadow-[0_-2px_4px_rgba(0,0,0,0.05)] border-t border-l border-white/50">
+                                                        <span className="text-[10px] font-extrabold tracking-tight text-gray-900 leading-none block">
                                                             {unitText}
                                                         </span>
                                                     </div>
