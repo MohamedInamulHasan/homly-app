@@ -6,9 +6,10 @@ import { useLanguage } from '../context/LanguageContext';
 
 const News = () => {
     const navigate = useNavigate();
-    const { news: newsItems, loading } = useData();
+    const { news: newsItems, loading, initialLoading } = useData();
     const { t } = useLanguage();
 
+    const isNewsLoading = loading?.news || initialLoading;
 
     const [selectedNews, setSelectedNews] = useState(null);
 
@@ -51,7 +52,7 @@ const News = () => {
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-                {loading?.news ? (
+                {isNewsLoading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {[...Array(6)].map((_, i) => (
                             <div key={i} className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/50 h-[400px] animate-pulse" />
