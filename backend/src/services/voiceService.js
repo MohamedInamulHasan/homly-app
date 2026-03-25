@@ -18,7 +18,8 @@ export const sendVoiceAlert = async (type, data) => {
         const id = data._id.toString().slice(-8).toUpperCase();
         const amount = data.total ? `₹${data.total.toFixed(0)}` : '';
         
-        const title = type === 'order' ? '🚨 NEW ORDER RECEIVED' : '🔧 NEW SERVICE REQUEST';
+        const title = type === 'order' ? 'NEW ORDER RECEIVED' : 'NEW SERVICE REQUEST';
+
         const message = type === 'order' 
             ? `Order #${id} for ${amount} has arrived!`
             : `Service Request #${id} has arrived!`;
