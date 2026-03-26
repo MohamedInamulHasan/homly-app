@@ -355,7 +355,7 @@ const OrderDetails = () => {
                         {order.shippingAddress?.location && (
                             <a
                                 href={order.shippingAddress.location?.includes('maps?q=') 
-                                    ? order.shippingAddress.location.replace('maps?q=', 'maps/search/?api=1&query=') 
+                                    ? order.shippingAddress.location.replace('https://www.google.com/maps?q=', 'https://maps.google.com/maps?q=') 
                                     : order.shippingAddress.location}
                                 target="_blank"
                                 rel="noopener noreferrer"

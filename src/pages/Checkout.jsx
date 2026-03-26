@@ -378,7 +378,7 @@ const Checkout = () => {
                                                 const { latitude, longitude } = position.coords;
                                                 console.log('📍 Coordinates:', latitude, longitude);
 
-                                                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+                                                const mapsLink = `https://maps.google.com/maps?q=${latitude},${longitude}`;
                                                 console.log('📍 Maps link:', mapsLink);
 
                                                 try {
@@ -529,7 +529,7 @@ const Checkout = () => {
                                                                 setCachedLocation({ latitude, longitude });
 
                                                                 // Store as Google Maps URL for consistency
-                                                                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+                                                                const mapsLink = `https://maps.google.com/maps?q=${latitude},${longitude}`;
                                                                 setFormData(prev => ({
                                                                     ...prev,
                                                                     location: mapsLink
@@ -561,7 +561,7 @@ const Checkout = () => {
                                                                             (position) => {
                                                                                 const { latitude, longitude } = position.coords;
                                                                                 setCachedLocation({ latitude, longitude });
-                                                                                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+                                                                                const mapsLink = `https://maps.google.com/maps?q=${latitude},${longitude}`;
                                                                                 setFormData(prev => ({ ...prev, location: mapsLink }));
                                                                                 if (user) {
                                                                                     const updatedUserData = { ...user, location: mapsLink };

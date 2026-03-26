@@ -93,7 +93,7 @@ const Checkout = () => {
     const handleLocation = () => {
         // INSTANT RESPONSE: Check if we already have it cached
         if (cachedLocation) {
-            const mapsLink = `https://www.google.com/maps/search/?api=1&query=${cachedLocation.latitude},${cachedLocation.longitude}`;
+            const mapsLink = `https://maps.google.com/maps?q=${cachedLocation.latitude},${cachedLocation.longitude}`;
             setFormData(prev => ({ ...prev, location: mapsLink }));
             alert(t('Location retrieved successfully!')); // Show success immediately
             return;
@@ -112,7 +112,7 @@ const Checkout = () => {
                 // Update cache for next time
                 setCachedLocation({ latitude, longitude });
 
-                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+                const mapsLink = `https://maps.google.com/maps?q=${latitude},${longitude}`;
                 setFormData(prev => ({ ...prev, location: mapsLink }));
                 setIsNavigating(false);
                 alert(t('Location retrieved successfully!'));

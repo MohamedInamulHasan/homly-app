@@ -1733,7 +1733,7 @@ const OrderManagement = () => {
                                                     {order.shippingAddress?.location && (
                                                         <a
                                                             href={order.shippingAddress.location?.includes('maps?q=') 
-                                                                ? order.shippingAddress.location.replace('maps?q=', 'maps/search/?api=1&query=') 
+                                                                ? order.shippingAddress.location.replace('https://www.google.com/maps?q=', 'https://maps.google.com/maps?q=') 
                                                                 : order.shippingAddress.location}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
@@ -2588,7 +2588,7 @@ const UserManagement = () => {
 
                                                 let mapLink = loc;
                                                 if (!loc.startsWith('http')) {
-                                                    mapLink = `https://www.google.com/maps/search/?api=1&query=${loc.replace(/\s/g, '')}`;
+                                                    mapLink = `https://maps.google.com/maps?q=${loc.replace(/\s/g, '')}`;
                                                 }
 
                                                 return (
@@ -3496,7 +3496,7 @@ const ServiceRequestManagement = () => {
                                                             href={(() => {
                                                                 const loc = request.address?.location || request.user?.location;
                                                                 if (loc && loc.startsWith('http')) return loc;
-                                                                return `https://www.google.com/maps/search/?api=1&query=${loc}`;
+                                                                return `https://maps.google.com/maps?q=${loc}`;
                                                             })()}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
