@@ -360,15 +360,6 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                             {t('Add Service')}
                         </button>
                     )}
-                    {view === 'serviceItems' && serviceAdminMode && selectedService && (
-                        <button
-                            onClick={() => handleEditService(selectedService)}
-                            className="flex items-center gap-2 px-3 py-2 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm"
-                        >
-                            <Edit2 size={16} />
-                            {t('Edit Details')}
-                        </button>
-                    )}
                     {view === 'serviceItems' && (
                         <button
                             onClick={handleAddItem}
@@ -384,18 +375,20 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
             {/* View: List of Services */}
             {view === 'list' && (
                 <>
-                    <div className="mb-4">
-                        <div className="relative">
-                            <input
-                                type="text"
-                                placeholder={t('Search services...')}
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
-                            />
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                    {!serviceAdminMode && (
+                        <div className="mb-4">
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder={t('Search services...')}
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                />
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <DndContext
                         sensors={sensors}
@@ -528,7 +521,6 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                         <th className="p-4 w-12"></th>
                                         <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Image')}</th>
                                         <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Name')}</th>
-                                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Price')}</th>
                                         <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Available')}</th>
                                         <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Actions')}</th>
                                     </tr>
@@ -558,9 +550,6 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                                 <td className="p-4 font-bold text-gray-900 dark:text-white">
                                                     <div className="truncate max-w-[200px]" title={item.name}>{item.name}</div>
                                                     <div className="text-[10px] text-gray-400 font-medium truncate max-w-[200px]">{item.description}</div>
-                                                </td>
-                                                <td className="p-4 font-black text-gray-900 dark:text-white">
-                                                    {item.price ? `₹${item.price}` : t('Price on Request')}
                                                 </td>
                                                 <td className="p-4">
                                                     <button
@@ -771,11 +760,11 @@ const SortableServiceCard = ({ service, handleManageItems, handleEditService, ha
 
             <div className="p-4 flex flex-col flex-grow gap-3">
                 <div className="space-y-0.5">
-                    <h3 className="text-xl font-black text-gray-900 dark:text-white leading-tight line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                    <h3 className="text-2xl font-black text-gray-900 dark:text-white leading-tight line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
                         {service.name}
                     </h3>
                     <div className="flex flex-wrap gap-1.5">
-                        <span className="px-2 py-0.5 bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-[8px] uppercase tracking-widest font-black rounded-lg border border-gray-100 dark:border-gray-600">
+                        <span className="px-2 py-0.5 bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-[9px] uppercase tracking-widest font-black rounded-lg border border-gray-100 dark:border-gray-600">
                             {service.category}
                         </span>
                     </div>
@@ -784,18 +773,18 @@ const SortableServiceCard = ({ service, handleManageItems, handleEditService, ha
                 {/* Info Pill */}
                 <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-3 space-y-2 border border-gray-100 dark:border-gray-800/50">
                     <div className="flex items-center gap-2 truncate">
-                        <div className="p-1.5 bg-blue-500/10 rounded-lg">
-                            <MapPin size={14} className="text-blue-600 dark:text-blue-400" />
+                        <div className="p-2 bg-blue-500/10 rounded-lg">
+                            <MapPin size={16} className="text-blue-600 dark:text-blue-400" />
                         </div>
-                        <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400 truncate opacity-80" title={service.address}>
+                        <span className="text-xs font-bold text-gray-600 dark:text-gray-400 truncate opacity-80" title={service.address}>
                             {service.address || t('No address')}
                         </span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="p-1.5 bg-orange-500/10 rounded-lg">
-                            <Phone size={14} className="text-orange-600 dark:text-orange-400" />
+                        <div className="p-2 bg-orange-500/10 rounded-lg">
+                            <Phone size={16} className="text-orange-600 dark:text-orange-400" />
                         </div>
-                        <span className="text-[10px] font-black text-gray-700 dark:text-gray-200">
+                        <span className="text-xs font-black text-gray-700 dark:text-gray-200">
                             {service.mobile || t('No contact')}
                         </span>
                     </div>

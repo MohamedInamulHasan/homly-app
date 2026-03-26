@@ -645,7 +645,10 @@ const ProductManagement = () => {
         storeId: '',
         description: '',
         image: '',
-        sliderImages: []
+        sliderImages: [],
+        useTimeLimit: false,
+        openingTime: '00:00',
+        closingTime: '23:59'
     });
 
     const { uploadImage, uploading } = useCloudinaryUpload();
@@ -689,7 +692,10 @@ const ProductManagement = () => {
             image: product.image || (product.images && product.images[0]) || '',
             sliderImages: product.images || [],
             stock: product.stock || 0,
-            unit: product.unit || ''
+            unit: product.unit || '',
+            useTimeLimit: product.useTimeLimit || false,
+            openingTime: product.openingTime || '00:00',
+            closingTime: product.closingTime || '23:59'
         });
         setView('form');
     };
@@ -751,6 +757,11 @@ const ProductManagement = () => {
             productData.storeId = formData.storeId;
         }
 
+        // Add timing data
+        productData.useTimeLimit = formData.useTimeLimit;
+        productData.openingTime = formData.openingTime;
+        productData.closingTime = formData.closingTime;
+
         try {
             if (editingProduct) {
                 const updateData = { ...productData };
@@ -787,7 +798,7 @@ const ProductManagement = () => {
                 await addProduct(productData);
                 alert(t('Product uploaded successfully!'));
             }
-            setFormData({ title: '', price: '', category: '', subcategory: [], storeId: '', description: '', image: '', sliderImages: [], stock: 0, unit: 'kg' });
+            setFormData({ title: '', price: '', category: '', subcategory: [], storeId: '', description: '', image: '', sliderImages: [], stock: 0, unit: '', useTimeLimit: false, openingTime: '00:00', closingTime: '23:59' });
             setEditingProduct(null);
             setView('list');
         } catch (error) {
@@ -947,51 +958,66 @@ const ProductManagement = () => {
                                                         </td>
                                                         <td className="p-4 font-medium text-gray-900 dark:text-white">₹{product.price}</td>
                                                         <td className="p-4">
-                                                            <button
-                                                                onClick={async () => {
-                                                                    const currentStatus = product.isAvailable !== false;
-                                                                    const productId = product._id || product.id;
+                                                            <div className="flex items-center">
+                                                                <button
+                                                                    onClick={async () => {
+                                                                        const currentStatus = product.isAvailable !== false;
+                                                                        const productId = product._id || product.id;
 
-                                                                    // Optimistic update - instant UI response
-                                                                    queryClient.setQueryData(['products'], (old) => {
-                                                                        const oldData = Array.isArray(old) ? old : (old?.data || []);
-                                                                        return oldData.map(p =>
-                                                                            (p._id || p.id) === productId
-                                                                                ? { ...p, isAvailable: !currentStatus }
-                                                                                : p
-                                                                        );
-                                                                    });
+                                                                        // If automatically off due to time, we cannot manually turn it ON
+                                                                        if (!currentStatus && !isProductScheduled(product)) {
+                                                                            alert(t('Cannot enable: Product is currently outside its scheduled timing window.'));
+                                                                            return;
+                                                                        }
 
-                                                                    try {
-                                                                        await updateProduct({
-                                                                            id: productId,
-                                                                            data: { ...product, isAvailable: !currentStatus }
-                                                                        });
-                                                                    } catch (error) {
-                                                                        // Rollback on error
+                                                                        // Optimistic update
                                                                         queryClient.setQueryData(['products'], (old) => {
                                                                             const oldData = Array.isArray(old) ? old : (old?.data || []);
                                                                             return oldData.map(p =>
                                                                                 (p._id || p.id) === productId
-                                                                                    ? { ...p, isAvailable: currentStatus }
+                                                                                    ? { ...p, isAvailable: !currentStatus }
                                                                                     : p
                                                                             );
                                                                         });
-                                                                        console.error('Failed to toggle availability:', error);
-                                                                        alert(t('Failed to update status'));
-                                                                    }
-                                                                }}
-                                                                className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${product.isAvailable !== false ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'
-                                                                    }`}
-                                                                title={product.isAvailable !== false ? t('Available') : t('Out of Stock')}
-                                                            >
-                                                                <motion.span
-                                                                    layout
-                                                                    transition={{ type: "spring", stiffness: 700, damping: 30 }}
-                                                                    animate={{ x: product.isAvailable !== false ? 22 : 2 }}
-                                                                    className="inline-block h-5 w-5 transform rounded-full bg-white shadow-md"
-                                                                />
-                                                            </button>
+
+                                                                        try {
+                                                                            await updateProduct({
+                                                                                id: productId,
+                                                                                data: { ...product, isAvailable: !currentStatus }
+                                                                            });
+                                                                        } catch (error) {
+                                                                            // Rollback on error
+                                                                            queryClient.setQueryData(['products'], (old) => {
+                                                                                const oldData = Array.isArray(old) ? old : (old?.data || []);
+                                                                                return oldData.map(p =>
+                                                                                    (p._id || p.id) === productId
+                                                                                        ? { ...p, isAvailable: currentStatus }
+                                                                                        : p
+                                                                                );
+                                                                            });
+                                                                            console.error('Failed to toggle availability:', error);
+                                                                            alert(t('Failed to update status'));
+                                                                        }
+                                                                    }}
+                                                                    disabled={product.isAvailable === false && !isProductScheduled(product)}
+                                                                    className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${product.isAvailable !== false && isProductScheduled(product) ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'
+                                                                        } ${(product.isAvailable === false && !isProductScheduled(product)) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                                    title={product.isAvailable !== false && isProductScheduled(product) ? t('Available') : !isProductScheduled(product) ? t('Timed Out') : t('Out of Stock')}
+                                                                >
+                                                                    <motion.span
+                                                                        layout
+                                                                        transition={{ type: "spring", stiffness: 700, damping: 30 }}
+                                                                        animate={{ x: (product.isAvailable !== false && isProductScheduled(product)) ? 22 : 2 }}
+                                                                        className="inline-block h-5 w-5 transform rounded-full bg-white shadow-md"
+                                                                    />
+                                                                </button>
+                                                                {!isProductScheduled(product) && (
+                                                                    <span className="ml-2 text-[10px] font-bold text-orange-500 flex items-center gap-1">
+                                                                        <RefreshCw size={10} className="animate-spin-slow" />
+                                                                        {t('TIMED')}
+                                                                    </span>
+                                                                )}
+                                                            </div>
                                                         </td>
                                                         <td className="p-4">
                                                             <div className="flex gap-2">
@@ -1161,8 +1187,6 @@ const ProductManagement = () => {
                                     {t('Select one or more subcategories for this product')}
                                 </p>
                             </div>
-
-
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Store')}</label>
                                 <select
@@ -1177,6 +1201,47 @@ const ProductManagement = () => {
                                         </option>
                                     ))}
                                 </select>
+                            </div>
+
+                            <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-2xl border border-gray-100 dark:border-gray-600 space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <label className="text-sm font-bold text-gray-700 dark:text-gray-300">{t('Product Timing')}</label>
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, useTimeLimit: !formData.useTimeLimit })}
+                                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${formData.useTimeLimit ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'}`}
+                                    >
+                                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.useTimeLimit ? 'translate-x-6' : 'translate-x-1'}`} />
+                                    </button>
+                                </div>
+                                
+                                {formData.useTimeLimit && (
+                                    <div className="grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                        <div>
+                                            <label className="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1">{t('Opening')}</label>
+                                            <input
+                                                type="time"
+                                                value={formData.openingTime}
+                                                onChange={(e) => setFormData({ ...formData, openingTime: e.target.value })}
+                                                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1">{t('Closing')}</label>
+                                            <input
+                                                type="time"
+                                                value={formData.closingTime}
+                                                onChange={(e) => setFormData({ ...formData, closingTime: e.target.value })}
+                                                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                                <p className="text-[10px] text-gray-400">
+                                    {formData.useTimeLimit 
+                                        ? t('Product will automatically turn off outside these hours.') 
+                                        : t('Product will stay on 24/7 unless manually disabled.')}
+                                </p>
                             </div>
 
                             <div>
@@ -1667,7 +1732,9 @@ const OrderManagement = () => {
                                                     </span>
                                                     {order.shippingAddress?.location && (
                                                         <a
-                                                            href={order.shippingAddress.location}
+                                                            href={order.shippingAddress.location?.includes('maps?q=') 
+                                                                ? order.shippingAddress.location.replace('maps?q=', 'maps/search/?api=1&query=') 
+                                                                : order.shippingAddress.location}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline mt-1 text-xs"
@@ -2521,7 +2588,7 @@ const UserManagement = () => {
 
                                                 let mapLink = loc;
                                                 if (!loc.startsWith('http')) {
-                                                    mapLink = `https://www.google.com/maps?q=${loc.replace(/\s/g, '')}`;
+                                                    mapLink = `https://www.google.com/maps/search/?api=1&query=${loc.replace(/\s/g, '')}`;
                                                 }
 
                                                 return (
@@ -3429,7 +3496,7 @@ const ServiceRequestManagement = () => {
                                                             href={(() => {
                                                                 const loc = request.address?.location || request.user?.location;
                                                                 if (loc && loc.startsWith('http')) return loc;
-                                                                return `https://www.google.com/maps?q=${loc}`;
+                                                                return `https://www.google.com/maps/search/?api=1&query=${loc}`;
                                                             })()}
                                                             target="_blank"
                                                             rel="noopener noreferrer"

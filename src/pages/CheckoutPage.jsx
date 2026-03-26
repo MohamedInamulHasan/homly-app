@@ -93,7 +93,7 @@ const Checkout = () => {
     const handleLocation = () => {
         // INSTANT RESPONSE: Check if we already have it cached
         if (cachedLocation) {
-            const mapsLink = `https://www.google.com/maps?q=${cachedLocation.latitude},${cachedLocation.longitude}`;
+            const mapsLink = `https://www.google.com/maps/search/?api=1&query=${cachedLocation.latitude},${cachedLocation.longitude}`;
             setFormData(prev => ({ ...prev, location: mapsLink }));
             alert(t('Location retrieved successfully!')); // Show success immediately
             return;
@@ -112,7 +112,7 @@ const Checkout = () => {
                 // Update cache for next time
                 setCachedLocation({ latitude, longitude });
 
-                const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
                 setFormData(prev => ({ ...prev, location: mapsLink }));
                 setIsNavigating(false);
                 alert(t('Location retrieved successfully!'));
@@ -405,7 +405,7 @@ const Checkout = () => {
                                                 return a.timeValue.localeCompare(b.timeValue);
                                             });
 
-                                            return availableSlots.map(slot => (
+                                            return availableSlots.slice(0, 2).map(slot => (
                                                 <option key={slot.value} value={slot.value}>
                                                     {slot.label}
                                                 </option>
@@ -472,13 +472,21 @@ const Checkout = () => {
 
                                                 return (
                                                     <div className="flex flex-col min-w-0">
-                                                        <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate" title={mainTitle}>
-                                                            {mainTitle}
-                                                        </h3>
-                                                        {bracketContent && (
-                                                            <span className="text-xs text-gray-500 dark:text-gray-400 truncate" title={bracketContent}>
-                                                                {bracketContent}
-                                                            </span>
+                                                        {item.isFromAd ? (
+                                                            <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-1 leading-normal" title={fullTitle}>
+                                                                {fullTitle}
+                                                            </h3>
+                                                        ) : (
+                                                            <>
+                                                                <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate" title={mainTitle}>
+                                                                    {mainTitle}
+                                                                </h3>
+                                                                {bracketContent && (
+                                                                    <span className="text-xs text-gray-500 dark:text-gray-400 truncate" title={bracketContent}>
+                                                                        {bracketContent}
+                                                                    </span>
+                                                                )}
+                                                            </>
                                                         )}
                                                     </div>
                                                 );

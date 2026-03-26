@@ -62,7 +62,22 @@ const ProductGroupProducts = () => {
                 matchesName = baseProductTitle === searchTitle.toLowerCase();
             }
 
-            const isAvailable = product.isAvailable !== false;
+            // Consistent availability check (Manual + Time-based)
+            if (product.isAvailable === false) return false;
+
+            if (product.useTimeLimit) {
+                const now = new Date();
+                const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                const opening = product.openingTime || '00:00';
+                const closing = product.closingTime || '23:59';
+                
+                if (opening <= closing) {
+                    if (currentTime < opening || currentTime > closing) return false;
+                } else {
+                    // Overnights
+                    if (currentTime < opening && currentTime > closing) return false;
+                }
+            }
 
             // Apply storeId filter when present in the URL.
             // - From store page: storeId IS set → only show that store's products ✅
@@ -73,7 +88,7 @@ const ProductGroupProducts = () => {
                 matchesStore = pStoreId && (String(pStoreId) === String(storeIdParam));
             }
 
-            return matchesName && isAvailable && matchesStore;
+            return matchesName && matchesStore;
         })
         .sort((a, b) => {
             // Sort: Open stores first, then by price

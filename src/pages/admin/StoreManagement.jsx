@@ -171,7 +171,10 @@ const StoreManagement = () => {
         image: '',
         sliderImages: [],
         stock: 0,
-        unit: ''
+        unit: '',
+        useTimeLimit: false,
+        openingTime: '00:00',
+        closingTime: '23:59'
     });
 
     const handleStoreImageUpload = async (e) => {
@@ -311,7 +314,7 @@ const StoreManagement = () => {
     };
 
     const handleAddProductToStore = () => {
-        setProductForm({ title: '', price: '', category: '', subcategory: '', description: '', image: '', sliderImages: [], stock: 0, unit: '' });
+        setProductForm({ title: '', price: '', category: '', subcategory: [], description: '', image: '', sliderImages: [], stock: 0, unit: '', useTimeLimit: false, openingTime: '00:00', closingTime: '23:59' });
         setEditingProduct(null);
         setView('addProductToStore');
     };
@@ -327,7 +330,10 @@ const StoreManagement = () => {
             image: product.image,
             sliderImages: product.images || [],
             stock: product.stock || 0,
-            unit: product.unit || ''
+            unit: product.unit || '',
+            useTimeLimit: product.useTimeLimit || false,
+            openingTime: product.openingTime || '00:00',
+            closingTime: product.closingTime || '23:59'
         });
         setView('addProductToStore'); // Reusing the add form for editing
     };
@@ -363,22 +369,25 @@ const StoreManagement = () => {
             alert(t('Product duplicated successfully!'));
         } catch (error) {
             console.error('Error duplicating product:', error);
-            alert(t('Failed to duplicate product.'));
+        alert(t('Failed to duplicate product.'));
         }
     };
 
     const handleToggleStatus = async (store) => {
-        try {
-            // Toggle the isManuallyClosed status
-            const newStatus = !store.isManuallyClosed;
+        const isCurrentlyClosedBySchedule = !isStoreOpen({ ...store, isManuallyClosed: false });
+        const newManualStatus = !store.isManuallyClosed;
 
+        // If trying to open (isManuallyClosed: false) but it's closed by schedule
+        if (!newManualStatus && isCurrentlyClosedBySchedule && store.timingType === 'daily') {
+            alert(t('Cannot open: Store is currently outside its daily operating hours'));
+            return;
+        }
+
+        try {
             await updateStore({
                 id: store.id || store._id,
-                data: { isManuallyClosed: newStatus }
+                data: { isManuallyClosed: newManualStatus }
             });
-
-            // Optional: Show a toast or small notification
-            // alert(t(newStatus ? 'Store closed manually.' : 'Store opened (following schedule).')); 
         } catch (error) {
             console.error('Error toggling store status:', error);
             alert(t('Failed to update store status.'));
@@ -394,10 +403,12 @@ const StoreManagement = () => {
         }
 
         const productData = {
-            ...productForm,
             price: parseFloat(productForm.price),
             storeId: selectedStore._id || selectedStore.id,
-            images: productForm.sliderImages.length > 0 ? productForm.sliderImages : [productForm.image] // Use slider images if available, else main image
+            images: productForm.sliderImages.length > 0 ? productForm.sliderImages : [productForm.image],
+            useTimeLimit: productForm.useTimeLimit,
+            openingTime: productForm.openingTime,
+            closingTime: productForm.closingTime
         };
 
         try {
@@ -872,6 +883,24 @@ const StoreManagement = () => {
             {view === 'storeProducts' && selectedStore && (
                 <div className="space-y-6">
 
+                    {/* Product Timing Logic Helper */}
+                    {(() => {
+                        window.isProductScheduled = (product) => {
+                            if (!product.useTimeLimit) return true;
+                            const now = new Date();
+                            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                            const opening = product.openingTime || '00:00';
+                            const closing = product.closingTime || '23:59';
+
+                            if (opening <= closing) {
+                                return currentTime >= opening && currentTime <= closing;
+                            } else {
+                                return currentTime >= opening || currentTime <= closing;
+                            }
+                        };
+                        return null;
+                    })()}
+
                     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                         <div className="overflow-x-auto">
                             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -924,26 +953,35 @@ const StoreManagement = () => {
                                                         </div>
                                                     </td>
                                                     <td className="p-4 font-medium text-gray-900 dark:text-white">
-                                                        {(() => {
-                                                            const fullTitle = product.title;
-                                                            const bracketIndex = fullTitle?.indexOf('(');
+                                                        <div className="flex flex-col">
+                                                            {(() => {
+                                                                const fullTitle = product.title;
+                                                                const bracketIndex = fullTitle?.indexOf('(');
 
-                                                            if (bracketIndex !== -1) {
-                                                                const mainTitle = fullTitle.substring(0, bracketIndex).trim();
-                                                                const bracketText = fullTitle.substring(bracketIndex).trim();
+                                                                if (bracketIndex !== -1) {
+                                                                    const mainTitle = fullTitle.substring(0, bracketIndex).trim();
+                                                                    const bracketText = fullTitle.substring(bracketIndex).trim();
+                                                                    return (
+                                                                        <div className="max-w-[150px] sm:max-w-xs">
+                                                                            <div className="truncate" title={mainTitle}>{mainTitle}</div>
+                                                                            <div className="text-xs text-gray-500 dark:text-gray-400 truncate" title={bracketText}>{bracketText}</div>
+                                                                        </div>
+                                                                    );
+                                                                }
                                                                 return (
-                                                                    <div className="max-w-[150px] sm:max-w-xs">
-                                                                        <div className="truncate" title={mainTitle}>{mainTitle}</div>
-                                                                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate" title={bracketText}>{bracketText}</div>
+                                                                    <div className="max-w-[150px] sm:max-w-xs truncate" title={fullTitle}>
+                                                                        {fullTitle}
                                                                     </div>
                                                                 );
-                                                            }
-                                                            return (
-                                                                <div className="max-w-[150px] sm:max-w-xs truncate" title={fullTitle}>
-                                                                    {fullTitle}
+                                                            })()}
+                                                            {product.useTimeLimit && (
+                                                                <div className={`mt-1 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider ${window.isProductScheduled(product) ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
+                                                                    <Clock size={10} />
+                                                                    <span>{t('TIMED')}</span>
+                                                                    <span className="opacity-70">({formatTime12h(product.openingTime)} - {formatTime12h(product.closingTime)})</span>
                                                                 </div>
-                                                            );
-                                                        })()}
+                                                            )}
+                                                        </div>
                                                     </td>
                                                     <td className="p-4 font-medium text-gray-900 dark:text-white">
                                                         {(() => {
@@ -1027,7 +1065,15 @@ const StoreManagement = () => {
                                                     <td className="p-4">
                                                         <button
                                                             onClick={async () => {
+                                                                const isScheduled = window.isProductScheduled(product);
                                                                 const currentStatus = product.isAvailable !== false;
+
+                                                                // If product is currently OFF due to timing, and user tries to turn it ON manually
+                                                                if (!currentStatus && !isScheduled && product.useTimeLimit) {
+                                                                    alert(t('Cannot enable: Product is currently outside its scheduled timing window.'));
+                                                                    return;
+                                                                }
+
                                                                 const productId = product._id || product.id;
 
                                                                 // Optimistic update - instant UI response
@@ -1066,10 +1112,15 @@ const StoreManagement = () => {
                                                             <motion.span
                                                                 layout
                                                                 transition={{ type: "spring", stiffness: 700, damping: 30 }}
-                                                                animate={{ x: product.isAvailable !== false ? 22 : 2 }}
+                                                                animate={{ x: (product.isAvailable !== false && window.isProductScheduled(product)) ? 22 : 2 }}
                                                                 className="inline-block h-5 w-5 transform rounded-full bg-white shadow-md"
                                                             />
                                                         </button>
+                                                        {!window.isProductScheduled(product) && product.isAvailable !== false && (
+                                                            <div className="mt-1 text-[9px] font-black uppercase text-amber-500 tracking-tighter text-center leading-none">
+                                                                {t('Auto Off')}
+                                                            </div>
+                                                        )}
                                                     </td>
                                                     <td className="p-4">
                                                         <div className="flex gap-2">
@@ -1286,6 +1337,57 @@ const StoreManagement = () => {
                                             <input type="file" accept="image/*" multiple onChange={(e) => handleProductImageUpload(e, true)} className="hidden" />
                                         </label>
                                     </div>
+                                </div>
+                            </div>
+
+                            {/* Product Timing Section */}
+                            <div className="col-span-1 md:col-span-2">
+                                <div className="p-4 rounded-2xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="flex items-center gap-2">
+                                            <div className="p-1.5 bg-blue-100 dark:bg-blue-900/40 rounded-lg text-blue-600 dark:text-blue-400">
+                                                <Clock size={18} />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-sm font-bold text-gray-900 dark:text-white">{t('Product Timing')}</h4>
+                                                <p className="text-[10px] text-gray-500 dark:text-gray-400 tracking-tight">{t('Schedule when this product appears in the store')}</p>
+                                            </div>
+                                        </div>
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={productForm.useTimeLimit}
+                                                onChange={(e) => setProductForm({ ...productForm, useTimeLimit: e.target.checked })}
+                                                className="sr-only peer"
+                                            />
+                                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                        </label>
+                                    </div>
+
+                                    {productForm.useTimeLimit && (
+                                        <div className="grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                            <div>
+                                                <label className="block text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1.5 ml-1">{t('Opening')}</label>
+                                                <input
+                                                    type="time"
+                                                    value={productForm.openingTime}
+                                                    onChange={(e) => setProductForm({ ...productForm, openingTime: e.target.value })}
+                                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                                                    required={productForm.useTimeLimit}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1.5 ml-1">{t('Closing')}</label>
+                                                <input
+                                                    type="time"
+                                                    value={productForm.closingTime}
+                                                    onChange={(e) => setProductForm({ ...productForm, closingTime: e.target.value })}
+                                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                                                    required={productForm.useTimeLimit}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>

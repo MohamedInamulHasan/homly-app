@@ -378,7 +378,7 @@ const Checkout = () => {
                                                 const { latitude, longitude } = position.coords;
                                                 console.log('📍 Coordinates:', latitude, longitude);
 
-                                                const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                                                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
                                                 console.log('📍 Maps link:', mapsLink);
 
                                                 try {
@@ -529,7 +529,7 @@ const Checkout = () => {
                                                                 setCachedLocation({ latitude, longitude });
 
                                                                 // Store as Google Maps URL for consistency
-                                                                const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                                                                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
                                                                 setFormData(prev => ({
                                                                     ...prev,
                                                                     location: mapsLink
@@ -561,7 +561,7 @@ const Checkout = () => {
                                                                             (position) => {
                                                                                 const { latitude, longitude } = position.coords;
                                                                                 setCachedLocation({ latitude, longitude });
-                                                                                const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                                                                                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
                                                                                 setFormData(prev => ({ ...prev, location: mapsLink }));
                                                                                 if (user) {
                                                                                     const updatedUserData = { ...user, location: mapsLink };
@@ -670,18 +670,35 @@ const Checkout = () => {
 
                                     allowedSlots.forEach(timeValue => {
                                         const [hours, mins] = timeValue.split(':').map(Number);
-                                        const slotTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, mins);
-                                        // Show only future slots within the 3-hour window
-                                        if (slotTime > threshold && slotTime <= windowEnd) {
+                                        const displayTime = formatDeliveryRange(timeValue);
+
+                                        // 1. Add for TODAY if still available
+                                        const slotDateToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, mins);
+                                        if (slotDateToday > threshold) {
                                             availableSlots.push({
-                                                value: timeValue,
-                                                label: formatDeliveryRange(timeValue),
+                                                value: `today|${timeValue}`,
+                                                label: `${displayTime} (${t('Today')})`,
+                                                period: 'today',
+                                                timeValue
                                             });
                                         }
+
+                                        // 2. Add for TOMORROW
+                                        availableSlots.push({
+                                            value: `tomorrow|${timeValue}`,
+                                            label: `${displayTime} (${t('Tomorrow')})`,
+                                            period: 'tomorrow',
+                                            timeValue
+                                        });
                                     });
 
-                                    availableSlots.sort((a, b) => a.value.localeCompare(b.value));
-                                    const displaySlots = availableSlots; // No artificial cap — show all in the 3-hr window
+                                    // Sort by period then time
+                                    availableSlots.sort((a, b) => {
+                                        if (a.period !== b.period) return a.period === 'today' ? -1 : 1;
+                                        return a.timeValue.localeCompare(b.timeValue);
+                                    });
+
+                                    const displaySlots = availableSlots.slice(0, 2); 
                                     const selectedSlot = displaySlots.find(s => s.value === formData.deliveryTime);
 
                                     return (
@@ -868,7 +885,7 @@ const Checkout = () => {
 
                                                 // For special offers, show full title without bracket splitting
                                                 if (item.isFromAd) {
-                                                    return <h3 className={`text-sm font-medium text-gray-900 dark:text-white ${titleClass}`} title={fullTitle}>{fullTitle}</h3>;
+                                                    return <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-1 leading-normal" title={fullTitle}>{fullTitle}</h3>;
                                                 }
 
                                                 // For regular items, apply bracket splitting logic

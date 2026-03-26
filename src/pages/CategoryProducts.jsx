@@ -40,10 +40,24 @@ const CategoryProducts = () => {
             product.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             product.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
-        // Consistent availability check
-        const isAvailable = product.isAvailable !== false;
+        // Consistent availability check (Manual + Time-based)
+        if (product.isAvailable === false) return false;
 
-        return matchesCategory && matchesSearch && isAvailable;
+        if (product.useTimeLimit) {
+            const now = new Date();
+            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            const opening = product.openingTime || '00:00';
+            const closing = product.closingTime || '23:59';
+            
+            if (opening <= closing) {
+                if (currentTime < opening || currentTime > closing) return false;
+            } else {
+                // Overnights case (e.g., 22:00 to 02:00)
+                if (currentTime < opening && currentTime > closing) return false;
+            }
+        }
+
+        return matchesCategory && matchesSearch;
     });
 
     // Always group products by title with centralized utility

@@ -269,7 +269,7 @@ const Orders = () => {
                                                         })()}
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <p className={`text-sm font-bold text-gray-900 dark:text-white ${item.isFromAd ? 'line-clamp-2' : 'truncate'}`}>
+                                                        <p className={`text-sm font-bold text-gray-900 dark:text-white ${item.isFromAd ? 'mb-1 leading-normal' : 'truncate'}`}>
                                                             {(() => {
                                                                 const fullTitle = item.adTitle || item.name;
                                                                 const bracketIndex = fullTitle?.indexOf('(');

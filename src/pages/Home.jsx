@@ -61,10 +61,29 @@ const Home = () => {
 
     // Map products from raw data (handling potential nesting)
     // Filter out unavailable products so they don't show up in groups or lists
-    // Map products from raw data - Memoized accurately
+    // Map products from raw data - Memoized accurately with availability checks
     const products = useMemo(() => {
         const raw = Array.isArray(rawProducts) ? rawProducts : (rawProducts?.data || []);
-        return raw.filter(p => p.isAvailable !== false);
+        const now = new Date();
+        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+        return raw.filter(p => {
+            // Manual check
+            if (p.isAvailable === false) return false;
+
+            // Timing check
+            if (p.useTimeLimit) {
+                const opening = p.openingTime || '00:00';
+                const closing = p.closingTime || '23:59';
+                if (opening <= closing) {
+                    if (currentTime < opening || currentTime > closing) return false;
+                } else {
+                    // Overnights
+                    if (currentTime < opening && currentTime > closing) return false;
+                }
+            }
+            return true;
+        });
     }, [rawProducts]);
 
     console.log('🏠 Home: Products Count:', products.length);

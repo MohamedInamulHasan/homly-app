@@ -68,23 +68,44 @@ const SavedProducts = () => {
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                        {sortProductsByGoldAndOpen(savedProducts, stores).map((product) => {
-                            // Ensure product is an object (in case populate failed or mixed types)
-                            if (!product || typeof product !== 'object') return null;
+                        {sortProductsByGoldAndOpen(savedProducts, stores)
+                            .filter(product => {
+                                // Manual check
+                                if (product.isAvailable === false) return false;
 
-                            if (fastMode) {
-                                return (
-                                    <SimpleProductCard
-                                        key={product._id || product.id}
-                                        product={product}
-                                        isFastPurchase={true}
-                                        showSave={true}
-                                    />
-                                );
-                            }
+                                // Timing check
+                                if (product.useTimeLimit) {
+                                    const now = new Date();
+                                    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                                    const opening = product.openingTime || '00:00';
+                                    const closing = product.closingTime || '23:59';
+                                    
+                                    if (opening <= closing) {
+                                        if (currentTime < opening || currentTime > closing) return false;
+                                    } else {
+                                        // Overnights
+                                        if (currentTime < opening && currentTime > closing) return false;
+                                    }
+                                }
+                                return true;
+                            })
+                            .map((product) => {
+                                // Ensure product is an object (in case populate failed or mixed types)
+                                if (!product || typeof product !== 'object') return null;
 
-                            return <ProductCard key={product._id || product.id} product={product} stores={stores} showCartControls={false} showHeart={true} />;
-                        })}
+                                if (fastMode) {
+                                    return (
+                                        <SimpleProductCard
+                                            key={product._id || product.id}
+                                            product={product}
+                                            isFastPurchase={true}
+                                            showSave={true}
+                                        />
+                                    );
+                                }
+
+                                return <ProductCard key={product._id || product.id} product={product} stores={stores} showCartControls={false} showHeart={true} />;
+                            })}
                     </div>
                 )}
             </div>

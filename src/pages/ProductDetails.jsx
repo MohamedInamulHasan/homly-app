@@ -4,7 +4,8 @@ import { useCart } from '../context/CartContext';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { Plus, ArrowLeft, Minus, ShoppingBag, ShoppingCart, ChevronLeft, ChevronRight, Star, Share2, Bookmark, Store } from 'lucide-react';
+import { Plus, ArrowLeft, Minus, ShoppingBag, ShoppingCart, ChevronLeft, ChevronRight, Star, Share2, Bookmark, Store as StoreIcon } from 'lucide-react';
+import { isStoreOpen } from '../utils/storeHelpers';
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -172,6 +173,29 @@ const ProductDetails = () => {
     const images = product.images || [product.image];
     const totalPrice = (Number(product.price) * (quantity || 1)).toFixed(0);
 
+    // Availability Logic (Manual + Time-based)
+    const isManualAvailable = product.isAvailable !== false;
+    let isScheduled = true;
+    let timingInfo = null;
+
+    if (product.useTimeLimit) {
+        const now = new Date();
+        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        const opening = product.openingTime || '00:00';
+        const closing = product.closingTime || '23:59';
+        timingInfo = `${opening} - ${closing}`;
+
+        if (opening <= closing) {
+            if (currentTime < opening || currentTime > closing) isScheduled = false;
+        } else {
+            // Overnights
+            if (currentTime < opening && currentTime > closing) isScheduled = false;
+        }
+    }
+
+    const isStoreCurrentlyOpen = store ? isStoreOpen(store) : true;
+    const isCurrentlyAvailable = isManualAvailable && isScheduled && isStoreCurrentlyOpen;
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-2 pb-8 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
             <div className="max-w-7xl mx-auto">
@@ -282,7 +306,7 @@ const ProductDetails = () => {
                             <div className="mb-auto">
                                 {product.storeId && (
                                     <div className="flex items-center gap-1.5 mb-2">
-                                        <Store size={14} className="text-gray-500 dark:text-gray-400" />
+                                        <StoreIcon size={14} className="text-gray-500 dark:text-gray-400" />
                                         <span className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                                             {storeName}
                                         </span>
@@ -448,7 +472,18 @@ const ProductDetails = () => {
                                 {/* Dynamic Quantity & Action Area - Replaces Old Static Section */}
                                 <div className="hidden md:block mb-8">
                                     <div className="flex items-center gap-4">
-                                        {quantity === 0 ? (
+                                        {!isCurrentlyAvailable ? (
+                                            <div className="w-full p-6 bg-red-50 dark:bg-red-900/10 rounded-2xl border border-red-100 dark:border-red-800 text-center">
+                                                <p className="text-red-600 dark:text-red-400 font-bold text-lg mb-1">
+                                                    {!isStoreCurrentlyOpen ? t('Store Closed') : (!isManualAvailable ? t('Currently Unavailable') : t('Outside Operating Hours'))}
+                                                </p>
+                                                {isStoreCurrentlyOpen && isManualAvailable && timingInfo && (
+                                                    <p className="text-sm text-red-500/80 font-medium">
+                                                        {t('Available during')}: {timingInfo}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        ) : quantity === 0 ? (
                                             <div className="w-full flex gap-4">
                                                 <button
                                                     onClick={handleAddToCart}
@@ -519,7 +554,13 @@ const ProductDetails = () => {
             {/* Sticky Action Footer - Mobile Only */}
             <div className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border-t border-gray-200 dark:border-gray-700 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-[0_-4px_20px_-1px_rgba(0,0,0,0.1)] z-50 md:hidden">
                 <div className="max-w-7xl mx-auto">
-                    {quantity === 0 ? (
+                    {!isCurrentlyAvailable ? (
+                        <div className="w-full p-3 bg-red-50 dark:bg-red-900/10 rounded-2xl border border-red-100 dark:border-red-800 text-center">
+                            <p className="text-red-600 dark:text-red-400 font-bold text-sm">
+                                {!isStoreCurrentlyOpen ? t('Store Closed') : (!isManualAvailable ? t('Unavailable') : t('Closed Now'))} {isStoreCurrentlyOpen && (isScheduled || !timingInfo) ? '' : `(${timingInfo})`}
+                            </p>
+                        </div>
+                    ) : quantity === 0 ? (
                         <div className="w-full flex gap-3 px-2">
                             <button
                                 onClick={handleAddToCart}

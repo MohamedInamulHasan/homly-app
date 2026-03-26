@@ -65,6 +65,18 @@ const productSchema = new mongoose.Schema({
     salesCount: {
         type: Number,
         default: 0
+    },
+    openingTime: {
+        type: String,
+        default: '00:00'
+    },
+    closingTime: {
+        type: String,
+        default: '23:59'
+    },
+    useTimeLimit: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true

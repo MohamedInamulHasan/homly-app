@@ -95,7 +95,18 @@ const OrderConfirmation = () => {
             },
             scheduledDeliveryTime: formData.deliveryTime ? (() => {
                 const deliveryDate = new Date();
-                const [hours, minutes] = formData.deliveryTime.split(':');
+                
+                // Handle "period|time" format (e.g., "today|10:00" or "tomorrow|10:00")
+                let timeStr = formData.deliveryTime;
+                if (formData.deliveryTime.includes('|')) {
+                    const [period, time] = formData.deliveryTime.split('|');
+                    timeStr = time;
+                    if (period === 'tomorrow') {
+                        deliveryDate.setDate(deliveryDate.getDate() + 1);
+                    }
+                }
+
+                const [hours, minutes] = timeStr.split(':');
                 deliveryDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
                 return deliveryDate.toISOString();
@@ -270,7 +281,7 @@ const OrderConfirmation = () => {
 
                                                         // For special offers, skip bracket parsing and show full title
                                                         if (item.isFromAd) {
-                                                            return <p className={`font-medium text-gray-900 dark:text-white ${titleClass}`} title={fullTitle}>{fullTitle}</p>;
+                                                            return <p className="font-bold text-gray-900 dark:text-white mb-1 leading-normal" title={fullTitle}>{fullTitle}</p>;
                                                         }
 
                                                         if (bracketIndex !== -1) {

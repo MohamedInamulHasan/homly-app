@@ -286,7 +286,7 @@ const OrderDetails = () => {
                                         // For special offers, show full title without bracket splitting
                                         if (item.isFromAd) {
                                             return (
-                                                <h4 className={`font-bold text-gray-900 dark:text-white text-sm ${titleClass} mb-0.5`} title={fullName}>
+                                                <h4 className="font-bold text-gray-900 dark:text-white text-sm mb-1 leading-normal" title={fullName}>
                                                     {fullName}
                                                 </h4>
                                             );
@@ -352,6 +352,19 @@ const OrderDetails = () => {
                         <p className="opacity-80 mt-1">
                             {t('Mobile')}: {order.shippingAddress?.mobile}
                         </p>
+                        {order.shippingAddress?.location && (
+                            <a
+                                href={order.shippingAddress.location?.includes('maps?q=') 
+                                    ? order.shippingAddress.location.replace('maps?q=', 'maps/search/?api=1&query=') 
+                                    : order.shippingAddress.location}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl text-xs font-bold hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all border border-blue-100 dark:border-blue-800"
+                            >
+                                <MapPin size={14} />
+                                {t('View on Map')}
+                            </a>
+                        )}
                     </address>
                 </div>
 

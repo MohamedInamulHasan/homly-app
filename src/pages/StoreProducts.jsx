@@ -37,16 +37,28 @@ const StoreProducts = () => {
     const store = stores.find(s => (s._id || s.id) === storeId);
 
     // Filter products for this store
-    // Ensure we handle both string and number ID comparisons, and populated storeId objects
     const storeProducts = useMemo(() => {
+        const now = new Date();
+        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
         return products
-            .filter(p => p.isAvailable !== false) // Filter out unavailable products
+            .filter(p => p.isAvailable !== false) // Filter out manual unavailable
             .filter(p => {
-                // Handle both populated storeId (object with _id) and direct ID reference
+                // Time window check
+                if (p.useTimeLimit) {
+                    const opening = p.openingTime || '00:00';
+                    const closing = p.closingTime || '23:59';
+                    if (opening <= closing) {
+                        if (currentTime < opening || currentTime > closing) return false;
+                    } else {
+                        // Overnights case
+                        if (currentTime < opening && currentTime > closing) return false;
+                    }
+                }
+                
+                // Store connection check
                 const pStoreId = p.storeId?._id || p.storeId;
                 const targetId = storeId;
-
-                // Loose comparison to catch '1' vs 1, and also handle ObjectId comparison
                 return pStoreId == targetId || String(pStoreId) === String(targetId);
             });
     }, [products, storeId]);
