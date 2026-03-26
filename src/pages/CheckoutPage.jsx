@@ -370,7 +370,8 @@ const Checkout = () => {
                                         <option value="">{t('Select a time slot')}</option>
                                         {(() => {
                                             const now = new Date();
-                                            const todayThreshold = new Date(now.getTime() + 30 * 60000); // 30 min buffer
+                                            // 15-min buffer: never show a slot starting in < 15 mins
+                                            const todayThreshold = new Date(now.getTime() + 15 * 60000); // 30 min buffer
 
                                             const allowedSlots = settings?.deliveryTimes || [];
                                             const availableSlots = [];
@@ -384,7 +385,7 @@ const Checkout = () => {
                                                 if (slotDateToday > todayThreshold) {
                                                     availableSlots.push({
                                                         value: `today|${timeValue}`,
-                                                        label: `${displayTime} (${t('Today')})`,
+                                                        label: displayTime,
                                                         period: 'today',
                                                         timeValue
                                                     });
@@ -393,7 +394,7 @@ const Checkout = () => {
                                                 // 2. Add for TOMORROW (Always available)
                                                 availableSlots.push({
                                                     value: `tomorrow|${timeValue}`,
-                                                    label: `${displayTime} (${t('Tomorrow')})`,
+                                                    label: displayTime,
                                                     period: 'tomorrow',
                                                     timeValue
                                                 });

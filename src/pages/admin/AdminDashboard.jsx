@@ -36,7 +36,12 @@ import {
     GripVertical,
     Truck,
     Copy,
-    LogOut
+    LogOut,
+    Gift,
+    Coins,
+    AlertCircle,
+    Power,
+    ShieldAlert
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { apiService, API_BASE_URL } from '../../utils/api';
@@ -73,7 +78,7 @@ const AdminDashboard = () => {
     const isServiceAdmin = user?.role === 'service_admin';
     const isDeliveryBoy = user?.role === 'delivery_boy';
     const isAdmin = user?.role === 'admin';
-    const defaultTab = isStoreAdmin ? 'stores' : isServiceAdmin ? 'services' : isDeliveryBoy ? 'orders' : 'products';
+    const defaultTab = isStoreAdmin ? 'stores' : isServiceAdmin ? 'services' : isDeliveryBoy ? 'orders' : (isAdmin ? 'stores' : 'products');
     const [activeTab, setActiveTab] = useState(defaultTab);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { t } = useLanguage();
@@ -140,6 +145,8 @@ const AdminDashboard = () => {
                 return <SettingsManagement />;
             case 'delivery-boys':
                 return <DeliveryBoyManagement />;
+            case 'signup-bonus':
+                return <SignupBonusManagement />;
             default:
                 return <ProductManagement />;
         }
@@ -450,15 +457,6 @@ const AdminDashboard = () => {
                             onClick={setActiveTab}
                         />
                     )}
-                    {(isAdmin || isStoreAdmin) && (
-                        <SidebarItem
-                            icon={<Package size={20} />}
-                            label={t('Products')}
-                            id="products"
-                            active={activeTab === 'products'}
-                            onClick={setActiveTab}
-                        />
-                    )}
                     <SidebarItem
                         icon={<ShoppingBag size={20} />}
                         label={t('Orders')}
@@ -533,6 +531,17 @@ const AdminDashboard = () => {
                         active={false}
                         onClick={handleExport}
                     />
+                    {/* Signup Bonus Link */}
+                    {isAdmin && (
+                        <SidebarItem
+                            icon={<Gift size={20} />}
+                            label={t('Signup Bonus')}
+                            id="signup-bonus"
+                            active={activeTab === 'signup-bonus'}
+                            onClick={setActiveTab}
+                        />
+                    )}
+
                     <SidebarItem
                         icon={<MapPin size={20} />}
                         label={t('City Management')}
@@ -556,6 +565,187 @@ const AdminDashboard = () => {
             <div className="flex-1 overflow-auto w-full">
                 <div className="p-4 md:p-8 pt-16 md:pt-8">
                     {renderContent()}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const SignupBonusManagement = () => {
+    const { t } = useLanguage();
+    const [config, setConfig] = useState({ isEnabled: false, remainingLimit: 0 });
+    const [inputLimit, setInputLimit] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState({ type: '', text: '' });
+
+    const fetchConfig = async () => {
+        try {
+            const res = await apiService.settings.get('signup_bonus');
+            if (res.success && res.data) {
+                const val = res.data.value || { isEnabled: false, remainingLimit: 0 };
+                setConfig(val);
+                setInputLimit(val.remainingLimit?.toString() || '0');
+            }
+        } catch (err) {
+            console.error('Failed to fetch signup bonus config');
+        }
+    };
+
+    useEffect(() => {
+        fetchConfig();
+    }, []);
+
+    const showToast = (type, text) => {
+        setMessage({ type, text });
+        setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+    };
+
+    const handleUpdate = async () => {
+        if (loading) return;
+        setLoading(true);
+        const newLimit = parseInt(inputLimit) || 0;
+        const newValue = { isEnabled: true, remainingLimit: newLimit, bonusAmount: 1 };
+        try {
+            await apiService.settings.update('signup_bonus', newValue);
+            setConfig(newValue);
+            showToast('success', t('Signup bonus system activated!'));
+        } catch (err) {
+            showToast('error', t('Failed to update settings'));
+        }
+        setLoading(false);
+    };
+
+    const toggleOff = async () => {
+        if (loading) return;
+        setLoading(true);
+        const newValue = { ...config, isEnabled: false };
+        try {
+            await apiService.settings.update('signup_bonus', newValue);
+            setConfig(newValue);
+            showToast('success', t('Signup bonus system deactivated'));
+        } catch (err) {
+            showToast('error', t('Failed to update settings'));
+        }
+        setLoading(false);
+    };
+
+    return (
+        <div className="max-w-4xl animate-fade-in">
+            <div className="flex items-center gap-3 mb-8">
+                <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-2xl shadow-sm">
+                    <Gift className="text-yellow-600 dark:text-yellow-400" size={24} />
+                </div>
+                <div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('Signup Bonus Settings')}</h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('Manage automated rewards for new registrations')}</p>
+                </div>
+            </div>
+
+            {message.text && (
+                <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 animate-fade-in border ${message.type === 'success' ? 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/10 dark:text-green-400 dark:border-green-800' : 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/10 dark:text-red-400 dark:border-red-800'}`}>
+                    {message.type === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
+                    <span className="font-medium text-sm">{message.text}</span>
+                </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                {/* Status Card */}
+                <div className={`p-6 rounded-3xl border shadow-sm transition-all ${config.isEnabled ? 'bg-green-50 border-green-100 dark:bg-green-900/10 dark:border-green-800' : 'bg-gray-50 border-gray-100 dark:bg-gray-800 dark:border-gray-700'}`}>
+                    <div className="flex items-center justify-between mb-4">
+                        <span className="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">{t('Current Status')}</span>
+                        <div className={`w-3 h-3 rounded-full ${config.isEnabled ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`}></div>
+                    </div>
+                    <div className="text-3xl font-black mb-1 flex items-center gap-2">
+                        {config.isEnabled ? (
+                            <span className="text-green-600">{t('ACTIVE')}</span>
+                        ) : (
+                            <span className="text-gray-500">{t('INACTIVE')}</span>
+                        )}
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {config.isEnabled ? t('System is currently rewarding new users with 1 gold coin.') : t('Bonus system is currently disabled for new signups.')}
+                    </p>
+                </div>
+
+                {/* Counter Card */}
+                <div className="p-6 bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                    <div className="flex items-center justify-between mb-4">
+                        <span className="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">{t('Remaining Rewards')}</span>
+                        <Coins className="text-yellow-500" size={20} />
+                    </div>
+                    <div className="text-4xl font-black text-gray-900 dark:text-white mb-1">
+                        {config.remainingLimit}
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {t('Number of future signups eligible for the bonus.')}
+                    </p>
+                </div>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl overflow-hidden">
+                <div className="p-8">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                        <Settings className="text-blue-600" size={20} />
+                        {t('Configure System')}
+                    </h3>
+                    
+                    <div className="space-y-6">
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                                {t('Set User Limit')}
+                            </label>
+                            <div className="flex gap-4">
+                                <div className="relative flex-1">
+                                    <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                                    <input 
+                                        type="number" 
+                                        value={inputLimit}
+                                        onChange={(e) => setInputLimit(e.target.value)}
+                                        placeholder="e.g. 20"
+                                        className="w-full pl-12 pr-4 py-3.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/50 dark:text-white text-lg font-bold transition-all"
+                                    />
+                                </div>
+                                <button 
+                                    onClick={handleUpdate}
+                                    disabled={loading}
+                                    className="px-8 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/30 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                                >
+                                    {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Power size={20} />}
+                                    {t('Start System')}
+                                </button>
+                            </div>
+                            <p className="mt-2 text-xs text-gray-500 italic">
+                                {t('Setting a limit will activate the system immediately. It will automatically stop once the limit is reached.')}
+                            </p>
+                        </div>
+
+                        {config.isEnabled && (
+                            <div className="pt-6 border-t border-gray-100 dark:border-gray-700">
+                                <button 
+                                    onClick={toggleOff}
+                                    disabled={loading}
+                                    className="w-full py-4 bg-red-50 hover:bg-red-100 dark:bg-red-900/10 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 font-bold rounded-2xl transition-all flex items-center justify-center gap-2 border border-red-100 dark:border-red-900/20"
+                                >
+                                    <AlertCircle size={20} />
+                                    {t('Deactivate System Now')}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="bg-gray-50 dark:bg-gray-900/50 p-6 border-t border-gray-100 dark:border-gray-700">
+                    <div className="flex items-start gap-4">
+                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                            <ShieldAlert className="text-blue-600 dark:text-blue-400" size={20} />
+                        </div>
+                        <div>
+                            <h4 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">{t('Important Note')}</h4>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
+                                {t('The bonus (1 Gold Coin) is awarded ONLY on the FIRST registration of an email address or Google account. If a user already exists, no coin will be awarded even if the system is active.')}
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

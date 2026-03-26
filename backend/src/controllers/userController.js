@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import Settings from '../models/Settings.js';
 import LoginLog from '../models/LoginLog.js';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
@@ -63,12 +64,29 @@ export const registerUser = async (req, res, next) => {
             throw new Error('User already exists');
         }
 
+        // Check for signup bonus
+        let initialCoins = 0;
+        const bonusConfig = await Settings.findOne({ key: 'signup_bonus' });
+        
+        if (bonusConfig && bonusConfig.value?.isEnabled && bonusConfig.value?.remainingLimit > 0) {
+            initialCoins = 1;
+            
+            // Decrement limit
+            bonusConfig.value.remainingLimit -= 1;
+            if (bonusConfig.value.remainingLimit <= 0) {
+                bonusConfig.value.isEnabled = false;
+            }
+            bonusConfig.markModified('value');
+            await bonusConfig.save();
+        }
+
         // Create user
         const user = await User.create({
             name,
             email,
             password,
-            mobile
+            mobile,
+            coins: initialCoins
         });
 
         if (user) {
@@ -78,8 +96,6 @@ export const registerUser = async (req, res, next) => {
         next(error);
     }
 };
-
-
 
 // @desc    Google Authentication (Login/Signup)
 // @route   POST /api/users/google
@@ -104,7 +120,7 @@ export const googleAuth = async (req, res, next) => {
             // Verify/Fetch via Access Token (Implicit Flow)
             const response = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
                 headers: { Authorization: `Bearer ${accessToken}` }
-            });
+              });
             name = response.data.name;
             email = response.data.email;
             picture = response.data.picture;
@@ -130,12 +146,29 @@ export const googleAuth = async (req, res, next) => {
             // User doesn't exist - Signup
             const randomPassword = crypto.randomBytes(16).toString('hex');
 
+            // Check for signup bonus
+            let initialCoins = 0;
+            const bonusConfig = await Settings.findOne({ key: 'signup_bonus' });
+            
+            if (bonusConfig && bonusConfig.value?.isEnabled && bonusConfig.value?.remainingLimit > 0) {
+                initialCoins = 1;
+                
+                // Decrement limit
+                bonusConfig.value.remainingLimit -= 1;
+                if (bonusConfig.value.remainingLimit <= 0) {
+                    bonusConfig.value.isEnabled = false;
+                }
+                bonusConfig.markModified('value');
+                await bonusConfig.save();
+            }
+
             user = await User.create({
                 name,
                 email,
                 password: randomPassword,
                 role: 'customer',
-                mobile: '' // Placeholder
+                mobile: '', // Placeholder
+                coins: initialCoins
             });
 
             if (user) {

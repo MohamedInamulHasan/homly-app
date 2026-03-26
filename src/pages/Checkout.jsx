@@ -659,8 +659,8 @@ const Checkout = () => {
                                 </label>
                                 {(() => {
                                     const now = new Date();
-                                    // 30-min buffer: never show a slot starting in < 30 mins
-                                    const threshold = new Date(now.getTime() + 30 * 60000);
+                                    // 15-min buffer: never show a slot starting in < 15 mins
+                                    const threshold = new Date(now.getTime() + 15 * 60000);
                                     // 3-hour window: only show slots within the next 3 hours
                                     const windowEnd = new Date(now.getTime() + 3 * 60 * 60000);
 
@@ -674,10 +674,10 @@ const Checkout = () => {
 
                                         // 1. Add for TODAY if still available
                                         const slotDateToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, mins);
-                                        if (slotDateToday > threshold) {
+                                        if (slotDateToday >= threshold) {
                                             availableSlots.push({
                                                 value: `today|${timeValue}`,
-                                                label: `${displayTime} (${t('Today')})`,
+                                                label: displayTime,
                                                 period: 'today',
                                                 timeValue
                                             });
@@ -686,7 +686,7 @@ const Checkout = () => {
                                         // 2. Add for TOMORROW
                                         availableSlots.push({
                                             value: `tomorrow|${timeValue}`,
-                                            label: `${displayTime} (${t('Tomorrow')})`,
+                                            label: displayTime,
                                             period: 'tomorrow',
                                             timeValue
                                         });
