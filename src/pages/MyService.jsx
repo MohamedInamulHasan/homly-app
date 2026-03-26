@@ -18,7 +18,8 @@ const MyService = () => {
         );
     }
 
-    if (!user || user.role !== 'service_admin') {
+    const roles = Array.isArray(user?.role) ? user.role : [user?.role || 'customer'];
+    if (!user || !roles.includes('service_admin')) {
         setTimeout(() => navigate('/'), 0);
         return null;
     }

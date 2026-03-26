@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useMemo } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Wrench, ShieldCheck, MapPin, CheckCircle, Phone, Send, Check, Search } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
@@ -18,11 +18,26 @@ const Services = () => {
     const [requestSuccess, setRequestSuccess] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const [searchParams] = useSearchParams();
+    const serviceIdFromQuery = searchParams.get('id');
+
     // Hide footer/navbar when modals are open
     useEffect(() => {
         setIsFooterHidden(showConfirmation || requestSuccess);
         return () => setIsFooterHidden(false); // Cleanup on unmount
     }, [showConfirmation, requestSuccess, setIsFooterHidden]);
+
+    // Handle Deep Linking from Shop Toggle
+    useEffect(() => {
+        if (serviceIdFromQuery && services.length > 0) {
+            const foundService = services.find(s => (s._id || s.id) === serviceIdFromQuery);
+            if (foundService) {
+                setActiveService(foundService);
+                setViewMode('details');
+            }
+        }
+    }, [serviceIdFromQuery, services]);
+
     const [searchQuery, setSearchQuery] = useState('');
 
     // Dynamic Data Hooks

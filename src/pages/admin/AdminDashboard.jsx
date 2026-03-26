@@ -74,36 +74,34 @@ import { CSS } from '@dnd-kit/utilities';
 const AdminDashboard = () => {
     const { user, logout } = useAuth(); // Get current user & logout method
     const navigate = useNavigate();
-    const isStoreAdmin = user?.role === 'store_admin';
-    const isServiceAdmin = user?.role === 'service_admin';
-    const isDeliveryBoy = user?.role === 'delivery_boy';
-    const isAdmin = user?.role === 'admin';
+    const isStoreAdmin = Array.isArray(user?.role) ? user?.role.includes('store_admin') : user?.role === 'store_admin';
+    const isServiceAdmin = Array.isArray(user?.role) ? user?.role.includes('service_admin') : user?.role === 'service_admin';
+    const isDeliveryBoy = Array.isArray(user?.role) ? user?.role.includes('delivery_boy') : user?.role === 'delivery_boy';
+    const isAdmin = Array.isArray(user?.role) ? user?.role.includes('admin') : user?.role === 'admin';
+    const isCustomer = Array.isArray(user?.role) ? user?.role.includes('customer') : user?.role === 'customer';
     const defaultTab = isStoreAdmin ? 'stores' : isServiceAdmin ? 'services' : isDeliveryBoy ? 'orders' : (isAdmin ? 'stores' : 'products');
     const [activeTab, setActiveTab] = useState(defaultTab);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { t } = useLanguage();
     const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-    // Redirect Store Admin to allowed tabs only
+    // Tab Access Control for Multi-Role Support
     useEffect(() => {
-        if (isStoreAdmin && activeTab !== 'stores' && activeTab !== 'products' && activeTab !== 'orders') {
-            setActiveTab('stores');
-        }
-    }, [isStoreAdmin, activeTab]);
+        if (isAdmin) return; // Global admins have access to all tabs
 
-    // Redirect Service Admin to allowed tabs only
-    useEffect(() => {
-        if (isServiceAdmin && activeTab !== 'services') {
-            setActiveTab('services');
+        const isTabAllowed = 
+            (isStoreAdmin && ['stores', 'products', 'orders'].includes(activeTab)) ||
+            (isServiceAdmin && ['services'].includes(activeTab)) ||
+            (isDeliveryBoy && ['orders'].includes(activeTab));
+        
+        if (!isTabAllowed) {
+            console.log('🚫 Tab not allowed for current roles, redirecting...', { activeTab, isStoreAdmin, isServiceAdmin, isDeliveryBoy });
+            // Default to first allowed tab based on priority
+            if (isStoreAdmin) setActiveTab('stores');
+            else if (isServiceAdmin) setActiveTab('services');
+            else if (isDeliveryBoy) setActiveTab('orders');
         }
-    }, [isServiceAdmin, activeTab]);
-
-    // Redirect Delivery Boy to allowed tabs only
-    useEffect(() => {
-        if (isDeliveryBoy && activeTab !== 'orders') {
-            setActiveTab('orders');
-        }
-    }, [isDeliveryBoy, activeTab]);
+    }, [isAdmin, isStoreAdmin, isServiceAdmin, isDeliveryBoy, activeTab]);
 
     const handleExport = async () => {
         try {
@@ -1762,11 +1760,12 @@ const OrderManagement = () => {
     const { data: orders = [] } = useOrders();
     const { data: rawUsers = [] } = useUsers();
     const users = Array.isArray(rawUsers) ? rawUsers : (rawUsers?.data || []);
-    const deliveryBoys = users.filter(u => u.role === 'delivery_boy');
+    const deliveryBoys = users.filter(u => Array.isArray(u.role) ? u.role.includes('delivery_boy') : u.role === 'delivery_boy');
     const { user } = useAuth();
-    const isStoreAdmin = user?.role === 'store_admin';
-    const isServiceAdmin = user?.role === 'service_admin';
-    const isDeliveryBoy = user?.role === 'delivery_boy';
+    const _userRoles = Array.isArray(user?.role) ? user.role : [user?.role || 'customer'];
+    const isStoreAdmin = _userRoles.includes('store_admin');
+    const isServiceAdmin = _userRoles.includes('service_admin');
+    const isDeliveryBoy = _userRoles.includes('delivery_boy');
 
     const { mutateAsync: updateOrderStatus } = useUpdateOrderStatus();
     const { mutateAsync: deleteOrder } = useDeleteOrder();
@@ -2519,7 +2518,7 @@ const UserManagement = () => {
         email: '',
         mobile: '',
         address: '',
-        role: 'customer',
+        role: ['customer'],
         storeId: '',
         serviceId: '',
         location: '',
@@ -2533,14 +2532,14 @@ const UserManagement = () => {
 
     // Stats for Top Card
     // Filter out delivery boys from general user management
-    const filteredUsers = users.filter(u => u.role !== 'delivery_boy');
+    const filteredUsers = users.filter(u => Array.isArray(u.role) ? !u.role.includes('delivery_boy') : u.role !== 'delivery_boy');
 
     // Stats for Top Card
     const totalUsers = filteredUsers.length;
-    const adminCount = filteredUsers.filter(u => u.role === 'admin').length;
-    const storeAdminCount = filteredUsers.filter(u => u.role === 'store_admin').length;
-    const serviceAdminCount = filteredUsers.filter(u => u.role === 'service_admin').length;
-    const customerCount = filteredUsers.filter(u => u.role === 'customer').length;
+    const adminCount = filteredUsers.filter(u => Array.isArray(u.role) ? u.role.includes('admin') : u.role === 'admin').length;
+    const storeAdminCount = filteredUsers.filter(u => Array.isArray(u.role) ? u.role.includes('store_admin') : u.role === 'store_admin').length;
+    const serviceAdminCount = filteredUsers.filter(u => Array.isArray(u.role) ? u.role.includes('service_admin') : u.role === 'service_admin').length;
+    const customerCount = filteredUsers.filter(u => Array.isArray(u.role) ? u.role.includes('customer') : u.role === 'customer').length;
 
     useEffect(() => {
         const loadUsers = async () => {
@@ -2567,7 +2566,7 @@ const UserManagement = () => {
             email: user.email,
             mobile: user.mobile || '',
             address: user.address || '',
-            role: user.role || 'customer',
+            role: Array.isArray(user.role) ? user.role : [user.role || 'customer'],
             storeId: user.storeId?._id || user.storeId || '',
             serviceId: user.serviceId?._id || user.serviceId || '',
             coins: user.coins || 0,
@@ -2753,23 +2752,29 @@ const UserManagement = () => {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap 
-                                                ${user.role === 'admin' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
-                                                    user.role === 'store_admin' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' :
-                                                    user.role === 'service_admin' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
-                                                        'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'}`}>
-                                                {t(user.role === 'store_admin' ? 'Store Admin' : user.role === 'service_admin' ? 'Service Admin' : user.role.charAt(0).toUpperCase() + user.role.slice(1))}
-                                            </span>
-                                            {user.role === 'store_admin' && user.storeId && (
-                                                <div className="text-xs text-gray-500 mt-1 whitespace-nowrap">
-                                                    {user.storeId.name || 'Store Linked'}
-                                                </div>
-                                            )}
-                                            {user.role === 'service_admin' && user.serviceId && (
-                                                <div className="text-xs text-gray-500 mt-1 whitespace-nowrap">
-                                                    {user.serviceId.name || 'Service Linked'}
-                                                </div>
-                                            )}
+                                            <div className="flex flex-col gap-1">
+                                                {(Array.isArray(user.role) ? user.role : [user.role || 'customer']).map((role, idx) => (
+                                                    <div key={idx} className="flex flex-col">
+                                                        <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap w-fit
+                                                            ${role === 'admin' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
+                                                                role === 'store_admin' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' :
+                                                                role === 'service_admin' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
+                                                                    'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'}`}>
+                                                            {t(role === 'store_admin' ? 'Store Admin' : role === 'service_admin' ? 'Service Admin' : role.charAt(0).toUpperCase() + role.slice(1))}
+                                                        </span>
+                                                        {role === 'store_admin' && user.storeId && (
+                                                            <span className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 ml-1 whitespace-nowrap">
+                                                                📦 {user.storeId.name || 'Store Linked'}
+                                                            </span>
+                                                        )}
+                                                        {role === 'service_admin' && user.serviceId && (
+                                                            <span className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 ml-1 whitespace-nowrap">
+                                                                🔧 {user.serviceId.name || 'Service Linked'}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 text-gray-600 dark:text-gray-300 whitespace-nowrap">
                                             {(() => {
@@ -2800,23 +2805,44 @@ const UserManagement = () => {
                                                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">{t('Edit User Role')}</h3>
                                                     <div className="space-y-4">
                                                         <div>
-                                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Role')}</label>
-                                                            <select
-                                                                value={formData.role}
-                                                                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                                                                className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
-                                                            >
-                                                                <option value="customer">{t('Customer')}</option>
-                                                                <option value="store_admin">{t('Store Admin')}</option>
-                                                                <option value="service_admin">{t('Service Admin')}</option>
-                                                                <option value="delivery_boy">{t('Delivery Boy')}</option>
-                                                                <option value="admin">{t('Global Admin')}</option>
-                                                            </select>
+                                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{t('User Roles')}</label>
+                                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-100 dark:border-gray-700">
+                                                                {[
+                                                                    { id: 'customer', label: t('Customer'), icon: <CheckCircle size={16} /> },
+                                                                    { id: 'store_admin', label: t('Store Admin'), icon: <Store size={16} /> },
+                                                                    { id: 'service_admin', label: t('Service Admin'), icon: <Wrench size={16} /> },
+                                                                    { id: 'delivery_boy', label: t('Delivery Boy'), icon: <Truck size={16} /> },
+                                                                    { id: 'admin', label: t('Global Admin'), icon: <Shield size={16} /> }
+                                                                ].map((role) => (
+                                                                    <label key={role.id} className="flex items-center gap-3 p-2 hover:bg-white dark:hover:bg-gray-600 rounded-lg cursor-pointer transition-colors group">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={Array.isArray(formData.role) ? formData.role.includes(role.id) : formData.role === role.id}
+                                                                            onChange={(e) => {
+                                                                                const currentRoles = Array.isArray(formData.role) ? formData.role : [formData.role || 'customer'];
+                                                                                if (e.target.checked) {
+                                                                                    setFormData({ ...formData, role: [...new Set([...currentRoles, role.id])] });
+                                                                                } else {
+                                                                                    if (currentRoles.length > 1) {
+                                                                                        setFormData({ ...formData, role: currentRoles.filter(r => r !== role.id) });
+                                                                                    }
+                                                                                }
+                                                                            }}
+                                                                            className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                                                                        />
+                                                                        <span className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                                                                            <span className="text-gray-400 group-hover:text-blue-500">{role.icon}</span>
+                                                                            {role.label}
+                                                                        </span>
+                                                                    </label>
+                                                                ))}
+                                                            </div>
                                                         </div>
-                                                        {formData.role === 'delivery_boy' && (
+
+                                                        {(Array.isArray(formData.role) ? formData.role.includes('delivery_boy') : formData.role === 'delivery_boy') && (
                                                             <div className="p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-900/30 space-y-4">
                                                                 <h4 className="font-semibold text-blue-900 dark:text-blue-300 flex items-center gap-2">
-                                                                    <Wrench size={16} /> {t('Delivery Settings')}
+                                                                    <Truck size={16} /> {t('Delivery Settings')}
                                                                 </h4>
                                                                 <div className="grid grid-cols-2 gap-4">
                                                                     <div>
@@ -2878,7 +2904,8 @@ const UserManagement = () => {
                                                                 </div>
                                                             </div>
                                                         )}
-                                                        {formData.role === 'store_admin' && (
+
+                                                        {(Array.isArray(formData.role) ? formData.role.includes('store_admin') : formData.role === 'store_admin') && (
                                                             <div>
                                                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Assign Store')}</label>
                                                                 <select
@@ -2895,7 +2922,8 @@ const UserManagement = () => {
                                                                 </select>
                                                             </div>
                                                         )}
-                                                        {formData.role === 'service_admin' && (
+
+                                                        {(Array.isArray(formData.role) ? formData.role.includes('service_admin') : formData.role === 'service_admin') && (
                                                             <div>
                                                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Assign Service')}</label>
                                                                 <ServiceIdSelect
@@ -3019,7 +3047,7 @@ const DeliveryBoyManagement = () => {
         }
     });
 
-    const deliveryBoys = users.filter(u => u.role === 'delivery_boy');
+    const deliveryBoys = users.filter(u => Array.isArray(u.role) ? u.role.includes('delivery_boy') : u.role === 'delivery_boy');
 
     const handleEdit = (user) => {
         setEditingUser(user);
@@ -3038,7 +3066,7 @@ const DeliveryBoyManagement = () => {
 
     const handleSave = async () => {
         try {
-            await updateUser({ id: editingUser._id || editingUser.id, data: { ...formData, role: 'delivery_boy' } });
+            await updateUser({ id: editingUser._id || editingUser.id, data: { ...formData, role: ['delivery_boy'] } });
             alert(t('Delivery boy updated successfully!'));
             setEditingUser(null);
             fetchUsers();
@@ -3109,12 +3137,11 @@ const DeliveryBoyManagement = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="text-sm text-gray-900 dark:text-white flex items-center gap-2">
-                                            <RefreshCw size={14} className="text-blue-500" />
-                                            {boy.deliverySettings?.workTimings?.start || '09:00'} - {boy.deliverySettings?.workTimings?.end || '21:00'}
+                                        <div className="text-sm font-semibold text-gray-900 dark:text-white whitespace-nowrap">
+                                            ⏱️ {boy.deliverySettings?.workTimings?.start || '09:00'} - {boy.deliverySettings?.workTimings?.end || '21:00'}
                                         </div>
-                                        <div className="text-xs text-gray-500 mt-1">
-                                            Telegram ID: {boy.deliverySettings?.telegramChatId || 'Not Set'}
+                                        <div className="text-[10px] text-gray-500 font-mono mt-1 w-full truncate max-w-[150px]" title={boy._id || boy.id}>
+                                            ID: {boy._id || boy.id}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">

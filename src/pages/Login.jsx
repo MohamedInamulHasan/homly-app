@@ -29,7 +29,7 @@ const Login = () => {
             } else {
                 // Only force delivery boys directly to the admin dashboard. 
                 // Global admins, store admins, etc. may want to see the storefront first.
-                if (user.role === 'delivery_boy') {
+                if (Array.isArray(user.role) ? user.role.includes('delivery_boy') : user.role === 'delivery_boy') {
                     navigate('/admin');
                 } else {
                     // Always go to home page after login for regular users and other admins

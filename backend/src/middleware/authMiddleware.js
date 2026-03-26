@@ -66,7 +66,7 @@ export const optionalAuth = async (req, res, next) => {
 
 // Admin middleware
 export const adminOnly = (req, res, next) => {
-    if (req.user && req.user.role === 'admin') {
+    if (req.user && (req.user.role === 'admin' || (Array.isArray(req.user.role) && req.user.role.includes('admin')))) {
         next();
     } else {
         console.error('⛔ Admin Access Denied. User Role:', req.user ? req.user.role : 'No User');
@@ -76,41 +76,49 @@ export const adminOnly = (req, res, next) => {
 
 // Admin OR Store Admin middleware
 export const adminOrStoreAdmin = (req, res, next) => {
-    if (req.user && (req.user.role === 'admin' || req.user.role === 'store_admin')) {
-        next();
-    } else {
-        console.error('⛔ Access Denied. User Role:', req.user ? req.user.role : 'No User');
-        return res.status(403).json({ message: 'Not authorized as admin or store admin' });
+    if (req.user) {
+        const roles = Array.isArray(req.user.role) ? req.user.role : [req.user.role];
+        if (roles.includes('admin') || roles.includes('store_admin')) {
+            return next();
+        }
     }
+    console.error('⛔ Access Denied. User Role:', req.user ? req.user.role : 'No User');
+    return res.status(403).json({ message: 'Not authorized as admin or store admin' });
 };
 
 // Admin OR Service Admin middleware
 export const adminOrServiceAdmin = (req, res, next) => {
-    if (req.user && (req.user.role === 'admin' || req.user.role === 'service_admin')) {
-        next();
-    } else {
-        console.error('⛔ Access Denied. User Role:', req.user ? req.user.role : 'No User');
-        return res.status(403).json({ message: 'Not authorized as admin or service admin' });
+    if (req.user) {
+        const roles = Array.isArray(req.user.role) ? req.user.role : [req.user.role];
+        if (roles.includes('admin') || roles.includes('service_admin')) {
+            return next();
+        }
     }
+    console.error('⛔ Access Denied. User Role:', req.user ? req.user.role : 'No User');
+    return res.status(403).json({ message: 'Not authorized as admin or service admin' });
 };
 
 // Admin OR Delivery Boy middleware
 export const adminOrDelivery = (req, res, next) => {
-    if (req.user && (req.user.role === 'admin' || req.user.role === 'delivery_boy')) {
-        next();
-    } else {
-        console.error('⛔ Access Denied. User Role:', req.user ? req.user.role : 'No User');
-        return res.status(403).json({ message: 'Not authorized as admin or delivery boy' });
+    if (req.user) {
+        const roles = Array.isArray(req.user.role) ? req.user.role : [req.user.role];
+        if (roles.includes('admin') || roles.includes('delivery_boy')) {
+            return next();
+        }
     }
+    console.error('⛔ Access Denied. User Role:', req.user ? req.user.role : 'No User');
+    return res.status(403).json({ message: 'Not authorized as admin or delivery boy' });
 };
 
 // Any Role with Admin Access (Admin, Store, Service, Delivery)
 export const anyAdmin = (req, res, next) => {
-    const roles = ['admin', 'store_admin', 'service_admin', 'delivery_boy'];
-    if (req.user && roles.includes(req.user.role)) {
-        next();
-    } else {
-        console.error('⛔ Access Denied. User Role:', req.user ? req.user.role : 'No User');
-        return res.status(403).json({ message: 'Not authorized' });
+    const allowedRoles = ['admin', 'store_admin', 'service_admin', 'delivery_boy'];
+    if (req.user) {
+        const userRoles = Array.isArray(req.user.role) ? req.user.role : [req.user.role];
+        if (userRoles.some(r => allowedRoles.includes(r))) {
+            return next();
+        }
     }
+    console.error('⛔ Access Denied. User Role:', req.user ? req.user.role : 'No User');
+    return res.status(403).json({ message: 'Not authorized' });
 };

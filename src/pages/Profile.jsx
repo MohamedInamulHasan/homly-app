@@ -175,60 +175,63 @@ const Profile = () => {
                     </Link>
                 </div>
 
-                {/* Services */}
-                <div className="bg-gradient-to-br from-purple-50 via-white to-indigo-50 dark:from-gray-800 dark:via-gray-800 dark:to-purple-900/10 rounded-3xl shadow-lg shadow-purple-100 dark:shadow-purple-900/20 border border-purple-100 dark:border-gray-700 overflow-hidden mb-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
-                    <Link to="/services" className="p-6 flex items-center justify-between hover:bg-purple-50/50 dark:hover:bg-purple-900/10 transition-colors group">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg shadow-purple-300 dark:shadow-purple-900/50">
-                                <Wrench className="text-white" size={24} />
-                            </div>
-                            <div>
-                                <h2 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400 bg-clip-text text-transparent">{t('Services')}</h2>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">{t('Explore our additional services')}</p>
-                            </div>
-                        </div>
-                        <ChevronRight className="text-purple-500 group-hover:translate-x-1 transition-transform" size={20} />
-                    </Link>
-                </div>
 
-                {/* Admin Dashboard / My Store / My Service / Delivery Panel (Visible to Admin, Store Admin, Service Admin, or Delivery Boy) */}
-                {user && (user.role === 'admin' || user.role === 'store_admin' || user.role === 'service_admin' || user.role === 'delivery_boy') && (
-                    <div className="bg-gradient-to-br from-teal-50 via-white to-emerald-50 dark:from-gray-800 dark:via-gray-800 dark:to-teal-900/10 rounded-3xl shadow-lg shadow-teal-100 dark:shadow-teal-900/20 border border-teal-100 dark:border-gray-700 overflow-hidden mb-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
-                        <Link to={
-                            user.role === 'store_admin' ? '/my-store' : 
-                            user.role === 'service_admin' ? '/my-service' : 
-                            user.role === 'delivery_boy' ? '/admin' : '/admin'
-                        } className="p-6 flex items-center justify-between hover:bg-teal-50/50 dark:hover:bg-teal-900/10 transition-colors group">
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-2xl shadow-lg shadow-teal-300 dark:shadow-teal-900/50">
-                                    {user.role === 'store_admin' ? (
-                                        <Store className="text-white" size={24} />
-                                    ) : user.role === 'service_admin' ? (
-                                        <Wrench className="text-white" size={24} />
-                                    ) : user.role === 'delivery_boy' ? (
-                                        <Package className="text-white" size={24} />
-                                    ) : (
-                                        <Shield className="text-white" size={24} />
-                                    )}
+                {/* Role-based Action Cards: show one card per role */}
+                {user && (() => {
+                    const roles = Array.isArray(user.role) ? user.role : [user.role || 'customer'];
+                    const cardDefs = [
+                        {
+                            role: 'store_admin',
+                            to: '/my-store',
+                            icon: <Store className="text-white" size={24} />,
+                            title: t('My Store'),
+                            desc: t('Manage your store products and details'),
+                        },
+                        {
+                            role: 'service_admin',
+                            to: '/my-service',
+                            icon: <Wrench className="text-white" size={24} />,
+                            title: t('My Service'),
+                            desc: t('Manage your service items and details'),
+                        },
+                        {
+                            role: 'delivery_boy',
+                            to: '/admin',
+                            icon: <Package className="text-white" size={24} />,
+                            title: t('Delivery Panel'),
+                            desc: t('View and manage assigned deliveries'),
+                        },
+                        {
+                            role: 'admin',
+                            to: '/admin',
+                            icon: <Shield className="text-white" size={24} />,
+                            title: t('Admin Dashboard'),
+                            desc: t('Manage products, stores, and users'),
+                        },
+                    ];
+
+                    const cards = cardDefs.filter(c => roles.includes(c.role));
+                    if (cards.length === 0) return null;
+
+                    return cards.map((card, idx) => (
+                        <div key={idx} className="bg-gradient-to-br from-teal-50 via-white to-emerald-50 dark:from-gray-800 dark:via-gray-800 dark:to-teal-900/10 rounded-3xl shadow-lg shadow-teal-100 dark:shadow-teal-900/20 border border-teal-100 dark:border-gray-700 overflow-hidden mb-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
+                            <Link to={card.to} className="p-6 flex items-center justify-between hover:bg-teal-50/50 dark:hover:bg-teal-900/10 transition-colors group">
+                                <div className="flex items-center gap-4">
+                                    <div className="p-3 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-2xl shadow-lg shadow-teal-300 dark:shadow-teal-900/50">
+                                        {card.icon}
+                                    </div>
+                                    <div>
+                                        <h2 className="text-lg font-bold bg-gradient-to-r from-teal-600 to-emerald-600 dark:from-teal-400 dark:to-emerald-400 bg-clip-text text-transparent">
+                                            {card.title}
+                                        </h2>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">{card.desc}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h2 className="text-lg font-bold bg-gradient-to-r from-teal-600 to-emerald-600 dark:from-teal-400 dark:to-emerald-400 bg-clip-text text-transparent">
-                                        {user.role === 'store_admin' ? t('My Store') : 
-                                         user.role === 'service_admin' ? t('My Service') : 
-                                         user.role === 'delivery_boy' ? t('Delivery Panel') : t('Admin Dashboard')}
-                                    </h2>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                                        {user.role === 'store_admin' ? t('Manage your store products and details') : 
-                                         user.role === 'service_admin' ? t('Manage your service items and details') : 
-                                         user.role === 'delivery_boy' ? t('View and manage assigned deliveries') :
-                                         t('Manage products, stores, and users')}
-                                    </p>
-                                </div>
-                            </div>
-                            <ChevronRight className="text-teal-500 group-hover:translate-x-1 transition-transform" size={20} />
-                        </Link>
-                    </div>
-                )}
+                                <ChevronRight className="text-teal-500 group-hover:translate-x-1 transition-transform" size={20} />
+                            </Link>
+                        </div>
+                    ));
+                })()}
 
                 {/* Saved Products */}
                 <div className="bg-gradient-to-br from-blue-50 via-white to-cyan-50 dark:from-gray-800 dark:via-gray-800 dark:to-blue-900/10 rounded-3xl shadow-lg shadow-blue-100 dark:shadow-blue-900/20 border border-blue-100 dark:border-gray-700 overflow-hidden mb-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">

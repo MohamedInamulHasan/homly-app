@@ -95,7 +95,7 @@ const Layout = ({ children, onRefresh }) => {
 
     // Maintenance Mode Logic
     const isMaintenanceMode = settings?.maintenanceMode === true;
-    const isAdmin = user?.role === 'admin'; // Specific check for 'admin' role
+    const isAdmin = Array.isArray(user?.role) ? user?.role.includes('admin') : user?.role === 'admin'; // Specific check for 'admin' role
 
     // Allow access if:
     // 1. Maintenance mode is OFF

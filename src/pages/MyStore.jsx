@@ -19,7 +19,8 @@ const MyStore = () => {
         );
     }
 
-    if (!user || user.role !== 'store_admin') {
+    const roles = Array.isArray(user?.role) ? user.role : [user?.role || 'customer'];
+    if (!user || !roles.includes('store_admin')) {
         // Use useEffect or render Navigate would be better, but return null + navigate is what was there.
         // Let's use Navigate component for cleaner render interrupt
         // But for now, since I can't import Navigate in replace block easily without adding it to existing imports list which is messy in replace,

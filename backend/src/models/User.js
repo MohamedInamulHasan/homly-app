@@ -22,9 +22,9 @@ const userSchema = new mongoose.Schema({
         select: false
     },
     role: {
-        type: String,
+        type: [String],
         enum: ['customer', 'admin', 'store_admin', 'service_admin', 'delivery_boy'],
-        default: 'customer'
+        default: ['customer']
     },
     deliverySettings: {
         workTimings: {

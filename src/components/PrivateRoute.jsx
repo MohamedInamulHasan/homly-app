@@ -17,7 +17,10 @@ const PrivateRoute = ({ children, adminOnly = false }) => {
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
-    if (adminOnly && user.role !== 'admin' && user.role !== 'store_admin' && user.role !== 'service_admin' && user.role !== 'delivery_boy') {
+    const userRoles = Array.isArray(user.role) ? user.role : [user.role || 'customer'];
+    const hasAdminAccess = userRoles.some(r => ['admin', 'store_admin', 'service_admin', 'delivery_boy'].includes(r));
+
+    if (adminOnly && !hasAdminAccess) {
         // Redirect to home if user is not authorized
         return <Navigate to="/" replace />;
     }

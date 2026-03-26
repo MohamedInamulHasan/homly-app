@@ -114,8 +114,10 @@ const StoreManagement = () => {
     const { uploadImage, uploading: uploadingImage } = useCloudinaryUpload();
     const queryClient = useQueryClient();
 
-    const isStoreAdmin = user?.role === 'store_admin';
-    const myStore = isStoreAdmin ? stores.find(s => s._id === user.storeId || s.id === user.storeId) : null;
+    const userRoles = Array.isArray(user?.role) ? user.role : [user?.role || 'customer'];
+    const isStoreAdmin = userRoles.includes('store_admin');
+    const myStoreId = user?.storeId?._id || user?.storeId;
+    const myStore = isStoreAdmin ? stores.find(s => (s._id || s.id) === myStoreId || s._id === myStoreId) : null;
 
     const [view, setView] = useState('list'); // Default to list view for everyone
     const [selectedStore, setSelectedStore] = useState(myStore);

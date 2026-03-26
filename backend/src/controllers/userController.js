@@ -86,6 +86,7 @@ export const registerUser = async (req, res, next) => {
             email,
             password,
             mobile,
+            role: ['customer'],
             coins: initialCoins
         });
 
@@ -166,7 +167,7 @@ export const googleAuth = async (req, res, next) => {
                 name,
                 email,
                 password: randomPassword,
-                role: 'customer',
+                role: ['customer'],
                 mobile: '', // Placeholder
                 coins: initialCoins
             });
@@ -240,7 +241,7 @@ export const getUserProfile = async (req, res, next) => {
                     _id: user._id,
                     name: user.name,
                     email: user.email,
-                    role: user.role,
+                    role: Array.isArray(user.role) ? user.role : [user.role || 'customer'],
                     mobile: user.mobile,
                     address: user.address,
                     storeId: user.storeId,
@@ -346,21 +347,23 @@ export const updateUserByAdmin = async (req, res, next) => {
         }
 
         if (req.body.role) {
-            user.role = req.body.role;
+            user.role = Array.isArray(req.body.role) ? req.body.role : [req.body.role];
         }
+
+        const currentRoles = Array.isArray(user.role) ? user.role : [user.role];
 
         if (req.body.storeId) {
             user.storeId = req.body.storeId;
-        } else if (req.body.role === 'customer' || req.body.role === 'admin' || req.body.role === 'service_admin') {
+        } else if (!currentRoles.includes('store_admin')) {
             // Remove storeId if not store_admin
-            if (req.body.role !== 'store_admin') user.storeId = undefined;
+            user.storeId = undefined;
         }
 
         if (req.body.serviceId) {
             user.serviceId = req.body.serviceId;
-        } else if (req.body.role === 'customer' || req.body.role === 'admin' || req.body.role === 'store_admin') {
+        } else if (!currentRoles.includes('service_admin')) {
             // Remove serviceId if not service_admin
-            if (req.body.role !== 'service_admin') user.serviceId = undefined;
+            user.serviceId = undefined;
         }
 
         // Debug logging for coin updates
