@@ -20,7 +20,8 @@ export const createOrder = async (req, res, next) => {
             tax,
             discount,
             total,
-            scheduledDeliveryTime
+            scheduledDeliveryTime,
+            orderType
         } = req.body;
 
         if (!items || items.length === 0) {
