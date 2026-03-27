@@ -340,8 +340,8 @@ export const updateOrderStatus = async (req, res, next) => {
             order.deliveredBy = req.body.deliveredBy;
         }
 
-        // If a delivery boy accepts an order, set status to 'Out for Delivery' automatically if it was Processing/Shipped
-        if (roles.includes('delivery_boy') && (order.status === 'Processing' || order.status === 'Shipped') && !order.deliveredBy) {
+        // If a delivery boy accepts an order, set status to 'Out for Delivery' automatically if it was Processing
+        if (roles.includes('delivery_boy') && order.status === 'Processing' && !order.deliveredBy) {
             order.deliveredBy = req.user._id;
             order.status = 'Out for Delivery';
         }
@@ -376,7 +376,7 @@ export const deleteOrder = async (req, res, next) => {
         // Security Guard: Customers can only delete Cancelled or Failed orders
         const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role || 'customer'];
         const isCustomer = roles.includes('customer') || roles.length === 0;
-        const restrictedStatuses = ['Processing', 'Shipped', 'Out for Delivery', 'Delivered'];
+        const restrictedStatuses = ['Processing', 'Out for Delivery', 'Delivered'];
         
         if (isCustomer && !roles.includes('admin') && !roles.includes('store_admin') && restrictedStatuses.includes(order.status)) {
             res.status(403);

@@ -1847,8 +1847,8 @@ const OrderManagement = () => {
     };
 
     // Group orders by status
-    const processingOrders = orders.filter(o => o.status === 'Processing' || o.status === 'Shipped');
-    const outForDeliveryOrders = orders.filter(o => o.status === 'Out for Delivery');
+    const processingOrders = orders.filter(o => o.status === 'Processing');
+    const outForDeliveryOrders = orders.filter(o => o.status === 'Out for Delivery' || o.status === 'Shipped');
     const deliveredOrders = orders.filter(o => o.status === 'Delivered');
     const cancelledOrders = orders.filter(o => o.status === 'Cancelled');
 
@@ -1919,15 +1919,26 @@ const OrderManagement = () => {
                                                     <span className="truncate block font-medium text-gray-900 dark:text-white" title={`${order.shippingAddress?.street}, ${order.shippingAddress?.city}`}>
                                                         {order.shippingAddress ? `${order.shippingAddress.street}, ${order.shippingAddress.city}` : 'N/A'}
                                                     </span>
-                                                    {order.shippingAddress?.location && (
+                                                    {order.shippingAddress?.location ? (
                                                         <a
-                                                            href={order.shippingAddress.location?.replace('maps?q=', 'maps/search/?api=1&query=') || '#'}
+                                                            href={order.shippingAddress.location?.replace('maps/search/?api=1&query=', 'maps?q=') || '#'}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline mt-1 text-xs"
                                                         >
                                                             <MapPin size={12} />
                                                             View Map
+                                                        </a>
+                                                    ) : (
+                                                        <a
+                                                            href={`https://maps.google.com/maps?q=${encodeURIComponent(`${order.shippingAddress?.street || ''}, ${order.shippingAddress?.city || ''}`)}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="flex items-center gap-1 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline mt-1 text-[10px]"
+                                                            title={t('Search address on Google Maps')}
+                                                        >
+                                                            <MapPin size={12} />
+                                                            {t('Search Address')}
                                                         </a>
                                                     )}
                                                 </>
@@ -1949,8 +1960,7 @@ const OrderManagement = () => {
                                                     onChange={(e) => updateStatus(order._id || order.id, e.target.value)}
                                                     className={`px-3 py-1.5 rounded-lg border-2 text-sm font-semibold transition-colors outline-none
                                                         ${order.status === 'Delivered' ? 'border-green-100 bg-green-50 text-green-700' :
-                                                            order.status === 'Out for Delivery' ? 'border-blue-100 bg-blue-50 text-blue-700' :
-                                                                order.status === 'Shipped' ? 'border-blue-100 bg-blue-50 text-blue-700' :
+                                                            (order.status === 'Out for Delivery' || order.status === 'Shipped') ? 'border-blue-100 bg-blue-50 text-blue-700' :
                                                                     order.status === 'Cancelled' ? 'border-red-100 bg-red-50 text-red-700' :
                                                                         'border-yellow-100 bg-yellow-50 text-yellow-700'}`}
                                                 >

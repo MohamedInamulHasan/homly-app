@@ -378,7 +378,7 @@ const Checkout = () => {
                                                 const { latitude, longitude } = position.coords;
                                                 console.log('📍 Coordinates:', latitude, longitude);
 
-                                                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+                                                const mapsLink = `https://maps.google.com/maps?q=${latitude},${longitude}`;
                                                 console.log('📍 Maps link:', mapsLink);
 
                                                 try {
@@ -473,6 +473,24 @@ const Checkout = () => {
                                         </div>
                                         <ArrowLeft className="text-white/60 rotate-180" size={20} />
                                     </button>
+
+                                    {/* Saved GPS Indicator */}
+                                    {formData.location && !isNavigating && (
+                                        <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl animate-fade-in">
+                                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                                            <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">
+                                                {t('Saved GPS Location Attached')}
+                                            </span>
+                                            <button 
+                                                type="button"
+                                                onClick={() => setFormData(prev => ({ ...prev, location: '' }))}
+                                                className="ml-auto text-blue-400 hover:text-red-500 transition-colors"
+                                                title={t('Clear Location')}
+                                            >
+                                                <X size={14} />
+                                            </button>
+                                        </div>
+                                    )}
 
                                     {/* Separator */}
                                     <div className="flex items-center gap-4">

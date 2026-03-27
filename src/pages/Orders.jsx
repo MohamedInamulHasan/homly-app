@@ -50,7 +50,7 @@ const Orders = () => {
 
         const matchesTab =
             activeTab === 'All' ? true :
-                activeTab === 'Active' ? ['Processing', 'Shipped'].includes(order.status) :
+                activeTab === 'Active' ? ['Processing', 'Shipped', 'Out for Delivery'].includes(order.status) :
                     activeTab === 'Completed' ? order.status === 'Delivered' :
                         activeTab === 'Cancelled' ? order.status === 'Cancelled' : true;
 

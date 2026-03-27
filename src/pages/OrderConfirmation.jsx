@@ -84,7 +84,7 @@ const OrderConfirmation = () => {
                 street: formData.address,
                 city: formData.city,
                 state: '',
-                zip: '', // formData.pincode, // REMOVED
+                zip: formData.pincode || formData.zip || '',
                 country: 'India',
                 mobile: formData.mobile,
                 location: formData.location // Add GPS Location

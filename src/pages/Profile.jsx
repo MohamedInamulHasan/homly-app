@@ -41,7 +41,7 @@ const Profile = () => {
 
     // Calculate real-time order statistics
     const processingOrders = orders.filter(order => order.status === 'Processing').length;
-    const shippedOrders = orders.filter(order => order.status === 'Shipped').length;
+    const outForDeliveryOrders = orders.filter(order => order.status === 'Shipped' || order.status === 'Out for Delivery').length;
     const deliveredOrders = orders.filter(order => order.status === 'Delivered').length;
     const cancelledOrders = orders.filter(order => order.status === 'Cancelled').length;
 
@@ -123,8 +123,8 @@ const Profile = () => {
                                 <p className="text-xs text-amber-50 font-semibold mt-1">{t('Processing')}</p>
                             </div>
                             <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg shadow-blue-200 dark:shadow-blue-900/30 hover:scale-105 transition-transform duration-300">
-                                <p className="text-3xl font-bold text-white drop-shadow-lg">{shippedOrders}</p>
-                                <p className="text-xs text-blue-50 font-semibold mt-1">{t('Shipped')}</p>
+                                <p className="text-3xl font-bold text-white drop-shadow-lg">{outForDeliveryOrders}</p>
+                                <p className="text-xs text-blue-50 font-semibold mt-1">{t('Out for Delivery')}</p>
                             </div>
                             <div className="p-4 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg shadow-green-200 dark:shadow-green-900/30 hover:scale-105 transition-transform duration-300">
                                 <p className="text-3xl font-bold text-white drop-shadow-lg">{deliveredOrders}</p>
