@@ -377,14 +377,13 @@ const Checkout = () => {
 
                                                 const { latitude, longitude } = position.coords;
                                                 console.log('📍 Coordinates:', latitude, longitude);
-
-                                                const mapsLink = `https://maps.google.com/maps?q=${latitude},${longitude}`;
-                                                console.log('📍 Maps link:', mapsLink);
+                                                const googleMapsUrl = `https://www.google.com/maps/place/${latitude}+${longitude}/@${latitude},${longitude},17z`;
+                                                console.log('📍 Maps link:', googleMapsUrl);
 
                                                 try {
                                                     setFormData(prev => ({
                                                         ...prev,
-                                                        location: mapsLink
+                                                        location: googleMapsUrl
                                                     }));
                                                     console.log('📍 Form data updated');
                                                 } catch (formError) {
@@ -395,7 +394,7 @@ const Checkout = () => {
                                                     try {
                                                         const updatedUserData = {
                                                             ...user,
-                                                            location: mapsLink
+                                                            location: googleMapsUrl
                                                         };
                                                         setUser(updatedUserData);
                                                         localStorage.setItem('userInfo', JSON.stringify(updatedUserData));
