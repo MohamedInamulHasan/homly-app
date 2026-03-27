@@ -1929,18 +1929,7 @@ const OrderManagement = () => {
                                                             <MapPin size={12} />
                                                             View Map
                                                         </a>
-                                                    ) : (
-                                                        <a
-                                                            href={`https://maps.google.com/maps?q=${encodeURIComponent(`${order.shippingAddress?.street || ''}, ${order.shippingAddress?.city || ''}`)}`}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="flex items-center gap-1 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline mt-1 text-[10px]"
-                                                            title={t('Search address on Google Maps')}
-                                                        >
-                                                            <MapPin size={12} />
-                                                            {t('Search Address')}
-                                                        </a>
-                                                    )}
+                                                    ) : null}
                                                 </>
                                             )}
                                         </td>

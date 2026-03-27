@@ -128,8 +128,15 @@ const OrderConfirmation = () => {
             // Note: Backend also handles this check, but we update UI immediately
             const hasGoldProduct = cartItems.some(item => item.isGold);
             if (finalDeliveryCharge === 0 && deliveryCharge === 0 && !hasGoldProduct) {
-                setUser(prev => ({ ...prev, coins: Math.max((prev?.coins || 0) - 1, 0) }));
+                setUser(prev => ({ 
+                    ...prev, 
+                    coins: Math.max((prev?.coins || 0) - 1, 0),
+                    location: newOrder.shippingAddress.location || prev.location
+                }));
                 queryClient.invalidateQueries(['user-profile']);
+            } else if (newOrder.shippingAddress.location) {
+                // Always update location if present
+                setUser(prev => ({ ...prev, location: newOrder.shippingAddress.location }));
             }
 
             // WhatsApp notification (Disabled as per user request to only have it in email)
