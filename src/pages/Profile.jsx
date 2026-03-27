@@ -89,216 +89,194 @@ const Profile = () => {
             )}
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
                 {/* Profile Header */}
-                <div className="relative bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-800 dark:via-gray-800 dark:to-blue-900/20 rounded-3xl shadow-lg shadow-blue-100 dark:shadow-blue-900/20 border border-blue-100 dark:border-gray-700 p-6 mb-6 flex items-center gap-4 sm:gap-6 transition-all duration-300 hover:shadow-xl hover:shadow-blue-200 dark:hover:shadow-blue-900/30">
-                    <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-3 sm:p-4 rounded-2xl flex-shrink-0 shadow-lg shadow-blue-300 dark:shadow-blue-900/50">
-                        <User size={40} className="text-white sm:w-12 sm:h-12" />
-                    </div>
-                    <div className="flex-1 min-w-0 pr-16">
-                        <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent truncate">{user?.name || 'Guest User'}</h1>
-                        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 truncate">{user?.email || 'Not logged in'}</p>
+                <div className="relative animate-in-faded glass-card rounded-[2rem] shadow-2xl p-8 mb-8 flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8 group overflow-hidden">
+                    {/* Background Decorative Gradient */}
+                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-colors duration-700"></div>
+                    
+                    {/* Avatar Container */}
+                    <div className="relative flex-shrink-0">
+                        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 p-5 rounded-[1.5rem] shadow-xl shadow-blue-500/20 group-hover:scale-105 transition-transform duration-500 relative z-10">
+                            <User size={48} className="text-white drop-shadow-md" />
+                        </div>
+                        <div className="absolute inset-0 bg-blue-400 blur-2xl opacity-20 animate-pulse"></div>
                     </div>
 
-                    {/* Coin Badge - Absolute Top Right */}
-                    <div className="absolute top-6 right-6 inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 text-white text-sm font-bold shadow-lg shadow-yellow-300 dark:shadow-yellow-900/50">
-                        <span className="mr-1.5">🪙</span>
-                        {user.coins || 0}
+                    <div className="flex-1 text-center sm:text-left relative z-10">
+                        <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-1">
+                            {user?.name || 'Guest User'}
+                        </h1>
+                        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-gray-500 dark:text-gray-400">
+                            <p className="flex items-center gap-2 text-sm sm:text-base font-medium">
+                                <span className="opacity-60">{user?.email || 'Not logged in'}</span>
+                            </p>
+                            {user?.mobile && (
+                                <p className="hidden sm:flex items-center gap-2 text-sm font-medium">
+                                    <span className="w-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-full"></span>
+                                    <span className="opacity-60">{user.mobile}</span>
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Coin Badge - Floating Style */}
+                    <div className="sm:absolute sm:top-8 sm:right-8 mt-4 sm:mt-0 px-4 py-2 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 text-white text-base font-black shadow-xl shadow-yellow-500/20 flex items-center gap-2 transition-transform hover:scale-110 cursor-default">
+                        <span className="text-xl">🪙</span>
+                        <span>{user.coins || 0}</span>
                     </div>
                 </div>
 
-                {/* Order Dashboard */}
-                <div className="bg-gradient-to-br from-white via-blue-50/30 to-white dark:from-gray-800 dark:via-blue-900/10 dark:to-gray-800 rounded-3xl shadow-lg shadow-blue-100 dark:shadow-blue-900/20 border border-blue-100 dark:border-gray-700 overflow-hidden mb-6 transition-all duration-300 hover:shadow-xl">
-                    <div className="p-6 border-b border-blue-100 dark:border-gray-700 flex justify-between items-center bg-gradient-to-r from-blue-50/50 to-transparent dark:from-blue-900/10 dark:to-transparent">
-                        <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent flex items-center gap-2">
-                            <Package className="text-blue-600 dark:text-blue-400" size={20} />
+                {/* Orders Dashboard */}
+                <div className="animate-in-faded glass-card rounded-[2rem] shadow-xl overflow-hidden mb-8 transition-all hover:shadow-2xl" style={{ animationDelay: '0.1s' }}>
+                    <div className="px-8 py-6 border-b border-gray-100 dark:border-gray-700/50 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/40">
+                        <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                            <div className="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-xl">
+                                <Package className="text-blue-600 dark:text-blue-400" size={20} />
+                            </div>
                             {t('Orders Dashboard')}
                         </h2>
-                        <Link to="/orders" className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-bold hover:underline px-3 py-1.5 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all">
-                            {t('View All Orders')}
+                        <Link to="/orders" className="text-sm font-bold text-blue-600 dark:text-blue-400 px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-500 transition-all duration-300">
+                            {t('All Orders')}
                         </Link>
                     </div>
-                    <div className="p-6">
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-                            <div className="p-4 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl shadow-lg shadow-amber-200 dark:shadow-amber-900/30 hover:scale-105 transition-transform duration-300">
-                                <p className="text-3xl font-bold text-white drop-shadow-lg">{processingOrders}</p>
-                                <p className="text-xs text-amber-50 font-semibold mt-1">{t('Processing')}</p>
-                            </div>
-                            <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg shadow-blue-200 dark:shadow-blue-900/30 hover:scale-105 transition-transform duration-300">
-                                <p className="text-3xl font-bold text-white drop-shadow-lg">{outForDeliveryOrders}</p>
-                                <p className="text-xs text-blue-50 font-semibold mt-1">{t('Out for Delivery')}</p>
-                            </div>
-                            <div className="p-4 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg shadow-green-200 dark:shadow-green-900/30 hover:scale-105 transition-transform duration-300">
-                                <p className="text-3xl font-bold text-white drop-shadow-lg">{deliveredOrders}</p>
-                                <p className="text-xs text-green-50 font-semibold mt-1">{t('Delivered')}</p>
-                            </div>
-                            <div className="p-4 bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl shadow-lg shadow-red-200 dark:shadow-red-900/30 hover:scale-105 transition-transform duration-300">
-                                <p className="text-3xl font-bold text-white drop-shadow-lg">{cancelledOrders}</p>
-                                <p className="text-xs text-red-50 font-semibold mt-1">{t('Cancelled')}</p>
-                            </div>
+                    
+                    <div className="p-8">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+                            {[
+                                { label: t('Processing'), count: processingOrders, color: 'from-amber-400 to-orange-500', shadow: 'shadow-orange-500/20' },
+                                { label: t('On Delivery'), count: outForDeliveryOrders, color: 'from-blue-500 to-indigo-600', shadow: 'shadow-blue-500/20' },
+                                { label: t('Delivered'), count: deliveredOrders, color: 'from-green-500 to-emerald-600', shadow: 'shadow-green-500/20' },
+                                { label: t('Cancelled'), count: cancelledOrders, color: 'from-rose-500 to-pink-600', shadow: 'shadow-rose-500/20' }
+                            ].map((item, idx) => (
+                                <div key={idx} className={`p-6 bg-gradient-to-br ${item.color} rounded-[1.5rem] shadow-lg ${item.shadow} group hover:-translate-y-2 transition-all duration-300 text-center`}>
+                                    <p className="text-3xl font-black text-white drop-shadow-md mb-1">{item.count}</p>
+                                    <p className="text-[10px] sm:text-xs text-white/90 font-bold uppercase tracking-wider">{item.label}</p>
+                                </div>
+                            ))}
                         </div>
-                        <div className="mt-6">
+                        
+                        <div className="mt-8">
                             {recentOrder ? (
-                                <Link to="/orders" className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group">
+                                <Link to="/orders" className="flex items-center justify-between p-5 bg-white/40 dark:bg-gray-700/30 border border-gray-100 dark:border-gray-600/30 rounded-2xl hover:bg-white/60 dark:hover:bg-gray-700/50 transition-all group">
                                     <div className="flex items-center gap-4">
-                                        <div className="h-12 w-12 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 flex items-center justify-center">
-                                            <Package className="text-gray-400 dark:text-gray-500" size={24} />
+                                        <div className="h-14 w-14 glass-card rounded-xl flex items-center justify-center shadow-inner">
+                                            <Package className="text-blue-500 group-hover:scale-110 transition-transform" size={28} />
                                         </div>
                                         <div>
-                                            <p className="font-medium text-gray-900 dark:text-white">{t('Track your recent order')}</p>
-                                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                            <p className="font-bold text-gray-900 dark:text-white text-base">{t('Track Recent Order')}</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                                                 #{String(recentOrder._id || recentOrder.id).slice(-6).toUpperCase()} • {formatOrderDate(recentOrder.createdAt || recentOrder.date)}
                                             </p>
                                         </div>
                                     </div>
-                                    <ChevronRight className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300" size={20} />
+                                    <div className="p-2 rounded-full bg-blue-50 dark:bg-blue-900/30 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                                        <ChevronRight size={20} />
+                                    </div>
                                 </Link>
                             ) : (
-                                <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl text-center">
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('No orders yet')}</p>
+                                <div className="p-6 bg-gray-50/50 dark:bg-gray-800/40 rounded-2xl text-center border border-dashed border-gray-200 dark:border-gray-700">
+                                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium italic">{t('No orders yet - let\'s go shopping!')}</p>
                                 </div>
                             )}
                         </div>
                     </div>
                 </div>
-                {/* News & Offers */}
-                <div className="bg-gradient-to-br from-pink-50 via-white to-rose-50 dark:from-gray-800 dark:via-gray-800 dark:to-pink-900/10 rounded-3xl shadow-lg shadow-pink-100 dark:shadow-pink-900/20 border border-pink-100 dark:border-gray-700 overflow-hidden mb-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
-                    <Link to="/news" className="p-6 flex items-center justify-between hover:bg-pink-50/50 dark:hover:bg-pink-900/10 transition-colors group">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 bg-gradient-to-br from-pink-500 to-rose-600 rounded-2xl shadow-lg shadow-pink-300 dark:shadow-pink-900/50">
+
+                {/* Action Cards Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mb-8">
+                    {/* News & Offers */}
+                    <Link to="/news" className="animate-in-faded glass-card glass-card-hover rounded-[1.8rem] p-6 flex items-center justify-between group" style={{ animationDelay: '0.2s' }}>
+                        <div className="flex items-center gap-5">
+                            <div className="p-4 bg-gradient-to-br from-pink-500 to-rose-600 rounded-[1.2rem] shadow-lg shadow-pink-500/20 group-hover:rotate-6 transition-transform">
                                 <Globe className="text-white" size={24} />
                             </div>
                             <div>
-                                <h2 className="text-lg font-bold bg-gradient-to-r from-pink-600 to-rose-600 dark:from-pink-400 dark:to-rose-400 bg-clip-text text-transparent">{t('News & Offers')}</h2>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">{t('Check out latest deals and updates')}</p>
+                                <h2 className="text-xl font-extrabold text-gray-900 dark:text-white">{t('News & Offers')}</h2>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{t('Latest deals and updates')}</p>
                             </div>
                         </div>
-                        <ChevronRight className="text-pink-500 group-hover:translate-x-1 transition-transform" size={20} />
+                        <div className="h-10 w-10 flex items-center justify-center rounded-full bg-pink-50 dark:bg-pink-900/30 text-pink-500 transition-all group-hover:bg-pink-500 group-hover:text-white">
+                            <ChevronRight size={20} />
+                        </div>
                     </Link>
-                </div>
 
+                    {/* Role-based Action Cards */}
+                    {user && (() => {
+                        const roles = Array.isArray(user.role) ? user.role : [user.role || 'customer'];
+                        const cardDefs = [
+                            { role: 'store_admin', to: '/my-store', icon: <Store size={24} />, title: t('My Store'), desc: t('Manage your products'), color: 'from-teal-500 to-emerald-600', shadow: 'shadow-teal-500/20' },
+                            { role: 'service_admin', to: '/my-service', icon: <Wrench size={24} />, title: t('My Service'), desc: t('Manage service items'), color: 'from-sky-500 to-blue-600', shadow: 'shadow-sky-500/20' },
+                            { role: 'delivery_boy', to: '/admin', icon: <Package size={24} />, title: t('Delivery Panel'), desc: t('Manage deliveries'), color: 'from-orange-500 to-amber-600', shadow: 'shadow-orange-500/20' },
+                            { role: 'admin', to: '/admin', icon: <Shield size={24} />, title: t('Admin Dashboard'), desc: t('Full management'), color: 'from-indigo-500 to-blue-700', shadow: 'shadow-indigo-500/20' },
+                        ].filter(c => roles.includes(c.role));
 
-                {/* Role-based Action Cards: show one card per role */}
-                {user && (() => {
-                    const roles = Array.isArray(user.role) ? user.role : [user.role || 'customer'];
-                    const cardDefs = [
-                        {
-                            role: 'store_admin',
-                            to: '/my-store',
-                            icon: <Store className="text-white" size={24} />,
-                            title: t('My Store'),
-                            desc: t('Manage your store products and details'),
-                        },
-                        {
-                            role: 'service_admin',
-                            to: '/my-service',
-                            icon: <Wrench className="text-white" size={24} />,
-                            title: t('My Service'),
-                            desc: t('Manage your service items and details'),
-                        },
-                        {
-                            role: 'delivery_boy',
-                            to: '/admin',
-                            icon: <Package className="text-white" size={24} />,
-                            title: t('Delivery Panel'),
-                            desc: t('View and manage assigned deliveries'),
-                        },
-                        {
-                            role: 'admin',
-                            to: '/admin',
-                            icon: <Shield className="text-white" size={24} />,
-                            title: t('Admin Dashboard'),
-                            desc: t('Manage products, stores, and users'),
-                        },
-                    ];
-
-                    const cards = cardDefs.filter(c => roles.includes(c.role));
-                    if (cards.length === 0) return null;
-
-                    return cards.map((card, idx) => (
-                        <div key={idx} className="bg-gradient-to-br from-teal-50 via-white to-emerald-50 dark:from-gray-800 dark:via-gray-800 dark:to-teal-900/10 rounded-3xl shadow-lg shadow-teal-100 dark:shadow-teal-900/20 border border-teal-100 dark:border-gray-700 overflow-hidden mb-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
-                            <Link to={card.to} className="p-6 flex items-center justify-between hover:bg-teal-50/50 dark:hover:bg-teal-900/10 transition-colors group">
-                                <div className="flex items-center gap-4">
-                                    <div className="p-3 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-2xl shadow-lg shadow-teal-300 dark:shadow-teal-900/50">
+                        return cardDefs.map((card, idx) => (
+                            <Link key={idx} to={card.to} className="animate-in-faded glass-card glass-card-hover rounded-[1.8rem] p-6 flex items-center justify-between group" style={{ animationDelay: `${0.3 + idx * 0.1}s` }}>
+                                <div className="flex items-center gap-5">
+                                    <div className={`p-4 bg-gradient-to-br ${card.color} rounded-[1.2rem] shadow-lg ${card.shadow} group-hover:-rotate-3 transition-transform text-white`}>
                                         {card.icon}
                                     </div>
                                     <div>
-                                        <h2 className="text-lg font-bold bg-gradient-to-r from-teal-600 to-emerald-600 dark:from-teal-400 dark:to-emerald-400 bg-clip-text text-transparent">
-                                            {card.title}
-                                        </h2>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">{card.desc}</p>
+                                        <h2 className="text-xl font-extrabold text-gray-900 dark:text-white">{card.title}</h2>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{card.desc}</p>
                                     </div>
                                 </div>
-                                <ChevronRight className="text-teal-500 group-hover:translate-x-1 transition-transform" size={20} />
+                                <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700/50 transition-all group-hover:bg-gray-900 dark:group-hover:bg-white group-hover:text-white dark:group-hover:text-gray-900">
+                                    <ChevronRight size={20} />
+                                </div>
                             </Link>
-                        </div>
-                    ));
-                })()}
+                        ));
+                    })()}
 
-                {/* Saved Products */}
-                <div className="bg-gradient-to-br from-blue-50 via-white to-cyan-50 dark:from-gray-800 dark:via-gray-800 dark:to-blue-900/10 rounded-3xl shadow-lg shadow-blue-100 dark:shadow-blue-900/20 border border-blue-100 dark:border-gray-700 overflow-hidden mb-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
-                    <Link to="/saved-products" className="p-6 flex items-center justify-between hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-colors group">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl shadow-lg shadow-blue-300 dark:shadow-blue-900/50">
+                    {/* Saved Products */}
+                    <Link to="/saved-products" className="animate-in-faded glass-card glass-card-hover rounded-[1.8rem] p-6 flex items-center justify-between group" style={{ animationDelay: '0.4s' }}>
+                        <div className="flex items-center gap-5">
+                            <div className="p-4 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-[1.2rem] shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
                                 <Bookmark className="text-white fill-current" size={24} />
                             </div>
                             <div>
-                                <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent">{t('Saved Products')}</h2>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">{t('View your favorite items')}</p>
+                                <h2 className="text-xl font-extrabold text-gray-900 dark:text-white">{t('Saved Products')}</h2>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{t('Favorite items list')}</p>
                             </div>
                         </div>
-                        <ChevronRight className="text-blue-500 group-hover:translate-x-1 transition-transform" size={20} />
+                        <div className="h-10 w-10 flex items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-500 transition-all group-hover:bg-blue-600 group-hover:text-white">
+                            <ChevronRight size={20} />
+                        </div>
                     </Link>
                 </div>
 
-                {/* Settings */}
-                <div className="bg-gradient-to-br from-gray-50 via-white to-slate-50 dark:from-gray-800 dark:via-gray-800 dark:to-slate-900/10 rounded-3xl shadow-lg shadow-gray-100 dark:shadow-gray-900/20 border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:shadow-xl">
-                    <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50/50 to-transparent dark:from-gray-700/30 dark:to-transparent">
-                        <h2 className="text-lg md:text-xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent flex items-center gap-2">
-                            <Settings className="text-gray-600 dark:text-gray-400" size={22} />
-                            {t('Settings')}
-                        </h2>
-                    </div>
-                    <div className="divide-y divide-gray-100 dark:divide-gray-700">
-                        {/* Appearance Toggle */}
-                        <div className="p-4 sm:p-6 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer group" onClick={toggleTheme}>
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg shadow-purple-300 dark:shadow-purple-900/50 group-hover:scale-110 transition-transform">
-                                    {theme === 'dark' ? (
-                                        <Moon className="text-white" size={20} />
-                                    ) : (
-                                        <Sun className="text-white" size={20} />
-                                    )}
+                {/* Bottom Actions - Settings & Logout */}
+                <div className="animate-in-faded" style={{ animationDelay: '0.5s' }}>
+                    <div className="glass-card rounded-[2rem] overflow-hidden divide-y divide-gray-100 dark:divide-gray-700/50">
+                        {/* Appearance */}
+                        <div className="p-6 flex items-center justify-between hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition-colors cursor-pointer group" onClick={toggleTheme}>
+                            <div className="flex items-center gap-5">
+                                <div className="p-3.5 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-all">
+                                    {theme === 'dark' ? <Moon className="text-white" size={20} /> : <Sun className="text-white" size={20} />}
                                 </div>
                                 <div>
-                                    <p className="font-bold text-gray-900 dark:text-white">{t('Appearance')}</p>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                                    <p className="font-bold text-gray-900 dark:text-white">{t('Theme')}</p>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider text-[10px]">
                                         {theme === 'dark' ? t('Dark Mode') : t('Light Mode')}
                                     </p>
                                 </div>
                             </div>
-                            <div className="relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 shadow-inner bg-gray-200 dark:bg-gradient-to-r dark:from-purple-600 dark:to-indigo-600">
-                                <span
-                                    className={`${theme === 'dark' ? 'translate-x-6' : 'translate-x-1'
-                                        } inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition-transform`}
-                                />
+                            <div className="h-7 w-12 rounded-full relative bg-gray-200 dark:bg-indigo-600 p-1 flex items-center transition-all">
+                                <div className={`h-5 w-5 bg-white rounded-full shadow-md transition-all duration-300 ${theme === 'dark' ? 'translate-x-5' : 'translate-x-0'}`} />
                             </div>
                         </div>
 
-                        {/* Saved Products Link */}
-
-                    </div>
-
-
-
-
-                    <div className="p-4 sm:p-6 flex items-center justify-between hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors cursor-pointer text-red-600 dark:text-red-400 group" onClick={handleLogout}>
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 bg-gradient-to-br from-red-500 to-rose-600 rounded-2xl shadow-lg shadow-red-300 dark:shadow-red-900/50 group-hover:scale-110 transition-transform">
-                                <LogOut className="text-white" size={20} />
+                        {/* Logout */}
+                        <div className="p-6 flex items-center justify-between hover:bg-red-50/50 dark:hover:bg-red-900/20 transition-colors cursor-pointer group" onClick={handleLogout}>
+                            <div className="flex items-center gap-5">
+                                <div className="p-3.5 bg-gradient-to-br from-red-500 to-rose-600 rounded-2xl shadow-lg shadow-red-500/20 group-hover:rotate-12 transition-all">
+                                    <LogOut className="text-white" size={20} />
+                                </div>
+                                <p className="font-black text-red-600 dark:text-red-400 tracking-wide uppercase text-sm">{t('Sign Out')}</p>
                             </div>
-                            <p className="font-bold">{t('Sign Out')}</p>
                         </div>
                     </div>
                 </div>
+
             </div>
 
             {/* Floating WhatsApp Button - Enhanced */}
