@@ -1920,24 +1920,16 @@ const OrderManagement = () => {
                                                         {order.shippingAddress ? `${order.shippingAddress.street}, ${order.shippingAddress.city}` : 'N/A'}
                                                     </span>
                                                     {order.shippingAddress?.location ? (
-                                                        <button
-                                                            onClick={() => {
-                                                                const url = order.shippingAddress.location;
-                                                                if (!url) return;
-                                                                // On mobile, target="_blank" often breaks app handoff. 
-                                                                // Using window.location.href instead of <a> tag works much more reliably.
-                                                                if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
-                                                                    window.location.href = url;
-                                                                } else {
-                                                                    window.open(url, '_blank', 'noopener,noreferrer');
-                                                                }
-                                                            }}
-                                                            className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline mt-1 text-xs bg-transparent border-none p-0 cursor-pointer"
+                                                        <a
+                                                            href={order.shippingAddress.location || '#'}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline mt-1 text-xs"
                                                             title={t('View location on Google Maps')}
                                                         >
                                                             <MapPin size={12} />
                                                             View Map
-                                                        </button>
+                                                        </a>
                                                     ) : null}
                                                 </>
                                             )}
