@@ -1921,9 +1921,7 @@ const OrderManagement = () => {
                                                     </span>
                                                     {order.shippingAddress?.location && (
                                                         <a
-                                                            href={order.shippingAddress.location?.includes('maps?q=') 
-                                                                ? order.shippingAddress.location.replace('https://www.google.com/maps?q=', 'https://maps.google.com/maps?q=') 
-                                                                : order.shippingAddress.location}
+                                                            href={order.shippingAddress.location?.replace('maps?q=', 'maps/search/?api=1&query=') || '#'}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline mt-1 text-xs"
@@ -2783,7 +2781,7 @@ const UserManagement = () => {
 
                                                 let mapLink = loc;
                                                 if (!loc.startsWith('http')) {
-                                                    mapLink = `https://maps.google.com/maps?q=${loc.replace(/\s/g, '')}`;
+                                                    mapLink = `https://www.google.com/maps/search/?api=1&query=${loc.replace(/\s/g, '')}`;
                                                 }
 
                                                 return (
@@ -3713,7 +3711,7 @@ const ServiceRequestManagement = () => {
                                                             href={(() => {
                                                                 const loc = request.address?.location || request.user?.location;
                                                                 if (loc && loc.startsWith('http')) return loc;
-                                                                return `https://maps.google.com/maps?q=${loc}`;
+                                                                return `https://www.google.com/maps/search/?api=1&query=${loc}`;
                                                             })()}
                                                             target="_blank"
                                                             rel="noopener noreferrer"

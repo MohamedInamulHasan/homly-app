@@ -93,7 +93,7 @@ const Checkout = () => {
     const handleLocation = () => {
         // INSTANT RESPONSE: Check if we already have it cached
         if (cachedLocation) {
-            const mapsLink = `https://maps.google.com/maps?q=${cachedLocation.latitude},${cachedLocation.longitude}`;
+            const mapsLink = `https://www.google.com/maps/search/?api=1&query=${cachedLocation.latitude},${cachedLocation.longitude}`;
             setFormData(prev => ({ ...prev, location: mapsLink }));
             alert(t('Location retrieved successfully!')); // Show success immediately
             return;
@@ -112,7 +112,7 @@ const Checkout = () => {
                 // Update cache for next time
                 setCachedLocation({ latitude, longitude });
 
-                const mapsLink = `https://maps.google.com/maps?q=${latitude},${longitude}`;
+                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
                 setFormData(prev => ({ ...prev, location: mapsLink }));
                 setIsNavigating(false);
                 alert(t('Location retrieved successfully!'));
@@ -371,7 +371,7 @@ const Checkout = () => {
                                         {(() => {
                                             const now = new Date();
                                             // 15-min buffer: never show a slot starting in < 15 mins
-                                            const todayThreshold = new Date(now.getTime() + 15 * 60000); // 30 min buffer
+                                            const todayThreshold = now; // Strict timing: only show if before or at slot start
 
                                             const allowedSlots = settings?.deliveryTimes || [];
                                             const availableSlots = [];
@@ -382,7 +382,7 @@ const Checkout = () => {
 
                                                 // 1. Add for TODAY if still available
                                                 const slotDateToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, mins);
-                                                if (slotDateToday > todayThreshold) {
+                                                if (slotDateToday >= todayThreshold) {
                                                     availableSlots.push({
                                                         value: `today|${timeValue}`,
                                                         label: displayTime,

@@ -76,8 +76,8 @@ const Cart = () => {
                                     {/* Status Tags */}
                                     <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
                                         {item.isGold && (
-                                            <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
-                                                Gold Benefit
+                                            <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
+                                                Free Delivery
                                             </span>
                                         )}
                                         {item.isFromAd && (
@@ -192,8 +192,8 @@ const Cart = () => {
                                                 FREE
                                             </span>
                                             {hasGoldProduct ? (
-                                                <p className="text-[10px] text-yellow-600 dark:text-yellow-400 flex items-center justify-end gap-1 mt-0.5 font-bold">
-                                                    <span>⚡</span> Gold Benefit
+                                                <p className="text-[10px] text-emerald-600 dark:text-emerald-500 flex items-center justify-end gap-1 mt-0.5 font-bold">
+                                                    Free Delivery
                                                 </p>
                                             ) : (
                                                 <p className="text-[10px] text-yellow-600 dark:text-yellow-500 flex items-center justify-end gap-1 mt-0.5 font-medium">

@@ -12,7 +12,8 @@ export const getProducts = async (req, res, next) => {
 
         // By default, only show available products
         // Unless user is admin/store_admin AND explicitly asks for all (or we just show all for them?)
-        const isAdmin = req.user && (req.user.role === 'admin' || req.user.role === 'store_admin');
+        const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role || 'customer'];
+        const isAdmin = req.user && (roles.includes('admin') || roles.includes('store_admin'));
 
         if (!isAdmin) {
             query.isAvailable = true;
@@ -107,7 +108,8 @@ export const getProduct = async (req, res, next) => {
         }
 
         // Check availability logic
-        const isAdmin = req.user && (req.user.role === 'admin' || req.user.role === 'store_admin');
+        const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role || 'customer'];
+        const isAdmin = req.user && (roles.includes('admin') || roles.includes('store_admin'));
         if (!product.isAvailable && !isAdmin) {
             res.status(404);
             throw new Error('Product not found');
@@ -128,7 +130,8 @@ export const getProduct = async (req, res, next) => {
 export const createProduct = async (req, res, next) => {
     try {
         // Store Admin Restriction: Enforce storeId
-        if (req.user.role === 'store_admin') {
+        const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role || 'customer'];
+        if (roles.includes('store_admin')) {
             req.body.storeId = req.user.storeId;
         }
 
@@ -170,7 +173,8 @@ export const updateProduct = async (req, res, next) => {
         }
 
         // Store Admin Restriction: Verify ownership
-        if (req.user.role === 'store_admin') {
+        const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role || 'customer'];
+        if (roles.includes('store_admin')) {
             if (product.storeId && product.storeId.toString() !== req.user.storeId.toString()) {
                 res.status(403);
                 throw new Error('Not authorized to update this product');
@@ -247,7 +251,8 @@ export const deleteProduct = async (req, res, next) => {
         }
 
         // Store Admin Restriction: Verify ownership
-        if (req.user.role === 'store_admin') {
+        const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role || 'customer'];
+        if (roles.includes('store_admin')) {
             if (productToCheck.storeId && productToCheck.storeId.toString() !== req.user.storeId.toString()) {
                 res.status(403);
                 throw new Error('Not authorized to delete this product');
@@ -279,7 +284,8 @@ export const updateProductsOrder = async (req, res, next) => {
         }
 
         // Store Admin Restriction: Verify that ALL orderedIds belong to the user's store
-        if (req.user.role === 'store_admin') {
+        const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role || 'customer'];
+        if (roles.includes('store_admin')) {
             const count = await Product.countDocuments({
                 _id: { $in: orderedIds },
                 storeId: req.user.storeId

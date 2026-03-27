@@ -21,6 +21,19 @@ const Services = () => {
     const [searchParams] = useSearchParams();
     const serviceIdFromQuery = searchParams.get('id');
 
+    const [searchQuery, setSearchQuery] = useState('');
+
+    // Dynamic Data Hooks
+    const { data: services = [], isLoading: servicesLoading } = useServices();
+
+    // Sub-services state
+    const [viewMode, setViewMode] = useState('list'); // 'list' | 'details'
+    const [activeService, setActiveService] = useState(null);
+    const [selectedItem, setSelectedItem] = useState(null);
+
+    // Fetch items only when a service is active
+    const { data: serviceItems = [], isLoading: itemsLoading } = useServiceItems(activeService?._id || activeService?.id);
+
     // Hide footer/navbar when modals are open
     useEffect(() => {
         setIsFooterHidden(showConfirmation || requestSuccess);
@@ -37,19 +50,6 @@ const Services = () => {
             }
         }
     }, [serviceIdFromQuery, services]);
-
-    const [searchQuery, setSearchQuery] = useState('');
-
-    // Dynamic Data Hooks
-    const { data: services = [], isLoading: servicesLoading } = useServices();
-
-    // Sub-services state
-    const [viewMode, setViewMode] = useState('list'); // 'list' | 'details'
-    const [activeService, setActiveService] = useState(null);
-    const [selectedItem, setSelectedItem] = useState(null);
-
-    // Fetch items only when a service is active
-    const { data: serviceItems = [], isLoading: itemsLoading } = useServiceItems(activeService?._id || activeService?.id);
 
     const handleViewServices = (service) => {
         setActiveService(service);
@@ -177,6 +177,82 @@ const Services = () => {
                                     </button>
                                 )}
                             </div>
+
+                            {/* Search Results Dropdown */}
+                            {searchQuery.trim() && (
+                                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 max-h-80 overflow-y-auto z-50 w-full overflow-x-hidden">
+                                    {(() => {
+                                        const q = searchQuery.toLowerCase();
+                                        const results = services.filter(service =>
+                                            service.name?.toLowerCase().includes(q) ||
+                                            service.category?.toLowerCase().includes(q)
+                                        ).sort((a, b) => {
+                                            const aName = t(a, 'name').toLowerCase();
+                                            const bName = t(b, 'name').toLowerCase();
+                                            const aStarts = aName.startsWith(q);
+                                            const bStarts = bName.startsWith(q);
+                                            if (aStarts && !bStarts) return -1;
+                                            if (!aStarts && bStarts) return 1;
+                                            return 0;
+                                        }).slice(0, 5);
+
+                                        if (results.length === 0) {
+                                            return (
+                                                <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                                    {t('No services found')}
+                                                </div>
+                                            );
+                                        }
+
+                                        return results.map((service) => {
+                                            const serviceId = service._id || service.id;
+
+                                            return (
+                                                <div
+                                                    key={serviceId}
+                                                    onClick={() => {
+                                                        handleViewServices(service);
+                                                        setSearchQuery('');
+                                                    }}
+                                                    className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0 text-left"
+                                                >
+                                                    <div className="relative flex-shrink-0">
+                                                        <img
+                                                            src={service.image || `${API_BASE_URL}/services/${serviceId}/image`}
+                                                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=Service'; }}
+                                                            alt={service.name}
+                                                            className="w-10 h-10 rounded-lg object-cover border border-gray-100 dark:border-gray-700"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                                                            {(() => {
+                                                                const fullTitle = t(service, 'name');
+                                                                const bracketIndex = fullTitle.indexOf('(');
+                                                                if (bracketIndex !== -1) {
+                                                                    const mainPart = fullTitle.substring(0, bracketIndex);
+                                                                    const bracketPart = fullTitle.substring(bracketIndex);
+                                                                    return (
+                                                                        <>
+                                                                            <span>{mainPart}</span>
+                                                                            <span className="text-[10px] font-normal text-gray-500 dark:text-gray-400">{bracketPart}</span>
+                                                                        </>
+                                                                    );
+                                                                }
+                                                                return fullTitle;
+                                                            })()}
+                                                        </div>
+                                                        <p className="text-[10px] text-gray-500 dark:text-gray-400 truncate">
+                                                            {service.category || t('Service')}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            );
+                                        });
+                                    })()}
+                                </div>
+                            )}
+
                         </div>
                     )}
 

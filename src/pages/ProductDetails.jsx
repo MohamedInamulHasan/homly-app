@@ -245,8 +245,8 @@ const ProductDetails = () => {
                                     <div key={idx} className="min-w-full h-full snap-center flex items-center justify-center bg-white relative">
                                         {product.isGold && (
                                             <div className="absolute top-0 left-0 z-20">
-                                                <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-sm font-bold px-4 py-1 rounded-br-2xl shadow-md block">
-                                                    {t('Gold Benefit')}
+                                                <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-bold px-4 py-1 rounded-br-2xl shadow-md block">
+                                                    {t('Free Delivery')}
                                                 </span>
                                             </div>
                                         )}

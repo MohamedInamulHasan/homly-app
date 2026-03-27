@@ -247,8 +247,8 @@ const OrderConfirmation = () => {
                                                     {/* Status Tags */}
                                                     <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
                                                         {item.isGold && (
-                                                            <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
-                                                                Gold
+                                                            <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
+                                                                Free
                                                             </span>
                                                         )}
                                                         {item.isFromAd && (
@@ -331,8 +331,8 @@ const OrderConfirmation = () => {
                                     <div className="text-right">
                                         <span className="font-medium text-green-600 dark:text-green-400">FREE</span>
                                         {cartItems.some(item => item.isGold) ? (
-                                            <p className="text-xs text-yellow-600 dark:text-yellow-400 flex items-center justify-end gap-1 font-bold">
-                                                <span>⚡</span> Gold Benefit
+                                            <p className="text-xs text-emerald-600 dark:text-emerald-500 flex items-center justify-end gap-1 font-bold">
+                                                Free Delivery
                                             </p>
                                         ) : (
                                             <p className="text-xs text-yellow-600 dark:text-yellow-500 flex items-center justify-end gap-1">

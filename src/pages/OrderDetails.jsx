@@ -151,7 +151,8 @@ const OrderDetails = () => {
                 <div className="max-w-3xl mx-auto px-4 h-16 flex items-center gap-4">
                     <button
                         onClick={() => {
-                            if (user?.role === 'delivery_boy') {
+                            const roles = Array.isArray(user?.role) ? user.role : [user?.role || 'customer'];
+                            if (roles.includes('delivery_boy')) {
                                 navigate('/admin');
                             } else {
                                 navigate('/orders');
@@ -257,8 +258,8 @@ const OrderDetails = () => {
                                     {/* Status Tags */}
                                     <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
                                         {((item.isGold) || (item.product && item.product.isGold)) && (
-                                            <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
-                                                {t('Gold')}
+                                            <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
+                                                {t('Free')}
                                             </span>
                                         )}
                                         {item.isFromAd && !item.isGold && !(item.product && item.product.isGold) && (
@@ -354,9 +355,7 @@ const OrderDetails = () => {
                         </p>
                         {order.shippingAddress?.location && (
                             <a
-                                href={order.shippingAddress.location?.includes('maps?q=') 
-                                    ? order.shippingAddress.location.replace('https://www.google.com/maps?q=', 'https://maps.google.com/maps?q=') 
-                                    : order.shippingAddress.location}
+                                href={order.shippingAddress.location?.replace('maps?q=', 'maps/search/?api=1&query=') || '#'}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl text-xs font-bold hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all border border-blue-100 dark:border-blue-800"
@@ -385,8 +384,8 @@ const OrderDetails = () => {
                                 order?.items?.some(item => item.isGold || (item.product && item.product.isGold)) ? (
                                     <div className="text-right">
                                         <span className="text-green-600 font-bold">{t('FREE')}</span>
-                                        <p className="text-[10px] text-yellow-600 dark:text-yellow-400 font-bold flex items-center justify-end gap-1">
-                                            <span>⚡</span> {t('Gold Benefit')}
+                                        <p className="text-[10px] text-emerald-600 dark:text-emerald-500 font-bold flex items-center justify-end gap-1">
+                                            {t('Free Delivery')}
                                         </p>
                                     </div>
                                 ) : (

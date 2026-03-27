@@ -322,7 +322,7 @@ export const DataProvider = ({ children }) => {
             // Check auth status for sensitive data
             const storedUser = localStorage.getItem('userInfo');
             const user = storedUser ? JSON.parse(storedUser) : null;
-            const isAdmin = user?.role === 'admin';
+            const isAdmin = Array.isArray(user?.role) ? user.role.includes('admin') : user?.role === 'admin';
 
             const [productsRes, storesRes, newsRes, adsRes, categoriesRes, usersRes, servicesRes] = await Promise.all([
                 apiService.getProducts({ limit: 1000, page: 1 }).catch(e => { console.error("Failed to fetch products during refresh:", e); return { success: false, data: [] }; }),
@@ -358,7 +358,7 @@ export const DataProvider = ({ children }) => {
             const hasToken = !!localStorage.getItem('authToken');
             const storedUser = localStorage.getItem('userInfo');
             const user = storedUser ? JSON.parse(storedUser) : null;
-            const isAdmin = user?.role === 'admin';
+            const isAdmin = Array.isArray(user?.role) ? user.role.includes('admin') : user?.role === 'admin';
 
             const [productsRes, storesRes, newsRes, adsRes, categoriesRes, usersRes, servicesRes, ordersRes] = await Promise.all([
                 apiService.getProducts({ limit: 1000, page: 1 }).catch(e => ({ success: false, data: [] })),

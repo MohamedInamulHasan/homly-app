@@ -246,8 +246,8 @@ const Orders = () => {
                                                         {/* Status Tags */}
                                                         <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
                                                             {((item.isGold) || (item.product && item.product.isGold)) && (
-                                                                <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-[6px] font-bold px-1 py-px rounded-br-md shadow-sm mb-[1px]">
-                                                                    Gold
+                                                                <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[6px] font-bold px-1 py-px rounded-br-md shadow-sm mb-[1px]">
+                                                                    Free
                                                                 </span>
                                                             )}
                                                             {item.isFromAd && !item.isGold && !(item.product && item.product.isGold) && (

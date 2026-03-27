@@ -178,12 +178,17 @@ export const getOrders = async (req, res, next) => {
         // If user is customer, return only their orders
         let query = {};
 
-        if (req.user && req.user.role === 'admin') {
+        const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role || 'customer'];
+        const isAdmin = roles.includes('admin');
+        const isDeliveryBoy = roles.includes('delivery_boy');
+        const isStoreAdmin = roles.includes('store_admin');
+
+        if (isAdmin) {
             query = {}; // Admin sees all orders
-        } else if (req.user && req.user.role === 'delivery_boy') {
+        } else if (isDeliveryBoy) {
             // Delivery boy sees all orders, exactly like the admin panel
             query = {};
-        } else if (req.user && req.user.role === 'store_admin' && req.user.storeId) {
+        } else if (isStoreAdmin && req.user?.storeId) {
             // Store Admin sees:
             // 1. Orders containing items from their store (Sales)
             // 2. Orders they placed themselves (Purchases)
@@ -195,7 +200,7 @@ export const getOrders = async (req, res, next) => {
             };
         } else {
             // Customer sees only their orders
-            query = { user: req.user._id };
+            query = { user: req.user?._id };
         }
 
         const orders = await Order.find(query)
@@ -256,11 +261,13 @@ export const getOrder = async (req, res, next) => {
         // Check if the order belongs to the requesting user
         // Note: With lean(), order.user is an ObjectId, so we use string comparison
         const isOwner = order.user.toString() === req.user._id.toString();
-        const isAdmin = req.user.role === 'admin';
-        const isDeliveryBoy = req.user.role === 'delivery_boy';
+        const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role || 'customer'];
+        const isAdmin = roles.includes('admin');
+        const isDeliveryBoy = roles.includes('delivery_boy');
+        const isStoreAdminRole = roles.includes('store_admin');
 
         let isStoreAdmin = false;
-        if (req.user.role === 'store_admin' && req.user.storeId) {
+        if (isStoreAdminRole && req.user.storeId) {
             // Check if any item in the order belongs to this store
             // Note: items.storeId is populated in the query above as an object { _id, name }
             isStoreAdmin = order.items.some(item =>
@@ -295,8 +302,10 @@ export const updateOrderStatus = async (req, res, next) => {
         }
 
         // Security Guard: Customers can only cancel if status is 'Processing'
-        const isCustomer = req.user.role === 'customer' || !req.user.role;
-        if (isCustomer && req.body.status === 'Cancelled' && order.status !== 'Processing') {
+        const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role || 'customer'];
+        const isCustomer = roles.includes('customer') || roles.length === 0;
+        
+        if (isCustomer && !roles.includes('admin') && !roles.includes('store_admin') && !roles.includes('delivery_boy') && req.body.status === 'Cancelled' && order.status !== 'Processing') {
             res.status(403);
             throw new Error(`Order cannot be cancelled once it is ${order.status}`);
         }
@@ -332,7 +341,7 @@ export const updateOrderStatus = async (req, res, next) => {
         }
 
         // If a delivery boy accepts an order, set status to 'Out for Delivery' automatically if it was Processing/Shipped
-        if (req.user.role === 'delivery_boy' && (order.status === 'Processing' || order.status === 'Shipped') && !order.deliveredBy) {
+        if (roles.includes('delivery_boy') && (order.status === 'Processing' || order.status === 'Shipped') && !order.deliveredBy) {
             order.deliveredBy = req.user._id;
             order.status = 'Out for Delivery';
         }
@@ -365,9 +374,11 @@ export const deleteOrder = async (req, res, next) => {
         }
 
         // Security Guard: Customers can only delete Cancelled or Failed orders
-        const isCustomer = req.user.role === 'customer' || !req.user.role;
+        const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role || 'customer'];
+        const isCustomer = roles.includes('customer') || roles.length === 0;
         const restrictedStatuses = ['Processing', 'Shipped', 'Out for Delivery', 'Delivered'];
-        if (isCustomer && restrictedStatuses.includes(order.status)) {
+        
+        if (isCustomer && !roles.includes('admin') && !roles.includes('store_admin') && restrictedStatuses.includes(order.status)) {
             res.status(403);
             throw new Error(`Active or completed orders cannot be deleted. Current status: ${order.status}`);
         }

@@ -378,7 +378,7 @@ const Checkout = () => {
                                                 const { latitude, longitude } = position.coords;
                                                 console.log('📍 Coordinates:', latitude, longitude);
 
-                                                const mapsLink = `https://maps.google.com/maps?q=${latitude},${longitude}`;
+                                                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
                                                 console.log('📍 Maps link:', mapsLink);
 
                                                 try {
@@ -529,7 +529,7 @@ const Checkout = () => {
                                                                 setCachedLocation({ latitude, longitude });
 
                                                                 // Store as Google Maps URL for consistency
-                                                                const mapsLink = `https://maps.google.com/maps?q=${latitude},${longitude}`;
+                                                                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
                                                                 setFormData(prev => ({
                                                                     ...prev,
                                                                     location: mapsLink
@@ -561,7 +561,7 @@ const Checkout = () => {
                                                                             (position) => {
                                                                                 const { latitude, longitude } = position.coords;
                                                                                 setCachedLocation({ latitude, longitude });
-                                                                                const mapsLink = `https://maps.google.com/maps?q=${latitude},${longitude}`;
+                                                                                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
                                                                                 setFormData(prev => ({ ...prev, location: mapsLink }));
                                                                                 if (user) {
                                                                                     const updatedUserData = { ...user, location: mapsLink };
@@ -659,8 +659,8 @@ const Checkout = () => {
                                 </label>
                                 {(() => {
                                     const now = new Date();
-                                    // 15-min buffer: never show a slot starting in < 15 mins
-                                    const threshold = new Date(now.getTime() + 15 * 60000);
+                                    // Strict timing: only show slot if current time is BEFORE or EXACTLY at slot start
+                                    const threshold = now;
                                     // 3-hour window: only show slots within the next 3 hours
                                     const windowEnd = new Date(now.getTime() + 3 * 60 * 60000);
 
@@ -853,8 +853,8 @@ const Checkout = () => {
                                             {/* Status Tags */}
                                             <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
                                                 {item.isGold && (
-                                                    <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
-                                                        Gold
+                                                    <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
+                                                        Free
                                                     </span>
                                                 )}
                                                 {item.isFromAd && (
@@ -945,8 +945,8 @@ const Checkout = () => {
                                         <div className="text-right">
                                             <span className="font-medium text-green-600 dark:text-green-400">FREE</span>
                                             {hasGoldProduct ? (
-                                                <p className="text-xs text-yellow-600 dark:text-yellow-400 flex items-center justify-end gap-1 font-bold">
-                                                    <span>⚡</span> Gold Benefit
+                                                <p className="text-xs text-emerald-600 dark:text-emerald-500 flex items-center justify-end gap-1 font-bold">
+                                                    Free Delivery
                                                 </p>
                                             ) : (
                                                 <p className="text-xs text-yellow-600 dark:text-yellow-500 flex items-center justify-end gap-1">

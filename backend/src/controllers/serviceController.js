@@ -57,7 +57,8 @@ export const updateService = async (req, res) => {
         const service = await Service.findById(req.params.id);
         if (service) {
             // Ownership check for service_admin
-            if (req.user.role === 'service_admin' && String(service._id) !== String(req.user.serviceId)) {
+            const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role || 'customer'];
+            if (roles.includes('service_admin') && String(service._id) !== String(req.user.serviceId)) {
                 return res.status(403).json({ message: 'Not authorized to manage this service' });
             }
 
@@ -140,7 +141,8 @@ export const getServiceItems = async (req, res) => {
 export const createServiceItem = async (req, res) => {
     try {
         // Ownership check for service_admin
-        if (req.user.role === 'service_admin' && String(req.params.id) !== String(req.user.serviceId)) {
+        const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role || 'customer'];
+        if (roles.includes('service_admin') && String(req.params.id) !== String(req.user.serviceId)) {
             return res.status(403).json({ message: 'Not authorized to add items to this service' });
         }
 
@@ -167,7 +169,8 @@ export const updateServiceItem = async (req, res) => {
         const item = await ServiceItem.findById(req.params.itemId);
         if (item) {
             // Ownership check for service_admin
-            if (req.user.role === 'service_admin' && String(item.serviceId) !== String(req.user.serviceId)) {
+            const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role || 'customer'];
+            if (roles.includes('service_admin') && String(item.serviceId) !== String(req.user.serviceId)) {
                 return res.status(403).json({ message: 'Not authorized to manage this item' });
             }
 
@@ -193,7 +196,8 @@ export const updateServiceItem = async (req, res) => {
 export const updateServiceItemsOrder = async (req, res) => {
     try {
         // Ownership check for service_admin
-        if (req.user.role === 'service_admin' && String(req.params.id) !== String(req.user.serviceId)) {
+        const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role || 'customer'];
+        if (roles.includes('service_admin') && String(req.params.id) !== String(req.user.serviceId)) {
             return res.status(403).json({ message: 'Not authorized to reorder items for this service' });
         }
 
@@ -223,7 +227,8 @@ export const deleteServiceItem = async (req, res) => {
         const item = await ServiceItem.findById(req.params.itemId);
         if (item) {
             // Ownership check for service_admin
-            if (req.user.role === 'service_admin' && String(item.serviceId) !== String(req.user.serviceId)) {
+            const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role || 'customer'];
+            if (roles.includes('service_admin') && String(item.serviceId) !== String(req.user.serviceId)) {
                 return res.status(403).json({ message: 'Not authorized' });
             }
 

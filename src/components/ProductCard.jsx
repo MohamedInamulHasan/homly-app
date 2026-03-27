@@ -42,11 +42,18 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
 
 
     return (
-        <div className={`rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full relative group ${!isAvailable ? 'opacity-75' : ''} ${product.isGold
-            ? 'bg-gradient-to-br from-yellow-300 via-yellow-100 to-yellow-400 dark:from-yellow-600 dark:via-yellow-400 dark:to-yellow-700 shadow-[0_0_15px_rgba(250,204,21,0.3)] hover:shadow-[0_0_25px_rgba(250,204,21,0.5)] border border-yellow-400 dark:border-yellow-500 transform hover:-translate-y-1'
-            : 'bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700'} ${!isStoreOpenCheck && isAvailable ? 'grayscale-[0.5] opacity-75 cursor-not-allowed pointer-events-none' : ''}`}>
+        <div className={`rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full relative group ${!isAvailable ? 'opacity-75' : ''} bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 ${!isStoreOpenCheck && isAvailable ? 'grayscale-[0.5] opacity-75 cursor-not-allowed pointer-events-none' : ''}`}>
             <Link to={`/product/${productId}`} onClick={handleCardClick} className={`flex-1 block ${!isAvailable ? 'pointer-events-none' : ''}`}>
-                <div className={`relative pb-[100%] overflow-hidden ${product.isGold ? 'bg-transparent' : 'bg-white'}`}>
+                <div className={`relative pb-[100%] overflow-hidden bg-white`}>
+                    
+                    {/* Free Delivery Tag */}
+                    <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-[25] pointer-events-none">
+                        {product.isGold && (
+                            <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-br-lg shadow-md">
+                                Free Delivery
+                            </span>
+                        )}
+                    </div>
                     <img
                         src={product.image || `${API_BASE_URL}/products/${productId}/image`}
                         alt={t(product, 'title')}
@@ -58,26 +65,20 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                     {showHeart && (
                         <button
                             onClick={handleToggleSave}
-                            className={`absolute top-2 right-2 p-2 rounded-full transition-colors shadow-sm z-10 pointer-events-auto ${product.isGold
-                                ? 'bg-gradient-to-br from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 border border-slate-600'
-                                : 'bg-white/80 dark:bg-black/40 hover:bg-white dark:hover:bg-black/60'
-                                }`}
+                            className={`absolute top-2 right-2 p-2 rounded-full transition-colors shadow-sm z-10 pointer-events-auto bg-white/80 dark:bg-black/40 hover:bg-white dark:hover:bg-black/60`}
                         >
                             <Bookmark
                                 size={18}
                                 className={`${isSaved
-                                    ? (product.isGold ? 'text-yellow-400 fill-current' : 'text-blue-600 fill-current')
-                                    : (product.isGold ? 'text-slate-400 hover:text-white' : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400')
+                                    ? 'text-blue-600 fill-current'
+                                    : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
                                     }`}
                             />
                         </button>
                     )}
                     {/* Cart Quantity Badge - Always visible if in cart */}
                     {cartItem && cartItem.quantity > 0 && (
-                        <div className={`absolute top-2 left-2 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg flex items-center gap-1 z-20 pointer-events-none ${product.isGold
-                            ? 'bg-gradient-to-br from-slate-700 to-slate-800 border border-slate-600'
-                            : 'bg-blue-600'
-                            }`}>
+                        <div className={`absolute top-2 right-2 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg flex items-center gap-1 z-20 pointer-events-none bg-blue-600`}>
                             <Store size={12} className="hidden" /> {/* Hidden store icon to match height usage if needed, or use ShoppingCart */}
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-shopping-cart"><circle cx="8" cy="21" r="1" /><circle cx="19" cy="21" r="1" /><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" /></svg>
                             {cartItem.quantity}
@@ -117,10 +118,10 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
 
                             return (
                                 <div className="mb-1">
-                                    <h3 className={`text-sm font-medium leading-normal ${product.isGold ? 'text-slate-800' : 'text-gray-800 dark:text-white'} truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors pb-0.5`} title={mainTitle}>
+                                    <h3 className={`text-sm font-medium leading-normal text-gray-800 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors pb-0.5`} title={mainTitle}>
                                         {mainTitle}
                                     </h3>
-                                    <p className={`text-xs ${product.isGold ? 'text-slate-600' : 'text-gray-500 dark:text-gray-400'} truncate pb-0.5`} title={bracketText}>
+                                    <p className={`text-xs text-gray-500 dark:text-gray-400 truncate pb-0.5`} title={bracketText}>
                                         {bracketText}
                                     </p>
                                 </div>
@@ -128,15 +129,15 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                         }
 
                         return (
-                            <h3 className={`text-sm font-medium leading-normal ${product.isGold ? 'text-slate-800' : 'text-gray-800 dark:text-white'} line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-1 pb-0.5`} title={fullTitle}>
+                            <h3 className={`text-sm font-medium leading-normal text-gray-800 dark:text-white line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-1 pb-0.5`} title={fullTitle}>
                                 {fullTitle}
                             </h3>
                         );
                     })()}
                     {product.storeId && (
                         <div className="flex items-center gap-1 mt-1">
-                            <Store size={12} className={`${product.isGold ? 'text-slate-500' : 'text-gray-400 dark:text-gray-500'} flex-shrink-0`} />
-                            <p className={`text-xs ${product.isGold ? 'text-slate-600' : 'text-gray-500 dark:text-gray-400'} truncate`}>
+                            <Store size={12} className={`text-gray-400 dark:text-gray-500 flex-shrink-0`} />
+                            <p className={`text-xs text-gray-500 dark:text-gray-400 truncate`}>
                                 {getStoreName(product.storeId, stores)}
                             </p>
                         </div>
@@ -146,7 +147,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
             {showCartControls && (
                 <div className="p-3 pt-1 mt-auto">
                     <div className="flex flex-col gap-3">
-                        <span className={`text-lg md:text-xl font-semibold ${!isStoreOpenCheck ? 'text-gray-400' : (product.isGold ? 'text-slate-800' : 'text-blue-600 dark:text-blue-400')}`}>₹{Number(product.price || 0).toFixed(0)}</span>
+                        <span className={`text-lg md:text-xl font-semibold ${!isStoreOpenCheck ? 'text-gray-400' : 'text-blue-600 dark:text-blue-400'}`}>₹{Number(product.price || 0).toFixed(0)}</span>
                         {!isStoreOpenCheck ? (
                             <button
                                 disabled
@@ -157,7 +158,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                                 <span className="text-sm font-semibold tracking-wide text-gray-500">{t('ADD')}</span>
                             </button>
                         ) : cartItem && cartItem.quantity > 0 ? (
-                            <div className={`flex items-center justify-between h-10 rounded-xl p-1 ${product.isGold ? 'bg-white/60 border border-slate-200' : 'bg-gray-100 dark:bg-gray-700'}`} onClick={(e) => e.stopPropagation()}>
+                            <div className={`flex items-center justify-between h-10 rounded-xl p-1 bg-gray-100 dark:bg-gray-700`} onClick={(e) => e.stopPropagation()}>
                                 <button
                                     onClick={() => {
                                         if (!user) {
@@ -166,13 +167,13 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                                         }
                                         updateQuantity(productId, cartItem.quantity - 1);
                                     }}
-                                    className={`w-8 h-8 flex items-center justify-center rounded-lg shadow-sm transition-all active:scale-90 ${product.isGold ? 'bg-white text-slate-700 hover:text-red-600 border border-slate-100' : 'bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-200 hover:text-red-600 border border-gray-100 dark:border-gray-500'}`}
+                                    className={`w-8 h-8 flex items-center justify-center rounded-lg shadow-sm transition-all active:scale-90 bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-200 hover:text-red-600 border border-gray-100 dark:border-gray-500`}
                                     aria-label="Decrease quantity"
                                     disabled={!isAvailable}
                                 >
                                     <Minus size={16} strokeWidth={3} />
                                 </button>
-                                <span className={`font-semibold text-base flex-1 text-center tabular-nums ${product.isGold ? 'text-slate-800' : 'text-gray-900 dark:text-white'}`}>
+                                <span className={`font-semibold text-base flex-1 text-center tabular-nums text-gray-900 dark:text-white`}>
                                     {cartItem.quantity}
                                 </span>
                                 <button
@@ -183,7 +184,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                                         }
                                         updateQuantity(productId, cartItem.quantity + 1);
                                     }}
-                                    className={`w-8 h-8 flex items-center justify-center rounded-lg shadow-md hover:shadow-lg transition-all active:scale-90 ${product.isGold ? 'bg-gradient-to-br from-slate-200 to-slate-300 text-slate-800 hover:from-slate-300 hover:to-slate-400' : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700'}`}
+                                    className={`w-8 h-8 flex items-center justify-center rounded-lg shadow-md hover:shadow-lg transition-all active:scale-90 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700`}
                                     aria-label="Increase quantity"
                                     disabled={!isAvailable}
                                 >
@@ -201,13 +202,13 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                                 }}
                                 disabled={!isAvailable}
                                 className={`w-full h-10 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 flex items-center justify-center gap-2 transform active:scale-95 ${isAvailable
-                                    ? (product.isGold ? 'bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white shadow-md' : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md hover:shadow-lg hover:from-blue-700 hover:to-indigo-700')
+                                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md hover:shadow-lg hover:from-blue-700 hover:to-indigo-700'
                                     : 'bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed'
                                     }`}
                                 aria-label={isAvailable ? "Add to cart" : "Out of stock"}
                             >
                                 <Plus size={20} className={product.isGold ? 'text-slate-200' : 'text-white'} />
-                                <span className={`text-sm font-semibold tracking-wide ${product.isGold ? 'text-slate-100' : 'text-white'}`}>{isAvailable ? 'ADD' : 'Out of Stock'}</span>
+                                <span className={`text-sm font-semibold tracking-wide text-white`}>{isAvailable ? 'ADD' : 'Out of Stock'}</span>
                             </button>
                         )}
                     </div>
@@ -215,7 +216,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
             )}
             {!showCartControls && (
                 <div className="p-3 pt-1 mt-auto">
-                    <span className={`text-lg md:text-xl font-semibold ${!isStoreOpenCheck ? 'text-gray-400' : (product.isGold ? 'text-slate-800' : 'text-blue-600 dark:text-blue-400')}`}>₹{Number(product.price || 0).toFixed(0)}</span>
+                    <span className={`text-lg md:text-xl font-semibold ${!isStoreOpenCheck ? 'text-gray-400' : 'text-blue-600 dark:text-blue-400'}`}>₹{Number(product.price || 0).toFixed(0)}</span>
                 </div>
             )}
         </div>

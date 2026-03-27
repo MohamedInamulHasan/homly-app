@@ -119,12 +119,18 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
         return (
             <Link
                 to={`/product-group/${encodeURIComponent(product.title)}?${isFastPurchase ? 'fast=true&' : ''}${product.storeId ? `storeId=${product.storeId._id || product.storeId}` : ''}`}
-                className={`rounded-2xl shadow-lg overflow-hidden transition-all duration-300 flex flex-col h-full ${product.isGold
-                    ? 'bg-gradient-to-br from-yellow-300 via-yellow-100 to-yellow-400 dark:from-yellow-600 dark:via-yellow-400 dark:to-yellow-700 shadow-[0_0_15px_rgba(250,204,21,0.3)] hover:shadow-[0_0_25px_rgba(250,204,21,0.5)] border border-yellow-400 dark:border-yellow-500 transform hover:-translate-y-1'
-                    : 'bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700'
-                    } ${product.anyStoreOpen ? 'hover:shadow-2xl hover:scale-[1.02]' : 'opacity-75 grayscale-[0.5]'}`}
+                className={`rounded-2xl shadow-lg overflow-hidden transition-all duration-300 flex flex-col h-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 ${product.anyStoreOpen ? 'hover:shadow-2xl hover:scale-[1.02]' : 'opacity-75 grayscale-[0.5]'}`}
             >
-                <div className={`relative pb-[100%] overflow-hidden ${product.isGold ? 'bg-transparent' : 'bg-white'}`}>
+                <div className={`relative pb-[100%] overflow-hidden bg-white`}>
+                    
+                    {/* Free Delivery Tag */}
+                    <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-[25] pointer-events-none">
+                        {product.isGold && (
+                            <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-br-lg shadow-md">
+                                Free Delivery
+                            </span>
+                        )}
+                    </div>
                     <img
                         src={product.image || `${API_BASE_URL}/products/${product._id.replace('group-', '')}/image`}
                         alt={t(product, 'title')}
@@ -158,11 +164,11 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
 
                             return (
                                 <div className="mb-1">
-                                    <h3 className={`text-sm font-medium ${product.isGold ? 'text-slate-800' : 'text-gray-800 dark:text-white'} leading-tight ${bracketContent ? 'truncate' : 'line-clamp-2'}`}>
+                                    <h3 className={`text-sm font-medium text-gray-800 dark:text-white leading-tight ${bracketContent ? 'truncate' : 'line-clamp-2'}`}>
                                         {mainTitle}
                                     </h3>
                                     {bracketContent && (
-                                        <span className={`block text-xs ${product.isGold ? 'text-slate-600' : 'text-gray-500 dark:text-gray-400'} font-medium truncate`}>
+                                        <span className={`block text-xs text-gray-500 dark:text-gray-400 font-medium truncate`}>
                                             {bracketContent}
                                         </span>
                                     )}
@@ -171,8 +177,8 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                         })()}
                         {/* Store Name - Consistent with Single Product */}
                         <div className="flex items-center gap-1 mt-1 mb-1">
-                            <Store size={12} className={`${product.isGold ? 'text-slate-500' : 'text-gray-400 dark:text-gray-500'} flex-shrink-0`} />
-                            <p className={`text-xs ${product.isGold ? 'text-slate-600' : 'text-gray-500 dark:text-gray-400'} truncate`}>
+                            <Store size={12} className={`text-gray-400 dark:text-gray-500 flex-shrink-0`} />
+                            <p className={`text-xs text-gray-500 dark:text-gray-400 truncate`}>
                                 {product.variants?.length
                                     ? `${product.variants.length} ${t('options')}`
                                     : `${(product.variantExtraCount || 0) + 1} ${t('options')}`}
@@ -180,7 +186,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                         </div>
                     </div>
 
-                    <span className={`text-lg font-semibold ${!product.anyStoreOpen ? 'text-gray-400' : (product.isGold ? 'text-slate-800' : 'text-blue-600 dark:text-blue-400')}`}>
+                    <span className={`text-lg font-semibold ${!product.anyStoreOpen ? 'text-gray-400' : 'text-blue-600 dark:text-blue-400'}`}>
                         {(() => {
                             // Robust Price Logic
                             if (product.minPrice !== undefined && product.maxPrice !== undefined && product.minPrice !== product.maxPrice) {
@@ -214,7 +220,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                                 </div>
                             ) : (
                                 <div
-                                    className={`w-full h-10 flex items-center justify-center gap-2 rounded-lg px-3 transition-colors cursor-pointer shadow-md hover:shadow-lg ${product.isGold ? 'bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 border border-slate-600' : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700'}`}
+                                    className={`w-full h-10 flex items-center justify-center gap-2 rounded-lg px-3 transition-colors cursor-pointer shadow-md hover:shadow-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700`}
                                 >
                                     <span className="text-white text-xs font-semibold uppercase">{t('VIEW')}</span>
                                 </div>
@@ -241,13 +247,19 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                 }
                 handleClick(e);
             }}
-            className={`rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full ${product.isGold
-                ? 'bg-gradient-to-br from-yellow-300 via-yellow-100 to-yellow-400 dark:from-yellow-600 dark:via-yellow-400 dark:to-yellow-700 shadow-[0_0_15px_rgba(250,204,21,0.3)] hover:shadow-[0_0_25px_rgba(250,204,21,0.5)] border border-yellow-400 dark:border-yellow-500 transform hover:-translate-y-1'
-                : 'bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700'} ${isStoreOpenCheck && isAvailable ? 'hover:shadow-2xl hover:scale-[1.02]' : 'opacity-75 grayscale-[0.5] cursor-not-allowed'
+            className={`rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 ${isStoreOpenCheck && isAvailable ? 'hover:shadow-2xl hover:scale-[1.02]' : 'opacity-75 grayscale-[0.5] cursor-not-allowed'
                 }`}
         >
-            <div className={`relative pb-[100%] overflow-hidden ${product.isGold ? 'bg-transparent' : 'bg-white'}`}>
-                <img
+            <div className={`relative pb-[100%] overflow-hidden bg-white`}>
+
+                    <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-[25] pointer-events-none">
+                        {product.isGold && (
+                            <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-br-lg shadow-md">
+                                Free Delivery
+                            </span>
+                        )}
+                    </div>
+                    <img
                     src={product.image || `${API_BASE_URL}/products/${productId}/image`}
                     alt={t(product, 'title')}
                     loading="lazy"
@@ -274,10 +286,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                 )}
                 {/* Cart Quantity Badge - Moved to Left */}
                 {cartQuantity > 0 && isStoreOpenCheck && isAvailable && (
-                    <div className={`absolute top-2 left-2 text-white text-xs font-bold px-2.5 py-1.5 rounded-full shadow-lg flex items-center gap-1 z-20 ${product.isGold
-                        ? 'bg-gradient-to-br from-slate-700 to-slate-800 border border-slate-600'
-                        : 'bg-gradient-to-br from-blue-600 to-indigo-600'
-                        }`}>
+                    <div className={`absolute top-2 right-2 text-white text-xs font-bold px-2.5 py-1.5 rounded-full shadow-lg flex items-center gap-1 z-20 bg-gradient-to-br from-blue-600 to-indigo-600`}>
                         <ShoppingCart size={12} />
                         {cartQuantity}
                     </div>
@@ -287,16 +296,13 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                 {showSave && (
                     <button
                         onClick={handleToggleSave}
-                        className={`absolute top-2 right-2 p-1.5 rounded-full transition-colors shadow-sm z-20 ${product.isGold
-                            ? 'bg-gradient-to-br from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 border border-slate-600'
-                            : 'bg-white/80 dark:bg-black/40 hover:bg-white dark:hover:bg-black/60'
-                            }`}
+                        className={`absolute top-2 right-2 p-1.5 rounded-full transition-colors shadow-sm z-20 bg-white/80 dark:bg-black/40 hover:bg-white dark:hover:bg-black/60`}
                     >
                         <Bookmark
                             size={16}
                             className={`${isSaved
-                                ? (product.isGold ? 'text-yellow-400 fill-current' : 'text-blue-600 fill-current')
-                                : (product.isGold ? 'text-slate-400 hover:text-white' : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400')
+                                ? 'text-blue-600 fill-current'
+                                : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
                                 }`}
                         />
                     </button>
@@ -326,11 +332,11 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
 
                         return (
                             <div className="mb-1">
-                                <h3 className={`text-sm font-medium ${product.isGold ? 'text-slate-800' : 'text-gray-800 dark:text-white'} leading-normal ${bracketContent ? 'truncate' : 'line-clamp-2'} pb-0.5`}>
+                                <h3 className={`text-sm font-medium text-gray-800 dark:text-white leading-normal ${bracketContent ? 'truncate' : 'line-clamp-2'} pb-0.5`}>
                                     {mainTitle}
                                 </h3>
                                 {bracketContent && (
-                                    <span className={`block text-xs ${product.isGold ? 'text-slate-600' : 'text-gray-500 dark:text-gray-400'} font-medium truncate pb-0.5`}>
+                                    <span className={`block text-xs text-gray-500 dark:text-gray-400 font-medium truncate pb-0.5`}>
                                         {bracketContent}
                                     </span>
                                 )}
@@ -339,14 +345,14 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                     })()}
                     {product.storeId && (
                         <div className="flex items-center gap-1 mb-2">
-                            <Store size={12} className={`${product.isGold ? 'text-slate-500' : 'text-gray-400 dark:text-gray-500'} flex-shrink-0`} />
-                            <p className={`text-xs ${product.isGold ? 'text-slate-600' : 'text-gray-500 dark:text-gray-400'} truncate`}>
+                            <Store size={12} className={`text-gray-400 dark:text-gray-500 flex-shrink-0`} />
+                            <p className={`text-xs text-gray-500 dark:text-gray-400 truncate`}>
                                 {storeName}
                             </p>
                         </div>
                     )}
                 </div>
-                <span className={`text-lg font-semibold ${!isStoreOpenCheck || !isAvailable ? 'text-gray-400' : (product.isGold ? 'text-slate-800' : 'text-blue-600 dark:text-blue-400')}`}>
+                <span className={`text-lg font-semibold ${!isStoreOpenCheck || !isAvailable ? 'text-gray-400' : 'text-blue-600 dark:text-blue-400'}`}>
                     ₹{Number(product.price || 0).toFixed(0)}
                 </span>
 
@@ -361,19 +367,19 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                                 <span className="text-gray-400 text-xs font-semibold uppercase">{t('Add')}</span>
                             </button>
                         ) : cartQuantity > 0 ? (
-                            <div className={`flex items-center justify-between h-10 rounded-xl p-1 ${product.isGold ? 'bg-white/60 border border-slate-200' : 'bg-gray-100 dark:bg-gray-700'}`}>
+                            <div className={`flex items-center justify-between h-10 rounded-xl p-1 bg-gray-100 dark:bg-gray-700`}>
                                 <button
                                     onClick={handleDecrement}
-                                    className={`w-8 h-8 flex items-center justify-center rounded-lg shadow-sm transition-colors ${product.isGold ? 'bg-white text-slate-700 hover:text-red-600 border border-slate-100' : 'bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-200 hover:text-red-600 border border-gray-100 dark:border-gray-500'}`}
+                                    className={`w-8 h-8 flex items-center justify-center rounded-lg shadow-sm transition-colors bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-200 hover:text-red-600 border border-gray-100 dark:border-gray-500`}
                                 >
                                     <Minus size={16} strokeWidth={2.5} />
                                 </button>
-                                <span className={`font-semibold text-base flex-1 text-center tabular-nums ${product.isGold ? 'text-slate-800' : 'text-gray-900 dark:text-white'}`}>
+                                <span className={`font-semibold text-base flex-1 text-center tabular-nums text-gray-900 dark:text-white`}>
                                     {cartQuantity}
                                 </span>
                                 <button
                                     onClick={handleIncrement}
-                                    className={`w-8 h-8 flex items-center justify-center rounded-lg shadow-sm transition-colors ${product.isGold ? 'bg-gradient-to-br from-slate-200 to-slate-300 text-slate-800 hover:from-slate-300 hover:to-slate-400' : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700'}`}
+                                    className={`w-8 h-8 flex items-center justify-center rounded-lg shadow-sm transition-colors bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700`}
                                 >
                                     <Plus size={16} strokeWidth={2.5} />
                                 </button>
@@ -381,10 +387,10 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                         ) : (
                             <button
                                 onClick={handleFastPurchaseClick}
-                                className={`w-full h-10 flex items-center justify-center gap-2 rounded-lg px-3 transition-colors ${product.isGold ? 'bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white shadow-md' : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md hover:shadow-lg hover:from-blue-700 hover:to-indigo-700'}`}
+                                className={`w-full h-10 flex items-center justify-center gap-2 rounded-lg px-3 transition-colors bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md hover:shadow-lg hover:from-blue-700 hover:to-indigo-700`}
                             >
                                 <Plus size={16} className={product.isGold ? 'text-slate-200' : 'text-white'} />
-                                <span className={`${product.isGold ? 'text-slate-100' : 'text-white'} text-xs font-semibold uppercase`}>{t('Add')}</span>
+                                <span className={`text-white text-xs font-semibold uppercase`}>{t('Add')}</span>
                             </button>
                         )}
                     </div>
