@@ -377,7 +377,7 @@ const Checkout = () => {
 
                                                 const { latitude, longitude } = position.coords;
                                                 console.log('📍 Coordinates:', latitude, longitude);
-                                                const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}&entry=gps`;
+                                                const googleMapsUrl = `https://www.google.com/maps/place/${latitude}+${longitude}/@${latitude},${longitude},17z?entry=gps`;
                                                 console.log('📍 Maps link:', googleMapsUrl);
 
                                                 try {
