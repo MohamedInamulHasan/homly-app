@@ -1921,7 +1921,7 @@ const OrderManagement = () => {
                                                     </span>
                                                     {order.shippingAddress?.location ? (
                                                         <a
-                                                            href={order.shippingAddress.location?.replace('maps/search/?api=1&query=', 'maps?q=') || '#'}
+                                                            href={order.shippingAddress.location || '#'}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline mt-1 text-xs"
