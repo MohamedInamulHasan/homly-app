@@ -85,9 +85,18 @@ export const createOrder = async (req, res, next) => {
             tax,
             discount,
             total: finalTotal,
-            scheduledDeliveryTime
+            scheduledDeliveryTime,
+            isPaid: paymentMethod === 'Online',
+            paidAt: paymentMethod === 'Online' ? Date.now() : null,
+            orderType: orderType || 'Store'
         });
 
+        // PERSISTENCE FIX: Save the location to the user's profile for future orders
+        if (req.user?._id && shippingAddress?.location) {
+            await User.findByIdAndUpdate(req.user._id, {
+                $set: { location: shippingAddress.location }
+            });
+        }
         // Update user profile with latest shipping address for autofill
         if (req.user?._id) {
             try {
