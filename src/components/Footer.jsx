@@ -6,42 +6,48 @@ import { useLanguage } from '../context/LanguageContext';
 const Footer = () => {
     const { t } = useLanguage();
     return (
-        <footer className="bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 pt-16 pb-8 transition-colors duration-200">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <footer className="bg-[#2E5A2E] pt-20 pb-10 transition-colors duration-200 relative overflow-hidden">
+            {/* Subtle light accent background */}
+            <div className="absolute top-0 left-0 w-96 h-96 bg-[#CBF9B2]/5 rounded-full blur-[100px] pointer-events-none -translate-x-1/2 -translate-y-1/2"></div>
+            
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
                     <div className="col-span-1 md:col-span-1">
-                        <Link to="/" className="flex items-center gap-2 mb-6 group">
-                            <div className="bg-blue-600 text-white p-2 rounded-xl group-hover:scale-110 transition-transform duration-300">
-                                <ShoppingBag size={24} />
+                        <Link to="/" className="flex items-center gap-3 mb-8 group">
+                            <div className="bg-[#CBF9B2] text-[#2E5A2E] p-2.5 rounded-2xl group-hover:rotate-6 transition-transform duration-500 shadow-lg shadow-[#000]/20">
+                                <ShoppingBag size={26} strokeWidth={2.5} />
                             </div>
-                            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent dark:from-blue-400 dark:to-blue-600">
-                                ShopEase
+                            <span className="text-[26px] font-black tracking-tight text-white uppercase">
+                                Homly
                             </span>
                         </Link>
-                        <p className="text-gray-500 dark:text-gray-400 leading-relaxed mb-6">
-                            {t('Your one-stop destination for premium shopping. Quality products, fast delivery, and exceptional service.')}
+                        <p className="text-gray-300 leading-relaxed mb-8 text-[15px] font-medium max-w-sm">
+                            {t('Ilayangudi\'s premiere destination for groceries, fashion, and lifestyle. Premium quality at your doorstep.')}
                         </p>
                         <div className="flex gap-4">
                             {['facebook', 'twitter', 'instagram', 'linkedin'].map((social) => (
                                 <a
                                     key={social}
                                     href={`#${social}`}
-                                    className="h-10 w-10 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300"
+                                    className="h-11 w-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-[#CBF9B2] hover:text-[#2E5A2E] hover:border-transparent transition-all duration-500 group"
                                 >
                                     <span className="sr-only">{social}</span>
-                                    <div className="w-5 h-5 bg-current rounded-sm" />
+                                    <div className="w-5 h-5 bg-current rounded-[4px] group-hover:scale-110 transition-transform" />
                                 </a>
                             ))}
                         </div>
                     </div>
 
                     <div>
-                        <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-6">{t('Quick Links')}</h3>
+                        <h3 className="font-bold text-white text-lg mb-8 tracking-wide uppercase">{t('Experience')}</h3>
                         <ul className="space-y-4">
-                            {['Home', 'Shop', 'About Us', 'Contact', 'Cart', 'Checkout', 'Orders'].map((item) => (
+                            {['Home', 'Shop', 'Store', 'Orders'].map((item) => (
                                 <li key={item}>
-                                    <Link to={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`} className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2 group">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-600 group-hover:bg-blue-600 dark:group-hover:bg-blue-400 transition-colors" />
+                                    <Link 
+                                        to={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`} 
+                                        className="text-gray-400 hover:text-[#CBF9B2] transition-colors flex items-center gap-3 group text-[15px] font-medium"
+                                    >
+                                        <div className="w-1.5 h-1.5 rounded-full bg-white/20 group-hover:bg-[#CBF9B2] group-hover:scale-125 transition-all" />
                                         {t(item)}
                                     </Link>
                                 </li>
@@ -50,12 +56,15 @@ const Footer = () => {
                     </div>
 
                     <div>
-                        <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-6">{t('Customer Service')}</h3>
+                        <h3 className="font-bold text-white text-lg mb-8 tracking-wide uppercase">{t('Support')}</h3>
                         <ul className="space-y-4">
-                            {['FAQ', 'Shipping Policy', 'Returns & Refunds', 'Privacy Policy'].map((item) => (
+                            {['Help Center', 'Privacy Policy', 'Terms of Service', 'Refund Policy'].map((item) => (
                                 <li key={item}>
-                                    <Link to="/" className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2 group">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-600 group-hover:bg-blue-600 dark:group-hover:bg-blue-400 transition-colors" />
+                                    <Link 
+                                        to="/" 
+                                        className="text-gray-400 hover:text-[#CBF9B2] transition-colors flex items-center gap-3 group text-[15px] font-medium"
+                                    >
+                                        <div className="w-1.5 h-1.5 rounded-full bg-white/20 group-hover:bg-[#CBF9B2] group-hover:scale-125 transition-all" />
                                         {t(item)}
                                     </Link>
                                 </li>
@@ -64,32 +73,39 @@ const Footer = () => {
                     </div>
 
                     <div>
-                        <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-6">{t('Contact Us')}</h3>
-                        <ul className="space-y-4">
-                            <li className="flex items-start gap-3 text-gray-500 dark:text-gray-400">
-                                <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
-                                <span>123 Commerce St, Business City, NY 10012</span>
+                        <h3 className="font-bold text-white text-lg mb-8 tracking-wide uppercase">{t('Contact')}</h3>
+                        <ul className="space-y-5">
+                            <li className="flex items-start gap-4 text-gray-400 text-[15px]">
+                                <div className="p-2.5 bg-white/5 rounded-xl border border-white/10 shrink-0">
+                                    <MapPin className="w-5 h-5 text-[#CBF9B2]" />
+                                </div>
+                                <span className="pt-0.5 leading-snug">Main Road, Ilayangudi – 630 702<br/>Sivagangai District, TN</span>
                             </li>
-                            <li className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                                <Phone className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-                                <span>+1 (555) 123-4567</span>
+                            <li className="flex items-center gap-4 text-gray-400 text-[15px]">
+                                <div className="p-2.5 bg-white/5 rounded-xl border border-white/10 shrink-0">
+                                    <Phone className="w-5 h-5 text-[#CBF9B2]" />
+                                </div>
+                                <span>+91 98XXX XXXXX</span>
                             </li>
-                            <li className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                                <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-                                <span>support@shopease.com</span>
+                            <li className="flex items-center gap-4 text-gray-400 text-[15px]">
+                                <div className="p-2.5 bg-white/5 rounded-xl border border-white/10 shrink-0">
+                                    <Mail className="w-5 h-5 text-[#CBF9B2]" />
+                                </div>
+                                <span>hello@homly.shop</span>
                             </li>
                         </ul>
                     </div>
                 </div>
 
-                <div className="border-t border-gray-100 dark:border-gray-800 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-gray-500 dark:text-gray-400 text-sm text-center md:text-left">
-                        © {new Date().getFullYear()} ShopEase. {t('All rights reserved')}.
-                    </p>
-                    <div className="flex gap-6">
-                        <Link to="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">{t('Terms')}</Link>
-                        <Link to="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">{t('Privacy')}</Link>
-                        <Link to="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">{t('Cookies')}</Link>
+                <div className="border-t border-white/10 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div className="text-gray-500 text-sm font-medium flex items-center gap-2">
+                        <span>© {new Date().getFullYear()} Homly.</span>
+                        <span className="h-1 w-1 bg-gray-600 rounded-full"></span>
+                        <span>{t('Experience Better')}</span>
+                    </div>
+                    <div className="flex gap-8">
+                        <Link to="/" className="text-[13px] font-bold text-gray-500 hover:text-white uppercase tracking-wider transition-colors">{t('Terms')}</Link>
+                        <Link to="/" className="text-[13px] font-bold text-gray-500 hover:text-white uppercase tracking-wider transition-colors">{t('Privacy')}</Link>
                     </div>
                 </div>
             </div>

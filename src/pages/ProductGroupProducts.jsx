@@ -107,84 +107,39 @@ const ProductGroupProducts = () => {
     return (
         <PullToRefreshLayout>
             <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20 transition-colors duration-200">
-                {/* Header */}
-                <div className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-10">
-                    <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-                        <div className="flex-1 min-w-0 flex items-center gap-4">
-                            <button
-                                onClick={() => navigate(-1)}
-                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-                            >
-                                <ChevronLeft className="text-gray-600 dark:text-white" size={24} />
-                            </button>
-                            <div className="flex-1 min-w-0">
-                                {(() => {
-                                    const fullTitle = t(decodedName);
-                                    const bracketIndex = fullTitle.indexOf('(');
+                {/* Clean Header */}
+                <div className="relative max-w-7xl mx-auto px-4 pt-8 pb-2 flex items-center justify-center">
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="absolute left-4 w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-[0_2px_15px_rgba(0,0,0,0.06)] dark:shadow-none text-gray-700 dark:text-gray-300 transition-all active:scale-90 z-10"
+                    >
+                        <ChevronLeft size={28} strokeWidth={1.5} />
+                    </button>
+                    <h1 className="text-xl font-normal text-gray-700 dark:text-gray-300 truncate leading-normal text-center px-16">
+                        {(() => {
+                            const fullTitle = t(decodedName);
+                            const bracketIndex = fullTitle.indexOf('(');
+                            let mainTitle = fullTitle;
+                            let bracketText = '';
 
-                                    // If URL already contains bracket text, use it directly
-                                    if (bracketIndex !== -1) {
-                                        const mainTitle = fullTitle.substring(0, bracketIndex).trim();
-                                        const bracketText = fullTitle.substring(bracketIndex).trim();
-                                        const isLongTitle = mainTitle.length > 20;
+                            if (bracketIndex !== -1) {
+                                mainTitle = fullTitle.substring(0, bracketIndex).trim();
+                                bracketText = fullTitle.substring(bracketIndex).trim();
+                            } else {
+                                const firstProduct = groupProducts[0];
+                                if (firstProduct) {
+                                    const pTitle = firstProduct.title || '';
+                                    const pTitleTa = firstProduct.title_ta || '';
+                                    const bMatch = pTitle.match(/\(([^)]+)\)/);
+                                    if (bMatch) bracketText = bMatch[0];
+                                    else if (pTitleTa && pTitleTa !== pTitle) bracketText = `(${pTitleTa})`;
+                                }
+                            }
 
-                                        return (
-                                            <div className="flex flex-col min-w-0">
-                                                <h1 className={`font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent capitalize truncate ${isLongTitle ? 'text-base sm:text-lg' : 'text-xl md:text-2xl'}`} title={mainTitle}>
-                                                    {mainTitle}
-                                                </h1>
-                                                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium truncate" title={bracketText}>
-                                                    {bracketText}
-                                                </span>
-                                            </div>
-                                        );
-                                    }
-
-                                    // Fallback: extract bracket text from first loaded product's title or translation fields
-                                    const firstProduct = groupProducts[0];
-                                    let bracketText = '';
-
-                                    if (firstProduct) {
-                                        const pTitle = firstProduct.title || '';
-                                        const pTitleTa = firstProduct.title_ta || '';
-                                        const bracketMatch = pTitle.match(/\(([^)]+)\)/);
-
-                                        if (bracketMatch) {
-                                            bracketText = bracketMatch[0];
-                                        } else if (pTitleTa && pTitleTa !== pTitle) {
-                                            bracketText = `(${pTitleTa})`;
-                                        }
-                                    }
-
-                                    const isLongTitle = fullTitle.length > 20;
-
-                                    if (bracketText) {
-                                        return (
-                                            <div className="flex flex-col min-w-0">
-                                                <h1 className={`font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent capitalize truncate ${isLongTitle ? 'text-base sm:text-lg' : 'text-xl md:text-2xl'}`} title={fullTitle}>
-                                                    {fullTitle}
-                                                </h1>
-                                                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium truncate" title={bracketText}>
-                                                    {bracketText}
-                                                </span>
-                                            </div>
-                                        );
-                                    }
-
-                                    return (
-                                        <h1 className={`font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent capitalize truncate ${isLongTitle ? 'text-base sm:text-lg' : 'text-xl md:text-2xl'}`} title={fullTitle}>
-                                            {fullTitle}
-                                        </h1>
-                                    );
-                                })()}
-                            </div>
-                        </div>
-
-
-
-                    </div>
+                            return `${mainTitle} ${bracketText || ''}`;
+                        })()}
+                    </h1>
                 </div>
-
                 <div className="max-w-7xl mx-auto px-4 py-6">
                     {isLoading ? (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
@@ -205,11 +160,12 @@ const ProductGroupProducts = () => {
                     ) : groupProducts.length > 0 ? (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                             {groupProducts.map(product => (
-                                fastMode ? (
-                                    <SimpleProductCard key={product._id || product.id} product={product} isFastPurchase={true} />
-                                ) : (
-                                    <ProductCard key={product._id || product.id} product={product} showCartControls={false} />
-                                )
+                                    <ProductCard 
+                                        key={product._id || product.id} 
+                                        product={product} 
+                                        showCartControls={true} 
+                                        stores={stores}
+                                    />
                             ))}
                         </div>
                     ) : (

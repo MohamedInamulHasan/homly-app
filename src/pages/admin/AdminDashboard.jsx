@@ -1006,7 +1006,7 @@ const ProductManagement = () => {
     return (
         <div className="max-w-6xl">
             <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                <h2 className="text-2xl font-normal text-gray-900 dark:text-white">
                     {view === 'list' ? t('Product Inventory') : editingProduct ? t('Edit Product') : t('Add New Product')}
                 </h2>
                 <button
@@ -1019,7 +1019,7 @@ const ProductManagement = () => {
                             setView('list');
                         }
                     }}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 font-normal"
                 >
                     {view === 'list' ? <Plus size={20} /> : <List size={20} />}
                     {view === 'list' ? t('Add Product') : t('View List')}

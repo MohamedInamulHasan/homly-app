@@ -89,7 +89,7 @@ export const groupProducts = (productList, stores = [], options = {}) => {
                 isGold: group.every(p => p.isGold),
                 _id: `group-${displayProduct._id || displayProduct.id}`,
                 id: `group-${displayProduct._id || displayProduct.id}`,
-                storeId: forcedStoreId || null, // forcedStoreId allows showing store name instead of "+ options"
+                storeId: forcedStoreId || displayProduct.storeId, // Preverve storeId from first product if no forced ID
                 variants: group
             });
         } else {

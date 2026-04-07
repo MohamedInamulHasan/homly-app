@@ -1,14 +1,16 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, MapPin, Clock, Phone, ChevronRight, AlertCircle, Zap, Search } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, Phone, ChevronRight, AlertCircle, Zap, Search, ListFilter } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useLanguage } from '../context/LanguageContext';
 import { isStoreOpen } from '../utils/storeHelpers';
+import PullToRefreshLayout from '../components/PullToRefreshLayout';
 import { API_BASE_URL } from '../utils/api';
 import { groupProducts } from '../utils/productGrouping';
 import ProductCard from '../components/ProductCard';
 import SimpleProductCard from '../components/SimpleProductCard';
 import SortDropdown from '../components/SortDropdown';
+import { Bell } from 'lucide-react';
 
 const ProductSkeleton = ({ fastMode }) => (
     <div className={`bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 animate-pulse flex flex-col h-full`}>
@@ -270,51 +272,90 @@ const StoreProducts = () => {
     const storeIsOpen = isStoreOpen(store);
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20 transition-colors duration-200">
-            {/* Header / Breadcrumbs */}
-            <div className="pt-6 pb-2">
-                <div className="max-w-7xl mx-auto px-4">
-                    <nav className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
-                        <Link to={isFromHome ? "/" : "/store"} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                            {isFromHome ? t('Home') : t('Stores')}
-                        </Link>
-                        <ChevronRight size={16} className="mx-2" />
-                        <span className="font-semibold text-gray-900 dark:text-white leading-normal pb-0.5">
-                            {store.name}
-                        </span>
-                    </nav>
-
-                    <div className="flex justify-between items-center">
-                        <h1 className={`${store.name.length > 25 ? 'text-xl md:text-3xl' : store.name.length > 15 ? 'text-2xl md:text-4xl' : 'text-3xl md:text-4xl'} font-bold leading-normal pb-0.5 whitespace-nowrap`}>
-                            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
-                                {store.name}
-                            </span>
-                        </h1>
+        <PullToRefreshLayout>
+            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-20 transition-colors duration-200">
+                {/* Premium Store Header Card */}
+                <div className="w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-6 pb-6 shadow-sm relative overflow-hidden mb-4">
+                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
+                    
+                    <div className="relative z-10">
+                        <div className="max-w-2xl mx-auto px-2 relative flex items-center justify-center min-h-[42px]">
+                            <button
+                                onClick={() => navigate(isFromHome ? "/" : "/store")}
+                                className="absolute left-4 w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50 flex-shrink-0 z-10"
+                            >
+                                <ArrowLeft size={22} />
+                            </button>
+                            <div className="flex flex-col items-center text-center px-12 min-w-0">
+                                <h1 className="text-gray-900 text-[18px] font-bold tracking-tight truncate w-full">{store?.name}</h1>
+                                {store?.address && (
+                                    <div className="flex items-center justify-center gap-1 mt-0.5 w-full">
+                                        <MapPin size={12} className="text-[#2E5A2E] flex-shrink-0" />
+                                        <p className="text-[#2E5A2E] text-[13px] font-medium truncate max-w-[250px]">{store?.address}</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Search Bar & Sort Dropdown Section */}
-            <div className="pt-2 pb-4">
-                <div className="max-w-7xl mx-auto px-4">
-                    <div className="flex items-center gap-3 relative z-50">
-                        {/* Search Bar */}
-                        <div className="relative flex-1">
-                            <form onSubmit={(e) => e.preventDefault()}>
-                                <input
-                                    type="text"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    placeholder={t('Search in store...')}
-                                    className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-gray-100 dark:border-gray-800 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 placeholder-gray-400 dark:placeholder-gray-500 shadow-sm focus:shadow-lg transition-all duration-300 text-sm"
-                                />
-                                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-blue-500 dark:text-blue-400" size={18} />
-                            </form>
-                        </div>
-
-                        {/* Sort Dropdown */}
-                        <SortDropdown currentSort={globalSortOrder} onSortChange={setGlobalSortOrder} />
+                {/* Store Search & Filter (Now Below the Design) */}
+                <div className="flex items-center gap-3 max-w-2xl mx-auto px-6 relative z-20 mb-8">
+                    <div className="relative group flex-1">
+                        <form onSubmit={(e) => e.preventDefault()}>
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder={`${t('Search in')} ${store?.name}...`}
+                                className="w-full pl-12 pr-6 py-4 rounded-full border border-gray-100 bg-white text-gray-900 placeholder-gray-400 focus:outline-none transition-all duration-300"
+                            />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2E5A2E] transition-colors" size={20} />
+                        </form>
                     </div>
+                    
+                    <button className="w-14 h-14 bg-white rounded-full flex-shrink-0 flex items-center justify-center border border-gray-100 transition-all active:scale-90 group">
+                        <ListFilter size={24} className="text-gray-900 group-hover:text-[#2E5A2E] transition-colors" />
+                    </button>
+                </div>
+
+                {/* Subcategory Tabs (As per reference image) */}
+                <div className="max-w-7xl mx-auto px-4 mb-6">
+                    <div className="flex items-center gap-6 overflow-x-auto scrollbar-hide border-b border-gray-100/50">
+                        <button
+                            onClick={() => setSelectedSubcategory(null)}
+                            className={`pb-3 text-sm font-bold transition-all relative whitespace-nowrap ${
+                                !selectedSubcategory 
+                                ? 'text-[#2E5A2E]' 
+                                : 'text-gray-400 hover:text-gray-600'
+                            }`}
+                        >
+                            {t('All')}
+                            {!selectedSubcategory && (
+                                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2E5A2E] rounded-full"></div>
+                            )}
+                        </button>
+                        
+                        {subcategoryData.map(({ name }) => (
+                            <button
+                                key={name}
+                                onClick={() => setSelectedSubcategory(name)}
+                                className={`pb-3 text-sm font-bold transition-all relative whitespace-nowrap uppercase tracking-wide ${
+                                    selectedSubcategory === name 
+                                    ? 'text-[#2E5A2E]' 
+                                    : 'text-gray-400 hover:text-gray-600'
+                                }`}
+                            >
+                                {t(name)}
+                                {selectedSubcategory === name && (
+                                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2E5A2E] rounded-full"></div>
+                                )}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="max-w-7xl mx-auto px-4 -mt-4">
 
                     {/* Search Results Dropdown */}
                     {searchQuery.trim() && (
@@ -403,7 +444,6 @@ const StoreProducts = () => {
                         </div>
                     )}
                 </div>
-            </div>
 
             {/* Store Closed Banner (Moved here) */}
             <div className="max-w-7xl mx-auto px-4">
@@ -422,55 +462,7 @@ const StoreProducts = () => {
                 )}
             </div>
 
-            {/* Subcategories Scroller */}
-            {subcategoryData.length > 1 && !loading?.categories && (
-                <div className="pb-1 mb-1 transition-colors duration-200">
-                    <div className="max-w-7xl mx-auto px-4 overflow-x-auto p-2 pb-1 scrollbar-hide">
-                        <div className="flex justify-start">
-                            <div className="flex space-x-3 py-2">
-                                    {!loading.products && (
-                                        <button
-                                            id={!selectedSubcategory ? "active-sub-pill" : undefined}
-                                            onClick={() => {
-                                                setSelectedSubcategory(null);
-                                                document.getElementById("active-sub-pill")?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                                            }}
-                                            className={`flex-shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${!selectedSubcategory
-                                                ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                                                : 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-md text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-800 hover:text-blue-600 dark:hover:text-blue-400'
-                                                }`}
-                                        >
-                                            <span className="whitespace-nowrap leading-normal pb-0.5">
-                                                {t('All')}
-                                            </span>
-                                        </button>
-                                    )}
-                                {subcategoryData.map(({ name, count }, idx) => {
-                                    const isActive = selectedSubcategory === name;
-                                    return (
-                                        <button
-                                            key={idx}
-                                            id={isActive ? "active-sub-pill" : undefined}
-                                            onClick={() => {
-                                                setSelectedSubcategory(name);
-                                                document.getElementById("active-sub-pill")?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                                            }}
-                                            className={`flex-shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${isActive
-                                                ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                                                : 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-md text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-800 hover:text-blue-600 dark:hover:text-blue-400'
-                                                }`}
-                                        >
-                                            <span className="whitespace-nowrap leading-normal pb-0.5">
-                                                {t(name)}
-                                            </span>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+
 
             {/* Content Area */}
             <div className="max-w-7xl mx-auto px-4 pt-1 pb-4">
@@ -495,10 +487,10 @@ const StoreProducts = () => {
                                 )}
                                 <div className={`grid gap-4 sm:gap-6 ${fastMode ? 'grid-cols-2 md:grid-cols-4 lg:grid-cols-6' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'}`}>
                                     {groupProducts.map((product) => (
-                                        (fastMode || product.isGroup) ? (
+                                        (fastMode) ? (
                                             <SimpleProductCard key={product._id || product.id} product={product} isFastPurchase={fastMode} />
                                         ) : (
-                                            <ProductCard key={product._id || product.id} product={product} showHeart={false} showCartControls={false} />
+                                            <ProductCard key={product._id || product.id} product={product} showHeart={false} showCartControls={true} />
                                         )
                                     ))}
                                 </div>
@@ -528,8 +520,9 @@ const StoreProducts = () => {
                         )}
                     </div>
                 )}
+                </div>
             </div>
-        </div>
+        </PullToRefreshLayout>
     );
 };
 

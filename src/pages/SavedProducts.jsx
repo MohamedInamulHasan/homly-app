@@ -8,6 +8,7 @@ import SimpleProductCard from '../components/SimpleProductCard';
 import { useStores } from '../hooks/queries/useStores';
 import { isStoreOpen } from '../utils/storeHelpers';
 import { sortProductsByGoldAndOpen } from '../utils/productSorting';
+import { groupProducts } from '../utils/productGrouping';
 
 const SavedProducts = () => {
     const navigate = useNavigate();
@@ -68,7 +69,7 @@ const SavedProducts = () => {
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                        {sortProductsByGoldAndOpen(savedProducts, stores)
+                        {groupProducts(sortProductsByGoldAndOpen(savedProducts, stores), stores)
                             .filter(product => {
                                 // Manual check
                                 if (product.isAvailable === false) return false;
@@ -104,7 +105,7 @@ const SavedProducts = () => {
                                     );
                                 }
 
-                                return <ProductCard key={product._id || product.id} product={product} stores={stores} showCartControls={false} showHeart={true} />;
+                                return <ProductCard key={product._id || product.id} product={product} stores={stores} showCartControls={true} showHeart={true} />;
                             })}
                     </div>
                 )}

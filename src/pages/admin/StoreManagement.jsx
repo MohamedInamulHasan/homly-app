@@ -472,7 +472,7 @@ const StoreManagement = () => {
                             <ArrowLeft size={24} />
                         </button>
                     )}
-                    <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white truncate">
+                    <h2 className="text-xl md:text-2xl font-normal text-gray-900 dark:text-white truncate">
                         {view === 'list' ? (!isStoreAdmin ? t('Manage Stores') : t('My Store')) :
                             view === 'form' ? (editingStore ? t('Edit Store') : t('Add New Store')) :
                                 view === 'storeProducts' ? `${selectedStore?.name || ''}` :
@@ -506,7 +506,7 @@ const StoreManagement = () => {
                     {view === 'storeProducts' && (
                         <button
                             onClick={handleAddProductToStore}
-                            className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors text-sm md:text-base whitespace-nowrap"
+                            className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors text-sm md:text-base whitespace-nowrap font-normal"
                         >
                             <Plus size={18} className="md:w-5 md:h-5" />
                             {t('Add Product')}

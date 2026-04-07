@@ -9,7 +9,7 @@ import { isStoreOpen } from '../utils/storeHelpers';
 import { sortProductsByGoldAndOpen } from '../utils/productSorting';
 import SimpleProductCard from '../components/SimpleProductCard';
 import PullToRefreshLayout from '../components/PullToRefreshLayout';
-import { ChevronLeft, Zap, MapPin, ArrowRight } from 'lucide-react';
+import { ChevronLeft, Zap, MapPin, ArrowRight, Search } from 'lucide-react';
 import { API_BASE_URL } from '../utils/api';
 import { groupProducts } from '../utils/productGrouping';
 import ProductCard from '../components/ProductCard';
@@ -179,76 +179,43 @@ const CategoryProducts = () => {
 
     return (
         <PullToRefreshLayout>
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20 transition-colors duration-200">
-                {/* Header */}
-                <div className="pt-4 pb-1">
-                    <div className="max-w-7xl mx-auto px-4 flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-4 min-w-0 flex-1">
-                            <Link to="/" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors flex-shrink-0">
-                                <ChevronLeft className="text-gray-600 dark:text-white" size={24} />
-                            </Link>
-                            {(() => {
-                                const fullName = t(categoryName);
-                                const bracketIndex = fullName.indexOf('(');
-
-                                if (bracketIndex !== -1) {
-                                    const mainName = fullName.substring(0, bracketIndex).trim();
-                                    const bracketText = fullName.substring(bracketIndex).trim();
-
-                                    return (
-                                        <div className={`flex ${bracketText.length > 12 ? 'flex-col' : 'flex-row items-baseline gap-2'} min-w-0`}>
-                                            <h1 className="text-xl md:text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent capitalize truncate leading-tight" title={mainName}>
-                                                {mainName}
-                                            </h1>
-                                            <span className={`text-xl md:text-2xl font-normal truncate leading-none text-gray-500 dark:text-gray-400 ${bracketText.length > 12 ? 'mt-2' : ''}`} title={bracketText}>
-                                                {bracketText}
-                                            </span>
-                                        </div>
-                                    );
-                                }
-
-                                return (
-                                    <h1 className="text-xl md:text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent capitalize truncate" title={fullName}>
-                                        {fullName}
-                                    </h1>
-                                );
-                            })()}
-                        </div>
-                    </div>
+            <div className="min-h-screen bg-gray-100 dark:bg-gray-900 pb-20 transition-colors duration-200">
+                <div className="relative max-w-7xl mx-auto px-4 pt-8 pb-4 flex items-center justify-center">
+                    <Link
+                        to="/"
+                        className="absolute left-4 w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-[0_2px_15px_rgba(0,0,0,0.06)] dark:shadow-none text-gray-700 dark:text-gray-300 transition-all active:scale-90 z-10"
+                    >
+                        <ChevronLeft size={28} strokeWidth={1.5} />
+                    </Link>
+                    <h1 className="text-xl font-normal text-gray-700 dark:text-gray-300 truncate leading-normal text-center px-16">
+                        {(() => {
+                            const fullName = t(categoryName);
+                            const bracketIndex = fullName.indexOf('(');
+                            if (bracketIndex !== -1) {
+                                const mainName = fullName.substring(0, bracketIndex).trim();
+                                const bracketPart = fullName.substring(bracketIndex).trim();
+                                return `${mainName} ${bracketPart}`;
+                            }
+                            return fullName;
+                        })()}
+                    </h1>
                 </div>
 
-                {/* Mobile Search Bar - Exactly like Home.jsx */}
-                <div className="pt-1 pb-4">
+                <div className="pt-1 pb-6">
                     <div className="max-w-7xl mx-auto px-4">
                         <div className="flex items-center gap-3 relative z-50">
-                            <form
-                                onSubmit={(e) => e.preventDefault()}
-                                className="relative flex-1"
-                            >
-                                <div className="relative group">
+                            <div className="relative flex-1 group">
+                                <form onSubmit={(e) => e.preventDefault()}>
                                     <input
                                         type="text"
-                                        name="search"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         placeholder={t('Search products...')}
-                                        className="w-full pl-12 pr-4 py-3.5 rounded-2xl border-2 border-gray-100 dark:border-gray-800 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-500/10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 shadow-sm focus:shadow-lg transition-all duration-300"
+                                        className="w-full pl-12 pr-4 py-4 rounded-2xl border-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 shadow-[0_2px_15px_rgba(0,0,0,0.04)] focus:shadow-[0_4px_20px_rgba(0,0,0,0.08)] focus:outline-none transition-all duration-300"
                                     />
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500 dark:text-blue-400 transition-transform group-focus-within:scale-110">
-                                        <svg
-                                            width="20"
-                                            height="20"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth="2.5"
-                                        >
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </form>
-
+                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors" size={20} />
+                                </form>
+                            </div>
                             <SortDropdown currentSort={globalSortOrder} onSortChange={setGlobalSortOrder} />
                         </div>
 
@@ -436,7 +403,7 @@ const CategoryProducts = () => {
                                         </div>
                                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
                                             {section.products.map(product => {
-                                                if (fastMode || product.isGroup) {
+                                                if (fastMode) {
                                                     return (
                                                         <SimpleProductCard
                                                             key={product._id || product.id}
@@ -449,8 +416,9 @@ const CategoryProducts = () => {
                                                     <ProductCard
                                                         key={product._id || product.id}
                                                         product={product}
-                                                        showHeart={false}
-                                                        showCartControls={false}
+                                                        showHeart={true}
+                                                        showCartControls={true}
+                                                        stores={stores}
                                                     />
                                                 );
                                             })}

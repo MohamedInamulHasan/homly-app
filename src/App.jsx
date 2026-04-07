@@ -77,6 +77,9 @@ const Layout = ({ children, onRefresh }) => {
     useBackButton();
     // Only hide footer on order confirmation and auth pages
     const hideMobileFooter = location.pathname === '/order-confirmation' ||
+        location.pathname.startsWith('/product/') ||
+        location.pathname === '/checkout' ||
+        location.pathname === '/cart' ||
         location.pathname === '/login' ||
         location.pathname === '/signup' ||
         location.pathname === '/forgot-password' ||
@@ -121,13 +124,13 @@ const Layout = ({ children, onRefresh }) => {
         return <MaintenanceScreen />;
     }
 
-    const showNavbar = !isAuthPage && !isAdminRoute && !isFooterHidden;
-    const showMobileFooter = !isAuthPage && !isAdminRoute && !isFooterHidden;
+    const showNavbar = !isAuthPage && !isAdminRoute && !isFooterHidden && location.pathname !== '/' && !location.pathname.startsWith('/product-group/') && !location.pathname.startsWith('/store/');
+    const showMobileFooter = !isAuthPage && !isAdminRoute && !isFooterHidden && !hideMobileFooter;
 
     return (
-        <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+        <div className="flex flex-col min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200">
             <ScrollToTop />
-            {showNavbar && <Navbar />}
+            {/* {showNavbar && <Navbar />} */}
             {/* <PullToRefresh onRefresh={onRefresh} resistance={2.5} className="flex-grow flex flex-col"> */}
             <main className={`flex-grow flex flex-col ${(hideMobileFooter || isFooterHidden) ? '' : 'pb-32'} md:pb-0`}>
                 {children}

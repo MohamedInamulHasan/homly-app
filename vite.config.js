@@ -127,7 +127,7 @@ export default defineConfig({
     })
   ],
   server: {
-    host: '127.0.0.1', // Force IPv4 for reliable localhost
+    host: true, // Listen on all network interfaces
     port: 5173,
     strictPort: false,
   },

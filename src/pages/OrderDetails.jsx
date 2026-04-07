@@ -69,11 +69,11 @@ const OrderDetails = () => {
 
     if (!order) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center p-4 transition-colors duration-200">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t('Order not found')}</h2>
+            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 mx-auto max-w-md w-full relative pb-48 flex flex-col items-center justify-center p-4">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('Order not found')}</h2>
                 <button
                     onClick={() => navigate('/orders')}
-                    className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-2"
+                    className="text-[#7CA90E] dark:text-[#8bc910] font-bold flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow-sm"
                 >
                     <ArrowLeft size={20} />
                     {t('Back to Orders')}
@@ -84,12 +84,12 @@ const OrderDetails = () => {
 
     const getStatusColor = (status) => {
         switch (status) {
-            case 'Delivered': return 'text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/30 border-green-200 dark:border-green-800';
+            case 'Delivered': return 'text-[#16a34a] dark:text-[#4ade80] bg-[#f0fdf4] dark:bg-green-900/20 border-[#bbf7d0] dark:border-green-800';
             case 'Shipped':
-            case 'Out for Delivery': return 'text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800';
-            case 'Processing': return 'text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30 border-amber-200 dark:border-amber-800';
-            case 'Cancelled': return 'text-red-700 dark:text-red-400 bg-red-100 dark:bg-red-900/30 border-red-200 dark:border-red-800';
-            default: return 'text-gray-700 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700';
+            case 'Out for Delivery': return 'text-[#0284c7] dark:text-[#38bdf8] bg-[#f0f9ff] dark:bg-blue-900/20 border-[#bae6fd] dark:border-blue-800';
+            case 'Processing': return 'text-[#b45309] dark:text-[#fbbf24] bg-[#fffbeb] dark:bg-amber-900/20 border-[#fde68a] dark:border-amber-800';
+            case 'Cancelled': return 'text-[#dc2626] dark:text-[#f87171] bg-[#fef2f2] dark:bg-red-900/20 border-[#fecaca] dark:border-red-800';
+            default: return 'text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700';
         }
     };
 
@@ -145,43 +145,47 @@ const OrderDetails = () => {
     const timelineSteps = getTimelineSteps(order.status);
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-24 transition-colors duration-200">
-            {/* Header Background */}
-            <div className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 sticky top-0 z-30">
-                <div className="max-w-3xl mx-auto px-4 h-16 flex items-center gap-4">
-                    <button
-                        onClick={() => {
-                            const roles = Array.isArray(user?.role) ? user.role : [user?.role || 'customer'];
-                            if (roles.includes('delivery_boy')) {
-                                navigate('/admin');
-                            } else {
-                                navigate('/orders');
-                            }
-                        }}
-                        className="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-                    >
-                        <ArrowLeft className="text-gray-900 dark:text-white" size={24} />
-                    </button>
-                    <h1 className="text-lg font-bold text-gray-900 dark:text-white">{t('Order Details')}</h1>
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 mx-auto max-w-md w-full relative pb-48">
+            <div className="px-5 pt-8">
+                {/* Header matching Profile & Cart */}
+                <div className="flex items-center justify-between mb-8 mt-2">
+                     <button 
+                         onClick={() => {
+                             const roles = Array.isArray(user?.role) ? user.role : [user?.role || 'customer'];
+                             if (roles.includes('delivery_boy')) {
+                                 navigate('/admin');
+                             } else {
+                                 navigate('/orders');
+                             }
+                         }}
+                         className="w-[46px] h-[46px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-700/50"
+                     >
+                         <ArrowLeft size={22} />
+                     </button>
+                     <h1 className="text-[17px] font-bold text-gray-900 dark:text-white tracking-tight">{t('Order Details')}</h1>
+                     <div className="w-[46px] h-[46px]" /> {/* Spacer */}
                 </div>
-            </div>
 
-            <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+                <div className="space-y-5">
 
                 {/* Status Card & Timeline */}
-                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                     {/* Status Banner */}
-                    <div className={`p-6 ${order.status === 'Cancelled' ? 'bg-red-50 dark:bg-red-900/10' :
-                        order.status === 'Delivered' ? 'bg-green-50 dark:bg-green-900/10' :
-                            'bg-blue-50 dark:bg-blue-900/10'
+                    <div className={`p-6 ${
+                        order.status === 'Cancelled' ? 'bg-[#fef2f2] dark:bg-red-900/10' :
+                        order.status === 'Delivered' ? 'bg-[#f0fdf4] dark:bg-green-900/10' :
+                        order.status === 'Processing' ? 'bg-[#fffbeb] dark:bg-amber-900/10' :
+                        'bg-[#f0f9ff] dark:bg-blue-900/10'
                         } flex items-center justify-between`}>
                         <div>
                             <p className="text-sm font-medium opacity-80 mb-1 dark:text-gray-300">
                                 {t('Order ID')}: #{String(order._id || order.id).slice(-6).toUpperCase()}
                             </p>
-                            <h2 className={`text-2xl font-black ${order.status === 'Cancelled' ? 'text-red-600 dark:text-red-400' :
-                                order.status === 'Delivered' ? 'text-green-600 dark:text-green-400' :
-                                    'text-blue-600 dark:text-blue-400'
+                            <h2 className={`text-2xl font-black ${
+                                order.status === 'Cancelled' ? 'text-[#dc2626] dark:text-[#f87171]' :
+                                order.status === 'Delivered' ? 'text-[#16a34a] dark:text-[#4ade80]' :
+                                order.status === 'Processing' ? 'text-[#b45309] dark:text-[#fbbf24]' :
+                                'text-[#0284c7] dark:text-[#38bdf8]'
                                 }`}>
                                 {t(order.status)}
                             </h2>
@@ -189,9 +193,11 @@ const OrderDetails = () => {
                                 {new Date(order.createdAt).toLocaleDateString()} • {new Date(order.createdAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
                             </p>
                         </div>
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${order.status === 'Cancelled' ? 'bg-red-100 text-red-600 dark:bg-red-900/30' :
-                            order.status === 'Delivered' ? 'bg-green-100 text-green-600 dark:bg-green-900/30' :
-                                'bg-blue-100 text-blue-600 dark:bg-blue-900/30'
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                            order.status === 'Cancelled' ? 'bg-[#fecaca] text-[#dc2626] dark:bg-red-900/30' :
+                            order.status === 'Delivered' ? 'bg-[#bbf7d0] text-[#16a34a] dark:bg-green-900/30' :
+                            order.status === 'Processing' ? 'bg-[#fde68a] text-[#b45309] dark:bg-amber-900/30' :
+                            'bg-[#bae6fd] text-[#0284c7] dark:bg-blue-900/30'
                             }`}>
                             {getStatusIcon(order.status)}
                         </div>
@@ -203,7 +209,7 @@ const OrderDetails = () => {
                             {/* Connecting Line */}
                             <div className="absolute top-[42px] left-6 right-6 h-1 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                                 <div
-                                    className="h-full bg-blue-500 transition-all duration-1000 ease-out"
+                                    className="h-full bg-[#7CA90E] transition-all duration-1000 ease-out"
                                     style={{
                                         width: `${timelineSteps.filter(s => s.completed).length === 1 ? '0%' :
                                             timelineSteps.filter(s => s.completed).length === 2 ? '50%' : '100%'}`
@@ -215,7 +221,7 @@ const OrderDetails = () => {
                                 {timelineSteps.map((step, idx) => (
                                     <div key={idx} className="flex flex-col items-center z-10">
                                         <div className={`w-9 h-9 rounded-full flex items-center justify-center border-4 transition-all duration-300 ${step.completed
-                                            ? 'bg-blue-500 border-white dark:border-gray-800 text-white shadow-lg shadow-blue-500/30'
+                                            ? 'bg-[#7CA90E] border-white dark:border-gray-800 text-white shadow-lg shadow-green-500/30'
                                             : 'bg-white dark:bg-gray-700 border-gray-100 dark:border-gray-600 text-gray-300'
                                             }`}>
                                             <step.icon size={14} strokeWidth={3} />
@@ -234,9 +240,9 @@ const OrderDetails = () => {
                 </div>
 
                 {/* Items Card */}
-                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                     <div className="p-4 border-b border-gray-50 dark:border-gray-700 flex items-center gap-2">
-                        <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg text-indigo-600 dark:text-indigo-400">
+                        <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#7CA90E] dark:text-[#8bc910]">
                             <Package size={18} />
                         </div>
                         <h3 className="font-bold text-gray-900 dark:text-white">{t('Items Ordered')}</h3>
@@ -268,14 +274,6 @@ const OrderDetails = () => {
                                             </span>
                                         )}
                                     </div>
-                                    {/* Unit Badge */}
-                                    {(item.unit || item.product?.unit) && (
-                                        <div className="absolute bottom-0 right-0 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-tl-xl rounded-br-[11px] z-10 pointer-events-none shadow-[0_-2px_4px_rgba(0,0,0,0.05)] border-t border-l border-white/50">
-                                            <span className="text-[10px] font-extrabold text-gray-900 tracking-tight leading-none block">
-                                                {item.unit || item.product?.unit}
-                                            </span>
-                                        </div>
-                                    )}
                                 </div>
                                 <div className="flex-1 min-w-0 flex flex-col justify-center">
                                     {(() => {
@@ -284,33 +282,8 @@ const OrderDetails = () => {
                                         // Use line-clamp-2 for ads to show full title, truncate for regular items
                                         const titleClass = item.isFromAd ? 'line-clamp-2' : 'truncate';
 
-                                        // For special offers, show full title without bracket splitting
-                                        if (item.isFromAd) {
-                                            return (
-                                                <h4 className="font-bold text-gray-900 dark:text-white text-sm mb-1 leading-normal" title={fullName}>
-                                                    {fullName}
-                                                </h4>
-                                            );
-                                        }
-
-                                        if (bracketIndex !== -1) {
-                                            const mainName = fullName.substring(0, bracketIndex).trim();
-                                            const bracketText = fullName.substring(bracketIndex).trim();
-
-                                            return (
-                                                <div className="mb-0.5">
-                                                    <h4 className={`font-bold text-gray-900 dark:text-white text-sm ${titleClass}`} title={mainName}>
-                                                        {mainName}
-                                                    </h4>
-                                                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate" title={bracketText}>
-                                                        {bracketText}
-                                                    </p>
-                                                </div>
-                                            );
-                                        }
-
                                         return (
-                                            <h4 className={`font-bold text-gray-900 dark:text-white text-sm ${titleClass} mb-0.5`} title={fullName}>
+                                            <h4 className={`font-medium text-gray-900 dark:text-white text-sm ${titleClass} mb-0.5`} title={fullName}>
                                                 {fullName}
                                             </h4>
                                         );
@@ -318,18 +291,24 @@ const OrderDetails = () => {
 
                                     {(item.storeId || item.storeName) && (
                                         <div className="flex items-center gap-1 mb-1">
-                                            <Store size={10} className="text-gray-400" />
-                                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                            <p className="text-xs font-normal text-gray-500 dark:text-gray-400 truncate">
                                                 {getStoreName(item.storeId, stores) || item.storeName}
                                             </p>
                                         </div>
                                     )}
 
                                     <div className="flex items-center justify-between mt-auto">
-                                        <div className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300">
-                                            {item.quantity}
+                                        <div className="flex items-center gap-2">
+                                            {(item.unit || item.product?.unit) && (
+                                                <span className="text-xs font-normal text-gray-500 dark:text-gray-400">
+                                                    {item.unit || item.product?.unit}
+                                                </span>
+                                            )}
+                                            <div className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700/50 rounded-md text-xs font-normal text-gray-500 dark:text-gray-400 shrink-0">
+                                                {item.quantity}
+                                            </div>
                                         </div>
-                                        <span className="font-bold text-gray-900 dark:text-white text-sm">₹{Number(item.price * item.quantity).toFixed(0)}</span>
+                                        <span className="font-bold text-gray-900 dark:text-white text-[15px]">₹{Number(item.price * item.quantity).toFixed(0)}</span>
                                     </div>
                                 </div>
                             </div>
@@ -338,7 +317,7 @@ const OrderDetails = () => {
                 </div>
 
                 {/* Address Card - Now Full Width */}
-                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col justify-center">
+                <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col justify-center">
                     <div className="flex items-center gap-3 mb-3">
                         <div className="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-full text-orange-600 dark:text-orange-400">
                             <MapPin size={18} />
@@ -358,7 +337,7 @@ const OrderDetails = () => {
                                 href={order.shippingAddress.location?.replace('maps?q=', 'maps/search/?api=1&query=') || '#'}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl text-xs font-bold hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all border border-blue-100 dark:border-blue-800"
+                                className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-green-50 dark:bg-green-900/30 text-[#7CA90E] dark:text-[#8bc910] rounded-xl text-xs font-bold hover:bg-green-100 dark:hover:bg-green-900/50 transition-all border border-green-100/50 dark:border-green-800"
                             >
                                 <MapPin size={14} />
                                 {t('View on Map')}
@@ -368,7 +347,7 @@ const OrderDetails = () => {
                 </div>
 
                 {/* Price Breakdown */}
-                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+                <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 p-6">
                     <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                         <CreditCard size={18} className="text-gray-400" />
                         {t('Payment Summary')}
@@ -420,7 +399,7 @@ const OrderDetails = () => {
                 </div>
 
                 {/* Scheduled Time - Moved to Bottom (Last) */}
-                <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl p-6 text-white shadow-lg shadow-blue-500/20 relative overflow-hidden">
+                <div className="bg-gray-900 dark:bg-white rounded-[2rem] p-6 text-white dark:text-gray-900 shadow-sm relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-4 opacity-10">
                         <Clock size={100} />
                     </div>
@@ -437,6 +416,8 @@ const OrderDetails = () => {
                                 : t('By End of Day')}
                         </p>
                     </div>
+                </div>
+
                 </div>
 
                 {/* Footer Buttons */}

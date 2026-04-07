@@ -2,12 +2,14 @@ import { Link, useLocation } from 'react-router-dom';
 import { Home, Store, ShoppingCart, User, Package } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const MobileFooter = () => {
     const location = useLocation();
     const { cartCount } = useCart();
 
     const { user } = useAuth(); // Add auth context
+    const { t } = useLanguage();
 
     const isActive = (path) => location.pathname === path;
 
@@ -40,36 +42,36 @@ const MobileFooter = () => {
                                 className="relative flex flex-col items-center justify-center gap-0.5 group"
                             >
                                 {/* Icon Container */}
-                                <div className={`relative p-2 rounded-xl transition-all duration-300 ${active
-                                    ? 'bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 shadow-md shadow-blue-400/50 dark:shadow-blue-600/50 scale-105'
-                                    : 'bg-gray-100 dark:bg-gray-700/50 group-hover:bg-gray-200 dark:group-hover:bg-gray-600/50 group-hover:scale-105'
+                                <div className={`relative p-2.5 rounded-xl transition-all duration-300 ${active
+                                    ? 'bg-[#2E5A2E] shadow-lg shadow-[#2E5A2E]/20 scale-110'
+                                    : 'bg-gray-100 dark:bg-gray-700/50 group-hover:bg-gray-200 dark:group-hover:bg-gray-600/50'
                                     }`}>
                                     <item.icon
-                                        size={18}
+                                        size={19}
                                         strokeWidth={active ? 2.5 : 2}
                                         className={`transition-all duration-300 ${active
-                                            ? 'text-white'
+                                            ? 'text-[#CBF9B2]'
                                             : 'text-gray-600 dark:text-gray-300'
                                             }`}
                                     />
                                     {item.path === '/cart' && cartCount > 0 && (
-                                        <span className="absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-[8px] font-bold rounded-full h-4 w-4 flex items-center justify-center border-2 border-white dark:border-gray-800 shadow-md animate-bounce">
+                                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-bold rounded-full h-4 w-4 flex items-center justify-center border-2 border-white dark:border-gray-800 shadow-md animate-bounce">
                                             {cartCount}
                                         </span>
                                     )}
                                 </div>
 
                                 {/* Label */}
-                                <span className={`text-[8px] font-semibold transition-all duration-300 ${active
-                                    ? 'text-blue-600 dark:text-blue-400'
-                                    : 'text-gray-500 dark:text-gray-400'
+                                <span className={`text-[10px] font-bold transition-all duration-300 mt-1 ${active
+                                    ? 'text-[#2E5A2E] dark:text-green-400'
+                                    : 'text-gray-400 dark:text-gray-500 font-medium'
                                     }`}>
-                                    {item.label}
+                                    {t(item.label)}
                                 </span>
 
                                 {/* Active Indicator Dot */}
                                 {active && (
-                                    <div className="absolute -bottom-0.5 w-1 h-1 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                                    <div className="absolute -bottom-1 w-1.5 h-1.5 bg-[#2E5A2E] dark:bg-green-400 rounded-full shadow-sm"></div>
                                 )}
                             </Link>
                         );

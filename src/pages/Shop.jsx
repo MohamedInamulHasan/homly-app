@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { MapPin, Search, Star, Clock, Phone, Store, Wrench } from 'lucide-react';
+import { MapPin, Search, Star, Clock, Phone, Store, Wrench, ArrowRight } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useLanguage } from '../context/LanguageContext';
 import { isStoreOpen, formatTime12h } from '../utils/storeHelpers';
@@ -9,6 +9,7 @@ import StoreCard from '../components/StoreCard';
 import { API_BASE_URL } from '../utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useServices } from '../hooks/queries/useServices';
+import HomeHeader from '../components/home/HomeHeader';
 
 const Shop = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -91,52 +92,26 @@ const Shop = () => {
 
     return (
         <PullToRefreshLayout>
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
-                <div className="max-w-7xl mx-auto">
-                    <div className="mb-5">
-                        <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
-                            <h1 className="text-3xl md:text-4xl font-bold flex items-center gap-4">
-                                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
-                                    {t('Find a')}
-                                </span>
-                                <div className="inline-flex p-1.5 bg-white/50 dark:bg-gray-800/50 backdrop-blur-xl rounded-full relative border border-gray-200 dark:border-gray-700 shadow-lg min-w-[240px]">
-                                    <motion.div
-                                        className="absolute top-1 bottom-1 left-1 bg-gradient-to-r from-blue-600 to-blue-500 rounded-full z-0 shadow-md"
-                                        initial={false}
-                                        animate={{
-                                            x: viewType === 'store' ? 0 : 114,
-                                            width: viewType === 'store' ? 116 : 116
-                                        }}
-                                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                                    />
-                                    <button
-                                        onClick={() => setViewType('store')}
-                                        className={`relative z-10 flex-1 py-2 px-4 rounded-full text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 ${viewType === 'store' ? 'text-white scale-105' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
-                                            }`}
-                                    >
-                                        <Store size={18} className={viewType === 'store' ? 'text-blue-100' : 'text-gray-400'} />
-                                        <span>{t('Store')}</span>
-                                    </button>
-                                    <button
-                                        onClick={() => setViewType('service')}
-                                        className={`relative z-10 flex-1 py-2 px-4 rounded-full text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 ${viewType === 'service' ? 'text-white scale-105' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
-                                            }`}
-                                    >
-                                        <Wrench size={18} className={viewType === 'service' ? 'text-blue-100' : 'text-gray-400'} />
-                                        <span>{t('Service')}</span>
-                                    </button>
-                                </div>
-                            </h1>
-                        </div>
-                        <div className="relative max-w-xl mb-6">
+            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-24 transition-colors duration-200">
+                <div className="w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-2 pt-4 pb-5 shadow-sm relative overflow-hidden mb-4">
+                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
+                    <div className="relative z-10">
+                        <HomeHeader />
+                    </div>
+                </div>
+                
+                <div className="max-w-7xl mx-auto px-4 mt-2">
+                    <div className="mb-2">
+                        {/* Removed Store/Service toggle for a cleaner experience */}
+                        <div className="relative group mb-8">
                             <input
                                 type="text"
-                                placeholder={viewType === 'store' ? t('Search by store name or location...') : t('Search services...')}
+                                placeholder={t('Search by store name or location...')}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3.5 rounded-2xl border-2 border-gray-100 dark:border-gray-800 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-500/10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 shadow-sm focus:shadow-lg transition-all duration-300"
+                                className="w-full pl-12 pr-6 py-4 rounded-full border border-gray-100 bg-white text-gray-900 placeholder-gray-400 focus:outline-none transition-all duration-300"
                             />
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500 dark:text-blue-400" size={22} />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2E5A2E] transition-colors" size={20} />
 
                             {/* Search Results Dropdown */}
                             {searchQuery.trim() && viewType === 'store' && (
@@ -297,19 +272,19 @@ const Shop = () => {
                         </div>
 
 
-                        {/* Category Pills - Only show for stores */}
+                        {/* Category Tabs - Only show for stores */}
                         {viewType === 'store' && (
                             isCategoriesLoading ? (
-                                <div className="flex justify-start md:justify-center overflow-x-auto p-2 pb-2 scrollbar-hide -mx-2">
-                                    <div className="flex space-x-3 mx-auto px-2">
+                                <div className="max-w-7xl mx-auto mb-6">
+                                    <div className="flex items-center gap-6 overflow-x-auto scrollbar-hide border-b border-gray-100/50 pb-2">
                                         {[1, 2, 3, 4, 5].map((i) => (
-                                            <div key={i} className="flex-shrink-0 px-8 py-4 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse w-24"></div>
+                                            <div key={i} className="flex-shrink-0 bg-gray-200 dark:bg-gray-700 animate-pulse w-16 h-4 rounded"></div>
                                         ))}
                                     </div>
                                 </div>
                             ) : (
-                                <div className="flex justify-start md:justify-center overflow-x-auto p-2 pb-2 scrollbar-hide -mx-2">
-                                    <div className="flex space-x-3 mx-auto px-2">
+                                <div className="max-w-7xl mx-auto mb-6 mt-2">
+                                    <div className="flex items-center gap-6 overflow-x-auto scrollbar-hide border-b border-gray-100/50">
                                         {categoryData.map((category) => {
                                             const isActive = category.name === categoryFilter;
                                             return (
@@ -318,21 +293,21 @@ const Shop = () => {
                                                     id={isActive ? "active-category-pill" : undefined}
                                                     onClick={() => {
                                                         handleCategoryClick(category.name);
-                                                        // Center the clicked button
                                                         document.getElementById("active-category-pill")?.scrollIntoView({
                                                             behavior: 'smooth',
                                                             block: 'nearest',
                                                             inline: 'center'
                                                         });
                                                     }}
-                                                    className={`flex-shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${isActive
-                                                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                                                        : 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-md text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-800 hover:text-blue-600 dark:hover:text-blue-400'
+                                                    className={`pb-3 text-sm font-bold transition-all relative whitespace-nowrap uppercase tracking-wide ${isActive
+                                                        ? 'text-[#2E5A2E]'
+                                                        : 'text-gray-400 hover:text-gray-600'
                                                         }`}
                                                 >
-                                                    <span className="whitespace-nowrap">
-                                                        {t(category.name)}
-                                                    </span>
+                                                    {t(category.name)}
+                                                    {isActive && (
+                                                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2E5A2E] rounded-full"></div>
+                                                    )}
                                                 </button>
                                             );
                                         })}
@@ -353,23 +328,13 @@ const Shop = () => {
                             >
                                 {isStoresLoading ? (
                                     // Skeleton Loader
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
                                         {[1, 2, 3, 4, 5, 6].map((i) => (
-                                            <div key={i} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden animate-pulse">
-                                                <div className="h-48 bg-gray-200 dark:bg-gray-700"></div>
-                                                <div className="p-6 space-y-4">
-                                                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
-                                                    <div className="space-y-2">
-                                                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
-                                                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
-                                                    </div>
-                                                    <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-lg w-full"></div>
-                                                </div>
-                                            </div>
+                                            <div key={i} className="bg-white dark:bg-gray-800 rounded-[2rem] h-80 shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden animate-pulse" />
                                         ))}
                                     </div>
                                 ) : filteredStores.length > 0 ? (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                                         {filteredStores.map((store) => (
                                             <StoreCard key={store._id || store.id} store={store} />
                                         ))}
@@ -393,9 +358,9 @@ const Shop = () => {
                                 transition={{ duration: 0.2 }}
                             >
                                 {servicesLoading ? (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
                                         {[1, 2, 3, 4, 5, 6].map((i) => (
-                                            <div key={i} className="bg-white dark:bg-gray-800 rounded-3xl h-80 shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden animate-pulse" />
+                                            <div key={i} className="bg-white dark:bg-gray-800 rounded-[2rem] h-80 shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden animate-pulse" />
                                         ))}
                                     </div>
                                 ) : (() => {
@@ -417,32 +382,46 @@ const Shop = () => {
                                     }
  
                                     return (
-                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                        <div className="grid grid-cols-1 gap-4">
                                             {filteredServices.map((service, index) => (
                                                 <div
                                                     key={service._id || index}
                                                     onClick={() => navigate(`/services?id=${service._id || service.id}`)}
-                                                    className="group relative bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-80 w-full cursor-pointer"
+                                                    className="group flex items-center gap-4 bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 dark:border-gray-700/50 cursor-pointer"
                                                 >
-                                                    <div className="absolute inset-0">
+                                                    {/* Left Side: Square Image */}
+                                                    <div className="w-20 h-20 flex-shrink-0 relative">
+                                                        <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 rounded-xl" />
                                                         <img
                                                             src={service.image || `${API_BASE_URL}/services/${service._id || service.id}/image`}
                                                             alt={service.name}
-                                                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
-                                                            onError={(e) => { e.target.src = 'https://placehold.co/400x300?text=Service'; }}
+                                                            className="absolute inset-0 w-full h-full object-cover rounded-xl z-10"
+                                                            onError={(e) => { e.target.src = 'https://placehold.co/200x200?text=Service'; }}
                                                         />
-                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80" />
                                                     </div>
-                                                    <div className="absolute top-4 left-4 z-20">
-                                                        <span className="px-3 py-1 bg-white/20 backdrop-blur-md border border-white/20 rounded-full text-[10px] font-bold text-white uppercase tracking-wider">
-                                                            {service.category || t('Service')}
-                                                        </span>
+
+                                                    {/* Middle: Details */}
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-1.5 mb-1">
+                                                            <span className="px-1.5 py-0.5 bg-[#CBF9B2]/20 rounded text-[9px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] uppercase tracking-wider">
+                                                                {service.category || t('Service')}
+                                                            </span>
+                                                        </div>
+                                                        <h3 className="text-gray-900 dark:text-white text-[15px] font-semibold truncate mb-1">
+                                                            {service.name}
+                                                        </h3>
+                                                        <div className="flex items-center gap-1 opacity-60">
+                                                            <MapPin size={12} className="text-[#2E5A2E] dark:text-[#CBF9B2]" />
+                                                            <p className="text-gray-600 dark:text-gray-400 text-[11px] truncate">
+                                                                {service.address || t('Available Locally')}
+                                                            </p>
+                                                        </div>
                                                     </div>
-                                                    <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
-                                                        <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">{service.name}</h3>
-                                                        <div className="flex items-center gap-2 text-gray-300 text-xs">
-                                                            <MapPin size={14} className="text-blue-400" />
-                                                            <span className="line-clamp-1">{service.address || t('Available Locally')}</span>
+
+                                                    {/* Right Side: Simple Arrow Icon */}
+                                                    <div className="flex-shrink-0 pr-1">
+                                                        <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-[#2E5A2E] dark:group-hover:text-[#CBF9B2] transition-colors">
+                                                            <ArrowRight size={16} />
                                                         </div>
                                                     </div>
                                                 </div>
