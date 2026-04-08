@@ -3,7 +3,7 @@ import {
     User, Package, Settings, ChevronRight, LogOut, 
     Shield, Wrench, Store, ArrowLeft, MoreHorizontal, 
     MapPin, Lock, HelpCircle, Pencil, Languages, Heart,
-    ChevronDown, ShoppingCart
+    ChevronDown, ShoppingCart, Newspaper
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
@@ -141,6 +141,9 @@ const Profile = () => {
                           <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
 
                           <MenuLink to="/services" icon={<Wrench size={18} strokeWidth={2} />} title={t('Services')} />
+                          <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
+
+                          <MenuLink to="/news" icon={<Newspaper size={18} strokeWidth={2} />} title={t('News')} />
                           <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
 
                           {/* Settings Dropdown/Accordion */}

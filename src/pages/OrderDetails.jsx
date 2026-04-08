@@ -7,6 +7,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { apiService, API_BASE_URL } from '../utils/api';
 import { getStoreName } from '../utils/storeHelpers';
 import LoadingSpinner from '../components/LoadingSpinner';
+import CancelOrderModal from '../components/CancelOrderModal';
 
 const OrderDetails = () => {
     const { id } = useParams();
@@ -415,34 +416,11 @@ const OrderDetails = () => {
                 )}
             </div>
 
-            {/* Cancel Confirmation Modal */}
-            {cancelConfirmation && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-sm w-full p-6 transform transition-all scale-100 animate-in zoom-in-95 duration-200 slide-in-from-bottom-10 sm:slide-in-from-bottom-0">
-                        <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <RotateCcw size={32} className="text-red-600 dark:text-red-400" />
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-2">{t('Cancel Order?')}</h3>
-                        <p className="text-gray-500 dark:text-gray-400 text-center mb-8 text-sm leading-relaxed">
-                            {t('Are you sure you want to cancel? This action cannot be undone.')}
-                        </p>
-                        <div className="flex gap-3">
-                            <button
-                                onClick={() => setCancelConfirmation(false)}
-                                className="flex-1 py-3.5 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-2xl font-bold transition-colors"
-                            >
-                                {t('No, Keep')}
-                            </button>
-                            <button
-                                onClick={confirmCancelOrder}
-                                className="flex-1 py-3.5 text-white bg-red-600 hover:bg-red-700 rounded-2xl font-bold shadow-md shadow-red-500/10 transition-colors"
-                            >
-                                {t('Yes, Cancel')}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <CancelOrderModal 
+                isOpen={cancelConfirmation} 
+                onClose={() => setCancelConfirmation(false)} 
+                onConfirm={confirmCancelOrder} 
+            />
         </div>
     );
 };
