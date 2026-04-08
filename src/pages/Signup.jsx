@@ -56,10 +56,10 @@ const Signup = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-green-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
-            <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700">
+        <div className="min-h-screen flex items-center justify-center bg-[#CBF9B2] dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
+            <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-[3rem] border border-gray-100 dark:border-gray-700">
                 <div className="text-center">
-                    <div className="mx-auto h-12 w-12 bg-[#2E5A2E] rounded-xl flex items-center justify-center shadow-lg mb-6 transform -rotate-3">
+                    <div className="mx-auto h-12 w-12 bg-[#2E5A2E] rounded-xl flex items-center justify-center mb-6 transform -rotate-3">
                         <User className="h-6 w-6 text-white" />
                     </div>
                     <h2 className="mt-2 text-3xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
@@ -193,7 +193,7 @@ const Signup = () => {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-bold rounded-2xl text-white bg-[#2E5A2E] hover:bg-[#1E3A1E] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2E5A2E] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed shadow-md shadow-green-900/10 hover:shadow-lg hover:shadow-green-900/20"
+                            className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-bold rounded-full text-white bg-[#2E5A2E] hover:bg-[#1E3A1E] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2E5A2E] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
                             {isSubmitting ? (
                                 <Loader className="animate-spin h-5 w-5" />
