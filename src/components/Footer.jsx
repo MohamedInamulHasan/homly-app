@@ -6,7 +6,7 @@ import { useLanguage } from '../context/LanguageContext';
 const Footer = () => {
     const { t } = useLanguage();
     return (
-        <footer className="bg-[#2E5A2E] pt-20 pb-10 transition-colors duration-200 relative overflow-hidden">
+        <footer className="bg-black pt-20 pb-10 transition-colors duration-200 relative overflow-hidden">
             {/* Subtle light accent background */}
             <div className="absolute top-0 left-0 w-96 h-96 bg-[#CBF9B2]/5 rounded-full blur-[100px] pointer-events-none -translate-x-1/2 -translate-y-1/2"></div>
             
@@ -14,7 +14,7 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
                     <div className="col-span-1 md:col-span-1">
                         <Link to="/" className="flex items-center gap-3 mb-8 group">
-                            <div className="bg-[#CBF9B2] text-[#2E5A2E] p-2.5 rounded-2xl group-hover:rotate-6 transition-transform duration-500 shadow-lg shadow-[#000]/20">
+                            <div className="bg-[#CBF9B2] text-black p-2.5 rounded-2xl group-hover:rotate-6 transition-transform duration-500 shadow-lg shadow-[#000]/20">
                                 <ShoppingBag size={26} strokeWidth={2.5} />
                             </div>
                             <span className="text-[26px] font-black tracking-tight text-white uppercase">
@@ -29,7 +29,7 @@ const Footer = () => {
                                 <a
                                     key={social}
                                     href={`#${social}`}
-                                    className="h-11 w-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-[#CBF9B2] hover:text-[#2E5A2E] hover:border-transparent transition-all duration-500 group"
+                                    className="h-11 w-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-[#CBF9B2] hover:text-black hover:border-transparent transition-all duration-500 group"
                                 >
                                     <span className="sr-only">{social}</span>
                                     <div className="w-5 h-5 bg-current rounded-[4px] group-hover:scale-110 transition-transform" />

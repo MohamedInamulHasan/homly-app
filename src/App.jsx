@@ -77,17 +77,6 @@ const Layout = ({ children, onRefresh }) => {
     // Use back button handler for Android navigation
     useBackButton();
     // Only hide footer on order confirmation and auth pages
-    const hideMobileFooter = location.pathname === '/order-confirmation' ||
-        location.pathname.startsWith('/product/') ||
-        location.pathname === '/checkout' ||
-        location.pathname === '/cart' ||
-        location.pathname === '/login' ||
-        location.pathname === '/signup' ||
-        location.pathname === '/forgot-password' ||
-        location.pathname.startsWith('/reset-password') ||
-        location.pathname === '/edit-address' ||
-        location.pathname.startsWith('/admin');
-
     const isAuthPage = location.pathname === '/login' ||
         location.pathname === '/signup' ||
         location.pathname === '/forgot-password' ||
@@ -102,18 +91,6 @@ const Layout = ({ children, onRefresh }) => {
     const isMaintenanceMode = settings?.maintenanceMode === true;
     const isAdmin = Array.isArray(user?.role) ? user?.role.includes('admin') : user?.role === 'admin'; // Specific check for 'admin' role
 
-    // Allow access if:
-    // 1. Maintenance mode is OFF
-    // 2. OR User is an Admin
-    // 3. OR User is on a public auth page (Login/Signup) - OPTIONAL: Decided to block even auth to prevent confusion, 
-    //    BUT Super Admins need to login! So we MUST allow Login page access.
-
-    // Refined Logic:
-    // If Mode is ON:
-    // - Show Maintenance Screen
-    // - EXCEPT if user is Admin (but we don't know if they are admin until they login)
-    // - So we must allow access to /login, /admin (which redirects to login if not auth)
-    // Also allow signup and password reset flows so admins/users can recover accounts even during maintenance.
     const isExemptRoute =
         location.pathname === '/login' ||
         location.pathname === '/signup' ||
@@ -126,8 +103,9 @@ const Layout = ({ children, onRefresh }) => {
         return <MaintenanceScreen />;
     }
 
-    const showNavbar = !isAuthPage && !isAdminRoute && !isFooterHidden && location.pathname !== '/' && !location.pathname.startsWith('/product-group/') && !location.pathname.startsWith('/store/');
-    const showMobileFooter = !isAuthPage && !isAdminRoute && !isFooterHidden && !hideMobileFooter;
+    // Footer Visibility Refinement: Only show on specific main routes
+    const allowedFooterRoutes = ['/', '/store', '/orders', '/profile'];
+    const showMobileFooter = !isAuthPage && !isAdminRoute && !isFooterHidden && allowedFooterRoutes.includes(location.pathname);
 
     return (
         <div className="flex flex-col min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200">
