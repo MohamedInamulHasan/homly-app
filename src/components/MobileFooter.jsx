@@ -1,82 +1,140 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Store, ShoppingCart, User, Package } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
+const HomeIcon = ({ isActive }) => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path 
+            d="M3.5 10.5C3.5 10.5 3.5 10.5 3.5 10.5V17.5C3.5 19.1569 4.84315 20.5 6.5 20.5H17.5C19.1569 20.5 20.5 19.1569 20.5 17.5V10.5C20.5 10.5 20.5 10.5 20.5 10.5" 
+            stroke={isActive ? "white" : "#2E5A2E"} 
+            strokeWidth="1.5" 
+            strokeLinecap="round" 
+        />
+        <path 
+            d="M2.5 11.5L10.4571 4.39824C11.3323 3.61528 12.6677 3.61528 13.5429 4.39824L21.5 11.5" 
+            stroke={isActive ? "white" : "#2E5A2E"} 
+            strokeWidth="1.5" 
+            strokeLinecap="round" 
+        />
+        <path 
+            d="M9.5 20.5V16.5C9.5 15.1193 10.6193 14 12 14C13.3807 14 14.5 15.1193 14.5 16.5V20.5" 
+            stroke={isActive ? "white" : "#2E5A2E"} 
+            strokeWidth="1.5" 
+            strokeLinecap="round" 
+        />
+    </svg>
+);
+
+const StoreIcon = ({ isActive }) => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="scale-110">
+        <path 
+            d="M4.5 8.5V16.5C4.5 18.7091 6.29086 20.5 8.5 20.5H15.5C17.7091 20.5 19.5 18.7091 19.5 16.5V8.5C19.5 7.39543 18.6046 6.5 17.5 6.5H6.5C5.39543 6.5 4.5 7.39543 4.5 8.5Z" 
+            stroke={isActive ? "white" : "#2E5A2E"} 
+            strokeWidth="1.5" 
+        />
+        <path 
+            d="M8.5 6.5V6C8.5 4.067 10.067 2.5 12 2.5C13.933 2.5 15.5 4.067 15.5 6V6.5" 
+            stroke={isActive ? "white" : "#2E5A2E"} 
+            strokeWidth="1.5" 
+            strokeLinecap="round" 
+        />
+        <path 
+            d="M8.5 10.5H15.5" 
+            stroke={isActive ? "white" : "#2E5A2E"} 
+            strokeWidth="1.5" 
+            strokeLinecap="round" 
+        />
+    </svg>
+);
+
+const OrdersIcon = ({ isActive }) => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path 
+            d="M5 5C5 3.89543 5.89543 3 7 3H17C18.1046 3 19 3.89543 19 5V19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V5Z" 
+            stroke={isActive ? "white" : "#2E5A2E"} 
+            strokeWidth="1.5" 
+        />
+        <path 
+            d="M8.5 8H15.5" 
+            stroke={isActive ? "white" : "#2E5A2E"} 
+            strokeWidth="1.5" 
+            strokeLinecap="round" 
+        />
+        <path 
+            d="M8.5 12H15.5" 
+            stroke={isActive ? "white" : "#2E5A2E"} 
+            strokeWidth="1.5" 
+            strokeLinecap="round" 
+        />
+        <path 
+            d="M8.5 16H12.5" 
+            stroke={isActive ? "white" : "#2E5A2E"} 
+            strokeWidth="1.5" 
+            strokeLinecap="round" 
+        />
+    </svg>
+);
+
+const ProfileIcon = ({ isActive }) => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle 
+            cx="12" 
+            cy="8" 
+            r="3.5" 
+            stroke={isActive ? "white" : "#2E5A2E"} 
+            strokeWidth="1.5" 
+        />
+        <path 
+            d="M5.5 19C5.5 16.5147 8.41015 14.5 12 14.5C15.5899 14.5 18.5 16.5147 18.5 19" 
+            stroke={isActive ? "white" : "#2E5A2E"} 
+            strokeWidth="1.5" 
+            strokeLinecap="round" 
+        />
+    </svg>
+);
+
 const MobileFooter = () => {
     const location = useLocation();
     const { cartCount } = useCart();
-
-    const { user } = useAuth(); // Add auth context
+    const { user } = useAuth();
     const { t } = useLanguage();
 
     const isActive = (path) => location.pathname === path;
 
     const navItems = [
-        { path: '/', icon: Home, label: 'Home' },
-        { path: '/store', icon: Store, label: 'Store' },
-        { path: user ? '/orders' : '/login', icon: Package, label: 'Orders' },
-        { path: user ? '/profile' : '/login', icon: User, label: user ? 'Profile' : 'Login' }, // Dynamic label/path
+        { path: '/', icon: HomeIcon, label: 'Home' },
+        { path: '/store', icon: StoreIcon, label: 'Store' },
+        { path: user ? '/orders' : '/login', icon: OrdersIcon, label: 'Orders' },
+        { path: user ? '/profile' : '/login', icon: ProfileIcon, label: user ? t('profile') : t('login') },
     ];
 
-    // Hide footer on specific pages
     if (location.pathname.startsWith('/product/') ||
         location.pathname === '/checkout' ||
-        location.pathname === '/order-confirmation') {
+        location.pathname === '/order-confirmation' ||
+        location.pathname.startsWith('/admin')) {
         return null;
     }
 
     return (
-        <div className="md:hidden fixed bottom-0 left-0 w-full z-50 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-700 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-
-            {/* Content Container */}
-            <div className="w-full">
-                <div className="flex justify-around items-center px-2 py-2">
-                    {navItems.map((item) => {
-                        const active = isActive(item.path);
-                        return (
-                            <Link
-                                key={item.label}
-                                to={item.path}
-                                className="relative flex flex-col items-center justify-center gap-0.5 group"
+        <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+            <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-white/20 dark:border-gray-800/50 rounded-full px-6 py-2 flex items-center gap-4 shadow-xl shadow-black/5">
+                {navItems.map((item) => {
+                    const active = isActive(item.path);
+                    return (
+                        <Link
+                            key={item.label}
+                            to={item.path}
+                            className="relative flex items-center justify-center group"
+                        >
+                            <div 
+                                className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${active ? 'bg-[#2E5A2E] shadow-lg shadow-[#2E5A2E]/20 scale-110' : 'hover:bg-gray-100'}`}
                             >
-                                {/* Icon Container */}
-                                <div className={`relative p-2.5 rounded-xl transition-all duration-300 ${active
-                                    ? 'bg-[#2E5A2E] shadow-lg shadow-[#2E5A2E]/20 scale-110'
-                                    : 'bg-gray-100 dark:bg-gray-700/50 group-hover:bg-gray-200 dark:group-hover:bg-gray-600/50'
-                                    }`}>
-                                    <item.icon
-                                        size={19}
-                                        strokeWidth={active ? 2.5 : 2}
-                                        className={`transition-all duration-300 ${active
-                                            ? 'text-[#CBF9B2]'
-                                            : 'text-gray-600 dark:text-gray-300'
-                                            }`}
-                                    />
-                                    {item.path === '/cart' && cartCount > 0 && (
-                                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-bold rounded-full h-4 w-4 flex items-center justify-center border-2 border-white dark:border-gray-800 shadow-md animate-bounce">
-                                            {cartCount}
-                                        </span>
-                                    )}
-                                </div>
-
-                                {/* Label */}
-                                <span className={`text-[10px] font-bold transition-all duration-300 mt-1 ${active
-                                    ? 'text-[#2E5A2E] dark:text-green-400'
-                                    : 'text-gray-400 dark:text-gray-500 font-medium'
-                                    }`}>
-                                    {t(item.label)}
-                                </span>
-
-                                {/* Active Indicator Dot */}
-                                {active && (
-                                    <div className="absolute -bottom-1 w-1.5 h-1.5 bg-[#2E5A2E] dark:bg-green-400 rounded-full shadow-sm"></div>
-                                )}
-                            </Link>
-                        );
-                    })}
-                </div>
+                                <item.icon isActive={active} />
+                            </div>
+                        </Link>
+                    );
+                })}
             </div>
         </div>
     );

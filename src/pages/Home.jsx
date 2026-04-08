@@ -1,20 +1,23 @@
 import { useState, useMemo } from 'react';
 import { Search, ListFilter } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useProducts } from '../hooks/queries/useProducts';
 import { useAds } from '../hooks/queries/useAds';
 import { useCategories } from '../hooks/queries/useCategories';
 import { useStores } from '../hooks/queries/useStores';
 import { useLanguage } from '../context/LanguageContext';
+import { useData } from '../context/DataContext';
 import { isStoreOpen } from '../utils/storeHelpers';
 import HomeHeader from '../components/home/HomeHeader';
 import HeroBanner from '../components/home/HeroBanner';
 import CategorySection from '../components/home/CategorySection';
 import StoreSection from '../components/home/StoreSection';
+import SortDropdown from '../components/SortDropdown';
 import PullToRefreshLayout from '../components/PullToRefreshLayout';
 
 const Home = () => {
     const [searchQuery, setSearchQuery] = useState('');
+    const { globalSortOrder, setGlobalSortOrder } = useData();
     const navigate = useNavigate();
     const { t } = useLanguage();
 
@@ -25,11 +28,23 @@ const Home = () => {
     const { data: rawStores = [], isLoading: loadingStores } = useStores();
 
     const products = useMemo(() => {
-        const raw = Array.isArray(rawProducts) ? rawProducts : (rawProducts?.data || []);
+        return Array.isArray(rawProducts) ? rawProducts : (rawProducts?.data || []);
+    }, [rawProducts]);
+
+    const stores = Array.isArray(rawStores) ? rawStores : (rawStores?.data || []);
+
+    // Filter categories
+    const featuredCategories = useMemo(() => {
+        const raw = Array.isArray(rawCategories) ? rawCategories : (rawCategories?.data || []);
+        return raw.filter(cat => !cat.isHidden);
+    }, [rawCategories]);
+
+    // Grouping Logic (Only available products for main categories/sections)
+    const groupedByStore = useMemo(() => {
         const now = new Date();
         const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-        return raw.filter(p => {
+        const availableProducts = products.filter(p => {
             if (p.isAvailable === false) return false;
             if (p.useTimeLimit) {
                 const opening = p.openingTime || '00:00';
@@ -42,19 +57,8 @@ const Home = () => {
             }
             return true;
         });
-    }, [rawProducts]);
 
-    const stores = Array.isArray(rawStores) ? rawStores : (rawStores?.data || []);
-
-    // Filter categories
-    const featuredCategories = useMemo(() => {
-        const raw = Array.isArray(rawCategories) ? rawCategories : (rawCategories?.data || []);
-        return raw.filter(cat => !cat.isHidden);
-    }, [rawCategories]);
-
-    // Grouping Logic
-    const groupedByStore = useMemo(() => {
-        return products.reduce((acc, product) => {
+        return availableProducts.reduce((acc, product) => {
             const storeId = product.storeId?._id || product.storeId;
             const key = storeId || `category_${product.category || 'Other'}`;
             if (!acc[key]) acc[key] = [];
@@ -107,22 +111,23 @@ const Home = () => {
     const isLoadingAll = loadingProducts || loadingStores || loadingCategories;
 
     return (
-        <PullToRefreshLayout>
-            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-24 transition-colors duration-200">
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-24 transition-colors duration-200">
+            
+            {/* Premium Light Green Header Card */}
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-2 pt-4 pb-5 shadow-sm overflow-hidden">
+                {/* Background Accents (Subtle light accents) */}
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
                 
-                {/* Premium Light Green Header Card (Matches Store Products Design) */}
-                <div className="w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-2 pt-4 pb-5 shadow-sm relative overflow-hidden mb-4">
-                    {/* Background Accents (Subtle light accents) */}
-                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
-                    
-                    <div className="relative z-10">
-                        <HomeHeader />
-                    </div>
+                <div className="relative z-10">
+                    <HomeHeader />
                 </div>
+            </div>
 
+            <PullToRefreshLayout>
+                <div className="pt-[130px]">
                 {/* Search Bar (Now Below the Design with Filter) */}
                 <section className="px-4 relative z-20 mb-8">
-                    <div className="flex items-center gap-3 max-w-2xl mx-auto">
+                    <div className="flex items-center gap-3 max-w-2xl mx-auto relative">
                         <div className="relative group flex-1">
                             <form
                                 onSubmit={(e) => {
@@ -137,7 +142,7 @@ const Home = () => {
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder={t('Search by fresh groceries...')}
-                                    className="w-full pl-12 pr-4 py-4 rounded-full border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:outline-none transition-all duration-300"
+                                    className="w-full pl-12 pr-4 py-4 rounded-full border border-gray-100 bg-white text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none transition-all duration-300"
                                 />
                                 <Search 
                                     className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2E5A2E] transition-colors" 
@@ -146,14 +151,147 @@ const Home = () => {
                             </form>
                         </div>
                         
-                        {/* Round Filter Button (Matching Store design but no shadow) */}
-                        <button className="w-14 h-14 bg-white rounded-full flex-shrink-0 flex items-center justify-center border border-gray-200 transition-all active:scale-90 group">
-                            <ListFilter size={24} className="text-gray-900 group-hover:text-[#2E5A2E] transition-colors" />
-                        </button>
+                        {/* Sort Dropdown */}
+                        <SortDropdown currentSort={globalSortOrder} onSortChange={setGlobalSortOrder} />
+
+                        {/* Search Results Dropdown (Matching CategoryProducts design) */}
+                        {searchQuery.trim() && (
+                            <div className="absolute top-[calc(100%+12px)] left-0 right-0 bg-white dark:bg-gray-900 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 max-h-96 overflow-y-auto z-[200] animate-in fade-in slide-in-from-top-2 duration-300 shadow-sm">
+                                {(() => {
+                                    const filteredDropdown = products
+                                        .filter(p => 
+                                            p.title?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                            p.title_ta?.toLowerCase().includes(searchQuery.toLowerCase())
+                                        )
+                                        .sort((a, b) => {
+                                            const aStore = stores.find(s => (s._id || s.id) === (a.storeId?._id || a.storeId));
+                                            const bStore = stores.find(s => (s._id || s.id) === (b.storeId?._id || b.storeId));
+                                            
+                                            // Check product-specific availability + store status
+                                            const now = new Date();
+                                            const curTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                                            
+                                            const checkOpen = (p, s) => {
+                                                if (p.isAvailable === false) return false;
+                                                if (!isStoreOpen(s)) return false;
+                                                if (p.useTimeLimit) {
+                                                    const op = p.openingTime || '00:00';
+                                                    const cl = p.closingTime || '23:59';
+                                                    if (op <= cl) return curTime >= op && curTime <= cl;
+                                                    return curTime >= op || curTime <= cl;
+                                                }
+                                                return true;
+                                            };
+
+                                            const aOpen = checkOpen(a, aStore);
+                                            const bOpen = checkOpen(b, bStore);
+                                            
+                                            // 1. Available products first
+                                            if (aOpen && !bOpen) return -1;
+                                            if (!aOpen && bOpen) return 1;
+                                            
+                                            // 2. Starts with query prioritization
+                                            const aTitle = a.title?.toLowerCase() || '';
+                                            const bTitle = b.title?.toLowerCase() || '';
+                                            const query = searchQuery.toLowerCase();
+                                            
+                                            const aStarts = aTitle.startsWith(query);
+                                            const bStarts = bTitle.startsWith(query);
+                                            
+                                            if (aStarts && !bStarts) return -1;
+                                            if (!aStarts && bStarts) return 1;
+                                            return 0;
+                                        })
+                                        .slice(0, 10);
+
+                                    if (filteredDropdown.length === 0) {
+                                        return (
+                                            <div className="p-8 text-center text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap overflow-hidden">
+                                                {t('No products found')}
+                                            </div>
+                                        );
+                                    }
+
+                                    return filteredDropdown.map((product) => {
+                                        const productId = product._id || product.id;
+                                        const productStore = stores.find(s => (s._id || s.id) === (product.storeId?._id || product.storeId));
+                                        
+                                        const now = new Date();
+                                        const curTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                                        const checkOpen = (p, s) => {
+                                            if (p.isAvailable === false) return false;
+                                            if (!isStoreOpen(s)) return false;
+                                            if (p.useTimeLimit) {
+                                                const op = p.openingTime || '00:00';
+                                                const cl = p.closingTime || '23:59';
+                                                if (op <= cl) return curTime >= op && curTime <= cl;
+                                                return curTime >= op || curTime <= cl;
+                                            }
+                                            return true;
+                                        };
+
+                                        const productOpen = checkOpen(product, productStore);
+                                        const isClosed = !productOpen;
+                                        const title = t(product, 'title');
+
+                                        return (
+                                            <Link
+                                                key={productId}
+                                                to={isClosed ? '#' : `/product/${productId}`}
+                                                onClick={(e) => {
+                                                    if (isClosed) {
+                                                        e.preventDefault();
+                                                        return;
+                                                    }
+                                                    setSearchQuery('');
+                                                }}
+                                                className={`flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50/80 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-50 dark:border-gray-700 last:border-b-0 ${isClosed ? 'cursor-not-allowed opacity-80' : ''}`}
+                                            >
+                                                <div className="relative flex-shrink-0">
+                                                    <div className={`w-12 h-12 rounded-[1rem] bg-gray-50 dark:bg-gray-700 p-1 flex items-center justify-center overflow-hidden border border-gray-100 dark:border-gray-600 ${isClosed ? 'blur-[1px] grayscale' : ''}`}>
+                                                        <img
+                                                            src={product.image || `${API_BASE_URL}/products/${productId}/image`}
+                                                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
+                                                            alt={product.title}
+                                                            className="w-full h-full object-contain"
+                                                        />
+                                                    </div>
+                                                    {isClosed && (
+                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-[1rem]">
+                                                            <span className="bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-tighter">
+                                                                {t('Closed')}
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                    {product.unit && !isClosed && (
+                                                        <div className="absolute -bottom-1 -right-1 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg px-2 py-0.5 shadow-sm">
+                                                            <p className="text-gray-500 dark:text-gray-400 text-[9px] font-bold">
+                                                                {product.unit}
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex flex-col gap-0">
+                                                        <p className={`font-normal text-gray-800 dark:text-gray-200 truncate text-[13px] tracking-tight leading-tight ${isClosed ? 'opacity-60' : ''}`}>
+                                                            {title}
+                                                        </p>
+                                                        <div className="flex items-center gap-1.5">
+                                                            <span className={`text-[#2E5A2E] dark:text-[#CBF9B2] font-medium text-[11px] ${isClosed ? 'grayscale opacity-50' : ''}`}>₹{Number(product.price).toFixed(0)}</span>
+                                                            {product.originalPrice > product.price && (
+                                                                <span className="text-gray-400 text-[10px] line-through font-normal opacity-40">₹{product.originalPrice}</span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        );
+                                    });
+                                })()}
+                            </div>
+                        )}
                     </div>
                 </section>
-
-
 
                 {/* Ads */}
                 <HeroBanner slides={ads} isLoading={loadingAds} />
@@ -187,8 +325,9 @@ const Home = () => {
                     </div>
                 )}
 
-            </div>
-        </PullToRefreshLayout>
+                </div>
+            </PullToRefreshLayout>
+        </div>
     );
 };
 

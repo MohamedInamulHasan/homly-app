@@ -10,7 +10,6 @@ import { groupProducts } from '../utils/productGrouping';
 import ProductCard from '../components/ProductCard';
 import SimpleProductCard from '../components/SimpleProductCard';
 import SortDropdown from '../components/SortDropdown';
-import { Bell } from 'lucide-react';
 
 const ProductSkeleton = ({ fastMode }) => (
     <div className={`bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 animate-pulse flex flex-col h-full`}>
@@ -38,37 +37,39 @@ const StoreProducts = () => {
     // Find store and its products
     const store = stores.find(s => (s._id || s.id) === storeId);
 
-    // Filter products for this store
+    // All products for this store (INCLUDE closed for search)
     const storeProducts = useMemo(() => {
-        const now = new Date();
-        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-
-        return products
-            .filter(p => p.isAvailable !== false) // Filter out manual unavailable
-            .filter(p => {
-                // Time window check
-                if (p.useTimeLimit) {
-                    const opening = p.openingTime || '00:00';
-                    const closing = p.closingTime || '23:59';
-                    if (opening <= closing) {
-                        if (currentTime < opening || currentTime > closing) return false;
-                    } else {
-                        // Overnights case
-                        if (currentTime < opening && currentTime > closing) return false;
-                    }
-                }
-                
-                // Store connection check
-                const pStoreId = p.storeId?._id || p.storeId;
-                const targetId = storeId;
-                return pStoreId == targetId || String(pStoreId) === String(targetId);
-            });
+        return products.filter(p => {
+            const pStoreId = p.storeId?._id || p.storeId;
+            return pStoreId == storeId || String(pStoreId) === String(storeId);
+        });
     }, [products, storeId]);
+
+    // Check if the product is open/available
+    const checkProductOpen = (p, s) => {
+        if (p.isAvailable === false) return false;
+        if (!isStoreOpen(s)) return false;
+        
+        if (p.useTimeLimit) {
+            const now = new Date();
+            const curTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            const op = p.openingTime || '00:00';
+            const cl = p.closingTime || '23:59';
+            if (op <= cl) return curTime >= op && curTime <= cl;
+            return curTime >= op || curTime <= cl;
+        }
+        return true;
+    };
+
+    // Filtered products for main display (ONLY available)
+    const availableStoreProducts = useMemo(() => {
+        return storeProducts.filter(p => checkProductOpen(p, store));
+    }, [storeProducts, store]);
 
     // Group products by title with centralized utility
     const groupedStoreProducts = useMemo(() => {
-        return groupProducts(storeProducts, stores, { forcedStoreId: storeId });
-    }, [storeProducts, stores, storeId]);
+        return groupProducts(availableStoreProducts, stores, { forcedStoreId: storeId });
+    }, [availableStoreProducts, stores, storeId]);
 
     // Aggressive subcategory normalization (consistent with CategoryProducts.jsx)
     const normalizeSub = (s) => {
@@ -275,13 +276,13 @@ const StoreProducts = () => {
         <PullToRefreshLayout>
             <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-20 transition-colors duration-200">
                 {/* Premium Store Header Card */}
-                <div className="w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-6 pb-6 shadow-sm relative overflow-hidden mb-4">
+                <div className="w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-6 pb-6 shadow-sm relative overflow-hidden mb-8">
                     <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
                     
                     <div className="relative z-10">
                         <div className="max-w-2xl mx-auto px-2 relative flex items-center justify-center min-h-[42px]">
                             <button
-                                onClick={() => navigate(isFromHome ? "/" : "/store")}
+                                onClick={() => navigate(-1)}
                                 className="absolute left-4 w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50 flex-shrink-0 z-10"
                             >
                                 <ArrowLeft size={22} />
@@ -300,7 +301,8 @@ const StoreProducts = () => {
                 </div>
 
                 {/* Store Search & Filter (Now Below the Design) */}
-                <div className="flex items-center gap-3 max-w-2xl mx-auto px-6 relative z-20 mb-8">
+                <section className="px-4 relative z-20 mb-10">
+                    <div className="flex items-center gap-3 max-w-2xl mx-auto relative">
                     <div className="relative group flex-1">
                         <form onSubmit={(e) => e.preventDefault()}>
                             <input
@@ -308,31 +310,133 @@ const StoreProducts = () => {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder={`${t('Search in')} ${store?.name}...`}
-                                className="w-full pl-12 pr-6 py-4 rounded-full border border-gray-100 bg-white text-gray-900 placeholder-gray-400 focus:outline-none transition-all duration-300"
+                                className="w-full pl-12 pr-6 py-4 rounded-full border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none transition-all duration-300 shadow-sm"
                             />
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2E5A2E] transition-colors" size={20} />
                         </form>
                     </div>
                     
-                    <button className="w-14 h-14 bg-white rounded-full flex-shrink-0 flex items-center justify-center border border-gray-100 transition-all active:scale-90 group">
-                        <ListFilter size={24} className="text-gray-900 group-hover:text-[#2E5A2E] transition-colors" />
-                    </button>
-                </div>
+                    {/* Sort Dropdown */}
+                    <SortDropdown currentSort={globalSortOrder} onSortChange={setGlobalSortOrder} />
 
-                {/* Subcategory Tabs (As per reference image) */}
-                <div className="max-w-7xl mx-auto px-4 mb-6">
+                    {/* Store Search Results Dropdown (Wider/Full-container width like Home) */}
+                    {searchQuery.trim() && (
+                        <div className="absolute top-[calc(100%+12px)] left-0 right-0 bg-white dark:bg-gray-900 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 max-h-96 overflow-y-auto z-[200] animate-in fade-in slide-in-from-top-2 duration-300 shadow-sm">
+                            {(() => {
+                                const q = searchQuery.toLowerCase();
+                                const results = storeProducts
+                                    .filter(p =>
+                                        p.title?.toLowerCase().includes(q) ||
+                                        p.title_ta?.toLowerCase().includes(q)
+                                    )
+                                    .sort((a, b) => {
+                                        const aOpen = checkProductOpen(a, store);
+                                        const bOpen = checkProductOpen(b, store);
+                                        
+                                        // 1. Available products first
+                                        if (aOpen && !bOpen) return -1;
+                                        if (!aOpen && bOpen) return 1;
+                                        
+                                        // 2. Starts with query prioritization
+                                        const aTitle = a.title?.toLowerCase() || '';
+                                        const bTitle = b.title?.toLowerCase() || '';
+                                        
+                                        const aStarts = aTitle.startsWith(q);
+                                        const bStarts = bTitle.startsWith(q);
+                                        
+                                        if (aStarts && !bStarts) return -1;
+                                        if (!aStarts && bStarts) return 1;
+                                        return 0;
+                                    })
+                                    .slice(0, 10);
+
+                                if (results.length === 0) {
+                                    return (
+                                        <div className="p-8 text-center text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap overflow-hidden">
+                                            {t('No products found')}
+                                        </div>
+                                    );
+                                }
+
+                                return results.map(product => {
+                                    const productId = product._id || product.id;
+                                    const productOpen = checkProductOpen(product, store);
+                                    const isClosed = !productOpen;
+                                    const title = t(product, 'title');
+
+                                    return (
+                                        <Link
+                                            key={productId}
+                                            to={isClosed ? '#' : `/product/${productId}`}
+                                            onClick={(e) => {
+                                                if (isClosed) {
+                                                    e.preventDefault();
+                                                    return;
+                                                }
+                                                setSearchQuery('');
+                                            }}
+                                            className={`flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50/80 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-50 dark:border-gray-700 last:border-b-0 ${isClosed ? 'cursor-not-allowed opacity-80' : ''}`}
+                                        >
+                                            <div className="relative flex-shrink-0">
+                                                <div className={`w-12 h-12 rounded-[1rem] bg-gray-50 dark:bg-gray-700 p-1 flex items-center justify-center overflow-hidden border border-gray-100 dark:border-gray-600 ${isClosed ? 'blur-[1px]' : ''}`}>
+                                                    <img
+                                                        src={product.image || `${API_BASE_URL}/products/${productId}/image`}
+                                                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
+                                                        alt={product.title}
+                                                        className="w-full h-full object-contain"
+                                                    />
+                                                </div>
+                                                {isClosed && (
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-[1rem]">
+                                                        <span className="bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-tighter">
+                                                            {t('Closed')}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                                {product.unit && !isClosed && (
+                                                    <div className="absolute -bottom-1 -right-1 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg px-2 py-0.5 shadow-sm">
+                                                        <p className="text-gray-500 dark:text-gray-400 text-[9px] font-bold">
+                                                            {product.unit}
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex flex-col gap-0">
+                                                    <p className={`font-normal text-gray-800 dark:text-gray-200 truncate text-[13px] tracking-tight leading-tight ${isClosed ? 'opacity-60' : ''}`}>
+                                                        {title}
+                                                    </p>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className={`text-[#2E5A2E] dark:text-[#CBF9B2] font-medium text-[11px] ${isClosed ? 'grayscale opacity-50' : ''}`}>₹{Number(product.price).toFixed(0)}</span>
+                                                        {product.originalPrice > product.price && (
+                                                            <span className="text-gray-400 text-[10px] line-through font-normal opacity-40">₹{product.originalPrice}</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    );
+                                });
+                            })()}
+                        </div>
+                    )}
+                </div>
+            </section>
+
+            {/* Subcategory Tabs (As per reference image) */}
+            <div className="max-w-7xl mx-auto px-4 mb-6">
                     <div className="flex items-center gap-6 overflow-x-auto scrollbar-hide border-b border-gray-100/50">
                         <button
                             onClick={() => setSelectedSubcategory(null)}
                             className={`pb-3 text-sm font-bold transition-all relative whitespace-nowrap ${
                                 !selectedSubcategory 
-                                ? 'text-[#2E5A2E]' 
-                                : 'text-gray-400 hover:text-gray-600'
+                                ? 'text-black dark:text-white' 
+                                : 'text-gray-400 hover:text-black dark:hover:text-white'
                             }`}
                         >
                             {t('All')}
                             {!selectedSubcategory && (
-                                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2E5A2E] rounded-full"></div>
+                                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-black dark:bg-white rounded-full"></div>
                             )}
                         </button>
                         
@@ -342,13 +446,13 @@ const StoreProducts = () => {
                                 onClick={() => setSelectedSubcategory(name)}
                                 className={`pb-3 text-sm font-bold transition-all relative whitespace-nowrap uppercase tracking-wide ${
                                     selectedSubcategory === name 
-                                    ? 'text-[#2E5A2E]' 
-                                    : 'text-gray-400 hover:text-gray-600'
+                                    ? 'text-black dark:text-white' 
+                                    : 'text-gray-400 hover:text-black dark:hover:text-white'
                                 }`}
                             >
                                 {t(name)}
                                 {selectedSubcategory === name && (
-                                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2E5A2E] rounded-full"></div>
+                                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-black dark:bg-white rounded-full"></div>
                                 )}
                             </button>
                         ))}
@@ -356,93 +460,7 @@ const StoreProducts = () => {
                 </div>
 
                 <div className="max-w-7xl mx-auto px-4 -mt-4">
-
-                    {/* Search Results Dropdown */}
-                    {searchQuery.trim() && (
-                        <div className="absolute left-4 right-4 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 max-h-80 overflow-y-auto overflow-x-hidden z-50">
-                            {(() => {
-                                const q = searchQuery.toLowerCase();
-                                const results = storeProducts.filter(p =>
-                                    p.title.toLowerCase().includes(q) ||
-                                    (p.description && p.description.toLowerCase().includes(q))
-                                ).sort((a, b) => {
-                                    const aDisplay = t(a, 'title').toLowerCase();
-                                    const bDisplay = t(b, 'title').toLowerCase();
-                                    const aStarts = aDisplay.startsWith(q);
-                                    const bStarts = bDisplay.startsWith(q);
-
-                                    if (aStarts && !bStarts) return -1;
-                                    if (!aStarts && bStarts) return 1;
-                                    return 0;
-                                }).slice(0, 5);
-
-                                if (results.length === 0) {
-                                    return (
-                                        <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
-                                            {t('No products found')}
-                                        </div>
-                                    );
-                                }
-
-                                return results.map(product => {
-                                    const productId = product._id || product.id;
-
-                                    return (
-                                        <Link
-                                            key={productId}
-                                            to={`/product/${productId}`}
-                                            className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0"
-                                            onClick={() => setSearchQuery('')}
-                                        >
-                                            <div className="relative flex-shrink-0">
-                                                <img
-                                                    src={product.image || `${API_BASE_URL}/products/${productId}/image`}
-                                                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
-                                                    alt={product.title}
-                                                    className={`w-10 h-10 rounded-lg object-cover flex-shrink-0 border border-gray-100 dark:border-gray-700 ${!storeIsOpen ? 'grayscale opacity-60' : ''}`}
-                                                />
-                                                {/* Unit Badge (Order Summary Style - More Compact) */}
-                                                {product.unit && (
-                                                    <div className="absolute bottom-0 right-0 bg-white/95 backdrop-blur-none px-1 py-0 rounded-tl-sm z-10 pointer-events-none shadow-sm border-l border-t border-gray-100 dark:border-gray-700 max-w-full overflow-hidden flex items-center h-2.5">
-                                                        <span className={`font-semibold text-gray-900 whitespace-nowrap inline-block ${product.unit.length > 8 ? 'text-[5px]' : 'text-[7px]'}`}>
-                                                            {product.unit}
-                                                        </span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div className="flex-1 min-w-0 px-1">
-                                                <div className="flex items-center justify-between gap-2 overflow-hidden">
-                                                    <div className="font-semibold text-sm text-gray-900 dark:text-white truncate">
-                                                        {(() => {
-                                                            const fullTitle = t(product, 'title');
-                                                            const bracketIndex = fullTitle.indexOf('(');
-                                                            if (bracketIndex !== -1) {
-                                                                const mainPart = fullTitle.substring(0, bracketIndex);
-                                                                const bracketPart = fullTitle.substring(bracketIndex);
-                                                                return (
-                                                                    <>
-                                                                        <span>{mainPart}</span>
-                                                                        <span className="font-normal text-gray-500 dark:text-gray-400">{bracketPart}</span>
-                                                                    </>
-                                                                );
-                                                            }
-                                                            return fullTitle;
-                                                        })()}
-                                                    </div>
-                                                    {!storeIsOpen && (
-                                                        <span className="text-[10px] font-bold text-red-500 flex-shrink-0 bg-red-50 dark:bg-red-900/20 px-1.5 py-0.5 rounded-full border border-red-100 dark:border-red-800">
-                                                            {t('Store Closed')}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400">₹{Number(product.price).toFixed(0)}</p>
-                                            </div>
-                                        </Link>
-                                    );
-                                });
-                            })()}
-                        </div>
-                    )}
+                    {/* The search dropdown was previously here but moved inside the relative container above */}
                 </div>
 
             {/* Store Closed Banner (Moved here) */}

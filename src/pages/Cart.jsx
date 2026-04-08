@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, MoreHorizontal } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useUserProfile } from '../hooks/queries/useUsers';
@@ -45,26 +46,26 @@ const Cart = () => {
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 flex flex-col justify-between transition-colors duration-200 relative overflow-hidden mx-auto max-w-md w-full my-auto pb-48">
             
-            {/* Scrollable Container for Top Half */}
-            <div className="flex-1 overflow-y-auto px-5 pt-8 pb-32 no-scrollbar">
-
-                {/* Header */}
-                <div className="flex items-center justify-between mb-8">
-                     <button onClick={() => navigate(-1)} className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95">
-                         <ArrowLeft size={24} />
+            {/* Simple Header */}
+            <div className="w-full px-5 py-6">
+                <div className="max-w-md mx-auto flex items-center justify-between">
+                     <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95 border border-gray-100/50">
+                         <ArrowLeft size={22} />
                      </button>
-                     <h1 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">{t('Checkout')}</h1>
-                     <button className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95">
-                         <MoreHorizontal size={24} />
-                     </button>
+                     <h1 className="text-[17px] font-bold text-gray-900 dark:text-white tracking-tight">{t('Cart')}</h1>
+                     <div className="w-[42px]" /> {/* Spacer */}
                 </div>
+            </div>
+
+            {/* Scrollable Container for Top Half */}
+            <div className="flex-1 overflow-y-auto px-5 pt-2 pb-32 no-scrollbar">
 
                 {/* Items */}
                 <div className="space-y-4 mb-6">
                     {cartItems.map((item) => (
                         <div key={item.id} className="bg-white dark:bg-gray-800 rounded-3xl p-3 flex gap-4 items-center relative shadow-[0_4px_20px_-5px_rgba(0,0,0,0.03)] border border-gray-100 dark:border-gray-700 transition-all duration-300">
                              {/* Image block */}
-                             <div className="h-[90px] w-[100px] rounded-2xl overflow-hidden bg-gray-50 flex-shrink-0 relative">
+                             <div className="h-[90px] w-[100px] rounded-2xl overflow-hidden bg-[#F9FAFB] dark:bg-gray-800 flex-shrink-0 relative">
                                   <img 
                                       src={item.image || `${API_BASE_URL}/products/${item.id}/image`} 
                                       alt={item.title}
@@ -126,8 +127,12 @@ const Cart = () => {
             </div>
 
             {/* Bottom Pull-up Card (Order Summary) */}
-            <div className="bg-white dark:bg-gray-800 rounded-t-[3rem] pt-6 pb-6 px-8 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] fixed bottom-0 max-w-md w-full left-1/2 -translate-x-1/2 border-t border-gray-100 dark:border-gray-700 z-50">
-
+            <motion.div 
+                initial={{ y: '100%', x: '-50%' }}
+                animate={{ y: 0, x: '-50%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="bg-white dark:bg-gray-800 rounded-t-[3rem] pt-6 pb-6 px-8 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] fixed bottom-0 max-w-md w-full left-1/2 border-t border-gray-100 dark:border-gray-700 z-50"
+            >
                  <div className="flex justify-between items-center mb-6">
                       <h2 className="text-[16px] font-bold text-gray-900 dark:text-white">{t('Payment')}</h2>
                       <span className="text-[12px] font-semibold text-gray-400">{cartItems.length} item{cartItems.length > 1 ? 's' : ''}</span>
@@ -148,13 +153,10 @@ const Cart = () => {
                       </div>
                  </div>
 
-                 {/* Desktop checkout button placed exactly where it would be natively */}
-                 <Link to="/checkout" className="w-full bg-[#2E5A2E] text-white rounded-full py-4 flex flex-col items-center justify-center font-bold text-[15px] active:scale-[0.98] transition-transform">
+                 <Link to="/checkout" className="w-full bg-black text-white rounded-full py-4 flex flex-col items-center justify-center font-normal text-[15px] active:scale-[0.98] transition-transform">
                       {t('Proceed to Checkout')}
                  </Link>
-                 
-            </div>
-            
+            </motion.div>
         </div>
     );
 };

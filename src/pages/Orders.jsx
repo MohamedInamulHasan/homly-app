@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Package, Search, Truck, CheckCircle, Clock, RotateCcw, ShoppingBag, Trash2, AlertTriangle, X, Store, ArrowLeft, MoreHorizontal } from 'lucide-react';
+import { Package, Search, Truck, CheckCircle, Clock, RotateCcw, ShoppingCart, Trash2, AlertTriangle, X, Store, ArrowLeft, MoreHorizontal, ShoppingBag } from 'lucide-react';
 import { useOrders, useDeleteOrder } from '../hooks/queries/useOrders';
 import { useStores } from '../hooks/queries/useStores';
 // import { useData } from '../context/DataContext'; // Removed dependency
@@ -8,12 +8,14 @@ import { getStoreName } from '../utils/storeHelpers';
 import { useLanguage } from '../context/LanguageContext';
 import { formatOrderDateTime, formatDeliveryTime } from '../utils/dateUtils';
 import PullToRefreshLayout from '../components/PullToRefreshLayout';
+import { useCart } from '../context/CartContext';
 import { API_BASE_URL } from '../utils/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const Orders = () => {
     const navigate = useNavigate();
     const { data: orders = [], isLoading: loadingOrders } = useOrders();
+    const { cartCount } = useCart();
     const { data: stores = [] } = useStores();
     const { mutate: deleteOrder } = useDeleteOrder();
 
@@ -25,7 +27,7 @@ const Orders = () => {
     useEffect(() => {
         const activeTabElement = document.getElementById('active-order-tab');
         if (activeTabElement) {
-            activeTabElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            activeTabElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
         }
     }, [activeTab]);
     const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, orderId: null });
@@ -104,28 +106,37 @@ const Orders = () => {
     // We handle 'loadingOrders' state inside the return block by showing a beautiful skeleton loader.
 
     return (
-        <PullToRefreshLayout>
-            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 mx-auto max-w-md w-full relative pb-48">
-                {/* Premium Light Green Header Card */}
-                <div className="w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-6 pb-6 shadow-sm relative overflow-hidden mb-4">
-                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
-                    
-                    <div className="relative z-10">
-                        <div className="max-w-2xl mx-auto px-2 flex items-center justify-between">
-                            <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50">
-                                <ArrowLeft size={22} />
-                            </button>
-                            <div className="flex flex-col text-center">
-                                <h1 className="text-[18px] font-bold text-gray-900 tracking-tight">{t('My Orders')}</h1>
-                                <p className="text-[#2E5A2E] text-[13px] font-medium mt-0.5">{t('Track packages')}</p>
-                            </div>
-                            <button className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50">
-                                <MoreHorizontal size={22} />
-                            </button>
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 mx-auto max-w-md w-full relative pb-48">
+            {/* Premium Light Green Header Card */}
+            <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-md bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-6 pb-6 shadow-sm overflow-hidden">
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div className="relative z-10">
+                    <div className="max-w-2xl mx-auto px-2 flex items-center justify-between">
+                        <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50">
+                            <ArrowLeft size={22} />
+                        </button>
+                        <div className="flex flex-col text-center">
+                            <h1 className="text-[18px] font-bold text-gray-900 tracking-tight">{t('My Orders')}</h1>
+                            <p className="text-[#2E5A2E] text-[13px] font-medium mt-0.5">{t('Track packages')}</p>
                         </div>
+                        <button 
+                            onClick={() => navigate('/cart')}
+                            className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-black/5 relative"
+                        >
+                            <ShoppingCart size={22} className="text-gray-700" />
+                            {cartCount > 0 && (
+                                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-5 w-5 rounded-full flex items-center justify-center shadow-sm border-2 border-white">
+                                    {cartCount}
+                                </span>
+                            )}
+                        </button>
                     </div>
                 </div>
+            </div>
 
+            <PullToRefreshLayout>
+                <div className="pt-[110px]">
                 <div className="px-5 mt-2">
                     {/* Search Pill */}
                     <div className="relative mb-6">
@@ -148,7 +159,7 @@ const Orders = () => {
                     </div>
 
                     {/* Tabs */}
-                    <div className="flex overflow-x-auto pb-2 mb-4 scrollbar-hide gap-3">
+                    <div className="flex overflow-x-auto pb-4 mb-4 scrollbar-hide gap-3 -mx-5 px-5">
                         {tabs.map(tab => (
                             <button
                                 key={tab}
@@ -239,7 +250,7 @@ const Orders = () => {
                                         <div className="divide-y divide-gray-50 dark:divide-gray-700">
                                             {order.items?.slice(0, 2).map((item, idx) => (
                                                 <div key={idx} className="py-3 flex items-center gap-3">
-                                                    <div className="h-12 w-12 rounded-xl bg-gray-50 border border-gray-100 dark:border-gray-700 overflow-hidden flex-shrink-0 relative">
+                                                    <div className="h-12 w-12 rounded-xl bg-[#F9FAFB] border border-gray-100 dark:border-gray-700 overflow-hidden flex-shrink-0 relative">
                                                         <img
                                                             src={item.image && (item.image.startsWith('http') || item.image.startsWith('data:'))
                                                                 ? item.image
@@ -309,7 +320,7 @@ const Orders = () => {
                                                 <p className="font-bold text-[16px] text-gray-900 dark:text-white leading-none">₹{order.total.toFixed(0)}</p>
                                             </div>
                                             <div className="text-[#2E5A2E] text-[13px] font-bold underline decoration-[#2E5A2E] decoration-2 underline-offset-2 hover:opacity-80 transition-opacity">
-                                                {t('Detail')}
+                                                {t('Details')}
                                             </div>
                                         </div>
                                     </div>
@@ -378,8 +389,9 @@ const Orders = () => {
                         </div>
                     </div>
                 )}
-            </div>
-        </PullToRefreshLayout>
+                </div>
+            </PullToRefreshLayout>
+        </div>
     );
 };
 

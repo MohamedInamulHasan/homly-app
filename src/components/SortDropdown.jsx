@@ -30,22 +30,15 @@ const SortDropdown = ({ currentSort, onSortChange }) => {
         <div className="relative" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`flex items-center justify-center gap-2 p-3 sm:px-4 sm:py-3 rounded-2xl border-2 transition-all duration-300 shadow-sm active:scale-95 ${isOpen
-                    ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-900/40 backdrop-blur-md shadow-blue-500/5'
-                    : 'border-gray-100 dark:border-gray-800 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md'
+                className={`w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-full border transition-all duration-300 active:scale-95 ${isOpen
+                    ? 'border-[#2E5A2E] bg-[#2E5A2E]/5 dark:bg-[#CBF9B2]/10'
+                    : 'border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800'
                     }`}
                 title={t(selectedOption.label)}
             >
-                <div className={`${isOpen ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                <div className={`${isOpen ? 'text-[#2E5A2E] dark:text-[#CBF9B2]' : 'text-gray-900 dark:text-white'}`}>
                     {selectedOption.icon}
                 </div>
-                <span className="text-sm font-bold text-gray-700 dark:text-gray-200 whitespace-nowrap hidden sm:block">
-                    {t(selectedOption.label)}
-                </span>
-                <ChevronDown
-                    size={16}
-                    className={`text-gray-400 transition-transform duration-300 hidden sm:block ${isOpen ? 'rotate-180 text-blue-500' : ''}`}
-                />
             </button>
 
             <AnimatePresence>
@@ -55,7 +48,7 @@ const SortDropdown = ({ currentSort, onSortChange }) => {
                         animate={{ opacity: 1, y: 5, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={{ duration: 0.2, ease: 'easeOut' }}
-                        className="absolute right-0 top-full mt-2 w-56 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-white/20 dark:border-gray-700/50 rounded-2xl shadow-2xl z-[100] overflow-hidden"
+                        className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-gray-800 backdrop-blur-xl border border-gray-100 dark:border-gray-700 rounded-2xl z-[100] overflow-hidden"
                     >
                         <div className="p-2 space-y-1">
                             {sortOptions.map((option) => (
@@ -65,9 +58,9 @@ const SortDropdown = ({ currentSort, onSortChange }) => {
                                         onSortChange(option.id);
                                         setIsOpen(false);
                                     }}
-                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${currentSort === option.id
-                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
-                                        : 'text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400'
+                                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-normal transition-all duration-200 ${currentSort === option.id
+                                        ? 'bg-[#2E5A2E] text-white'
+                                        : 'text-gray-600 dark:text-gray-300 hover:bg-[#2E5A2E]/5 dark:hover:bg-white/5 hover:text-[#2E5A2E] dark:hover:text-[#CBF9B2]'
                                         }`}
                                 >
                                     <span className={`${currentSort === option.id ? 'text-white' : 'text-gray-400'}`}>

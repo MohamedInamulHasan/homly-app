@@ -3,14 +3,16 @@ import {
     User, Package, Settings, ChevronRight, LogOut, 
     Shield, Wrench, Store, ArrowLeft, MoreHorizontal, 
     MapPin, Lock, HelpCircle, Pencil, Languages, Heart,
-    ChevronDown
+    ChevronDown, ShoppingCart
 } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import AuthContext from '../context/AuthContext';
 import { useUserProfile } from '../hooks/queries/useUsers';
 import { useData } from '../context/DataContext';
+import LogoutModal from '../components/LogoutModal';
 
 const MenuLink = ({ icon, title, to, onClick, isRed = false }) => {
     const Wrapper = to ? Link : 'button';
@@ -33,11 +35,14 @@ const MenuLink = ({ icon, title, to, onClick, isRed = false }) => {
     );
 };
 
+
+
 const Profile = () => {
     const { theme, toggleTheme } = useTheme();
     const { language, setLanguage, t } = useLanguage();
     const { setIsFooterHidden } = useData();
     const { user: authUser, logout } = useContext(AuthContext);
+    const { cartCount } = useCart();
 
     const { data: userProfile } = useUserProfile();
     
@@ -60,28 +65,14 @@ const Profile = () => {
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 mx-auto max-w-md w-full relative pb-48">
             
             {/* Logout Modal */}
-            {showLogoutModal && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 max-w-sm w-full shadow-2xl flex flex-col items-center">
-                        <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-4">
-                            <LogOut size={32} className="text-red-600 dark:text-red-400" />
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-2">{t('Sign Out')}</h3>
-                        <p className="text-gray-500 dark:text-gray-400 text-center mb-6">{t('Are you sure you want to sign out?')}</p>
-                        <div className="flex gap-4 w-full">
-                            <button onClick={() => setShowLogoutModal(false)} className="flex-1 py-3.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full font-bold transition-colors">
-                                {t('Cancel')}
-                            </button>
-                            <button onClick={confirmLogout} className="flex-1 py-3.5 bg-red-600 text-white rounded-full font-bold shadow-md shadow-red-500/20 hover:bg-red-700 transition-colors">
-                                {t('Sign Out')}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <LogoutModal 
+                isOpen={showLogoutModal} 
+                onClose={() => setShowLogoutModal(false)} 
+                onConfirm={confirmLogout} 
+            />
 
             {/* Premium Light Green Header Card */}
-            <div className="w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-6 pb-6 shadow-sm relative overflow-hidden mb-8">
+            <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-md bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-6 pb-6 shadow-sm overflow-hidden">
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
                 
                 <div className="relative z-10">
@@ -93,13 +84,22 @@ const Profile = () => {
                             <h1 className="text-[18px] font-bold text-gray-900 tracking-tight">{t('Profile')}</h1>
                             <p className="text-[#2E5A2E] text-[13px] font-medium mt-0.5">{t('Manage your account')}</p>
                         </div>
-                        <button className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50">
-                            <MoreHorizontal size={22} />
+                        <button 
+                            onClick={() => navigate('/cart')}
+                            className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-black/5 relative"
+                        >
+                            <ShoppingCart size={22} className="text-gray-700" />
+                            {cartCount > 0 && (
+                                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-5 w-5 rounded-full flex items-center justify-center shadow-sm border-2 border-white">
+                                    {cartCount}
+                                </span>
+                            )}
                         </button>
                     </div>
                 </div>
             </div>
 
+            <div className="pt-[115px]">
             <div className="px-5">
                 {/* Profile Widget */}
                 <div className="bg-white dark:bg-gray-800/80 rounded-[2.5rem] p-4 flex items-center justify-between mb-8 shadow-sm border border-gray-100 dark:border-gray-700">
@@ -134,6 +134,9 @@ const Profile = () => {
                           <MenuLink to="/orders" icon={<Package size={18} strokeWidth={2} />} title={t('My Orders')} />
                           <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
                           
+                          <MenuLink to="/edit-address" icon={<MapPin size={18} strokeWidth={2} />} title={t('My Address')} />
+                          <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
+
                           <MenuLink to="/saved-products" icon={<Heart size={18} strokeWidth={2} />} title={t('Saved Products')} />
                           <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
 
@@ -223,6 +226,7 @@ const Profile = () => {
                           />
                      </div>
                 </div>
+            </div>
             </div>
         </div>
     );

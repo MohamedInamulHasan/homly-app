@@ -23,6 +23,7 @@ import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import MyService from './pages/MyService';
+import EditAddress from './pages/EditAddress';
 
 import MobileFooter from './components/MobileFooter';
 import InstallPrompt from './components/InstallPrompt';
@@ -84,6 +85,7 @@ const Layout = ({ children, onRefresh }) => {
         location.pathname === '/signup' ||
         location.pathname === '/forgot-password' ||
         location.pathname.startsWith('/reset-password') ||
+        location.pathname === '/edit-address' ||
         location.pathname.startsWith('/admin');
 
     const isAuthPage = location.pathname === '/login' ||
@@ -182,6 +184,14 @@ function App() {
                                     element={
                                         <PrivateRoute>
                                             <Profile />
+                                        </PrivateRoute>
+                                    }
+                                />
+                                <Route
+                                    path="/edit-address"
+                                    element={
+                                        <PrivateRoute>
+                                            <EditAddress />
                                         </PrivateRoute>
                                     }
                                 />

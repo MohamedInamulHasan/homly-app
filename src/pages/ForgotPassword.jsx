@@ -25,7 +25,7 @@ const ForgotPassword = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
+        <div className="min-h-screen flex items-center justify-center bg-[#E8EAEF] dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
             <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
                 <div className="text-center">
                     <h2 className="mt-2 text-3xl font-extrabold text-gray-900 dark:text-white">

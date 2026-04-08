@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -254,7 +255,7 @@ const Checkout = () => {
     const finalTotal = cartTotal + deliveryCharge;
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8 pb-24 transition-colors duration-200">
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8 pb-24 transition-colors duration-200">
             <div className="max-w-7xl mx-auto">
                 <button
                     onClick={() => navigate('/cart')}
@@ -561,32 +562,30 @@ const Checkout = () => {
                 </form>
             </div>
 
-            {/* Sticky Action Footer - Mobile Only */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 p-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50 md:hidden pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
-                <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-                    <div className="flex flex-col">
-                        <span className="text-xs text-gray-500 dark:text-gray-400">{t('Total')}</span>
-                        <span className="text-lg font-bold text-blue-600 dark:text-blue-400">₹{finalTotal.toFixed(0)}</span>
-                    </div>
-                    <button
-                        onClick={handleSubmit}
-                        disabled={isNavigating}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 text-sm rounded-xl shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {isNavigating ? (
-                            <>
-                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                {t('Loading...')}
-                            </>
-                        ) : (
-                            <>
-                                <ShoppingBag size={20} />
-                                {t('Review Order')}
-                            </>
-                        )}
-                    </button>
+            {/* Sticky Action Footer - Mobile Only (Premium Pull-up Card) */}
+            <motion.div 
+                initial={{ y: '100%', x: '-50%' }}
+                animate={{ y: 0, x: '-50%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="bg-white dark:bg-gray-800 rounded-t-[3rem] pt-6 pb-6 px-8 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] fixed bottom-0 max-w-md w-full left-1/2 border-t border-gray-100 dark:border-gray-700 z-50"
+            >
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-[16px] font-bold text-gray-900 dark:text-white">{t('Total')}</h2>
+                    <span className="text-[17px] font-bold text-gray-900 dark:text-white">₹{finalTotal.toFixed(0)}</span>
                 </div>
-            </div>
+
+                <button
+                    onClick={handleSubmit}
+                    disabled={isNavigating}
+                    className="w-full bg-black text-white rounded-full py-4 flex items-center justify-center font-normal text-[15px] active:scale-[0.98] transition-transform disabled:opacity-50"
+                >
+                    {isNavigating ? (
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                        t('Review Order')
+                    )}
+                </button>
+            </motion.div>
         </div>
     );
 };

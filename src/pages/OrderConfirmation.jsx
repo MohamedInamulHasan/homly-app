@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useData } from '../context/DataContext';
 import { getStoreName, formatDeliveryRange, calculateDeliveryCharge } from '../utils/storeHelpers';
@@ -7,7 +7,8 @@ import { useLanguage } from '../context/LanguageContext';
 import { API_BASE_URL } from '../utils/api';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext';
-import { CheckCircle, ArrowLeft, ClipboardList, ShoppingBag, MapPin, Store, ChevronLeft } from 'lucide-react';
+import { CheckCircle, ArrowLeft, ClipboardList, ShoppingBag, MapPin, Store, ChevronLeft, MoreHorizontal, Package, Clock } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const OrderConfirmation = () => {
     const location = useLocation();
@@ -213,285 +214,248 @@ const OrderConfirmation = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8 pb-24 transition-colors duration-200">
-            <div className="max-w-3xl mx-auto">
-                <div className="flex items-center gap-4 mb-6">
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors flex-shrink-0"
-                    >
-                        <ArrowLeft className="text-gray-900 dark:text-white" size={24} />
-                    </button>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                        <ClipboardList className="text-blue-600 dark:text-blue-400" />
-                        {t('Review Order')}
-                    </h1>
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 pb-[380px] md:pb-32 relative">
+            {/* Simple Header */}
+            <div className="w-full px-5 py-6">
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
+                     <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95 border border-gray-100/50">
+                         <ArrowLeft size={22} />
+                     </button>
+                     <h1 className="text-[17px] font-bold text-gray-900 dark:text-white tracking-tight">{t('Review Order')}</h1>
+                     <div className="w-[42px]" />
                 </div>
+            </div>
 
-                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden mb-8">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 space-y-6">
+                <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    <div className="p-5 border-b border-gray-50 dark:border-gray-700 flex items-center gap-3">
+                        <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#7CA90E] dark:text-[#8bc910]">
+                            <Package size={18} />
+                        </div>
+                        <h3 className="font-medium text-gray-900 dark:text-white text-base">{t('Order Summary')}</h3>
+                    </div>
 
-
-                    <div className="p-8">
-                        <div className="border-b border-gray-100 dark:border-gray-700 pb-8 mb-8">
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">{t('Order Summary')}</h2>
-                            <div className="space-y-4">
-                                {cartItems.map((item) => {
-                                    console.log('🔍 OrderConfirmation - Cart Item:', item);
-                                    console.log('  - isFromAd:', item.isFromAd);
-                                    console.log('  - adTitle:', item.adTitle);
-                                    console.log('  - title:', item.title);
-                                    return (
-                                        <div key={item.id} className="flex justify-between items-center">
-                                            <div className="flex-1 min-w-0 flex items-center gap-4">
-                                                <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 relative">
-                                                    <img
-                                                        src={item.image || ((item._id || item.id || item.product) ? `${API_BASE_URL}/products/${item._id || item.id || item.product}/image` : "https://via.placeholder.com/150?text=No+Image")}
-                                                        alt={item.adTitle || item.title}
-                                                        className="h-full w-full object-cover"
-                                                        loading="lazy"
-                                                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
-                                                    />
-                                                    {/* Status Tags */}
-                                                    <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
-                                                        {item.isGold && (
-                                                            <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
-                                                                Free
-                                                            </span>
-                                                        )}
-                                                        {item.isFromAd && (
-                                                            <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm">
-                                                                Offer
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                    {(() => {
-                                                        const unitText = item.unit;
-                                                        if (!unitText) return null;
-                                                        return (
-                                                            <div className="absolute bottom-0 right-0 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-tl-lg z-10 pointer-events-none shadow-sm">
-                                                                <span className="text-[9px] font-bold text-gray-900 leading-none block">
-                                                                    {unitText}
-                                                                </span>
-                                                            </div>
-                                                        );
-                                                    })()}
+                    <div className="p-4 sm:p-6">
+                        <div className="divide-y divide-gray-50 dark:divide-gray-700">
+                                {cartItems.map((item) => (
+                                    <div key={item.id} className="py-4 flex gap-4 first:pt-0">
+                                        <div className="h-16 w-16 bg-gray-50 border border-gray-100 dark:border-gray-700 rounded-2xl overflow-hidden flex-shrink-0 relative">
+                                            <img
+                                                src={item.image || ((item._id || item.id || item.product) ? `${API_BASE_URL}/products/${item._id || item.id || item.product}/image` : "https://via.placeholder.com/150?text=No+Image")}
+                                                alt={item.adTitle || item.title}
+                                                className="h-full w-full object-cover"
+                                                loading="lazy"
+                                                onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
+                                            />
+                                            <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
+                                                {item.isGold && (
+                                                    <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
+                                                        Free
+                                                    </span>
+                                                )}
+                                                {item.isFromAd && (
+                                                    <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm">
+                                                        Offer
+                                                    </span>
+                                                )}
+                                            </div>
+                                            {item.unit && (
+                                                <div className="absolute bottom-0 right-0 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-tl-lg z-10 pointer-events-none shadow-sm">
+                                                    <span className="text-[9px] font-bold text-gray-900 leading-none block">
+                                                        {item.unit}
+                                                    </span>
                                                 </div>
-                                                <div className="flex-1 min-w-0">
-                                                    {(() => {
-                                                        // Use adTitle if available, otherwise use regular title
-                                                        const displayTitle = item.adTitle || item.title || item.name || t('Product');
-                                                        const fullTitle = t(item, 'title') || displayTitle;
-                                                        const bracketMatch = fullTitle.match(/[(（\[{]/);
-                                                        const bracketIndex = bracketMatch ? bracketMatch.index : -1;
-                                                        // Use line-clamp-2 for ads to show full title, truncate for regular items
-                                                        const titleClass = item.isFromAd ? 'line-clamp-2' : 'truncate';
-
-                                                        // For special offers, skip bracket parsing and show full title
-                                                        if (item.isFromAd) {
-                                                            return <p className="font-bold text-gray-900 dark:text-white mb-1 leading-normal" title={fullTitle}>{fullTitle}</p>;
-                                                        }
-
-                                                        if (bracketIndex !== -1) {
-                                                            const mainTitle = fullTitle.substring(0, bracketIndex).trim();
-                                                            const bracketText = fullTitle.substring(bracketIndex).trim();
-
-                                                            return (
-                                                                <div className="flex flex-col min-w-0">
-                                                                    <p className={`font-medium text-gray-900 dark:text-white ${titleClass}`} title={mainTitle}>{mainTitle}</p>
-                                                                    <span className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5" title={bracketText}>{bracketText}</span>
-                                                                </div>
-                                                            );
-                                                        }
-
-                                                        return <p className={`font-medium text-gray-900 dark:text-white ${titleClass}`} title={fullTitle}>{fullTitle}</p>;
-                                                    })()}
-                                                    {(item.storeId || item.storeName) && (
-                                                        <div className="flex items-center gap-1 mt-0.5">
-                                                            <Store size={12} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
-                                                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                                                                {getStoreName(item.storeId, stores) || item.storeName}
-                                                            </p>
-                                                        </div>
-                                                    )}
-                                                    <div className="flex items-center gap-1.5">
-                                                        <div className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300">
-                                                            {item.quantity}
-                                                        </div>
-                                                    </div>
+                                            )}
+                                        </div>
+                                        <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                            <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-0.5 truncate" title={item.adTitle || item.title}>{item.adTitle || item.title}</h4>
+                                            {(item.storeId || item.storeName) && (
+                                                <p className="text-xs font-normal text-gray-500 dark:text-gray-400 truncate">
+                                                    {getStoreName(item.storeId, stores) || item.storeName}
+                                                </p>
+                                            )}
+                                            <div className="flex items-center justify-between mt-1">
+                                                <p className="text-sm font-medium text-black dark:text-white">₹{((item.price * item.quantity) || 0).toFixed(0)}</p>
+                                                <div className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300">
+                                                    x{item.quantity}
                                                 </div>
                                             </div>
-                                            <p className="text-sm font-medium text-gray-900 dark:text-white">₹{((item.price * item.quantity) || 0).toFixed(0)}</p>
                                         </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        <div className="space-y-3">
-                            <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                                <span>{t('Subtotal')}</span>
-                                <span>₹{(cartTotal || 0).toFixed(0)}</span>
-                            </div>
-                            <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                                <span>{t('Delivery Charge')}</span>
-                                {(deliveryCharge === 0 || deliveryCharge === null) ? (
-                                    <div className="text-right">
-                                        <span className="font-medium text-green-600 dark:text-green-400">FREE</span>
-                                        {cartItems.some(item => item.isGold) ? (
-                                            <p className="text-xs text-emerald-600 dark:text-emerald-500 flex items-center justify-end gap-1 font-bold">
-                                                Free Delivery
-                                            </p>
-                                        ) : (
-                                            <p className="text-xs text-yellow-600 dark:text-yellow-500 flex items-center justify-end gap-1">
-                                                <span>🪙</span> Coin Applied
-                                            </p>
-                                        )}
                                     </div>
-                                ) : (
-                                    <span>₹{(deliveryCharge || 20).toFixed(0)}</span>
-                                )}
-                            </div>
-                            <div className="pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                                <span className="text-lg font-bold text-gray-900 dark:text-white">{t('Total')}</span>
-                                <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">₹{finalTotal.toFixed(0)}</span>
-                            </div>
+                                ))}
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 mb-8">
-                    <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                        <MapPin className="text-blue-600 dark:text-blue-400" size={20} />
-                        {t('Shipping Details')}
-                    </h2>
-                    <div className="text-gray-600 dark:text-gray-300 space-y-1">
-                        <p className="font-medium text-gray-900 dark:text-white">{formData.name}</p>
-                        <p>{formData.address}</p>
-                        <p>{formData.city}, {formData.pincode}</p>
-                        <p>{t('Mobile')}: {formData.mobile}</p>
+                <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    <div className="p-5 border-b border-gray-50 dark:border-gray-700 flex items-center gap-3">
+                        <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#7CA90E] dark:text-[#8bc910]">
+                            <MapPin size={18} />
+                        </div>
+                        <h3 className="font-medium text-gray-900 dark:text-white text-base">{t('Shipping Details')}</h3>
                     </div>
+                    <div className="p-6">
+                        <div className="text-gray-600 dark:text-gray-300 space-y-1">
+                            <p className="font-medium text-gray-900 dark:text-white">{formData.name}</p>
+                            <p>{formData.address}</p>
+                            <p>{formData.city}, {formData.pincode}</p>
+                            <p>{t('Mobile')}: {formData.mobile}</p>
+                        </div>
 
-                    {/* Delivery Time Display */}
-                    {formData.deliveryTime && (
-                        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                            <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <div>
-                                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('Scheduled Delivery')}</p>
-                                    <p className="font-semibold">
-                                        {(() => {
-                                            return formatDeliveryRange(formData.deliveryTime);
-                                        })()}
-                                    </p>
+                        {formData.deliveryTime && (
+                            <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                                <div className="flex items-center gap-3 text-emerald-600 dark:text-emerald-400">
+                                    <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center">
+                                        <Clock size={20} />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">{t('Scheduled Delivery')}</p>
+                                        <p className="font-medium text-gray-900 dark:text-white">
+                                            {formatDeliveryRange(formData.deliveryTime)}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
 
-                {/* Desktop Confirm Button */}
-                <div className="hidden md:block">
-                    <button
-                        onClick={handleConfirmOrder}
-                        className="w-full bg-blue-600 text-white py-4 px-6 text-lg rounded-2xl font-bold shadow-md shadow-blue-500/10 hover:bg-blue-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                    >
-                        {t('Place Order')}
-                    </button>
+                <div className="hidden md:block mb-8">
+                     <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 p-8">
+                          <div className="space-y-4 mb-8">
+                               <div className="flex justify-between items-center text-gray-500 font-medium">
+                                    <span>{t('Subtotal')}</span>
+                                    <span className="text-gray-900 dark:text-white font-bold">₹{(cartTotal || 0).toFixed(0)}</span>
+                               </div>
+                               <div className="flex justify-between items-center text-gray-500 font-medium">
+                                    <span>{t('Delivery')}</span>
+                                    {(deliveryCharge === 0 || deliveryCharge === null) ? (
+                                        <span className="text-green-600 font-bold">FREE</span>
+                                    ) : (
+                                        <span className="text-gray-900 dark:text-white font-bold">₹{(deliveryCharge || 20).toFixed(0)}</span>
+                                    )}
+                               </div>
+                               <div className="flex justify-between items-center pt-2 border-t border-gray-50 dark:border-gray-700 text-gray-900 dark:text-white font-black text-lg">
+                                    <span>{t('Total')}</span>
+                                    <span className="text-2xl">₹{finalTotal.toFixed(0)}</span>
+                               </div>
+                          </div>
+                          <button
+                              onClick={handleConfirmOrder}
+                              className="w-full bg-black text-white py-4 px-6 text-lg rounded-full font-normal shadow-lg transition-transform active:scale-[0.98]"
+                          >
+                              {t('Place Order')}
+                          </button>
+                     </div>
                 </div>
             </div>
 
-            {/* Sticky Action Footer - Mobile Only */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 p-3 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] z-50 md:hidden pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
-                <div className="max-w-7xl mx-auto">
-                    <button
-                        onClick={handleConfirmOrder}
-                        className="w-[90%] mx-auto block bg-blue-600 text-white py-3.5 px-4 text-sm md:py-4 md:px-6 md:text-lg rounded-2xl font-bold shadow-md shadow-blue-500/10 hover:bg-blue-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                    >
-                        {t('Place Order')}
-                    </button>
-                </div>
-            </div>
+            {/* Sticky Action Footer - Mobile Only (Premium Pull-up Card) */}
+            <motion.div 
+                initial={{ y: '100%', x: '-50%' }}
+                animate={{ y: 0, x: '-50%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="bg-white dark:bg-gray-800 rounded-t-[3rem] pt-6 pb-6 px-8 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] fixed bottom-0 max-w-md w-full left-1/2 border-t border-gray-100 dark:border-gray-700 z-50"
+            >
+                 <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-[16px] font-bold text-gray-900 dark:text-white">{t('Payment')}</h2>
+                      <span className="text-[12px] font-semibold text-gray-400">{cartItems.length} items</span>
+                 </div>
 
-            {/* Confirmation Modal (Are you sure?) */}
-            {
-                showConfirmModal && (
-                    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md transition-opacity duration-300">
-                        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-sm w-full p-8 transform transition-all scale-100 animate-bounce-subtle border border-gray-100 dark:border-gray-700">
-                            <div className="text-center">
-                                <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-blue-50 dark:bg-blue-900/40 mb-6 shadow-inner relative group">
-                                    <div className="absolute inset-0 rounded-full bg-blue-400 opacity-20 animate-ping group-hover:animate-none"></div>
-                                    <ShoppingBag className="h-10 w-10 text-blue-600 dark:text-blue-400 relative z-10" />
-                                </div>
-                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                                    {t('Ready to Wrap Up?')}
-                                </h3>
-                                <p className="text-base text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
-                                    {t('You are just one step away from confirming your order. Do you want to proceed?')}
-                                </p>
-                                <div className="flex gap-4">
-                                    <button
-                                        onClick={() => setShowConfirmModal(false)}
-                                        disabled={isSubmitting}
-                                        className="flex-1 px-4 py-3.5 text-sm font-bold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 transition-colors"
-                                    >
-                                        {t('Cancel')}
-                                    </button>
-                                    <button
-                                        onClick={confirmOrderAction}
-                                        disabled={isSubmitting}
-                                        className="flex-1 px-4 py-3.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md shadow-blue-500/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 transition-all"
-                                    >
-                                        {isSubmitting ? (
-                                            <>
-                                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                                {t('Processing')}
-                                            </>
-                                        ) : (
-                                            t('Confirm Order')
-                                        )}
-                                    </button>
-                                </div>
+                 <div className="space-y-4 mb-8">
+                      <div className="flex justify-between items-center">
+                           <span className="text-[14px] text-gray-400 font-medium">{t('Subtotal')}</span>
+                           <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹{(cartTotal || 0).toFixed(0)}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                           <span className="text-[14px] text-gray-400 font-medium">{t('Delivery Charge')}</span>
+                           {(deliveryCharge === 0 || deliveryCharge === null) ? (
+                                <span className="text-[15px] font-bold text-green-600 dark:text-green-400">FREE</span>
+                           ) : (
+                               <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹{(deliveryCharge || 20).toFixed(0)}</span>
+                           )}
+                      </div>
+                      <div className="flex justify-between items-center pt-2 border-t border-gray-50 dark:border-gray-700">
+                           <span className="text-[15px] text-gray-500 font-medium">{t('Total Amount')}</span>
+                           <span className="text-[16px] font-black text-gray-900 dark:text-white">₹{finalTotal.toFixed(0)}</span>
+                      </div>
+                 </div>
+
+                 <button
+                      onClick={handleConfirmOrder}
+                      className="w-full bg-black text-white rounded-full py-4 flex items-center justify-center font-normal text-[15px] active:scale-[0.98] transition-transform"
+                 >
+                      {t('Place Order')}
+                 </button>
+            </motion.div>
+
+            {showConfirmModal && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+                    <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl max-w-sm w-full p-8 transform transition-all border border-gray-100 dark:border-gray-700">
+                        <div className="text-center">
+                            <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-gray-50 dark:bg-gray-700 mb-6 shadow-inner relative">
+                                <div className="absolute inset-0 rounded-full bg-black opacity-5 animate-ping"></div>
+                                <ShoppingBag className="h-10 w-10 text-black dark:text-white relative z-10" />
                             </div>
-                        </div>
-                    </div>
-                )
-            }
-
-            {/* Success Modal (With Design) */}
-            {
-                showSuccessModal && (
-                    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-green-500/20 backdrop-blur-md">
-                        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-sm w-full p-8 transform transition-all scale-100 animate-bounce-subtle">
-                            <div className="text-center">
-                                <div className="w-24 h-24 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-                                    <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400 animate-pulse" />
-                                </div>
-                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                                    {t('Order Placed!')}
-                                </h2>
-                                <p className="text-gray-500 dark:text-gray-400 mb-6">
-                                    {t('Your order has been placed successfully. Thank you for shopping with us!')}
-                                </p>
-                                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 mb-6">
-                                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('Order ID')}</p>
-                                    <p className="font-mono font-bold text-gray-900 dark:text-white text-lg">
-                                        #{String(createdOrderId || '000').slice(-6).toUpperCase()}
-                                    </p>
-                                </div>
+                            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                                {t('Ready to Wrap Up?')}
+                            </h3>
+                            <p className="text-base text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
+                                {t('You are just one step away from confirming your order. Do you want to proceed?')}
+                            </p>
+                            <div className="flex flex-col gap-3">
                                 <button
-                                    onClick={handleCloseSuccess}
-                                    className="w-full bg-green-600 text-white py-3 px-6 rounded-xl font-bold shadow-md shadow-green-500/10 hover:bg-green-700 transition-colors"
+                                    onClick={confirmOrderAction}
+                                    disabled={isSubmitting}
+                                    className="w-full px-4 py-4 text-sm font-normal text-white bg-black hover:bg-gray-900 rounded-full shadow-lg shadow-gray-200 dark:shadow-gray-900/20 disabled:opacity-50 flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
                                 >
-                                    {t('Go to Orders')}
+                                    {isSubmitting ? (
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    ) : t('Confirm Order')}
+                                </button>
+                                <button
+                                    onClick={() => setShowConfirmModal(false)}
+                                    disabled={isSubmitting}
+                                    className="w-full px-4 py-3 text-sm font-normal text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+                                >
+                                    {t('Cancel')}
                                 </button>
                             </div>
                         </div>
                     </div>
-                )
-            }
-        </div >
+                </div>
+            )}
+
+            {showSuccessModal && (
+                <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-emerald-500/20 backdrop-blur-md">
+                    <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl max-w-sm w-full p-8 transform transition-all scale-100">
+                        <div className="text-center">
+                            <div className="w-24 h-24 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <CheckCircle className="h-12 w-12 text-emerald-600 dark:text-emerald-400" />
+                            </div>
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                                {t('Order Placed!')}
+                            </h2>
+                            <p className="text-gray-500 dark:text-gray-400 mb-6 font-medium">
+                                {t('Your order has been placed successfully.')}
+                            </p>
+                            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-5 mb-8 border border-gray-100 dark:border-gray-600/50">
+                                <p className="text-[10px] text-gray-400 dark:text-gray-500 mb-1 tracking-widest uppercase font-bold">{t('Order ID')}</p>
+                                <p className="font-mono font-bold text-gray-900 dark:text-white text-xl">
+                                    #{String(createdOrderId || '000').slice(-6).toUpperCase()}
+                                </p>
+                            </div>
+                            <button
+                                onClick={handleCloseSuccess}
+                                className="w-full bg-black text-white py-4 px-6 rounded-full font-normal shadow-lg shadow-gray-200 dark:shadow-gray-900/20 active:scale-[0.98] transition-transform"
+                            >
+                                {t('Go to Orders')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 };
 

@@ -70,7 +70,7 @@ const DealsGrid = ({ products = [], isLoading = false }) => {
                             </button>
 
                             {/* Image Container */}
-                            <div className="aspect-square w-full bg-gray-50/50 dark:bg-gray-900/40 p-4 flex items-center justify-center group-hover:bg-gray-100 dark:group-hover:bg-gray-900/60 transition-colors overflow-hidden">
+                            <div className="aspect-square w-full bg-[#F9FAFB] dark:bg-gray-900/40 p-4 flex items-center justify-center group-hover:bg-gray-100 dark:group-hover:bg-gray-900/60 transition-colors overflow-hidden">
                                 <img
                                     src={product.image || `${API_BASE_URL}/products/${productId}/image`}
                                     alt={product.title}

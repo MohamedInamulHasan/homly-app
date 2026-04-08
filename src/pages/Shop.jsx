@@ -91,15 +91,16 @@ const Shop = () => {
     const isCategoriesLoading = loading?.categories || initialLoading;
 
     return (
-        <PullToRefreshLayout>
-            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-24 transition-colors duration-200">
-                <div className="w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-2 pt-4 pb-5 shadow-sm relative overflow-hidden mb-4">
-                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
-                    <div className="relative z-10">
-                        <HomeHeader />
-                    </div>
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-24 transition-colors duration-200">
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-2 pt-4 pb-5 shadow-sm overflow-hidden">
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="relative z-10">
+                    <HomeHeader />
                 </div>
-                
+            </div>
+            
+            <PullToRefreshLayout>
+                <div className="pt-[115px]">
                 <div className="max-w-7xl mx-auto px-4 mt-2">
                     <div className="mb-2">
                         {/* Removed Store/Service toggle for a cleaner experience */}
@@ -109,31 +110,44 @@ const Shop = () => {
                                 placeholder={t('Search by store name or location...')}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-12 pr-6 py-4 rounded-full border border-gray-100 bg-white text-gray-900 placeholder-gray-400 focus:outline-none transition-all duration-300"
+                                className="w-full pl-12 pr-6 py-4 rounded-full border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none transition-all duration-300 shadow-sm"
                             />
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2E5A2E] transition-colors" size={20} />
 
-                            {/* Search Results Dropdown */}
+                            {/* Search Results Dropdown (Wider/Full-container width) */}
                             {searchQuery.trim() && viewType === 'store' && (
-                                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 max-h-80 overflow-y-auto z-50 w-full overflow-x-hidden">
+                                <div className="absolute top-[calc(100%+12px)] left-0 right-0 bg-white dark:bg-gray-900 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 max-h-96 overflow-y-auto z-[200] animate-in fade-in slide-in-from-top-2 duration-300 shadow-sm">
                                     {(() => {
                                         const q = searchQuery.toLowerCase();
-                                        const results = safeStores.filter(store =>
-                                            store.name?.toLowerCase().includes(q) ||
-                                            store.address?.toLowerCase().includes(q)
-                                        ).sort((a, b) => {
-                                            const aName = t(a, 'name').toLowerCase();
-                                            const bName = t(b, 'name').toLowerCase();
-                                            const aStarts = aName.startsWith(q);
-                                            const bStarts = bName.startsWith(q);
-                                            if (aStarts && !bStarts) return -1;
-                                            if (!aStarts && bStarts) return 1;
-                                            return 0;
-                                        }).slice(0, 5);
+                                        const results = safeStores
+                                            .filter(store =>
+                                                store.name?.toLowerCase().includes(q) ||
+                                                store.address?.toLowerCase().includes(q)
+                                            )
+                                            .sort((a, b) => {
+                                                const isOpenA = isStoreOpen(a);
+                                                const isOpenB = isStoreOpen(b);
+                                                
+                                                // 1. Open first
+                                                if (isOpenA && !isOpenB) return -1;
+                                                if (!isOpenA && isOpenB) return 1;
+                                                
+                                                // 2. Starts with query prioritization
+                                                const aName = a.name?.toLowerCase() || '';
+                                                const bName = b.name?.toLowerCase() || '';
+                                                
+                                                const aStarts = aName.startsWith(q);
+                                                const bStarts = bName.startsWith(q);
+                                                
+                                                if (aStarts && !bStarts) return -1;
+                                                if (!aStarts && bStarts) return 1;
+                                                return 0;
+                                            })
+                                            .slice(0, 10);
 
                                         if (results.length === 0) {
                                             return (
-                                                <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                                <div className="p-8 text-center text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap overflow-hidden">
                                                     {t('No stores found')}
                                                 </div>
                                             );
@@ -142,49 +156,41 @@ const Shop = () => {
                                         return results.map((store) => {
                                             const storeId = store._id || store.id;
                                             const isOpen = isStoreOpen(store);
+                                            const isClosed = !isOpen;
+                                            const name = t(store, 'name');
 
                                             return (
                                                 <div
                                                     key={storeId}
                                                     onClick={() => {
+                                                        if (isClosed) return;
                                                         navigate(`/store/${storeId}`);
                                                         setSearchQuery('');
                                                     }}
-                                                    className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0 text-left"
+                                                    className={`flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50/80 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-50 dark:border-gray-700 last:border-b-0 text-left ${isClosed ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'}`}
                                                 >
                                                     <div className="relative flex-shrink-0">
-                                                        <img
-                                                            src={store.image || `${API_BASE_URL}/stores/${storeId}/image`}
-                                                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=Store'; }}
-                                                            alt={store.name}
-                                                            className="w-10 h-10 rounded-lg object-cover border border-gray-100 dark:border-gray-700"
-                                                        />
-                                                        {/* Status Badge (Ultra-Compact) */}
-                                                        <div className={`absolute bottom-0 right-0 ${isOpen ? 'bg-green-500' : 'bg-red-500'} px-1 py-0 rounded-tl-sm z-10 pointer-events-none shadow-sm border-l border-t border-white/20 h-2.5 flex items-center`}>
-                                                            <span className="text-[6px] font-bold text-white leading-none">
-                                                                {isOpen ? t('Open') : t('Closed')}
-                                                            </span>
+                                                        <div className={`w-12 h-12 rounded-[1rem] bg-gray-50 dark:bg-gray-700 p-1 flex items-center justify-center overflow-hidden border border-gray-100 dark:border-gray-600 ${isClosed ? 'blur-[1px]' : ''}`}>
+                                                            <img
+                                                                src={store.image || `${API_BASE_URL}/stores/${storeId}/image`}
+                                                                onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=Store'; }}
+                                                                alt={store.name}
+                                                                className="w-full h-full object-cover"
+                                                            />
                                                         </div>
+                                                        {isClosed && (
+                                                            <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-[1rem]">
+                                                                <span className="bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-tighter">
+                                                                    {t('Closed')}
+                                                                </span>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <div className="text-sm font-semibold text-gray-900 dark:text-white truncate">
-                                                            {(() => {
-                                                                const fullTitle = t(store, 'name');
-                                                                const bracketIndex = fullTitle.indexOf('(');
-                                                                if (bracketIndex !== -1) {
-                                                                    const mainPart = fullTitle.substring(0, bracketIndex);
-                                                                    const bracketPart = fullTitle.substring(bracketIndex);
-                                                                    return (
-                                                                        <>
-                                                                            <span>{mainPart}</span>
-                                                                            <span className="text-[10px] font-normal text-gray-500 dark:text-gray-400">{bracketPart}</span>
-                                                                        </>
-                                                                    );
-                                                                }
-                                                                return fullTitle;
-                                                            })()}
+                                                        <div className={`font-normal text-gray-800 dark:text-gray-200 truncate text-[13px] tracking-tight leading-tight ${isClosed ? 'opacity-60' : ''}`}>
+                                                            {name}
                                                         </div>
-                                                        <p className="text-[10px] text-gray-500 dark:text-gray-400 truncate">
+                                                        <p className="text-[10px] text-gray-400 dark:text-gray-500 truncate mt-0.5 font-normal">
                                                             {t(store, 'address')}
                                                         </p>
                                                     </div>
@@ -197,25 +203,28 @@ const Shop = () => {
 
                             {/* Service Search Results Dropdown */}
                             {searchQuery.trim() && viewType === 'service' && (
-                                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 max-h-80 overflow-y-auto z-50 w-full overflow-x-hidden">
+                                <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-white dark:bg-gray-900 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 max-h-96 overflow-y-auto z-[200] animate-in fade-in slide-in-from-top-2 duration-300 shadow-sm">
                                     {(() => {
                                         const q = searchQuery.toLowerCase();
-                                        const results = services.filter(service =>
-                                            service.name?.toLowerCase().includes(q) ||
-                                            service.category?.toLowerCase().includes(q)
-                                        ).sort((a, b) => {
-                                            const aName = t(a, 'name').toLowerCase();
-                                            const bName = t(b, 'name').toLowerCase();
-                                            const aStarts = aName.startsWith(q);
-                                            const bStarts = bName.startsWith(q);
-                                            if (aStarts && !bStarts) return -1;
-                                            if (!aStarts && bStarts) return 1;
-                                            return 0;
-                                        }).slice(0, 5);
+                                        const results = services
+                                            .filter(service =>
+                                                service.name?.toLowerCase().includes(q) ||
+                                                service.category?.toLowerCase().includes(q)
+                                            )
+                                            .sort((a, b) => {
+                                                const aName = t(a, 'name').toLowerCase();
+                                                const bName = t(b, 'name').toLowerCase();
+                                                const aStarts = aName.startsWith(q);
+                                                const bStarts = bName.startsWith(q);
+                                                if (aStarts && !bStarts) return -1;
+                                                if (!aStarts && bStarts) return 1;
+                                                return 0;
+                                            })
+                                            .slice(0, 10);
 
                                         if (results.length === 0) {
                                             return (
-                                                <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                                <div className="p-8 text-center text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap overflow-hidden">
                                                     {t('No services found')}
                                                 </div>
                                             );
@@ -223,6 +232,7 @@ const Shop = () => {
 
                                         return results.map((service) => {
                                             const serviceId = service._id || service.id;
+                                            const name = t(service, 'name');
 
                                             return (
                                                 <div
@@ -231,35 +241,23 @@ const Shop = () => {
                                                         navigate(`/services?id=${serviceId}`);
                                                         setSearchQuery('');
                                                     }}
-                                                    className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0 text-left"
+                                                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50/80 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-50 dark:border-gray-700 last:border-b-0 text-left cursor-pointer"
                                                 >
                                                     <div className="relative flex-shrink-0">
-                                                        <img
-                                                            src={service.image || `${API_BASE_URL}/services/${serviceId}/image`}
-                                                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=Service'; }}
-                                                            alt={service.name}
-                                                            className="w-10 h-10 rounded-lg object-cover border border-gray-100 dark:border-gray-700"
-                                                        />
+                                                        <div className="w-12 h-12 rounded-[1rem] bg-gray-50 dark:bg-gray-700 p-1 flex items-center justify-center overflow-hidden border border-gray-100 dark:border-gray-600">
+                                                            <img
+                                                                src={service.image || `${API_BASE_URL}/services/${serviceId}/image`}
+                                                                onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=Service'; }}
+                                                                alt={service.name}
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        </div>
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <div className="text-sm font-semibold text-gray-900 dark:text-white truncate">
-                                                            {(() => {
-                                                                const fullTitle = t(service, 'name');
-                                                                const bracketIndex = fullTitle.indexOf('(');
-                                                                if (bracketIndex !== -1) {
-                                                                    const mainPart = fullTitle.substring(0, bracketIndex);
-                                                                    const bracketPart = fullTitle.substring(bracketIndex);
-                                                                    return (
-                                                                        <>
-                                                                            <span>{mainPart}</span>
-                                                                            <span className="text-[10px] font-normal text-gray-500 dark:text-gray-400">{bracketPart}</span>
-                                                                        </>
-                                                                    );
-                                                                }
-                                                                return fullTitle;
-                                                            })()}
+                                                        <div className="font-normal text-gray-800 dark:text-gray-200 truncate text-[13px] tracking-tight leading-tight">
+                                                            {name}
                                                         </div>
-                                                        <p className="text-[10px] text-gray-500 dark:text-gray-400 truncate">
+                                                        <p className="text-[10px] text-gray-400 dark:text-gray-500 truncate mt-0.5 font-normal">
                                                             {service.category || t('Service')}
                                                         </p>
                                                     </div>
@@ -300,13 +298,13 @@ const Shop = () => {
                                                         });
                                                     }}
                                                     className={`pb-3 text-sm font-bold transition-all relative whitespace-nowrap uppercase tracking-wide ${isActive
-                                                        ? 'text-[#2E5A2E]'
-                                                        : 'text-gray-400 hover:text-gray-600'
+                                                        ? 'text-black dark:text-white'
+                                                        : 'text-gray-400 hover:text-black dark:hover:text-white'
                                                         }`}
                                                 >
                                                     {t(category.name)}
                                                     {isActive && (
-                                                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2E5A2E] rounded-full"></div>
+                                                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-black dark:bg-white rounded-full"></div>
                                                     )}
                                                 </button>
                                             );
@@ -433,8 +431,9 @@ const Shop = () => {
                         )}
                     </AnimatePresence>
                 </div>
-            </div>
-        </PullToRefreshLayout>
+                </div>
+            </PullToRefreshLayout>
+        </div>
     );
 };
 

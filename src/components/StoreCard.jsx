@@ -18,7 +18,7 @@ const StoreCard = ({ store }) => {
     return (
         <div
             onClick={handleVisit}
-            className={`group relative bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 aspect-[16/9] md:aspect-[2.4/1] w-full cursor-pointer border border-gray-100 dark:border-gray-700/50 ${!isOpen ? 'grayscale opacity-75' : ''}`}
+            className={`group relative bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 aspect-[16/9] md:aspect-[2.4/1] w-full cursor-pointer border border-gray-100 dark:border-gray-700/50 ${!isOpen ? 'opacity-90' : ''}`}
         >
             {/* Full Background Image */}
             <div className="absolute inset-0 z-0">
@@ -26,7 +26,7 @@ const StoreCard = ({ store }) => {
                 <img
                     src={store.image || `${API_BASE_URL}/stores/${store._id || store.id}/image`}
                     alt={store.name}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 z-10"
+                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110 z-10 ${!isOpen ? 'blur-[2px]' : ''}`}
                     loading="lazy"
                     onError={(e) => {
                         e.target.onerror = null;
@@ -35,25 +35,25 @@ const StoreCard = ({ store }) => {
                 />
                 
                 {/* Dark Gradient Overlay for Text Readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className={`absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent transition-opacity duration-300 ${!isOpen ? 'opacity-100 bg-black/20' : 'opacity-90 group-hover:opacity-100'}`} />
             </div>
 
-            {/* Top Status Badge */}
+            {/* Status Overlays (Centered for Premium Feel) */}
             {!isOpen && (
-                <div className="absolute top-4 right-4 z-20">
-                    <span className="px-3 py-1 bg-red-600/90 backdrop-blur-sm rounded-full text-[10px] font-black text-white uppercase tracking-wider shadow-lg">
+                <div className="absolute inset-0 z-20 bg-black/5 flex items-center justify-center backdrop-blur-[1px]">
+                    <span className="px-6 py-2 bg-black/60 backdrop-blur-md rounded-full text-[12px] font-bold text-white uppercase tracking-widest shadow-2xl border border-white/10 animate-in fade-in zoom-in-95 duration-500">
                         {t('Closed')}
                     </span>
                 </div>
             )}
 
             {/* Content Section - Overlaid on Green Banner at Bottom */}
-            <div className="absolute bottom-0 left-0 right-0 py-2.5 px-4 z-20 overflow-hidden">
+            <div className={`absolute bottom-0 left-0 right-0 py-2.5 px-4 z-20 overflow-hidden transition-all duration-300 ${!isOpen ? 'blur-[2px] opacity-80' : ''}`}>
                 {/* Semi-transparent Green Banner Strip */}
                 <div className="absolute inset-0 bg-[#2E5A2E]/75 backdrop-blur-md border-t border-white/10" />
                 
                 <div className="relative z-10">
-                    <h3 className="text-white text-[15px] font-semibold tracking-tight leading-tight mb-0.5 drop-shadow-sm">
+                    <h3 className="text-white text-[15px] font-semibold tracking-tight leading-tight mb-0.5 drop-shadow-sm truncate">
                         {t(store, 'name')}
                     </h3>
                     <div className="flex items-center gap-1.5 opacity-90">
@@ -66,7 +66,7 @@ const StoreCard = ({ store }) => {
             </div>
 
             {/* Right Action - Floating Arrow (Synced with slimmer banner) */}
-            <div className="absolute bottom-4 right-4 z-20">
+            <div className={`absolute bottom-4 right-4 z-20 transition-all duration-300 ${!isOpen ? 'blur-[1.5px] opacity-40 scale-75' : ''}`}>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg ${
                     isOpen 
                     ? 'bg-[#CBF9B2] text-[#2E5A2E] scale-90 group-hover:scale-105 active:scale-90' 

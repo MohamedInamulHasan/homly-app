@@ -206,9 +206,9 @@ const ProductDetails = () => {
     const displayDescription = isDescriptionExpanded ? mainDesc : mainDesc.slice(0, 150) + (shouldTruncate ? '...' : '');
 
     return (
-        <div className="min-h-screen bg-[#F5F5F5] dark:bg-gray-900 transition-colors duration-200 flex flex-col">
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 flex flex-col">
             {/* Top Section: Full Image Area */}
-            <div className="relative w-full aspect-[4/4] md:aspect-[16/8] bg-[#F5F5F5] dark:bg-gray-900 flex items-center justify-center p-0 overflow-hidden">
+            <div className="relative w-full aspect-[4/4] md:aspect-[16/8] bg-[#E8EAEF] dark:bg-gray-900 flex items-center justify-center p-0 overflow-hidden">
                 {/* Floating Navigation Buttons (Restored) */}
                 <div className="absolute top-6 left-6 right-6 flex items-center justify-between z-30">
                     <button
@@ -339,7 +339,7 @@ const ProductDetails = () => {
                         ) : (
                             <button
                                 onClick={handleCheckout}
-                                className="w-full bg-[#2E5A2E] hover:bg-[#1E3A1E] text-white py-4 rounded-full font-normal text-lg transition-all active:scale-[0.95] flex items-center justify-center gap-2"
+                                className="w-full bg-black hover:bg-gray-900 text-white py-4 rounded-full font-normal text-lg transition-all active:scale-[0.95] flex items-center justify-center gap-2"
                             >
                                 <Plus size={20} />
                                 {t('Add product')}

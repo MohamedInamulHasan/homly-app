@@ -26,43 +26,34 @@ const SavedProducts = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-            {/* Compact Header Section */}
-            <div className="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 transition-colors duration-200 mb-6">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => navigate(-1)}
-                            className="p-2 -ml-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-                        >
-                            <ArrowLeft className="h-6 w-6" />
-                        </button>
-                        <div>
-                            <h1 className="text-xl md:text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 leading-none flex items-center gap-2">
-                                <Bookmark className="text-blue-600 dark:text-blue-400" size={24} />
-                                {t('Saved Products')}
-                            </h1>
-                        </div>
-                    </div>
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200">
+            {/* Fixed Premium Header (matching Cart) */}
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-5 py-6 shadow-sm">
+                <div className="max-w-md mx-auto flex items-center justify-between">
+                     <button onClick={() => navigate(-1)} className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95">
+                         <ArrowLeft size={24} />
+                     </button>
+                     <h1 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight leading-none">{t('Saved Products')}</h1>
+                     <div className="w-12" /> {/* Spacer for centering */}
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[115px] pb-20">
 
                 {savedProducts.length === 0 ? (
-                    <div className="text-center py-16">
-                        <div className="w-32 h-32 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                            <Bookmark className="text-blue-600 dark:text-blue-400" size={56} />
+                    <div className="text-center py-24 flex flex-col items-center">
+                        <div className="w-32 h-32 bg-[#CBF9B2]/20 dark:bg-[#CBF9B2]/10 rounded-full flex items-center justify-center mb-8 shadow-sm">
+                            <Bookmark className="text-[#2E5A2E] dark:text-[#CBF9B2]" size={56} />
                         </div>
-                        <h2 className="text-2xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-3">
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                             {t('No saved products')}
                         </h2>
-                        <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-sm mx-auto font-medium">
+                        <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-sm mx-auto font-medium leading-relaxed">
                             {t('Products you mark as favorite will appear here for easy access.')}
                         </p>
                         <Link
                             to="/store"
-                            className="inline-flex items-center justify-center px-8 py-3.5 border border-transparent text-base font-bold rounded-xl text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
+                            className="inline-flex items-center justify-center px-10 py-4 border border-transparent text-base font-bold rounded-full text-white bg-[#7CA90E] shadow-lg hover:shadow-xl transition-all active:scale-95"
                         >
                             {t('Browse Products')}
                         </Link>

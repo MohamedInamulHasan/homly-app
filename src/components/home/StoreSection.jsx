@@ -5,10 +5,36 @@ import { isStoreOpen } from '../../utils/storeHelpers';
 import { groupProducts } from '../../utils/productGrouping';
 import { useData } from '../../context/DataContext';
 import ProductCard from '../ProductCard';
+import { useState, useEffect, useMemo } from 'react';
 
 const StoreSection = ({ section, products = [] }) => {
     const { t } = useLanguage();
-    const { stores: contextStores } = useData();
+    const { stores: contextStores, globalSortOrder } = useData();
+    const [cycleIndex, setCycleIndex] = useState(0);
+
+    // 1. Group products by their category/subcategory
+    const productsByCategory = useMemo(() => {
+        const grouped = products.reduce((acc, p) => {
+            const cat = p.category || 'Other';
+            if (!acc[cat]) acc[cat] = [];
+            acc[cat].push(p);
+            return acc;
+        }, {});
+
+        // Sort categories by product count (most products first)
+        return Object.entries(grouped)
+            .sort((a, b) => b[1].length - a[1].length)
+            .slice(0, 3); // Take top 3
+    }, [products]);
+
+    // 2. Auto-cycle timer (10 seconds)
+    useEffect(() => {
+        if (productsByCategory.length === 0) return;
+        const interval = setInterval(() => {
+            setCycleIndex(prev => prev + 1);
+        }, 10000);
+        return () => clearInterval(interval);
+    }, [productsByCategory]);
 
     if (products.length === 0) return null;
 
@@ -18,52 +44,78 @@ const StoreSection = ({ section, products = [] }) => {
 
     const isOpen = section.type === 'store' ? isStoreOpen(section.data) : true;
 
+    // 3. Logic to pick exactly 7 cards based on 2-3-2 or fallback
+    const displayProducts = (() => {
+        const slots = [];
+        const numCats = productsByCategory.length;
+        
+        if (numCats === 0) return [];
+
+        let distribution = [7];
+        if (numCats === 3) distribution = [2, 3, 2];
+        else if (numCats === 2) distribution = [4, 3];
+
+        productsByCategory.forEach(([catName, catProducts], i) => {
+            const slotCount = distribution[i];
+            const groupedInCat = groupProducts(catProducts, contextStores, { forcedStoreId: section.type === 'store' ? section.id : null });
+            
+            // Apply global price sorting
+            const sortedInCat = [...groupedInCat].sort((a, b) => {
+                const priceA = Number(a.price || 0);
+                const priceB = Number(b.price || 0);
+                if (globalSortOrder === 'lowToHigh') return priceA - priceB;
+                if (globalSortOrder === 'highToLow') return priceB - priceA;
+                return 0;
+            });
+
+            // Pick unique products starting from an offset determined by cycleIndex
+            const takeCount = Math.min(slotCount, sortedInCat.length);
+            for (let j = 0; j < takeCount; j++) {
+                const productIndex = (cycleIndex + j) % sortedInCat.length;
+                slots.push(sortedInCat[productIndex]);
+            }
+        });
+
+        return slots;
+    })();
+
     return (
-        <section className={`px-4 py-6 dark:bg-gray-900 border-b border-gray-50 dark:border-gray-800 last:border-b-0 transition-opacity duration-300 ${!isOpen ? 'opacity-80' : ''}`}>
+        <section className={`px-4 py-8 dark:bg-gray-900 border-b border-gray-50 dark:border-gray-800 last:border-b-0 transition-opacity duration-300 ${!isOpen ? 'opacity-80' : ''}`}>
             {/* Header */}
-            <div className="flex justify-between items-end mb-4 px-1">
-                <div className="flex flex-col">
+            <div className="flex justify-between items-end mb-6 px-1">
+                <div className="flex flex-col min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                        <h2 className="text-lg font-bold text-gray-900 dark:text-white leading-tight">
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white leading-tight truncate max-w-[280px] xs:max-w-[320px] sm:max-w-[450px]">
                             {t(section.name)}
                         </h2>
-                        {!isOpen && (
-                            <span className="bg-red-50 text-red-500 text-[9px] font-bold px-2 py-0.5 rounded-md border border-red-100 uppercase">
-                                {t('Closed')}
-                            </span>
-                        )}
                     </div>
                     {section.address && (
-                        <p className="text-[10px] text-gray-400 font-medium mt-0.5 truncate max-w-[200px]">
+                        <p className="text-[11px] text-gray-400 font-medium mt-1 truncate max-w-[260px] sm:max-w-[400px]">
                             {section.address}
                         </p>
                     )}
                 </div>
-                <Link to={navigateTo} className="text-sm font-bold text-[#2E5A2E] dark:text-green-400 hover:opacity-70 transition-all underline decoration-2 underline-offset-4">
+                <Link to={navigateTo} className="text-[13px] font-bold text-[#2E5A2E] dark:text-green-400 hover:opacity-70 transition-all underline decoration-[2.5px] underline-offset-[6px]">
                     {t('See All')}
                 </Link>
             </div>
             
-            {/* Horizontal Scroll Layout */}
-            <div className="flex overflow-x-auto scrollbar-hide gap-3 pb-2 px-1">
-                {(() => {
-                    const groupedProducts = groupProducts(products, contextStores, { forcedStoreId: section.type === 'store' ? section.id : null }).slice(0, 16);
-                    const rowCount = groupedProducts.length <= 2 ? 1 : 2;
-                    
-                    return (
-                        <div className={`grid grid-rows-${rowCount} grid-flow-col gap-3`}>
-                            {groupedProducts.map((product) => (
-                                <div key={product._id || product.id} className="w-[160px]">
-                                    <ProductCard 
-                                        product={product} 
-                                        showCartControls={true} 
-                                        showHeart={true}
-                                    />
-                                </div>
-                            ))}
+            {/* Horizontal Scroll Layout (Fixed at 7 Cards) */}
+            <div className="flex overflow-x-auto scrollbar-hide gap-4 pb-2 px-1">
+                <div className="flex gap-4">
+                    {displayProducts.map((product, idx) => (
+                        <div 
+                            key={`${product._id || product.id}-${idx}-${cycleIndex}`} 
+                            className="w-[165px] animate-in fade-in slide-in-from-right-2 duration-500"
+                        >
+                            <ProductCard 
+                                product={product} 
+                                showCartControls={true} 
+                                showHeart={true}
+                            />
                         </div>
-                    );
-                })()}
+                    ))}
+                </div>
             </div>
         </section>
     );

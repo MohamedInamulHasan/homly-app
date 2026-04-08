@@ -70,6 +70,7 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, TouchSensor, 
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableAdCard, SortableProductRow, DragHandle, SortableItemContext, SortableSubcategoryItem } from './AdminDashboard_Sortables';
 import { CSS } from '@dnd-kit/utilities';
+import LogoutModal from '../../components/LogoutModal';
 
 const AdminDashboard = () => {
     const { user, logout } = useAuth(); // Get current user & logout method
@@ -155,7 +156,7 @@ const AdminDashboard = () => {
     // --- STORE ADMIN VIEW ---
     if (isStoreAdmin) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-colors duration-200 relative">
+            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 flex transition-colors duration-200 relative">
                 {/* Mobile Menu Button */}
                 <button
                     onClick={toggleMobileMenu}
@@ -206,8 +207,26 @@ const AdminDashboard = () => {
                             active={activeTab === 'orders'}
                             onClick={setActiveTab}
                         />
+                        <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
+                            <SidebarItem
+                                icon={<LogOut size={20} />}
+                                label={t('Logout')}
+                                id="logout"
+                                active={false}
+                                onClick={() => setShowLogoutModal(true)}
+                            />
+                        </div>
                     </nav>
                 </div>
+
+                <LogoutModal 
+                    isOpen={showLogoutModal} 
+                    onClose={() => setShowLogoutModal(false)} 
+                    onConfirm={() => {
+                        logout();
+                        navigate('/login');
+                    }} 
+                />
 
                 {/* Main Content */}
                 <div className="flex-1 overflow-auto w-full">
@@ -240,7 +259,7 @@ const AdminDashboard = () => {
     // --- SERVICE ADMIN VIEW ---
     if (isServiceAdmin) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-colors duration-200 relative">
+            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 flex transition-colors duration-200 relative">
                 {/* Mobile Menu Button */}
                 <button
                     onClick={toggleMobileMenu}
@@ -276,8 +295,26 @@ const AdminDashboard = () => {
                             active={activeTab === 'services'}
                             onClick={setActiveTab}
                         />
+                        <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
+                            <SidebarItem
+                                icon={<LogOut size={20} />}
+                                label={t('Logout')}
+                                id="logout"
+                                active={false}
+                                onClick={() => setShowLogoutModal(true)}
+                            />
+                        </div>
                     </nav>
                 </div>
+
+                <LogoutModal 
+                    isOpen={showLogoutModal} 
+                    onClose={() => setShowLogoutModal(false)} 
+                    onConfirm={() => {
+                        logout();
+                        navigate('/login');
+                    }} 
+                />
 
                 {/* Main Content */}
                 <div className="flex-1 overflow-auto w-full">
@@ -307,38 +344,15 @@ const AdminDashboard = () => {
     // --- DELIVERY BOY VIEW ---
     if (isDeliveryBoy) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-colors duration-200 relative">
-                {/* Logout Confirmation Modal */}
-                {showLogoutModal && (
-                    <div className="fixed inset-0 bg-black/50 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl transform transition-all scale-100 opacity-100 flex flex-col items-center">
-                            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-4">
-                                <LogOut size={32} className="text-red-600 dark:text-red-400" />
-                            </div>
-                            <h3 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-2">{t('Sign Out')}</h3>
-                            <p className="text-gray-500 dark:text-gray-400 text-center mb-6">
-                                {t('Are you sure you want to sign out?')}
-                            </p>
-                            <div className="flex gap-4 w-full">
-                                <button
-                                    onClick={() => setShowLogoutModal(false)}
-                                    className="flex-1 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                                >
-                                    {t('Cancel')}
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        logout();
-                                        navigate('/login');
-                                    }}
-                                    className="flex-1 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 shadow-md shadow-red-500/20 transition-colors"
-                                >
-                                    {t('Sign Out')}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
+            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 flex transition-colors duration-200 relative">
+                <LogoutModal 
+                    isOpen={showLogoutModal} 
+                    onClose={() => setShowLogoutModal(false)} 
+                    onConfirm={() => {
+                        logout();
+                        navigate('/login');
+                    }} 
+                />
 
                 {/* Mobile Menu Button */}
                 <button
@@ -416,7 +430,7 @@ const AdminDashboard = () => {
 
     // --- GLOBAL ADMIN VIEW ---
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-colors duration-200 relative">
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 flex transition-colors duration-200 relative">
             {/* Mobile Menu Button */}
             <button
                 onClick={toggleMobileMenu}
@@ -555,9 +569,26 @@ const AdminDashboard = () => {
                         active={activeTab === 'settings'}
                         onClick={setActiveTab}
                     />
-                    {/* End Settings Link */}
-                </nav>
-            </div>
+                        <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
+                            <SidebarItem
+                                icon={<LogOut size={20} />}
+                                label={t('Logout')}
+                                id="logout"
+                                active={false}
+                                onClick={() => setShowLogoutModal(true)}
+                            />
+                        </div>
+                    </nav>
+                </div>
+
+                <LogoutModal 
+                    isOpen={showLogoutModal} 
+                    onClose={() => setShowLogoutModal(false)} 
+                    onConfirm={() => {
+                        logout();
+                        navigate('/login');
+                    }} 
+                />
 
             {/* Main Content */}
             <div className="flex-1 overflow-auto w-full">

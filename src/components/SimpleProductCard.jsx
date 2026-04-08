@@ -107,6 +107,21 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
         }
     };
 
+    // Auto-cycling variants logic (for Group cards)
+    const [currentVariantIndex, setCurrentVariantIndex] = useState(0);
+    const variants = product.variants || [];
+    const isGroupProduct = product.isGroup && variants.length > 0;
+
+    useEffect(() => {
+        if (!isGroupProduct) return;
+        const interval = setInterval(() => {
+            setCurrentVariantIndex(prev => (prev + 1) % variants.length);
+        }, 3000); // Cycle every 3 seconds
+        return () => clearInterval(interval);
+    }, [isGroupProduct, variants.length]);
+
+    const featuredVariant = isGroupProduct ? variants[currentVariantIndex] : product;
+
     // Handle Grouped Products
     if (product.isGroup) {
         return (
@@ -114,7 +129,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                 to={`/product-group/${encodeURIComponent(product.title)}?${isFastPurchase ? 'fast=true&' : ''}${product.storeId ? `storeId=${product.storeId._id || product.storeId}` : ''}`}
                 className={`rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 ${(product.anyStoreOpen && isStoreOpenCheck) ? 'hover:scale-[1.01]' : 'opacity-75 grayscale-[0.5]'}`}
             >
-                <div className={`relative pb-[100%] m-1 rounded-2xl overflow-hidden bg-gray-200`}>
+            <div className={`relative pb-[100%] m-1 rounded-2xl overflow-hidden bg-[#F9FAFB]`}>
                     
                     {/* Delivery Tag */}
                     <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-[25] pointer-events-none">
@@ -125,10 +140,11 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                         )}
                     </div>
                     <img
-                        src={product.image || `${API_BASE_URL}/products/${product._id.replace('group-', '')}/image`}
-                        alt={t(product, 'title')}
+                        key={featuredVariant.image || currentVariantIndex}
+                        src={featuredVariant.image || `${API_BASE_URL}/products/${(featuredVariant._id || featuredVariant.id)?.toString().replace('group-', '')}/image`}
+                        alt={t(featuredVariant, 'title')}
                         loading="lazy"
-                        className={`absolute top-0 left-0 w-full h-full object-cover transition-transform duration-300 ${(isStoreOpenCheck && product.anyStoreOpen) ? 'hover:scale-105' : 'grayscale'}`}
+                        className={`absolute top-0 left-0 w-full h-full object-cover transition-all duration-700 animate-in fade-in zoom-in-95 ${(isStoreOpenCheck && product.anyStoreOpen) ? 'hover:scale-105' : 'grayscale'}`}
                         onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300?text=No+Image'; }}
                     />
                     {/* Show Closed Overlay for Group ONLY if ALL stores are closed */}
@@ -245,7 +261,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
             className={`rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 ${isStoreOpenCheck && isAvailable ? 'hover:scale-[1.01]' : 'opacity-75 grayscale-[0.5] cursor-not-allowed'
                 }`}
         >
-            <div className={`relative pb-[100%] m-1 rounded-2xl overflow-hidden bg-gray-200`}>
+            <div className={`relative pb-[100%] m-1 rounded-2xl overflow-hidden bg-[#F9FAFB]`}>
                     <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-[25] pointer-events-none">
                         {product.isGold && (
                             <span className="bg-[#2E5A2E] text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-br-lg">
@@ -292,7 +308,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
             <div className="p-3 flex flex-col flex-1 border-t border-gray-100 dark:border-gray-700">
                 <div className="w-full">
                     {(() => {
-                        const fullTitle = t(product, 'title');
+                        const fullTitle = t(featuredVariant, 'title');
                         const bracketIndex = fullTitle.indexOf('(');
                         let mainTitle = fullTitle;
                         let bracketContent = '';

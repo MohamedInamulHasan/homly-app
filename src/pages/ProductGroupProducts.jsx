@@ -106,7 +106,7 @@ const ProductGroupProducts = () => {
 
     return (
         <PullToRefreshLayout>
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20 transition-colors duration-200">
+            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-20 transition-colors duration-200">
                 {/* Clean Header */}
                 <div className="relative max-w-7xl mx-auto px-4 pt-8 pb-2 flex items-center justify-center">
                     <button

@@ -71,6 +71,21 @@ const ProductCard = ({ product, showCartControls = true, showHeart = true, store
         }
     };
 
+    // Auto-cycling variants logic (for Group cards)
+    const [currentVariantIndex, setCurrentVariantIndex] = useState(0);
+    const variants = product.variants || [];
+    const isGroup = product.isGroup && variants.length > 0;
+
+    useEffect(() => {
+        if (!isGroup) return;
+        const interval = setInterval(() => {
+            setCurrentVariantIndex(prev => (prev + 1) % variants.length);
+        }, 3000); // Cycle every 3 seconds
+        return () => clearInterval(interval);
+    }, [isGroup, variants.length]);
+
+    const featuredVariant = isGroup ? variants[currentVariantIndex] : product;
+
     return (
         <div className={`relative flex flex-col h-full bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-[0_2px_15px_rgba(0,0,0,0.04)] border border-gray-100 dark:border-gray-700/50 group transition-all duration-300 ${!isOpen || !isAvailable ? 'opacity-80' : 'hover:shadow-[0_8px_25px_rgba(0,0,0,0.08)]'}`}>
             
@@ -101,11 +116,12 @@ const ProductCard = ({ product, showCartControls = true, showHeart = true, store
                 )}
 
                 {/* Image Container (Full Bleed) */}
-                <div className="aspect-square bg-gray-200 m-1 rounded-2xl overflow-hidden flex items-center justify-center">
+                <div className="aspect-square bg-[#F9FAFB] m-1 rounded-2xl overflow-hidden flex items-center justify-center">
                     <img
-                        src={product.image || `${API_BASE_URL}/products/${productId}/image`}
-                        alt={t(product, 'title')}
-                        className={`w-full h-full object-cover transition-transform duration-700 ${isAvailable && isOpen ? 'group-hover:scale-110' : ''}`}
+                        key={featuredVariant.image || currentVariantIndex} // Force new element per variant for animation
+                        src={featuredVariant.image || `${API_BASE_URL}/products/${featuredVariant._id || featuredVariant.id}/image`}
+                        alt={t(featuredVariant, 'title')}
+                        className={`w-full h-full object-cover transition-all duration-700 animate-in fade-in zoom-in-95 ${isAvailable && isOpen ? 'group-hover:scale-110' : ''}`}
                         loading="lazy"
                         onError={(e) => { e.target.onerror = null; e.target.src = 'https://atlas-content-cdn.pixelbin.io/ast/feed_v2/static_assets/common/vegetable_placeholder.png'; }}
                     />
@@ -113,9 +129,9 @@ const ProductCard = ({ product, showCartControls = true, showHeart = true, store
 
                 {/* Content Section */}
                 <div className="p-3 bg-white dark:bg-gray-800 flex flex-col flex-1 border-t border-gray-100 dark:border-gray-700">
-                    <div className="flex-1 min-h-[42px] mb-1 w-full flex flex-col justify-center">
+                    <div className="flex-1 min-h-[42px] mb-1 w-full flex flex-col justify-center transition-opacity duration-300">
                         {(() => {
-                            const fullTitle = t(product, 'title');
+                            const fullTitle = t(featuredVariant, 'title');
                             const bracketIndex = fullTitle.indexOf('(');
                             
                             if (bracketIndex !== -1) {

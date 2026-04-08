@@ -6,7 +6,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { useUserProfile } from '../hooks/queries/useUsers';
 import { getStoreName, formatDeliveryRange, calculateDeliveryCharge } from '../utils/storeHelpers';
-import { ArrowLeft, MapPin, Clock, CreditCard, ShoppingBag, Truck, AlertCircle, X, Navigation, ShieldCheck, Trash2, Store, Pencil } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, CreditCard, ShoppingBag, Truck, AlertCircle, X, Navigation, ShieldCheck, Trash2, Store, Pencil, Package, MoreHorizontal } from 'lucide-react';
 import { checkLocationPermission, requestLocationPermission } from '../utils/locationHelpers';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -249,20 +249,19 @@ const Checkout = () => {
     const finalTotal = displayTotal + deliveryCharge;
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8 pb-24 transition-colors duration-200">
-            <div className="max-w-7xl mx-auto">
-                <div className="flex items-center gap-4 mb-8">
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors flex-shrink-0"
-                    >
-                        <ArrowLeft className="text-gray-900 dark:text-white" size={24} />
-                    </button>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                        <ShieldCheck className="text-blue-600 dark:text-blue-400" />
-                        {t('Checkout')}
-                    </h1>
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 pb-[380px] md:pb-24 relative">
+            {/* Simple Header */}
+            <div className="w-full px-5 py-6">
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
+                     <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95 border border-gray-100/50">
+                         <ArrowLeft size={22} />
+                     </button>
+                     <h1 className="text-[17px] font-bold text-gray-900 dark:text-white tracking-tight">{t('Checkout')}</h1>
+                     <div className="w-[42px]" /> {/* Spacer */}
                 </div>
+            </div>
+
+            <div className="pt-2 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Location Toast Message */}
                 {locationMessage.show && (
@@ -285,11 +284,15 @@ const Checkout = () => {
                     {/* Checkout Form */}
                     <div className="lg:col-span-2 space-y-8">
                         {/* Shipping Address */}
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-                                <MapPin className="text-blue-600 dark:text-blue-400" size={24} />
-                                {t('Shipping Details')}
-                            </h2>
+                        <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 p-5 sm:p-6">
+                            <div className="flex items-center gap-3 mb-5">
+                                <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#7CA90E] dark:text-[#8bc910]">
+                                    <MapPin size={18} />
+                                </div>
+                                <h3 className="font-medium text-gray-900 dark:text-white text-base">
+                                    {t('Shipping Details')}
+                                </h3>
+                            </div>
 
                             {!isInitialized || authLoading ? (
                                 // Skeleton Loading State
@@ -299,12 +302,11 @@ const Checkout = () => {
                                 </div>
                             ) : !isEditingAddress ? (
                                 // Address Card View
-                                <div className="relative overflow-hidden bg-gradient-to-br from-white to-blue-50/50 dark:from-gray-800 dark:to-gray-800/50 rounded-2xl p-6 border border-blue-100 dark:border-gray-700 shadow-sm group transition-all hover:shadow-md hover:border-blue-200 dark:hover:border-gray-600">
-                                    <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-500 rounded-l-2xl"></div>
+                                <div className="relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm group transition-all">
                                     <button
                                         type="button"
                                         onClick={() => setIsEditingAddress(true)}
-                                        className="absolute top-4 right-4 p-2.5 text-blue-600 dark:text-blue-400 hover:bg-white dark:hover:bg-gray-700 rounded-full shadow-sm transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:scale-110"
+                                        className="absolute top-4 right-4 p-2.5 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full shadow-sm transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:scale-110"
                                         title={t('Edit Address')}
                                     >
                                         <Pencil size={18} />
@@ -451,7 +453,7 @@ const Checkout = () => {
                                             }
                                         }}
                                         disabled={isNavigating}
-                                        className="w-full bg-blue-600 text-white p-4 rounded-xl shadow-md shadow-blue-500/10 hover:bg-blue-700 transition-all duration-300 text-left flex items-center justify-between"
+                                        className="w-full bg-[#2E5A2E] text-white p-4 rounded-[1.5rem] shadow-md hover:bg-[#1E3A1E] transition-all duration-300 text-left flex items-center justify-between"
                                     >
                                         <div className="flex items-center gap-4">
                                             <div className="bg-white/20 p-2 rounded-lg flex-shrink-0">
@@ -465,7 +467,7 @@ const Checkout = () => {
                                                 <h3 className="font-semibold text-sm md:text-base">
                                                     {isNavigating ? t('Detecting Location...') : t('Use Current Location')}
                                                 </h3>
-                                                <p className="text-blue-100/80 text-xs mt-0.5">
+                                                <p className="text-gray-300 text-xs mt-0.5">
                                                     {t('Tap to autofill address details')}
                                                 </p>
                                             </div>
@@ -475,15 +477,15 @@ const Checkout = () => {
 
                                     {/* Saved GPS Indicator */}
                                     {formData.location && !isNavigating && (
-                                        <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl animate-fade-in">
-                                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                                            <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">
+                                        <div className="flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl animate-fade-in">
+                                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                            <span className="text-xs font-semibold text-green-700 dark:text-green-300">
                                                 {t('Saved GPS Location Attached')}
                                             </span>
                                             <button 
                                                 type="button"
                                                 onClick={() => setFormData(prev => ({ ...prev, location: '' }))}
-                                                className="ml-auto text-blue-400 hover:text-red-500 transition-colors"
+                                                className="ml-auto text-gray-400 hover:text-red-500 transition-colors"
                                                 title={t('Clear Location')}
                                             >
                                                 <X size={14} />
@@ -725,17 +727,17 @@ const Checkout = () => {
                                                 type="button"
                                                 onClick={() => setIsDeliveryTimeOpen(!isDeliveryTimeOpen)}
                                                 className={`w-full relative overflow-hidden rounded-2xl border transition-all duration-300 group ${formData.deliveryTime
-                                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                                                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300 dark:hover:border-blue-700'
+                                                    ? 'border-[#2E5A2E] bg-white dark:bg-gray-800'
+                                                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-[#2E5A2E] dark:hover:border-gray-500'
                                                     }`}
                                             >
                                                 <div className="p-4 flex items-center justify-between">
                                                     <div className="flex items-center gap-3">
-                                                        <div className={`p-2.5 rounded-xl transition-colors ${formData.deliveryTime ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500'}`}>
+                                                        <div className={`p-2.5 rounded-xl transition-colors ${formData.deliveryTime ? 'bg-[#2E5A2E] text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500'}`}>
                                                             <Clock size={20} className={formData.deliveryTime ? 'animate-pulse' : ''} />
                                                         </div>
                                                         <div className="text-left">
-                                                            <p className={`text-xs font-bold uppercase tracking-wider mb-0.5 ${formData.deliveryTime ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500'}`}>
+                                                            <p className={`text-xs font-bold uppercase tracking-wider mb-0.5 ${formData.deliveryTime ? 'text-[#2E5A2E] dark:text-green-400' : 'text-gray-500'}`}>
                                                                 {formData.deliveryTime ? t('Selected Time') : t('Select Time')}
                                                             </p>
                                                             <h3 className={`font-bold text-base sm:text-lg ${formData.deliveryTime ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-500'}`}>
@@ -754,7 +756,7 @@ const Checkout = () => {
 
                                                 {/* Progress Bar / Decorator */}
                                                 {formData.deliveryTime && (
-                                                    <div className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-blue-400 to-indigo-500 w-full" />
+                                                    <div className="absolute bottom-0 left-0 h-1 bg-[#2E5A2E] dark:bg-green-400 w-full" />
                                                 )}
                                             </button>
 
@@ -796,9 +798,9 @@ const Checkout = () => {
                                                                                         setIsDeliveryTimeOpen(false);
                                                                                     }}
                                                                                     className={`py-3 px-2 rounded-xl text-[11px] sm:text-sm font-medium whitespace-nowrap transition-all duration-200 border ${formData.deliveryTime === slot.value
-                                                                                        ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200 dark:shadow-blue-900/20 scale-[0.98]'
-                                                                                        : 'bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-200 border-transparent hover:bg-gray-100 dark:hover:bg-gray-600 hover:border-gray-200 dark:hover:border-gray-500'
-                                                                                        }`}
+                                                                                        ? 'bg-[#2E5A2E] text-white border-[#2E5A2E] shadow-md scale-[0.98]'
+                                                                                        : 'bg-green-50 text-[#2E5A2E] border-green-100 hover:bg-green-100 hover:border-[#2E5A2E]/40'
+                                                                                        }` }
                                                                                 >
                                                                                     {slot.label}
                                                                                 </button>
@@ -825,20 +827,24 @@ const Checkout = () => {
                         </div>
 
                         {/* Payment Method */}
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-                                <CreditCard className="text-blue-600 dark:text-blue-400" size={24} />
-                                {t('Payment Method')}
-                            </h2>
+                        <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 p-5 sm:p-6">
+                            <div className="flex items-center gap-3 mb-5">
+                                <div className="p-2 bg-gray-50 dark:bg-gray-700 rounded-lg text-gray-500 dark:text-gray-400">
+                                    <CreditCard size={18} />
+                                </div>
+                                <h3 className="font-medium text-gray-900 dark:text-white text-base">
+                                    {t('Payment Method')}
+                                </h3>
+                            </div>
                             <div className="space-y-4">
-                                <label className={`flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all ${formData.paymentMethod === 'cod' ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700 hover:border-blue-300'}`}>
+                                <label className={`flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all ${formData.paymentMethod === 'cod' ? 'border-[#2E5A2E] bg-green-50 dark:bg-gray-800' : 'border-gray-200 dark:border-gray-700 hover:border-[#2E5A2E]'}`}>
                                     <input
                                         type="radio"
                                         name="paymentMethod"
                                         value="cod"
                                         checked={formData.paymentMethod === 'cod'}
                                         onChange={handleChange}
-                                        className="w-5 h-5 text-blue-600 focus:ring-blue-500"
+                                        className="w-5 h-5 text-[#2E5A2E] focus:ring-[#2E5A2E] accent-[#2E5A2E]"
                                     />
                                     <div className="ml-4">
                                         <span className="block font-medium text-gray-900 dark:text-white">{t('Cash on Delivery')}</span>
@@ -854,94 +860,70 @@ const Checkout = () => {
 
                     {/* Order Summary */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 sticky top-24">
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">{t('Order Summary')}</h2>
+                        <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden sticky top-32">
+                            <div className="p-5 border-b border-gray-50 dark:border-gray-700 flex items-center gap-3">
+                                <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#7CA90E] dark:text-[#8bc910]">
+                                    <Package size={18} />
+                                </div>
+                                <h3 className="font-medium text-gray-900 dark:text-white text-base">{t('Order Summary')}</h3>
+                            </div>
 
-                            <div className="space-y-4 mb-6">
+                            <div className="divide-y divide-gray-50 dark:divide-gray-700 max-h-[45vh] overflow-y-auto">
                                 {displayItems.map((item) => (
-                                    <div key={item.id} className="flex gap-4 group">
-                                        <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 relative">
+                                    <div key={item.id} className="p-4 flex gap-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group">
+                                        <div className="h-16 w-16 bg-[#F9FAFB] border border-gray-100 dark:border-gray-700 rounded-xl overflow-hidden flex-shrink-0 relative">
                                             <img
                                                 src={item.image || `${API_BASE_URL}/products/${item._id || item.id}/image`}
                                                 onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
                                                 alt={item.adTitle || item.title}
                                                 className="h-full w-full object-cover object-center"
                                             />
-                                            {/* Status Tags */}
                                             <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
                                                 {item.isGold && (
                                                     <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
-                                                        Free
+                                                        {t('Free')}
                                                     </span>
                                                 )}
                                                 {item.isFromAd && (
                                                     <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm">
-                                                        Offer
+                                                        {t('Offer')}
                                                     </span>
                                                 )}
                                             </div>
-                                            {(() => {
-                                                const unitText = item.unit;
-                                                if (!unitText) return null;
-                                                return (
-                                                    <div className="absolute bottom-0 right-0 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-tl-xl rounded-br-[11px] z-10 pointer-events-none shadow-[0_-2px_4px_rgba(0,0,0,0.05)] border-t border-l border-white/50">
-                                                        <span className="text-[10px] font-extrabold tracking-tight text-gray-900 leading-none block">
-                                                            {unitText}
-                                                        </span>
-                                                    </div>
-                                                );
-                                            })()}
                                         </div>
-                                        <div className="flex flex-1 flex-col justify-center min-w-0">
+                                        <div className="flex-1 min-w-0 flex flex-col justify-center">
                                             {(() => {
-                                                // Use adTitle if available, otherwise use regular title
                                                 const displayTitle = item.adTitle || item.title || item.name || t('Product');
                                                 const fullTitle = t(item, 'title') || displayTitle;
-                                                // Use line-clamp-2 for ads to show full title, truncate for regular items
                                                 const titleClass = item.isFromAd ? 'line-clamp-2' : 'truncate';
-
-                                                // For special offers, show full title without bracket splitting
-                                                if (item.isFromAd) {
-                                                    return <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-1 leading-normal" title={fullTitle}>{fullTitle}</h3>;
-                                                }
-
-                                                // For regular items, apply bracket splitting logic
-                                                const bracketMatch = fullTitle.match(/[(（\[{]/);
-                                                const bracketIndex = bracketMatch ? bracketMatch.index : -1;
-
-                                                if (bracketIndex !== -1) {
-                                                    const mainTitle = fullTitle.substring(0, bracketIndex).trim();
-                                                    const bracketText = fullTitle.substring(bracketIndex).trim();
-                                                    return (
-                                                        <div>
-                                                            <h3 className={`text-sm font-medium text-gray-900 dark:text-white ${titleClass}`} title={mainTitle}>{mainTitle}</h3>
-                                                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5" title={bracketText}>{bracketText}</p>
-                                                        </div>
-                                                    );
-                                                }
-                                                return <h3 className={`text-sm font-medium text-gray-900 dark:text-white ${titleClass}`} title={fullTitle}>{fullTitle}</h3>;
+                                                return <h4 className={`text-sm font-medium text-gray-900 dark:text-white mb-0.5 ${titleClass}`} title={fullTitle}>{fullTitle}</h4>;
                                             })()}
                                             {(item.storeId || item.storeName) && (
-                                                <div className="flex items-center gap-1 mt-0.5">
-                                                    <Store size={10} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
-                                                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                                <div className="flex items-center gap-1 mb-1 mt-0.5">
+                                                    <p className="text-xs font-normal text-gray-500 dark:text-gray-400 truncate">
                                                         {getStoreName(item.storeId, stores) || item.storeName}
                                                     </p>
                                                 </div>
                                             )}
-                                            <div className="flex items-center gap-1.5">
-                                                <div className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300">
-                                                    {item.quantity}
+                                            <div className="flex items-center justify-between mt-auto">
+                                                <div className="flex items-center gap-2">
+                                                    {(item.unit || item.product?.unit) && (
+                                                        <span className="text-xs font-normal text-gray-500 dark:text-gray-400">
+                                                            {item.unit || item.product?.unit}
+                                                        </span>
+                                                    )}
+                                                    <div className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700/50 rounded-md text-xs font-normal text-gray-500 dark:text-gray-400 shrink-0">
+                                                        {item.quantity}
+                                                    </div>
                                                 </div>
+                                                <span className="font-bold text-gray-900 dark:text-white text-[15px]">₹{(item.price * item.quantity).toFixed(0)}</span>
                                             </div>
-                                            <p className="text-sm font-medium text-gray-900 dark:text-white">₹{(item.price * item.quantity).toFixed(0)}</p>
                                         </div>
-                                        {/* Only show remove button if NOT a direct purchase */}
                                         {!directPurchase && (
                                             <button
                                                 type="button"
                                                 onClick={() => removeFromCart(item.id)}
-                                                className="self-center p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100"
+                                                className="self-center p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100"
                                                 aria-label={t('Remove item')}
                                             >
                                                 <Trash2 size={18} />
@@ -951,40 +933,43 @@ const Checkout = () => {
                                 ))}
                             </div>
 
-                            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3">
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="text-gray-600 dark:text-gray-400">{t('Subtotal')}</span>
-                                    <span className="font-medium text-gray-900 dark:text-white">₹{displayTotal.toFixed(0)}</span>
-                                </div>
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="text-gray-600 dark:text-gray-400">{t('Delivery Charge')}</span>
-                                    {(hasCoins || hasGoldProduct) ? (
-                                        <div className="text-right">
-                                            <span className="font-medium text-green-600 dark:text-green-400">FREE</span>
-                                            {hasGoldProduct ? (
-                                                <p className="text-xs text-emerald-600 dark:text-emerald-500 flex items-center justify-end gap-1 font-bold">
-                                                    Free Delivery
-                                                </p>
-                                            ) : (
-                                                <p className="text-xs text-yellow-600 dark:text-yellow-500 flex items-center justify-end gap-1">
-                                                    <span>🪙</span> Coin Applied
-                                                </p>
-                                            )}
-                                        </div>
-                                    ) : (
-                                        <span className="font-medium text-gray-900 dark:text-white">₹20</span>
-                                    )}
-                                </div>
-                                <div className="flex items-center justify-between text-base font-bold pt-2 border-t border-gray-200 dark:border-gray-700">
-                                    <span className="text-gray-900 dark:text-white">{t('Total')}</span>
-                                    <span className="text-blue-600 dark:text-blue-400">₹{finalTotal.toFixed(0)}</span>
+                            <div className="hidden md:block p-5 bg-gray-50/50 dark:bg-gray-800/80 border-t border-gray-100 dark:border-gray-700">
+                                <div className="space-y-3 mb-6">
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span className="text-gray-600 dark:text-gray-400">{t('Subtotal')}</span>
+                                        <span className="font-medium text-gray-900 dark:text-white">₹{displayTotal.toFixed(0)}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span className="text-gray-600 dark:text-gray-400">{t('Delivery Charge')}</span>
+                                        {(hasCoins || hasGoldProduct) ? (
+                                            <div className="text-right">
+                                                <span className="font-medium text-green-600 dark:text-green-400">FREE</span>
+                                                {hasGoldProduct ? (
+                                                    <p className="text-xs text-emerald-600 dark:text-emerald-500 flex items-center justify-end gap-1 font-bold">
+                                                        Free Delivery
+                                                    </p>
+                                                ) : (
+                                                    <p className="text-xs text-yellow-600 dark:text-yellow-500 flex items-center justify-end gap-1">
+                                                        <span>🪙</span> Coin Applied
+                                                    </p>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <span className="font-medium text-gray-900 dark:text-white">₹20</span>
+                                        )}
+                                    </div>
+                                    <div className="flex items-center justify-between text-base font-bold pt-3 border-t border-gray-200 dark:border-gray-700">
+                                        <span className="text-gray-900 dark:text-white">{t('Grand Total')}</span>
+                                        <span className="text-black dark:text-white">₹{finalTotal.toFixed(0)}</span>
+                                    </div>
                                 </div>
                             </div>
+
 
                             <button
                                 onClick={handleSubmit}
                                 disabled={isNavigating}
-                                className="hidden md:flex w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg items-center justify-center gap-2 transition-all transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                className="hidden md:flex w-full mt-6 bg-black hover:bg-gray-900 text-white font-normal py-4 px-6 rounded-xl shadow-lg items-center justify-center gap-2 transition-all transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                             >
                                 {isNavigating ? (
                                     <>
@@ -1003,34 +988,47 @@ const Checkout = () => {
                 </form>
             </div >
 
-            {/* Sticky Action Footer - Mobile Only - Redesigned */}
-            < div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] z-50 md:hidden pb-[calc(0.75rem+env(safe-area-inset-bottom))] px-4 py-3" >
-                <div className="max-w-7xl mx-auto flex items-center gap-4">
-                    <div className="flex flex-col flex-shrink-0">
-                        <span className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider mb-0.5">{t('Total Amount')}</span>
-                        <div className="flex items-baseline gap-1">
-                            <span className="text-2xl font-extrabold text-blue-600 dark:text-blue-400">₹{finalTotal.toFixed(0)}</span>
-                        </div>
-                    </div>
+            {/* Bottom Pull-up Card (Order Summary) - Mobile Only */}
+            <div className="bg-white dark:bg-gray-800 rounded-t-[2.5rem] pt-6 pb-8 px-6 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] fixed bottom-0 w-full left-0 right-0 border-t border-gray-100 dark:border-gray-700 z-50 md:hidden">
+                 <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-[16px] font-bold text-gray-900 dark:text-white">{t('Payment')}</h2>
+                      <span className="text-[12px] font-semibold text-gray-400">{displayItems.length} item{displayItems.length > 1 ? 's' : ''}</span>
+                 </div>
 
-                    <button
-                        onClick={handleSubmit}
-                        disabled={isNavigating}
-                        className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3.5 px-4 text-base rounded-2xl shadow-lg shadow-blue-200 dark:shadow-blue-900/20 flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-70 disabled:grayscale"
-                    >
-                        {isNavigating ? (
-                            <>
-                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            </>
-                        ) : (
-                            <>
-                                <span>{t('Review Order')}</span>
-                                <ShoppingBag size={20} className="ml-1" />
-                            </>
-                        )}
-                    </button>
-                </div>
-            </div >
+                 <div className="space-y-4 mb-8">
+                      <div className="flex justify-between items-center">
+                           <span className="text-[14px] text-gray-400 font-medium">{t('Subtotal')}</span>
+                           <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹{displayTotal.toFixed(0)}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                           <span className="text-[14px] text-gray-400 font-medium">{t('Delivery Charge')}</span>
+                           {(hasCoins || hasGoldProduct) ? (
+                               <span className="text-[15px] font-bold text-green-600">FREE</span>
+                           ) : (
+                               <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹20</span>
+                           )}
+                      </div>
+                      <div className="flex justify-between items-center pt-2">
+                           <span className="text-[15px] text-gray-500 font-medium">{t('Total')}</span>
+                           <span className="text-[16px] font-bold text-gray-900 dark:text-white">₹{finalTotal.toFixed(0)}</span>
+                      </div>
+                 </div>
+
+                 <button
+                      onClick={handleSubmit}
+                      disabled={isNavigating}
+                      className="w-full bg-black text-white rounded-[2rem] py-4 flex items-center justify-center font-normal text-[15px] active:scale-[0.98] transition-transform shadow-lg shadow-gray-200 dark:shadow-gray-900/20 disabled:opacity-70 disabled:grayscale gap-2"
+                 >
+                      {isNavigating ? (
+                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      ) : (
+                          <>
+                              <span>{t('Review Order')}</span>
+                              <ShoppingBag size={20} className="ml-1" />
+                          </>
+                      )}
+                 </button>
+            </div>
         </div >
     );
 };

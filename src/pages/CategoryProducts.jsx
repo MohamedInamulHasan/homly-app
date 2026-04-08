@@ -33,35 +33,44 @@ const CategoryProducts = () => {
     const stores = Array.isArray(rawStores) ? rawStores : (rawStores?.data || []);
     const categories = Array.isArray(rawCategories) ? rawCategories : (rawCategories?.data || []);
 
-    // Filter products by category AND search query
-    const categoryProducts = products.filter(product => {
-        const matchesCategory = product.category && product.category.toLowerCase() === categoryName?.toLowerCase();
-        const matchesSearch = !searchQuery.trim() ||
-            product.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            product.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    // Filter products by category AND search query (INCLUDE closed for search)
+    const categoryProducts = useMemo(() => {
+        return products.filter(product => {
+            const matchesCategory = product.category && product.category.toLowerCase() === categoryName?.toLowerCase();
+            const matchesSearch = !searchQuery.trim() ||
+                product.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                product.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
-        // Consistent availability check (Manual + Time-based)
+            return matchesCategory && matchesSearch;
+        });
+    }, [products, categoryName, searchQuery]);
+
+    // Check if the product or its store is open/available
+    const checkProductOpen = (product, store) => {
         if (product.isAvailable === false) return false;
-
+        if (!isStoreOpen(store)) return false;
+        
         if (product.useTimeLimit) {
             const now = new Date();
-            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-            const opening = product.openingTime || '00:00';
-            const closing = product.closingTime || '23:59';
-            
-            if (opening <= closing) {
-                if (currentTime < opening || currentTime > closing) return false;
-            } else {
-                // Overnights case (e.g., 22:00 to 02:00)
-                if (currentTime < opening && currentTime > closing) return false;
-            }
+            const curTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            const op = product.openingTime || '00:00';
+            const cl = product.closingTime || '23:59';
+            if (op <= cl) return curTime >= op && curTime <= cl;
+            return curTime >= op || curTime <= cl;
         }
+        return true;
+    };
 
-        return matchesCategory && matchesSearch;
-    });
+    // Main display products (ONLY available/open)
+    const displayProducts = useMemo(() => {
+        return categoryProducts.filter(p => {
+            const store = stores.find(s => (s._id || s.id) === (p.storeId?._id || p.storeId));
+            return checkProductOpen(p, store);
+        });
+    }, [categoryProducts, stores]);
 
     // Always group products by title with centralized utility
-    const groupedList = groupProducts(categoryProducts, stores, { exactMatch: true });
+    const groupedList = groupProducts(displayProducts, stores, { exactMatch: true });
     const sortedList = sortProductsByGoldAndOpen(groupedList, stores);
 
     // Aggressive subcategory normalization (consistent with Home.jsx)
@@ -164,8 +173,7 @@ const CategoryProducts = () => {
         return result;
     }, [categoryProducts, stores, selectedSubcategory, categoryName, globalSortOrder, t]);
 
-    // Keep displayProducts for simple count checks
-    const displayProducts = useMemo(() => sections.flatMap(s => s.products), [sections]);
+
 
     useEffect(() => {
         const activePill = document.getElementById('active-cat-sub-pill');
@@ -179,14 +187,14 @@ const CategoryProducts = () => {
 
     return (
         <PullToRefreshLayout>
-            <div className="min-h-screen bg-gray-100 dark:bg-gray-900 pb-20 transition-colors duration-200">
+            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-20 transition-colors duration-200">
                 <div className="relative max-w-7xl mx-auto px-4 pt-8 pb-4 flex items-center justify-center">
-                    <Link
-                        to="/"
+                    <button
+                        onClick={() => navigate(-1)}
                         className="absolute left-4 w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-[0_2px_15px_rgba(0,0,0,0.06)] dark:shadow-none text-gray-700 dark:text-gray-300 transition-all active:scale-90 z-10"
                     >
                         <ChevronLeft size={28} strokeWidth={1.5} />
-                    </Link>
+                    </button>
                     <h1 className="text-xl font-normal text-gray-700 dark:text-gray-300 truncate leading-normal text-center px-16">
                         {(() => {
                             const fullName = t(categoryName);
@@ -203,7 +211,7 @@ const CategoryProducts = () => {
 
                 <div className="pt-1 pb-6">
                     <div className="max-w-7xl mx-auto px-4">
-                        <div className="flex items-center gap-3 relative z-50">
+                        <div className="flex items-center gap-3 relative z-[100]">
                             <div className="relative flex-1 group">
                                 <form onSubmit={(e) => e.preventDefault()}>
                                     <input
@@ -211,92 +219,118 @@ const CategoryProducts = () => {
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         placeholder={t('Search products...')}
-                                        className="w-full pl-12 pr-4 py-4 rounded-2xl border-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 shadow-[0_2px_15px_rgba(0,0,0,0.04)] focus:shadow-[0_4px_20px_rgba(0,0,0,0.08)] focus:outline-none transition-all duration-300"
+                                        className="w-full pl-12 pr-4 py-4 rounded-full border-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 shadow-sm focus:outline-none transition-all duration-300"
                                     />
-                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors" size={20} />
+                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2E5A2E] transition-colors" size={20} />
                                 </form>
                             </div>
                             <SortDropdown currentSort={globalSortOrder} onSortChange={setGlobalSortOrder} />
-                        </div>
 
-                        {/* Search Results Dropdown */}
-                        {searchQuery.trim() && (
-                            <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 max-h-96 overflow-y-auto z-30">
-                                {(() => {
-                                    const filteredDropdown = categoryProducts.slice(0, 5);
+                            {/* Search Results Dropdown - Expanded to full container width */}
+                            {searchQuery.trim() && (
+                                <div className="absolute top-[calc(100%+12px)] left-0 right-0 bg-white dark:bg-gray-900 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 max-h-96 overflow-y-auto z-[200] animate-in fade-in slide-in-from-top-2 duration-300 shadow-sm">
+                                    {(() => {
+                                        const query = searchQuery.toLowerCase();
+                                        const filteredDropdown = categoryProducts
+                                            .filter(p => 
+                                                p.title?.toLowerCase().includes(query) || 
+                                                p.title_ta?.toLowerCase().includes(query)
+                                            )
+                                            .sort((a, b) => {
+                                                const aStore = stores.find(s => (s._id || s.id) === (a.storeId?._id || a.storeId));
+                                                const bStore = stores.find(s => (s._id || s.id) === (b.storeId?._id || b.storeId));
+                                                
+                                                const aOpen = checkProductOpen(a, aStore);
+                                                const bOpen = checkProductOpen(b, bStore);
+                                                
+                                                // 1. Open first
+                                                if (aOpen && !bOpen) return -1;
+                                                if (!aOpen && bOpen) return 1;
+                                                
+                                                // 2. Starts with query prioritization
+                                                const aTitle = a.title?.toLowerCase() || '';
+                                                const bTitle = b.title?.toLowerCase() || '';
+                                                
+                                                const aStarts = aTitle.startsWith(query);
+                                                const bStarts = bTitle.startsWith(query);
+                                                
+                                                if (aStarts && !bStarts) return -1;
+                                                if (!aStarts && bStarts) return 1;
+                                                return 0;
+                                            })
+                                            .slice(0, 10);
 
-                                    if (filteredDropdown.length === 0) {
-                                        return (
-                                            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-                                                {t('No products found')}
-                                            </div>
-                                        );
-                                    }
-
-                                    return filteredDropdown.map((product) => {
-                                        const productId = product._id || product.id;
-                                        // Check if store is open
-                                        const productStore = stores.find(s => (s._id || s.id) === (product.storeId?._id || product.storeId));
-                                        const storeOpen = productStore ? isStoreOpen(productStore) : true;
-
-                                        return (
-                                            <Link
-                                                key={productId}
-                                                to={`/product/${productId}`}
-                                                onClick={() => setSearchQuery('')}
-                                                className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0"
-                                            >
-                                                <div className="relative flex-shrink-0">
-                                                    <img
-                                                        src={product.image || `${API_BASE_URL}/products/${productId}/image`}
-                                                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
-                                                        alt={product.title}
-                                                        className={`w-12 h-12 rounded-lg object-cover ${!storeOpen ? 'grayscale opacity-60' : ''}`}
-                                                    />
-                                                    {/* Unit Tag on Image */}
-                                                    {product.unit && (
-                                                        <div className="absolute bottom-1 left-1 right-1 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-500 dark:to-indigo-500 border border-white/20 rounded-md py-0.5 shadow-sm">
-                                                            <p className="text-white text-[8px] text-center font-bold truncate px-1">
-                                                                {product.unit}
-                                                            </p>
-                                                        </div>
-                                                    )}
+                                        if (filteredDropdown.length === 0) {
+                                            return (
+                                                <div className="p-8 text-center text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap overflow-hidden">
+                                                    {t('No products found')}
                                                 </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center justify-between gap-2">
-                                                        <p className="font-semibold text-gray-900 dark:text-white truncate">
-                                                            {(() => {
-                                                                const fullTitle = t(product, 'title');
-                                                                const bracketIndex = fullTitle.indexOf('(');
-                                                                if (bracketIndex !== -1) {
-                                                                    const mainPart = fullTitle.substring(0, bracketIndex);
-                                                                    const bracketPart = fullTitle.substring(bracketIndex);
-                                                                    return (
-                                                                        <>
-                                                                            <span>{mainPart}</span>
-                                                                            <span className="font-normal text-gray-500 dark:text-gray-400">{bracketPart}</span>
-                                                                        </>
-                                                                    );
-                                                                }
-                                                                return fullTitle;
-                                                            })()}
-                                                        </p>
-                                                        {!storeOpen && (
-                                                            <span className="text-[10px] font-bold text-red-500 flex-shrink-0 bg-red-50 dark:bg-red-900/20 px-1.5 py-0.5 rounded-full border border-red-100 dark:border-red-800">
-                                                                {t('Store Closed')}
-                                                            </span>
+                                            );
+                                        }
+
+                                        return filteredDropdown.map((product) => {
+                                            const productId = product._id || product.id;
+                                            const productStore = stores.find(s => (s._id || s.id) === (product.storeId?._id || product.storeId));
+                                            
+                                            const isClosed = !checkProductOpen(product, productStore);
+
+                                            return (
+                                                <Link
+                                                    key={productId}
+                                                    to={isClosed ? '#' : `/product/${productId}`}
+                                                    onClick={(e) => {
+                                                        if (isClosed) {
+                                                            e.preventDefault();
+                                                            return;
+                                                        }
+                                                        setSearchQuery('');
+                                                    }}
+                                                    className={`flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50/80 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-50 dark:border-gray-700 last:border-b-0 ${isClosed ? 'cursor-not-allowed opacity-80' : ''}`}
+                                                >
+                                                    <div className="relative flex-shrink-0">
+                                                        <div className={`w-12 h-12 rounded-[1rem] bg-gray-50 dark:bg-gray-700 p-1 flex items-center justify-center overflow-hidden border border-gray-100 dark:border-gray-600 ${isClosed ? 'blur-[1px]' : ''}`}>
+                                                            <img
+                                                                src={product.image || `${API_BASE_URL}/products/${productId}/image`}
+                                                                onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
+                                                                alt={product.title}
+                                                                className="w-full h-full object-contain"
+                                                            />
+                                                        </div>
+                                                        {isClosed && (
+                                                            <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-[1rem]">
+                                                                <span className="bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-tighter">
+                                                                    {t('Closed')}
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                        {product.unit && !isClosed && (
+                                                            <div className="absolute -bottom-1 -right-1 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg px-2 py-0.5 shadow-sm">
+                                                                <p className="text-gray-500 dark:text-gray-400 text-[9px] font-bold">
+                                                                    {productStore?.name?.split(' ')[0]} • {product.unit}
+                                                                </p>
+                                                            </div>
                                                         )}
                                                     </div>
-                                                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                        ₹{Number(product.price).toFixed(0)}
-                                                    </p>
-                                                </div>
-                                            </Link>
-                                        );
-                                    });
-                                })()}
-                            </div>
-                        )}
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex flex-col gap-0">
+                                                            <p className={`font-normal text-gray-800 dark:text-gray-200 truncate text-[13px] tracking-tight leading-tight ${isClosed ? 'opacity-60' : ''}`}>
+                                                                {t(product, 'title')}
+                                                            </p>
+                                                            <div className="flex items-center gap-1.5">
+                                                                <span className={`text-[#2E5A2E] dark:text-[#CBF9B2] font-medium text-[11px] ${isClosed ? 'grayscale opacity-50' : ''}`}>₹{Number(product.price).toFixed(0)}</span>
+                                                                {product.originalPrice > product.price && (
+                                                                    <span className="text-gray-400 text-[10px] line-through font-normal opacity-40">₹{product.originalPrice}</span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </Link>
+                                            );
+                                        });
+                                    })()}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -313,8 +347,8 @@ const CategoryProducts = () => {
                                             document.getElementById("active-cat-sub-pill")?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                                         }}
                                         className={`flex-shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${!selectedSubcategory
-                                            ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                                            : 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-md text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-800 hover:text-blue-600 dark:hover:text-blue-400'
+                                            ? 'bg-[#2E5A2E] text-white'
+                                            : 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-md text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-800 hover:text-[#2E5A2E] dark:hover:text-[#CBF9B2]'
                                             }`}
                                     >
                                         <span className="whitespace-nowrap">{t('All')}</span>
@@ -330,8 +364,8 @@ const CategoryProducts = () => {
                                                     document.getElementById("active-cat-sub-pill")?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                                                 }}
                                                 className={`flex-shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${isActive
-                                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                                                    : 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-md text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-800 hover:text-blue-600 dark:hover:text-blue-400'
+                                                    ? 'bg-[#2E5A2E] text-white shadow-md shadow-[#2E5A2E]/20'
+                                                    : 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-md text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-800 hover:text-[#2E5A2E] dark:hover:text-[#CBF9B2]'
                                                     }`}
                                             >
                                                 <span className="font-medium whitespace-nowrap text-sm">
