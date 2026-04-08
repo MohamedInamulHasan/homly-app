@@ -112,7 +112,7 @@ const Layout = ({ children, onRefresh }) => {
             <ScrollToTop />
             {/* {showNavbar && <Navbar />} */}
             {/* <PullToRefresh onRefresh={onRefresh} resistance={2.5} className="flex-grow flex flex-col"> */}
-            <main className={`flex-grow flex flex-col ${(hideMobileFooter || isFooterHidden) ? '' : 'pb-32'} md:pb-0`}>
+            <main className={`flex-grow flex flex-col ${showMobileFooter ? 'pb-32' : ''} md:pb-0`}>
                 {children}
             </main>
             {/* </PullToRefresh> */}
