@@ -64,7 +64,6 @@ const News = () => {
                             return (
                                 <div key={item.id} onClick={() => openNews(item)} className="group bg-white dark:bg-gray-800 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 dark:border-gray-700/50 overflow-hidden flex flex-col cursor-pointer min-h-[450px]">
                                     {/* Image Container */}
-                                    <div className="relative h-56 w-full overflow-hidden">
                                         {/* Simplified Image logic for layout - slider code preserved but structure cleaned */}
                                         {item.images && item.images.length > 0 ? (
                                             <img

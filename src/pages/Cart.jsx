@@ -153,8 +153,9 @@ const Cart = () => {
                       </div>
                  </div>
 
-                 <Link to="/checkout" className="w-full bg-black text-white rounded-full py-4 flex flex-col items-center justify-center font-normal text-[15px] active:scale-[0.98] transition-transform">
-                      {t('Proceed to Checkout')}
+                 <Link to="/checkout" className="w-full bg-black text-white rounded-full py-4 flex items-center justify-center font-normal text-[15px] active:scale-[0.98] transition-transform gap-2">
+                       <span>{t('Proceed to Checkout')}</span>
+                       <ShoppingBag size={20} />
                  </Link>
             </motion.div>
         </div>

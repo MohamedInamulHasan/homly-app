@@ -58,10 +58,10 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#E8EAEF] dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
-            <div className="max-w-md w-full space-y-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700">
+        <div className="min-h-screen flex items-center justify-center bg-green-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
+            <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700">
                 <div className="text-center">
-                    <div className="mx-auto h-12 w-12 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg mb-6 transform rotate-3">
+                    <div className="mx-auto h-12 w-12 bg-[#2E5A2E] rounded-xl flex items-center justify-center shadow-lg mb-6 transform rotate-3">
                         <Lock className="h-6 w-6 text-white" />
                     </div>
                     <h2 className="mt-2 text-3xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
@@ -92,12 +92,12 @@ const Login = () => {
                 <form className="mt-8 space-y-6" onSubmit={submitHandler}>
                     <div className="space-y-5">
                         <div className="group">
-                            <label htmlFor="email-address" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 transition-colors group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400">
+                            <label htmlFor="email-address" shaking className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 transition-colors group-focus-within:text-[#2E5A2E] dark:group-focus-within:text-green-400">
                                 Email address
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Mail className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                                    <Mail className="h-5 w-5 text-gray-400 group-focus-within:text-[#2E5A2E] transition-colors" />
                                 </div>
                                 <input
                                     id="email-address"
@@ -105,7 +105,7 @@ const Login = () => {
                                     type="email"
                                     autoComplete="email"
                                     required
-                                    className="appearance-none relative block w-full pl-11 pr-4 py-3.5 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:z-10 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 transition-all duration-200"
+                                    className="appearance-none relative block w-full pl-11 pr-4 py-3.5 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-[#2E5A2E]/10 focus:border-[#2E5A2E] focus:z-10 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 transition-all duration-200"
                                     placeholder="you@example.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -113,12 +113,12 @@ const Login = () => {
                             </div>
                         </div>
                         <div className="group">
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 transition-colors group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400">
+                            <label htmlFor="password" shaking className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 transition-colors group-focus-within:text-[#2E5A2E] dark:group-focus-within:text-green-400">
                                 Password
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                                    <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-[#2E5A2E] transition-colors" />
                                 </div>
                                 <input
                                     id="password"
@@ -126,7 +126,7 @@ const Login = () => {
                                     type={showPassword ? "text" : "password"}
                                     autoComplete="current-password"
                                     required
-                                    className="appearance-none relative block w-full pl-11 pr-12 py-3.5 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:z-10 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 transition-all duration-200"
+                                    className="appearance-none relative block w-full pl-11 pr-12 py-3.5 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-[#2E5A2E]/10 focus:border-[#2E5A2E] focus:z-10 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 transition-all duration-200"
                                     placeholder="••••••••"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
@@ -156,7 +156,7 @@ const Login = () => {
                         </div>
 
                         <div className="text-sm">
-                            <Link to="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
+                            <Link to="/forgot-password" shaking className="font-medium text-[#2E5A2E] hover:text-[#1E3A1E] dark:text-green-400 dark:hover:text-green-300 transition-colors">
                                 Forgot password?
                             </Link>
                         </div>
@@ -166,7 +166,7 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-bold rounded-2xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed shadow-md shadow-blue-500/10 hover:shadow-lg hover:shadow-blue-500/20"
+                            className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-bold rounded-2xl text-white bg-[#2E5A2E] hover:bg-[#1E3A1E] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2E5A2E] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed shadow-md shadow-green-900/10 hover:shadow-lg hover:shadow-green-900/20"
                         >
                             {isSubmitting ? (
                                 <Loader className="animate-spin h-5 w-5" />
@@ -185,7 +185,7 @@ const Login = () => {
                 <div className="mt-6 text-center">
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                         Don't have an account?{' '}
-                        <Link to={redirect ? `/signup?redirect=${redirect}` : '/signup'} className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors">
+                        <Link to={redirect ? `/signup?redirect=${redirect}` : '/signup'} className="font-medium text-[#2E5A2E] hover:text-[#1E3A1E] dark:text-green-400 dark:hover:text-green-300 transition-colors">
                             Sign up now
                         </Link>
                     </p>

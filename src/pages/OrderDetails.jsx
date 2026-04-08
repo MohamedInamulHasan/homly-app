@@ -5,7 +5,7 @@ import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { apiService, API_BASE_URL } from '../utils/api';
-import { getStoreName, formatDeliveryRangeFromDate } from '../utils/storeHelpers';
+import { getStoreName } from '../utils/storeHelpers';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const OrderDetails = () => {
@@ -398,25 +398,6 @@ const OrderDetails = () => {
                     </div>
                 </div>
 
-                {/* Scheduled Time - Moved to Bottom (Last) */}
-                <div className="bg-gray-900 dark:bg-white rounded-[2rem] p-6 text-white dark:text-gray-900 shadow-sm relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-4 opacity-10">
-                        <Clock size={100} />
-                    </div>
-                    <div className="relative z-10">
-                        <p className="text-blue-100 text-xs font-bold uppercase tracking-wider mb-2">{t('Scheduled Delivery')}</p>
-                        <h3 className="text-2xl font-bold mb-1">
-                            {order.scheduledDeliveryTime
-                                ? formatDeliveryRangeFromDate(order.scheduledDeliveryTime)
-                                : t('Standard Delivery')}
-                        </h3>
-                        <p className="text-blue-100 font-medium">
-                            {order.scheduledDeliveryTime
-                                ? new Date(order.scheduledDeliveryTime).toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })
-                                : t('By End of Day')}
-                        </p>
-                    </div>
-                </div>
 
                 </div>
 

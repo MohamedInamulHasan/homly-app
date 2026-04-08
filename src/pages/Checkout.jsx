@@ -5,8 +5,8 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { useUserProfile } from '../hooks/queries/useUsers';
-import { getStoreName, formatDeliveryRange, calculateDeliveryCharge } from '../utils/storeHelpers';
-import { ArrowLeft, MapPin, Clock, CreditCard, ShoppingBag, Truck, AlertCircle, X, Navigation, ShieldCheck, Trash2, Store, Pencil, Package, MoreHorizontal } from 'lucide-react';
+import { getStoreName, calculateDeliveryCharge } from '../utils/storeHelpers';
+import { ArrowLeft, MapPin, CreditCard, ShoppingBag, Truck, AlertCircle, X, Navigation, ShieldCheck, Trash2, Store, Pencil, Package, MoreHorizontal } from 'lucide-react';
 import { checkLocationPermission, requestLocationPermission } from '../utils/locationHelpers';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -20,14 +20,13 @@ const Checkout = () => {
     const { user, setUser, loading: authLoading } = useAuth();
     const { data: userProfile } = useUserProfile(); // Fetch fresh user data with coins
     const { t } = useLanguage();
-    const { stores, updateUser, settings } = useData();
+    const { stores, updateUser } = useData();
     const [formData, setFormData] = useState({
         fullName: '',
         mobile: '',
         address: '',
         city: '',
         zip: '630702', // Default Pincode
-        deliveryTime: '',
         paymentMethod: 'cod',
         location: '' // GPS Location
     });
@@ -66,7 +65,6 @@ const Checkout = () => {
     // }, []);
     const [isEditingAddress, setIsEditingAddress] = useState(false);
     const [isInitialized, setIsInitialized] = useState(false);
-    const [isDeliveryTimeOpen, setIsDeliveryTimeOpen] = useState(false);
 
 
     // Check if user is authenticated
@@ -150,7 +148,7 @@ const Checkout = () => {
         e.preventDefault();
 
         // Validation
-        if (!formData.fullName || !formData.mobile || !formData.address || !formData.city || !formData.deliveryTime) {
+        if (!formData.fullName || !formData.mobile || !formData.address || !formData.city) {
             alert(t('Please fill in all required fields'));
             return;
         }
@@ -164,12 +162,6 @@ const Checkout = () => {
         // Validate Zip Code
         if (!/^\d{6}$/.test(formData.zip)) {
             alert(t('Please enter a valid 6-digit Pincode'));
-            return;
-        }
-
-        // Validate delivery time is selected
-        if (!formData.deliveryTime) {
-            alert(t('Please select a preferred delivery time'));
             return;
         }
 
@@ -326,14 +318,6 @@ const Checkout = () => {
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                                                     <span>{formData.mobile}</span>
                                                 </p>
-                                                {formData.deliveryTime && (
-                                                    <p className="text-gray-600 dark:text-gray-300 text-sm flex items-center gap-1.5">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                                        <span>
-                                                            {formatDeliveryRange(formData.deliveryTime)}
-                                                        </span>
-                                                    </p>
-                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -671,160 +655,7 @@ const Checkout = () => {
                                 </div>
                             )}
 
-                            {/* Delivery Time - Custom Dropdown */}
-                            <div className="mt-6">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                                    {t('Preferred Delivery Time')} <span className="text-red-500">*</span>
-                                </label>
-                                {(() => {
-                                    const now = new Date();
-                                    // Strict timing: only show slot if current time is BEFORE or EXACTLY at slot start
-                                    const threshold = now;
-                                    // 3-hour window: only show slots within the next 3 hours
-                                    const windowEnd = new Date(now.getTime() + 3 * 60 * 60000);
-
-                                    // Only use slots that admin has enabled in Settings
-                                    const allowedSlots = settings?.deliveryTimes || [];
-                                    const availableSlots = [];
-
-                                    allowedSlots.forEach(timeValue => {
-                                        const [hours, mins] = timeValue.split(':').map(Number);
-                                        const displayTime = formatDeliveryRange(timeValue);
-
-                                        // 1. Add for TODAY if still available
-                                        const slotDateToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, mins);
-                                        if (slotDateToday >= threshold) {
-                                            availableSlots.push({
-                                                value: `today|${timeValue}`,
-                                                label: displayTime,
-                                                period: 'today',
-                                                timeValue
-                                            });
-                                        }
-
-                                        // 2. Add for TOMORROW
-                                        availableSlots.push({
-                                            value: `tomorrow|${timeValue}`,
-                                            label: displayTime,
-                                            period: 'tomorrow',
-                                            timeValue
-                                        });
-                                    });
-
-                                    // Sort by period then time
-                                    availableSlots.sort((a, b) => {
-                                        if (a.period !== b.period) return a.period === 'today' ? -1 : 1;
-                                        return a.timeValue.localeCompare(b.timeValue);
-                                    });
-
-                                    const displaySlots = availableSlots.slice(0, 2); 
-                                    const selectedSlot = displaySlots.find(s => s.value === formData.deliveryTime);
-
-                                    return (
-                                        <div className="relative">
-                                            {/* Dropdown Trigger */}
-                                            <button
-                                                type="button"
-                                                onClick={() => setIsDeliveryTimeOpen(!isDeliveryTimeOpen)}
-                                                className={`w-full relative overflow-hidden rounded-2xl border transition-all duration-300 group ${formData.deliveryTime
-                                                    ? 'border-[#2E5A2E] bg-white dark:bg-gray-800'
-                                                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-[#2E5A2E] dark:hover:border-gray-500'
-                                                    }`}
-                                            >
-                                                <div className="p-4 flex items-center justify-between">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className={`p-2.5 rounded-xl transition-colors ${formData.deliveryTime ? 'bg-[#2E5A2E] text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500'}`}>
-                                                            <Clock size={20} className={formData.deliveryTime ? 'animate-pulse' : ''} />
-                                                        </div>
-                                                        <div className="text-left">
-                                                            <p className={`text-xs font-bold uppercase tracking-wider mb-0.5 ${formData.deliveryTime ? 'text-[#2E5A2E] dark:text-green-400' : 'text-gray-500'}`}>
-                                                                {formData.deliveryTime ? t('Selected Time') : t('Select Time')}
-                                                            </p>
-                                                            <h3 className={`font-bold text-base sm:text-lg ${formData.deliveryTime ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-500'}`}>
-                                                                {selectedSlot ? selectedSlot.label : t('Tap to choose a slot')}
-                                                            </h3>
-                                                        </div>
-                                                    </div>
-                                                    <div className={`transform transition-transform duration-300 ${isDeliveryTimeOpen ? 'rotate-180' : ''}`}>
-                                                        <div className="bg-white dark:bg-gray-700 rounded-full p-1.5 border border-gray-100 dark:border-gray-600">
-                                                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-gray-500">
-                                                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                {/* Progress Bar / Decorator */}
-                                                {formData.deliveryTime && (
-                                                    <div className="absolute bottom-0 left-0 h-1 bg-[#2E5A2E] dark:bg-green-400 w-full" />
-                                                )}
-                                            </button>
-
-                                            {/* Dropdown Content */}
-                                            <AnimatePresence>
-                                                {isDeliveryTimeOpen && (
-                                                    <motion.div
-                                                        initial={{ opacity: 0, y: -10, scale: 0.98 }}
-                                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                                        exit={{ opacity: 0, y: -10, scale: 0.98 }}
-                                                        transition={{ duration: 0.2, ease: "easeOut" }}
-                                                        className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 z-50 overflow-hidden max-h-80 overflow-y-auto scrollbar-hide ring-1 ring-black/5"
-                                                    >
-                                                        <div className="p-2 space-y-2">
-                                                            {displaySlots.length === 0 ? (
-                                                                <div className="p-8 text-center text-gray-500">
-                                                                    <div className="bg-gray-50 dark:bg-gray-700/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-                                                                        <Clock size={24} className="opacity-50" />
-                                                                    </div>
-                                                                    <p>{t('No slots available')}</p>
-                                                                </div>
-                                                            ) : (
-                                                                <div className="p-3">
-                                                                    {displaySlots.length === 0 ? (
-                                                                        <div className="p-8 text-center text-gray-500">
-                                                                            <div className="bg-gray-50 dark:bg-gray-700/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-                                                                                <Clock size={24} className="opacity-50" />
-                                                                            </div>
-                                                                            <p>{t('No slots available')}</p>
-                                                                        </div>
-                                                                    ) : (
-                                                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                                                            {displaySlots.map((slot) => (
-                                                                                <button
-                                                                                    key={slot.value}
-                                                                                    type="button"
-                                                                                    onClick={() => {
-                                                                                        setFormData({ ...formData, deliveryTime: slot.value });
-                                                                                        setIsDeliveryTimeOpen(false);
-                                                                                    }}
-                                                                                    className={`py-3 px-2 rounded-xl text-[11px] sm:text-sm font-medium whitespace-nowrap transition-all duration-200 border ${formData.deliveryTime === slot.value
-                                                                                        ? 'bg-[#2E5A2E] text-white border-[#2E5A2E] shadow-md scale-[0.98]'
-                                                                                        : 'bg-green-50 text-[#2E5A2E] border-green-100 hover:bg-green-100 hover:border-[#2E5A2E]/40'
-                                                                                        }` }
-                                                                                >
-                                                                                    {slot.label}
-                                                                                </button>
-                                                                            ))}
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
-
-                                            {/* Instructions - Only show when closed/empty */}
-                                            {!formData.deliveryTime && !isDeliveryTimeOpen && (
-                                                <p className="mt-2 text-xs text-center text-gray-400 animate-pulse">
-                                                    {t('Tap the box above to see available times')}
-                                                </p>
-                                            )}
-                                        </div>
-                                    );
-                                })()} 
                             </div>
-                        </div>
 
                         {/* Payment Method */}
                         <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 p-5 sm:p-6">
@@ -989,7 +820,12 @@ const Checkout = () => {
             </div >
 
             {/* Bottom Pull-up Card (Order Summary) - Mobile Only */}
-            <div className="bg-white dark:bg-gray-800 rounded-t-[2.5rem] pt-6 pb-8 px-6 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] fixed bottom-0 w-full left-0 right-0 border-t border-gray-100 dark:border-gray-700 z-50 md:hidden">
+            <motion.div 
+                initial={{ y: '100%', x: '-50%' }}
+                animate={{ y: 0, x: '-50%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="bg-white dark:bg-gray-800 rounded-t-[3rem] pt-6 pb-8 px-8 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] fixed bottom-0 max-w-md w-full left-1/2 border-t border-gray-100 dark:border-gray-700 z-50 md:hidden"
+            >
                  <div className="flex justify-between items-center mb-6">
                       <h2 className="text-[16px] font-bold text-gray-900 dark:text-white">{t('Payment')}</h2>
                       <span className="text-[12px] font-semibold text-gray-400">{displayItems.length} item{displayItems.length > 1 ? 's' : ''}</span>
@@ -1017,7 +853,7 @@ const Checkout = () => {
                  <button
                       onClick={handleSubmit}
                       disabled={isNavigating}
-                      className="w-full bg-black text-white rounded-[2rem] py-4 flex items-center justify-center font-normal text-[15px] active:scale-[0.98] transition-transform shadow-lg shadow-gray-200 dark:shadow-gray-900/20 disabled:opacity-70 disabled:grayscale gap-2"
+                      className="w-full bg-black text-white rounded-full py-4 flex items-center justify-center font-normal text-[15px] active:scale-[0.98] transition-transform shadow-lg shadow-gray-200 dark:shadow-gray-900/20 disabled:opacity-70 disabled:grayscale gap-2"
                  >
                       {isNavigating ? (
                           <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -1028,7 +864,7 @@ const Checkout = () => {
                           </>
                       )}
                  </button>
-            </div>
+            </motion.div>
         </div >
     );
 };
