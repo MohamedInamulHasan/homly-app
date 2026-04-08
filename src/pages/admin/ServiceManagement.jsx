@@ -354,7 +354,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                 setServiceForm({ name: '', category: '', description: '', image: '', address: '', mobile: '' });
                                 setView('form');
                             }}
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors font-bold shadow-sm"
                         >
                             <Plus size={20} />
                             {t('Add Service')}
@@ -363,7 +363,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                     {view === 'serviceItems' && (
                         <button
                             onClick={handleAddItem}
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors font-bold shadow-sm"
                         >
                             <Plus size={20} />
                             {t('Add Item')}
@@ -383,7 +383,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                     placeholder={t('Search services...')}
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all"
                                 />
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                             </div>
@@ -428,7 +428,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                     type="text"
                                     value={serviceForm.name}
                                     onChange={(e) => setServiceForm({ ...serviceForm, name: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all"
                                     required
                                 />
                             </div>
@@ -438,7 +438,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                     type="text"
                                     value={serviceForm.category}
                                     onChange={(e) => setServiceForm({ ...serviceForm, category: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all"
                                     placeholder="e.g., Home, Vehicle"
                                     required
                                 />
@@ -448,7 +448,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                 <textarea
                                     value={serviceForm.description}
                                     onChange={(e) => setServiceForm({ ...serviceForm, description: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none h-24"
+                                    className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none h-24"
                                     required
                                 />
                             </div>
@@ -458,7 +458,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                     type="text"
                                     value={serviceForm.address}
                                     onChange={(e) => setServiceForm({ ...serviceForm, address: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all"
                                     required
                                 />
                             </div>
@@ -468,7 +468,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                     type="text"
                                     value={serviceForm.mobile}
                                     onChange={(e) => setServiceForm({ ...serviceForm, mobile: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all"
                                     required
                                 />
                             </div>
@@ -496,7 +496,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                             <button
                                 type="submit"
                                 disabled={uploadingImage}
-                                className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors flex items-center gap-2 font-medium"
+                                className="px-6 py-3 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 font-bold shadow-sm"
                             >
                                 <Save size={20} />
                                 {editingService ? t('Update Service') : t('Add Service')}
@@ -572,7 +572,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                         console.error('Failed to toggle availability:', error);
                                     }
                                 }}
-                                                        className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${item.isAvailable !== false ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'}`}
+                                                        className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2E5A2E] ${item.isAvailable !== false ? 'bg-[#2E5A2E]' : 'bg-gray-200 dark:bg-gray-600'}`}
                                                     >
                                                         <motion.span
                                                             layout
@@ -586,14 +586,14 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                                     <div className="flex gap-2">
                                                         <button
                                                             onClick={() => handleDuplicateItem(item)}
-                                                            className="p-2 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-xl transition-colors"
+                                                            className="p-2 text-[#2E5A2E] hover:bg-[#E8F5E9] rounded-xl transition-colors"
                                                             title={t('Duplicate')}
                                                         >
                                                             <Copy size={18} />
                                                         </button>
                                                         <button
                                                             onClick={() => handleEditItem(item)}
-                                                            className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-colors"
+                                                            className="p-2 text-[#2E5A2E] hover:bg-[#E8F5E9] rounded-xl transition-colors"
                                                             title={t('Edit')}
                                                         >
                                                             <Edit2 size={18} />
@@ -638,7 +638,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                     type="text"
                                     value={itemForm.name}
                                     onChange={(e) => setItemForm({ ...itemForm, name: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all"
                                     placeholder="e.g., General Service"
                                     required
                                 />
@@ -649,7 +649,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                     id="isAvailable"
                                     checked={itemForm.isAvailable !== false}
                                     onChange={(e) => setItemForm({ ...itemForm, isAvailable: e.target.checked })}
-                                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                    className="w-4 h-4 text-[#2E5A2E] border-gray-300 rounded focus:ring-[#2E5A2E]"
                                 />
                                 <label htmlFor="isAvailable" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                                     {t('Available')}
@@ -685,7 +685,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                         <div className="flex justify-end">
                             <button
                                 type="submit"
-                                className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors flex items-center gap-2 font-medium"
+                                className="px-6 py-3 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 font-bold shadow-sm"
                             >
                                 <Save size={20} />
                                 {editingItem ? t('Update Item') : t('Add Item')}
@@ -760,7 +760,7 @@ const SortableServiceCard = ({ service, handleManageItems, handleEditService, ha
 
             <div className="p-4 flex flex-col flex-grow gap-3">
                 <div className="space-y-0.5">
-                    <h3 className="text-2xl font-black text-gray-900 dark:text-white leading-tight line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                    <h3 className="text-2xl font-black text-gray-900 dark:text-white leading-tight line-clamp-1 group-hover:text-[#2E5A2E] dark:group-hover:text-[#CBF9B2] transition-colors duration-300">
                         {service.name}
                     </h3>
                     <div className="flex flex-wrap gap-1.5">
@@ -774,7 +774,7 @@ const SortableServiceCard = ({ service, handleManageItems, handleEditService, ha
                 <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-3 space-y-2 border border-gray-100 dark:border-gray-800/50">
                     <div className="flex items-center gap-2 truncate">
                         <div className="p-2 bg-blue-500/10 rounded-lg">
-                            <MapPin size={16} className="text-blue-600 dark:text-blue-400" />
+                            <MapPin size={16} className="text-[#2E5A2E] dark:text-[#CBF9B2]" />
                         </div>
                         <span className="text-xs font-bold text-gray-600 dark:text-gray-400 truncate opacity-80" title={service.address}>
                             {service.address || t('No address')}
@@ -794,7 +794,7 @@ const SortableServiceCard = ({ service, handleManageItems, handleEditService, ha
                 <div className="grid grid-cols-2 gap-2 mt-auto">
                     <button
                         onClick={() => handleManageItems(service)}
-                        className="col-span-2 py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[1.25rem] shadow-xl shadow-blue-500/10 hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group/btn"
+                        className="col-span-2 py-3 px-4 bg-[#2E5A2E] text-white rounded-[1.25rem] shadow-xl shadow-[#2E5A2E]/10 hover:shadow-[#2E5A2E]/30 hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group/btn"
                     >
                         <Package size={16} className="transition-transform group-hover/btn:rotate-12" />
                         <span className="text-[10px] font-black uppercase tracking-wider">{t('Manage Items')}</span>
@@ -803,7 +803,7 @@ const SortableServiceCard = ({ service, handleManageItems, handleEditService, ha
                     <div className="col-span-2 flex items-center justify-center gap-4 mt-1 pt-3 border-t border-gray-100 dark:border-gray-700/50">
                         <button
                             onClick={() => handleEditService(service)}
-                            className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors px-2.5 py-1 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg"
+                            className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-[#2E5A2E] dark:text-[#CBF9B2] hover:text-[#1a3d1a] transition-colors px-2.5 py-1 hover:bg-[#E8F5E9] rounded-lg"
                         >
                             <Edit2 size={12} />
                             {t('Edit')}

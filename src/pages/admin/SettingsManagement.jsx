@@ -117,8 +117,8 @@ const SettingsManagement = () => {
     return (
         <div className="max-w-6xl">
             <div className="flex items-center gap-3 mb-6">
-                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-                    <Clock className="text-blue-600 dark:text-blue-400" size={24} />
+                <div className="p-3 bg-[#E8F5E9] dark:bg-[#2E5A2E]/20 rounded-xl">
+                    <Clock className="text-[#2E5A2E] dark:text-[#7CA90E]" size={24} />
                 </div>
                 <div>
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('Delivery Settings')}</h2>
@@ -177,7 +177,7 @@ const SettingsManagement = () => {
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden">
                 <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t('Delivery Slot Mode')}</h3>
@@ -188,7 +188,7 @@ const SettingsManagement = () => {
                             type="button"
                             onClick={() => setDeliveryTimingMode('dynamic')}
                             className={`px-4 py-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1 ${deliveryTimingMode === 'dynamic'
-                                ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+                                ? 'border-[#2E5A2E] bg-[#E8F5E9] text-[#2E5A2E]'
                                 : 'border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500'
                                 }`}
                         >
@@ -199,7 +199,7 @@ const SettingsManagement = () => {
                             type="button"
                             onClick={() => setDeliveryTimingMode('permanent')}
                             className={`px-4 py-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1 ${deliveryTimingMode === 'permanent'
-                                ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+                                ? 'border-[#2E5A2E] bg-[#E8F5E9] text-[#2E5A2E]'
                                 : 'border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500'
                                 }`}
                         >
@@ -217,7 +217,7 @@ const SettingsManagement = () => {
                     <div className="flex flex-wrap gap-2">
                         <button
                             onClick={selectWorkingHours}
-                            className="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                            className="px-3 py-1.5 text-sm font-bold text-[#2E5A2E] bg-[#E8F5E9] hover:bg-[#CBF9B2] dark:bg-[#2E5A2E]/20 dark:text-[#7CA90E] dark:hover:bg-[#2E5A2E]/30 rounded-lg transition-colors"
                         >
                             {t('Working Hours (9am-9pm)')}
                         </button>
@@ -247,8 +247,8 @@ const SettingsManagement = () => {
                                     className={`
                                         flex items-center justify-center py-2 px-3 rounded-xl border text-sm font-medium whitespace-nowrap transition-all
                                         ${isSelected
-                                            ? 'bg-blue-600 border-blue-600 text-white shadow-md transform scale-105'
-                                            : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-blue-300 dark:hover:border-blue-700'
+                                            ? 'bg-[#2E5A2E] border-[#2E5A2E] text-white shadow-md transform scale-105'
+                                            : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-[#CBF9B2] dark:hover:border-[#2E5A2E]'
                                         }
                                     `}
                                 >
@@ -266,7 +266,7 @@ const SettingsManagement = () => {
                     <button
                         onClick={handleSave}
                         disabled={loading}
-                        className="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                        className="w-full sm:w-auto px-6 py-3 bg-[#2E5A2E] text-white rounded-xl font-bold hover:bg-[#1a3d1a] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                     >
                         {loading ? (
                             <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

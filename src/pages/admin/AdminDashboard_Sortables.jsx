@@ -103,7 +103,7 @@ export const SortableProductRow = ({ product, children }) => {
 
     return (
         <SortableItemContext.Provider value={{ attributes, listeners, ref: setActivatorNodeRef }}>
-            <tr ref={setNodeRef} style={style} className={`${isDragging ? 'bg-blue-50 dark:bg-blue-900/30 shadow-lg' : 'hover:bg-gray-50 dark:hover:bg-gray-700/30'} transition-colors`}>
+            <tr ref={setNodeRef} style={style} className={`${isDragging ? 'bg-[#E8F5E9] dark:bg-[#2E5A2E]/20 shadow-lg' : 'hover:bg-gray-50 dark:hover:bg-gray-700/30'} transition-colors`}>
                 {children}
             </tr>
         </SortableItemContext.Provider>
@@ -132,7 +132,7 @@ export const SortableServiceItemRow = ({ item, children }) => {
 
     return (
         <SortableItemContext.Provider value={{ attributes, listeners, ref: setActivatorNodeRef }}>
-            <tr ref={setNodeRef} style={style} className={`${isDragging ? 'bg-blue-50 dark:bg-blue-900/30 shadow-lg' : 'hover:bg-gray-50 dark:hover:bg-gray-700/30'} transition-colors`}>
+            <tr ref={setNodeRef} style={style} className={`${isDragging ? 'bg-[#E8F5E9] dark:bg-[#2E5A2E]/20 shadow-lg' : 'hover:bg-gray-50 dark:hover:bg-gray-700/30'} transition-colors`}>
                 {children}
             </tr>
         </SortableItemContext.Provider>

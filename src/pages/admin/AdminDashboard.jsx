@@ -181,7 +181,7 @@ const AdminDashboard = () => {
                 `}>
                     <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                         <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                            <Store className="text-blue-600 dark:text-blue-400" />
+                            <Store className="text-[#2E5A2E] dark:text-[#7CA90E]" />
                             {t('My Store')}
                         </h1>
                     </div>
@@ -230,27 +230,26 @@ const AdminDashboard = () => {
 
                 {/* Main Content */}
                 <div className="flex-1 overflow-auto w-full">
-                    <div className="p-4 md:p-8 pt-16 md:pt-8">
-                        <div className="max-w-4xl mx-auto">
-                            <div className="flex items-center justify-between mb-8">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                                        <Store className="text-blue-600 dark:text-blue-400" size={24} />
+                            {/* Premium Header Card */}
+                            <div className="bg-[#CBF9B2] rounded-b-[40px] px-6 pt-12 pb-10 mb-8 -mx-4 md:-mx-8 -mt-16 md:-mt-8 shadow-sm">
+                                <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
+                                    <div className="w-16 h-16 bg-white/80 backdrop-blur-md rounded-2xl flex items-center justify-center mb-4 shadow-sm">
+                                        {activeTab === 'stores' && <Store className="text-[#2E5A2E]" size={32} />}
+                                        {activeTab === 'products' && <Package className="text-[#2E5A2E]" size={32} />}
+                                        {activeTab === 'orders' && <ShoppingBag className="text-[#2E5A2E]" size={32} />}
+                                        {(activeTab !== 'stores' && activeTab !== 'products' && activeTab !== 'orders') && <LayoutDashboard className="text-[#2E5A2E]" size={32} />}
                                     </div>
-                                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                    <h1 className="text-3xl font-bold text-[#2E5A2E]">
                                         {activeTab === 'stores' ? t('My Store') :
                                             activeTab === 'products' ? t('Product Inventory') :
                                                 activeTab === 'orders' ? t('Orders') : t('My Store')}
                                     </h1>
-                                </div>
-                                {/* Hide user name on mobile */}
-                                <div className="text-sm text-gray-500 dark:text-gray-400 hidden md:block">
-                                    {user?.name}
+                                    <p className="text-[#2E5A2E]/70 text-sm font-medium mt-1">
+                                        {user?.name}
+                                    </p>
                                 </div>
                             </div>
                             {renderContent()}
-                        </div>
-                    </div>
                 </div>
             </div>
         );
@@ -283,7 +282,7 @@ const AdminDashboard = () => {
                 `}>
                     <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                         <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                            <Wrench className="text-blue-600 dark:text-blue-400" />
+                            <Wrench className="text-[#2E5A2E] dark:text-[#7CA90E]" />
                             {t('My Service')}
                         </h1>
                     </div>
@@ -318,24 +317,21 @@ const AdminDashboard = () => {
 
                 {/* Main Content */}
                 <div className="flex-1 overflow-auto w-full">
-                    <div className="p-4 md:p-8 pt-16 md:pt-8">
-                        <div className="max-w-4xl mx-auto">
-                            <div className="flex items-center justify-between mb-8">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                                        <Wrench className="text-blue-600 dark:text-blue-400" size={24} />
+                            {/* Premium Header Card */}
+                            <div className="bg-[#CBF9B2] rounded-b-[40px] px-6 pt-12 pb-10 mb-8 -mx-4 md:-mx-8 -mt-16 md:-mt-8 shadow-sm">
+                                <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
+                                    <div className="w-16 h-16 bg-white/80 backdrop-blur-md rounded-2xl flex items-center justify-center mb-4 shadow-sm">
+                                        <Wrench className="text-[#2E5A2E]" size={32} />
                                     </div>
-                                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                    <h1 className="text-3xl font-bold text-[#2E5A2E]">
                                         {t('My Service')}
                                     </h1>
-                                </div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400 hidden md:block">
-                                    {user?.name}
+                                    <p className="text-[#2E5A2E]/70 text-sm font-medium mt-1">
+                                        {user?.name}
+                                    </p>
                                 </div>
                             </div>
                             {renderContent()}
-                        </div>
-                    </div>
                 </div>
             </div>
         );
@@ -377,7 +373,7 @@ const AdminDashboard = () => {
                 `}>
                     <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                         <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                            <ShoppingBag className="text-blue-600 dark:text-blue-400" />
+                            <ShoppingBag className="text-[#2E5A2E] dark:text-[#7CA90E]" />
                             {t('Deliveries')}
                         </h1>
                     </div>
@@ -405,24 +401,21 @@ const AdminDashboard = () => {
 
                 {/* Main Content */}
                 <div className="flex-1 overflow-auto w-full">
-                    <div className="p-4 md:p-8 pt-16 md:pt-8">
-                        <div className="max-w-4xl mx-auto">
-                            <div className="flex items-center justify-between mb-8">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                                        <ShoppingBag className="text-blue-600 dark:text-blue-400" size={24} />
+                            {/* Premium Header Card */}
+                            <div className="bg-[#CBF9B2] rounded-b-[40px] px-6 pt-12 pb-10 mb-8 -mx-4 md:-mx-8 -mt-16 md:-mt-8 shadow-sm">
+                                <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
+                                    <div className="w-16 h-16 bg-white/80 backdrop-blur-md rounded-2xl flex items-center justify-center mb-4 shadow-sm">
+                                        <ShoppingBag className="text-[#2E5A2E]" size={32} />
                                     </div>
-                                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                    <h1 className="text-3xl font-bold text-[#2E5A2E]">
                                         {t('Deliveries')}
                                     </h1>
-                                </div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400 hidden md:block">
-                                    {user?.name}
+                                    <p className="text-[#2E5A2E]/70 text-sm font-medium mt-1">
+                                        {user?.name}
+                                    </p>
                                 </div>
                             </div>
                             {renderContent()}
-                        </div>
-                    </div>
                 </div>
             </div>
         );
@@ -455,7 +448,7 @@ const AdminDashboard = () => {
             `}>
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                     <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                        <LayoutDashboard className="text-blue-600 dark:text-blue-400" />
+                        <LayoutDashboard className="text-[#2E5A2E] dark:text-[#7CA90E]" />
                         {t('Admin Panel')}
                     </h1>
                 </div>
@@ -592,8 +585,48 @@ const AdminDashboard = () => {
 
             {/* Main Content */}
             <div className="flex-1 overflow-auto w-full">
-                <div className="p-4 md:p-8 pt-16 md:pt-8">
-                    {renderContent()}
+                {/* Premium Header Card */}
+                <div className="bg-[#CBF9B2] rounded-b-[40px] px-6 pt-12 pb-10 mb-8 shadow-sm">
+                    <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
+                        <div className="w-16 h-16 bg-white/80 backdrop-blur-md rounded-2xl flex items-center justify-center mb-4 shadow-sm">
+                            {activeTab === 'stores' && <Store className="text-[#2E5A2E]" size={32} />}
+                            {activeTab === 'products' && <Package className="text-[#2E5A2E]" size={32} />}
+                            {activeTab === 'news' && <Newspaper className="text-[#2E5A2E]" size={32} />}
+                            {activeTab === 'orders' && <ShoppingBag className="text-[#2E5A2E]" size={32} />}
+                            {activeTab === 'users' && <Users className="text-[#2E5A2E]" size={32} />}
+                            {activeTab === 'categories' && <List className="text-[#2E5A2E]" size={32} />}
+                            {activeTab === 'ads' && <ImageIcon className="text-[#2E5A2E]" size={32} />}
+                            {activeTab === 'services' && <Wrench className="text-[#2E5A2E]" size={32} />}
+                            {activeTab === 'service-requests' && <ClipboardList className="text-[#2E5A2E]" size={32} />}
+                            {activeTab === 'settings' && <Settings className="text-[#2E5A2E]" size={32} />}
+                            {activeTab === 'delivery-boys' && <Truck className="text-[#2E5A2E]" size={32} />}
+                            {activeTab === 'cities' && <MapPin className="text-[#2E5A2E]" size={32} />}
+                            {activeTab === 'signup-bonus' && <Gift className="text-[#2E5A2E]" size={32} />}
+                        </div>
+                        <h1 className="text-3xl font-bold text-[#2E5A2E]">
+                            {activeTab === 'stores' ? t('Stores') :
+                             activeTab === 'products' ? t('Products') :
+                             activeTab === 'news' ? t('News') :
+                             activeTab === 'orders' ? t('Orders') :
+                             activeTab === 'users' ? t('Users') :
+                             activeTab === 'categories' ? t('Categories') :
+                             activeTab === 'ads' ? t('Ads') :
+                             activeTab === 'services' ? t('Services') :
+                             activeTab === 'service-requests' ? t('Requests') :
+                             activeTab === 'settings' ? t('Settings') :
+                             activeTab === 'delivery-boys' ? t('Fleet') :
+                             activeTab === 'cities' ? t('Cities') :
+                             activeTab === 'signup-bonus' ? t('Rewards') : t('Admin Panel')}
+                        </h1>
+                        <p className="text-[#2E5A2E]/70 text-sm font-medium mt-1">
+                            {user?.name}
+                        </p>
+                    </div>
+                </div>
+                <div className="px-4 md:px-8 pb-32">
+                    <div className="max-w-4xl mx-auto">
+                        {renderContent()}
+                    </div>
                 </div>
             </div>
         </div>
@@ -787,13 +820,16 @@ const SidebarItem = ({ icon, label, id, active, onClick, hidden = false }) => {
     return (
         <button
             onClick={() => onClick(id)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${active
-                ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium'
-                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50'
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${active
+                ? 'bg-[#E8F5E9] text-[#2E5A2E] font-bold shadow-sm'
+                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:translate-x-1'
                 }`}
         >
-            {icon}
-            {label}
+            <div className={`p-1.5 rounded-lg transition-colors ${active ? 'bg-[#2E5A2E] text-white' : 'text-gray-500'}`}>
+                {icon}
+            </div>
+            <span className="flex-1 text-left whitespace-nowrap">{label}</span>
+            {active && <ChevronRight size={16} className="text-[#2E5A2E]" />}
         </button>
     );
 };
@@ -1050,7 +1086,7 @@ const ProductManagement = () => {
                             setView('list');
                         }
                     }}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 font-normal"
+                    className="px-4 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 font-medium shadow-sm"
                 >
                     {view === 'list' ? <Plus size={20} /> : <List size={20} />}
                     {view === 'list' ? t('Add Product') : t('View List')}
@@ -1067,7 +1103,7 @@ const ProductManagement = () => {
                                 placeholder={t('Search products...')}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full pl-10 pr-4 py-3 rounded-2xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none"
                             />
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                         </div>
@@ -1078,7 +1114,7 @@ const ProductManagement = () => {
                         collisionDetection={closestCenter}
                         onDragEnd={handleDragEnd}
                     >
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                        <div className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden">
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left">
                                     <thead className="bg-gray-50 dark:bg-gray-700/50">
@@ -1219,7 +1255,7 @@ const ProductManagement = () => {
                                                                         }
                                                                     }}
                                                                     disabled={product.isAvailable === false && !isProductScheduled(product)}
-                                                                    className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${product.isAvailable !== false && isProductScheduled(product) ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'
+                                                                    className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7CA90E] ${product.isAvailable !== false && isProductScheduled(product) ? 'bg-[#2E5A2E]' : 'bg-gray-200 dark:bg-gray-600'
                                                                         } ${(product.isAvailable === false && !isProductScheduled(product)) ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                                     title={product.isAvailable !== false && isProductScheduled(product) ? t('Available') : !isProductScheduled(product) ? t('Timed Out') : t('Out of Stock')}
                                                                 >
@@ -1288,7 +1324,7 @@ const ProductManagement = () => {
                                                                 </button>
                                                                 <button
                                                                     onClick={() => handleEdit(product)}
-                                                                    className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                                                                    className="p-2 text-[#2E5A2E] hover:bg-[#E8F5E9] dark:hover:bg-[#2E5A2E]/20 rounded-lg transition-colors"
                                                                 >
                                                                     <Edit2 size={18} />
                                                                 </button>
@@ -1319,7 +1355,7 @@ const ProductManagement = () => {
                                     type="text"
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none"
                                     placeholder={t('e.g., Wireless Headphones')}
                                     required
                                 />
@@ -1331,7 +1367,7 @@ const ProductManagement = () => {
                                     type="number"
                                     value={formData.price}
                                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none"
                                     placeholder="0.00"
                                     required
                                 />
@@ -1343,7 +1379,7 @@ const ProductManagement = () => {
                                     type="text"
                                     value={formData.unit}
                                     onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none"
                                     placeholder={t('e.g., 1 kg, 500g, 1 Pack')}
                                 />
                             </div>
@@ -1354,7 +1390,7 @@ const ProductManagement = () => {
                                     onChange={(e) => {
                                         setFormData({ ...formData, category: e.target.value, subcategory: [] });
                                     }}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none"
                                     required
                                 >
                                     <option value="">{t('Select Category')}</option>
@@ -1391,7 +1427,7 @@ const ProductManagement = () => {
                                                                             : prev.subcategory.filter(s => s !== sub)
                                                                     }));
                                                                 }}
-                                                                className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                                                className="w-4 h-4 text-[#2E5A2E] rounded border-gray-300 focus:ring-[#2E5A2E]"
                                                             />
                                                             <span className="text-gray-700 dark:text-gray-300 text-sm">{t(sub)}</span>
                                                         </label>
@@ -1411,7 +1447,7 @@ const ProductManagement = () => {
                                 <select
                                     value={formData.storeId}
                                     onChange={(e) => setFormData({ ...formData, storeId: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none"
                                 >
                                     <option value="">{t('Select Store (Optional)')}</option>
                                     {stores.map(store => (
@@ -1428,7 +1464,7 @@ const ProductManagement = () => {
                                     <button
                                         type="button"
                                         onClick={() => setFormData({ ...formData, useTimeLimit: !formData.useTimeLimit })}
-                                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${formData.useTimeLimit ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'}`}
+                                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${formData.useTimeLimit ? 'bg-[#2E5A2E]' : 'bg-gray-200 dark:bg-gray-600'}`}
                                     >
                                         <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.useTimeLimit ? 'translate-x-6' : 'translate-x-1'}`} />
                                     </button>
@@ -1442,7 +1478,7 @@ const ProductManagement = () => {
                                                 type="time"
                                                 value={formData.openingTime}
                                                 onChange={(e) => setFormData({ ...formData, openingTime: e.target.value })}
-                                                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-[#7CA90E] outline-none"
                                             />
                                         </div>
                                         <div>
@@ -1451,7 +1487,7 @@ const ProductManagement = () => {
                                                 type="time"
                                                 value={formData.closingTime}
                                                 onChange={(e) => setFormData({ ...formData, closingTime: e.target.value })}
-                                                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-[#7CA90E] outline-none"
                                             />
                                         </div>
                                     </div>
@@ -1516,7 +1552,7 @@ const ProductManagement = () => {
                                 value={formData.description}
                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                 rows="4"
-                                className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none"
                                 placeholder={t('Product description...')}
                                 required
                             ></textarea>
@@ -1525,7 +1561,7 @@ const ProductManagement = () => {
                         <div className="flex justify-end">
                             <button
                                 type="submit"
-                                className="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
+                                className="px-6 py-3 bg-[#2E5A2E] text-white rounded-xl font-bold hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 shadow-sm"
                             >
                                 {editingProduct ? <Save size={20} /> : <Plus size={20} />}
                                 {editingProduct ? t('Update Product') : t('Add Product')}
@@ -1613,7 +1649,7 @@ const NewsManagement = () => {
         }
     };
 
-    const handleSubmit = async (e) => {
+    const handleNewsSubmit = async (e) => {
         e.preventDefault();
         const newsItem = {
             title: newsForm.headline,
@@ -1665,64 +1701,77 @@ const NewsManagement = () => {
                             setView('list');
                         }
                     }}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                    className="px-4 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 font-bold shadow-sm"
                 >
                     {view === 'list' ? <Plus size={20} /> : <ArrowLeft size={20} />}
-                    {view === 'list' ? t('Add Post') : t('Back')}
+                    {view === 'list' ? t('Add News') : t('Back')}
                 </button>
             </div>
 
             {view === 'list' ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {news.map(item => (
-                        // ... News modifications within NewsManagement ...
-                        <div key={item._id || item.id} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col group relative">
-                            {/* Removed absolute overlay icons */}
-                            <div className="h-48 overflow-hidden">
-                                <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-                            </div>
-                            <div className="p-6 flex-1 flex flex-col">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${item.category === 'Offer' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'}`}>
-                                        {item.category}
-                                    </span>
+                <div className="space-y-4">
+                    {news.length === 0 ? (
+                        <div className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 p-12 text-center">
+                            <Newspaper className="mx-auto h-12 w-12 text-gray-300 mb-4" />
+                            <p className="text-gray-500 dark:text-gray-400">{t('No news items found.')}</p>
+                        </div>
+                    ) : (
+                        news.map((item) => (
+                            <div key={item._id || item.id} className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 p-4 flex items-center gap-4 group hover:border-[#CBF9B2] transition-all duration-300">
+                                <div className="w-24 h-24 rounded-2xl overflow-hidden bg-gray-100 flex-shrink-0">
+                                    <img
+                                        src={item.image || `${API_BASE_URL}/news/${item._id || item.id}/image`}
+                                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/200?text=News'; }}
+                                        alt={item.title}
+                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                    />
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{item.title}</h3>
-                                <p className="text-gray-500 dark:text-gray-400 text-sm line-clamp-3 mb-4">
-                                    {item.content || item.description}
-                                </p>
-
-                                {/* New Footer for Actions */}
-                                <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-2">
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                                            item.category === 'Offer' ? 'bg-orange-100 text-orange-600' : 'bg-[#E8F5E9] text-[#2E5A2E]'
+                                        }`}>
+                                            {t(item.category)}
+                                        </span>
+                                        <span className="text-[10px] text-gray-400">
+                                            {new Date(item.createdAt || item.date).toLocaleDateString()}
+                                        </span>
+                                    </div>
+                                    <h3 className="font-bold text-gray-900 dark:text-white truncate" title={item.title}>
+                                        {item.title}
+                                    </h3>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mt-1">
+                                        {item.content || item.description}
+                                    </p>
+                                </div>
+                                <div className="flex flex-col gap-2">
                                     <button
-                                        onClick={(e) => { e.stopPropagation(); handleEditNews(item); }}
-                                        className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-                                        title={t('Edit')}
+                                        onClick={() => handleEditNews(item)}
+                                        className="p-2 text-[#2E5A2E] hover:bg-[#E8F5E9] rounded-xl transition-colors"
                                     >
                                         <Edit2 size={18} />
                                     </button>
                                     <button
-                                        onClick={(e) => { e.stopPropagation(); handleDeleteNews(item._id || item.id); }}
-                                        className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                                        title={t('Delete')}
+                                        onClick={() => handleDeleteNews(item._id || item.id)}
+                                        className="p-2 text-red-600 hover:bg-red-50 rounded-xl transition-colors"
                                     >
                                         <Trash2 size={18} />
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
             ) : (
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 p-6">
+                    <form onSubmit={handleNewsSubmit} className="space-y-6">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Headline')}</label>
                             <input
                                 type="text"
                                 value={newsForm.headline}
                                 onChange={(e) => setNewsForm({ ...newsForm, headline: e.target.value })}
-                                className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full px-4 py-3 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none transition-all"
                                 required
                             />
                         </div>
@@ -1733,11 +1782,10 @@ const NewsManagement = () => {
                                 <select
                                     value={newsForm.type}
                                     onChange={(e) => setNewsForm({ ...newsForm, type: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none transition-all"
                                 >
-                                    <option>{t('Offer')}</option>
-                                    <option>{t('News')}</option>
-                                    <option>{t('Deal')}</option>
+                                    <option value="Offer">{t('Offer')}</option>
+                                    <option value="News">{t('News')}</option>
                                 </select>
                             </div>
 
@@ -1769,7 +1817,7 @@ const NewsManagement = () => {
                                 rows="5"
                                 value={newsForm.content}
                                 onChange={(e) => setNewsForm({ ...newsForm, content: e.target.value })}
-                                className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full px-4 py-3 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none transition-all"
                                 required
                             ></textarea>
                         </div>
@@ -1929,7 +1977,7 @@ const OrderManagement = () => {
                                         <td className="p-4 font-medium">
                                             <Link 
                                                 to={`/orders/${order._id || order.id}`}
-                                                className="text-blue-600 dark:text-blue-400 hover:underline"
+                                                className="text-[#2E5A2E] dark:text-[#7CA90E] hover:underline font-bold"
                                                 title={t('View Order Details')}
                                             >
                                                 #{String(order._id || order.id).slice(-6).toUpperCase()}
@@ -1955,7 +2003,7 @@ const OrderManagement = () => {
                                                             href={order.shippingAddress.location || '#'}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline mt-1 text-xs"
+                                                            className="flex items-center gap-1 text-[#2E5A2E] dark:text-[#7CA90E] hover:underline mt-1 text-xs font-bold"
                                                             title={t('View location on Google Maps')}
                                                         >
                                                             <MapPin size={12} />
@@ -1981,7 +2029,7 @@ const OrderManagement = () => {
                                                     onChange={(e) => updateStatus(order._id || order.id, e.target.value)}
                                                     className={`px-3 py-1.5 rounded-lg border-2 text-sm font-semibold transition-colors outline-none
                                                         ${order.status === 'Delivered' ? 'border-green-100 bg-green-50 text-green-700' :
-                                                            (order.status === 'Out for Delivery' || order.status === 'Shipped') ? 'border-blue-100 bg-blue-50 text-blue-700' :
+                                                            (order.status === 'Out for Delivery' || order.status === 'Shipped') ? 'border-[#CBF9B2] bg-[#E8F5E9] text-[#2E5A2E]' :
                                                                     order.status === 'Cancelled' ? 'border-red-100 bg-red-50 text-red-700' :
                                                                         'border-yellow-100 bg-yellow-50 text-yellow-700'}`}
                                                 >
@@ -2017,7 +2065,7 @@ const OrderManagement = () => {
                                                 
                                                 {/* Show Assigned Delivery Boy (Admin Only) */}
                                                 {order.deliveredBy && !isDeliveryBoy && (
-                                                    <div className="flex items-center gap-1 text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                                                    <div className="flex items-center gap-1 text-[10px] font-bold text-[#2E5A2E] bg-[#E8F5E9] px-2 py-1 rounded">
                                                         <ShoppingBag size={10} />
                                                         {order.deliveredBy?.name || t('Assigned')}
                                                     </div>
@@ -2067,7 +2115,7 @@ const OrderManagement = () => {
                     )}
                     <button
                         onClick={handleManualRefresh}
-                        className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-blue-600 dark:text-blue-400 ${isRefreshing ? 'animate-spin' : ''}`}
+                        className={`p-2 rounded-full hover:bg-[#E8F5E9] transition-colors text-[#2E5A2E] dark:text-[#7CA90E] ${isRefreshing ? 'animate-spin' : ''}`}
                         title={t('Refresh Orders')}
                     >
                         <RefreshCw size={24} />
@@ -2077,7 +2125,7 @@ const OrderManagement = () => {
 
             {/* Render orders grouped by status */}
             {renderOrderTable(processingOrders, 'Processing Orders', 'text-amber-700 dark:text-amber-400')}
-            {renderOrderTable(outForDeliveryOrders, 'Out for Delivery Orders', 'text-blue-700 dark:text-blue-400')}
+            {renderOrderTable(outForDeliveryOrders, 'Out for Delivery Orders', 'text-[#2E5A2E] dark:text-[#7CA90E]')}
             {renderOrderTable(deliveredOrders, 'Delivered Orders', 'text-green-700 dark:text-green-400')}
             {renderOrderTable(cancelledOrders, 'Cancelled Orders', 'text-red-700 dark:text-red-400')}
 
@@ -2264,7 +2312,7 @@ const CategoryManagement = () => {
                             setView('list');
                         }
                     }}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                    className="px-4 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 font-bold shadow-sm"
                 >
                     {view === 'list' ? <Plus size={20} /> : <List size={20} />}
                     {view === 'list' ? t('Add Category') : t('View List')}
@@ -2340,7 +2388,7 @@ const CategoryManagement = () => {
                                                         {/* Stop propagation to prevent drag start on buttons */}
                                                         <button
                                                             onClick={(e) => { e.stopPropagation(); handleEdit(category); }}
-                                                            className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                                                            className="p-2 text-[#2E5A2E] hover:bg-[#E8F5E9] rounded-xl transition-colors"
                                                         >
                                                             <Edit2 size={18} />
                                                         </button>
@@ -2375,7 +2423,7 @@ const CategoryManagement = () => {
                                 type="text"
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full px-4 py-3 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none transition-all"
                                 placeholder={t('e.g., Vegetables')}
                                 required
                             />
@@ -2402,7 +2450,7 @@ const CategoryManagement = () => {
                                     <button
                                         type="button"
                                         onClick={handleAddSubcategory}
-                                        className="px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors flex items-center gap-2"
+                                        className="px-4 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 font-bold shadow-sm"
                                     >
                                         <Plus size={20} />
                                         {t('Add')}
@@ -2488,7 +2536,7 @@ const CategoryManagement = () => {
                                 disabled={uploadingCategory}
                                 className={`w-full sm:w-auto px-6 py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2 ${uploadingCategory
                                     ? 'bg-gray-400 cursor-not-allowed text-white'
-                                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                                    : 'bg-[#2E5A2E] text-white hover:bg-[#1a3d1a]'
                                     }`}
                             >
                                 {uploadingCategory ? (
@@ -2653,7 +2701,7 @@ const UserManagement = () => {
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
                 <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-lg">
+                        <div className="p-2 bg-[#E8F5E9] dark:bg-[#2E5A2E]/20 text-[#2E5A2E] rounded-lg">
                             <Users size={20} />
                         </div>
                         <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">{t('Total Users')}</span>
@@ -2680,7 +2728,7 @@ const UserManagement = () => {
                 </div>
                 <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-lg">
+                        <div className="p-2 bg-[#E8F5E9] dark:bg-[#2E5A2E]/30 text-[#2E5A2E] rounded-lg">
                             <Wrench size={20} />
                         </div>
                         <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">{t('Service Admins')}</span>
@@ -2689,7 +2737,7 @@ const UserManagement = () => {
                 </div>
                 <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-red-100 dark:bg-red-900/30 text-red-600 rounded-lg">
+                        <div className="p-2 bg-[#E8F5E9] dark:bg-[#2E5A2E]/30 text-[#2E5A2E] rounded-lg">
                             <Shield size={20} />
                         </div>
                         <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">{t('Admins')}</span>
@@ -2706,7 +2754,7 @@ const UserManagement = () => {
                         placeholder={t('Search users by name or email...')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-100 dark:border-gray-600 focus:ring-2 focus:ring-[#2E5A2E] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
                     />
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                 </div>
@@ -2723,7 +2771,7 @@ const UserManagement = () => {
                     <p className="text-red-600 dark:text-red-400">{t('Error')}: {error}</p>
                     <button
                         onClick={() => fetchUsers()}
-                        className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                        className="mt-4 px-4 py-2 bg-[#2E5A2E] text-white rounded-lg hover:bg-[#1a3d1a] transition-colors"
                     >
                         {t('Retry')}
                     </button>
@@ -2756,7 +2804,7 @@ const UserManagement = () => {
                                     <tr key={user._id || user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center">
-                                                <div className="h-10 w-10 flex-shrink-0 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 font-bold text-lg">
+                                                <div className="h-10 w-10 flex-shrink-0 bg-[#E8F5E9] dark:bg-[#2E5A2E]/30 rounded-full flex items-center justify-center text-[#2E5A2E] font-extrabold text-lg">
                                                     {user.name.charAt(0).toUpperCase()}
                                                 </div>
                                                 <div className="ml-4">
@@ -2785,10 +2833,10 @@ const UserManagement = () => {
                                                 {(Array.isArray(user.role) ? user.role : [user.role || 'customer']).map((role, idx) => (
                                                     <div key={idx} className="flex flex-col">
                                                         <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap w-fit
-                                                            ${role === 'admin' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
-                                                                role === 'store_admin' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' :
-                                                                role === 'service_admin' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
-                                                                    'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'}`}>
+                                                            ${role === 'admin' ? 'bg-[#2E5A2E]/10 text-[#2E5A2E] dark:bg-[#2E5A2E]/30 dark:text-[#CBF9B2]' :
+                                                                role === 'store_admin' ? 'bg-[#2E5A2E]/10 text-[#2E5A2E] dark:bg-[#2E5A2E]/30 dark:text-[#CBF9B2]' :
+                                                                role === 'service_admin' ? 'bg-[#2E5A2E]/10 text-[#2E5A2E] dark:bg-[#2E5A2E]/30 dark:text-[#CBF9B2]' :
+                                                                    'bg-[#2E5A2E]/10 text-[#2E5A2E] dark:bg-[#2E5A2E]/30 dark:text-[#CBF9B2]'}`}>
                                                             {t(role === 'store_admin' ? 'Store Admin' : role === 'service_admin' ? 'Service Admin' : role.charAt(0).toUpperCase() + role.slice(1))}
                                                         </span>
                                                         {role === 'store_admin' && user.storeId && (
@@ -2820,7 +2868,7 @@ const UserManagement = () => {
                                                         href={mapLink}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline"
+                                                        className="flex items-center gap-1 text-[#2E5A2E] dark:text-[#CBF9B2] hover:underline"
                                                     >
                                                         <MapPin size={14} />
                                                         {t('View Map')}
@@ -2857,10 +2905,10 @@ const UserManagement = () => {
                                                                                     }
                                                                                 }
                                                                             }}
-                                                                            className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                                                                            className="w-5 h-5 rounded border-gray-300 text-[#2E5A2E] focus:ring-[#2E5A2E] transition-all cursor-pointer"
                                                                         />
-                                                                        <span className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                                                                            <span className="text-gray-400 group-hover:text-blue-500">{role.icon}</span>
+                                                                        <span className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-[#2E5A2E] dark:group-hover:text-[#CBF9B2]">
+                                                                            <span className="text-gray-400 group-hover:text-[#2E5A2E]">{role.icon}</span>
                                                                             {role.label}
                                                                         </span>
                                                                     </label>
@@ -2869,8 +2917,8 @@ const UserManagement = () => {
                                                         </div>
 
                                                         {(Array.isArray(formData.role) ? formData.role.includes('delivery_boy') : formData.role === 'delivery_boy') && (
-                                                            <div className="p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-900/30 space-y-4">
-                                                                <h4 className="font-semibold text-blue-900 dark:text-blue-300 flex items-center gap-2">
+                                                            <div className="p-4 bg-[#E8F5E9] dark:bg-[#2E5A2E]/10 rounded-xl border border-[#CBF9B2] dark:border-[#2E5A2E]/30 space-y-4">
+                                                                <h4 className="font-semibold text-[#2E5A2E] dark:text-[#CBF9B2] flex items-center gap-2">
                                                                     <Truck size={16} /> {t('Delivery Settings')}
                                                                 </h4>
                                                                 <div className="grid grid-cols-2 gap-4">
@@ -2927,7 +2975,7 @@ const UserManagement = () => {
                                                                             ...formData,
                                                                             deliverySettings: { ...formData.deliverySettings, isActive: e.target.checked }
                                                                         })}
-                                                                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                                        className="rounded border-gray-300 text-[#2E5A2E] focus:ring-[#2E5A2E]"
                                                                     />
                                                                     <label htmlFor="isActive" className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('Active for Deliveries')}</label>
                                                                 </div>
@@ -3012,7 +3060,7 @@ const UserManagement = () => {
                                                         </button>
                                                         <button
                                                             onClick={handleSave}
-                                                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                                                            className="px-6 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 font-bold shadow-sm"
                                                         >
                                                             <Save size={18} />
                                                             {t('Save')}
@@ -3026,7 +3074,7 @@ const UserManagement = () => {
                                                     </div>
                                                     <button
                                                         onClick={() => handleEdit(user)}
-                                                        className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                                                        className="p-2 text-[#2E5A2E] hover:bg-[#E8F5E9] rounded-xl transition-colors"
                                                     >
                                                         <Edit2 size={18} />
                                                     </button>
@@ -3120,7 +3168,7 @@ const DeliveryBoyManagement = () => {
         <div className="max-w-6xl">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('Delivery Boys')}</h2>
-                <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 px-4 py-2 rounded-xl flex items-center gap-2 font-semibold">
+                <div className="bg-[#E8F5E9] dark:bg-[#2E5A2E]/30 text-[#2E5A2E] px-4 py-2 rounded-xl flex items-center gap-2 font-bold">
                     <Truck size={20} />
                     {deliveryBoys.length} {t('Active Personnel')}
                 </div>
@@ -3134,7 +3182,7 @@ const DeliveryBoyManagement = () => {
                         placeholder={t('Search delivery boys...')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-100 dark:border-gray-600 focus:ring-2 focus:ring-[#2E5A2E] bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all"
                     />
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                 </div>
@@ -3156,7 +3204,7 @@ const DeliveryBoyManagement = () => {
                                 <tr key={boy._id || boy.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center">
-                                            <div className="h-10 w-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 font-bold">
+                                            <div className="h-10 w-10 bg-[#E8F5E9] dark:bg-[#2E5A2E]/30 rounded-full flex items-center justify-center text-[#2E5A2E] font-bold">
                                                 {boy.name.charAt(0).toUpperCase()}
                                             </div>
                                             <div className="ml-4">
@@ -3174,7 +3222,7 @@ const DeliveryBoyManagement = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className={`px-3 py-1 text-xs font-semibold rounded-full ${boy.deliverySettings?.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                        <span className={`px-3 py-1 text-xs font-semibold rounded-full ${boy.deliverySettings?.isActive ? 'bg-[#E8F5E9] text-[#2E5A2E]' : 'bg-red-100 text-red-700'}`}>
                                             {boy.deliverySettings?.isActive ? t('Available') : t('Unavailable')}
                                         </span>
                                     </td>
@@ -3234,18 +3282,18 @@ const DeliveryBoyManagement = () => {
                                                             ...formData,
                                                             deliverySettings: { ...formData.deliverySettings, isActive: e.target.checked }
                                                         })}
-                                                        className="rounded text-blue-600"
+                                                        className="rounded text-[#2E5A2E]"
                                                     />
                                                     <span className="text-sm font-medium">{t('Active for Deliveries')}</span>
                                                 </div>
                                                 <div className="flex justify-end gap-2 pt-2">
                                                     <button onClick={() => setEditingUser(null)} className="text-gray-500 hover:text-gray-700 text-sm font-medium">{t('Cancel')}</button>
-                                                    <button onClick={handleSave} className="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium">{t('Save Changes')}</button>
+                                                    <button onClick={handleSave} className="bg-[#2E5A2E] text-white px-4 py-1.5 rounded-lg text-sm font-medium">{t('Save Changes')}</button>
                                                 </div>
                                             </div>
                                         ) : (
                                             <div className="flex justify-end gap-2">
-                                                <button onClick={() => handleEdit(boy)} className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg">
+                                                <button onClick={() => handleEdit(boy)} className="p-2 text-[#2E5A2E] hover:bg-[#E8F5E9] rounded-lg">
                                                     <Edit2 size={18} />
                                                 </button>
                                                 <button onClick={() => handleDelete(boy._id || boy.id)} className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
@@ -3461,7 +3509,7 @@ const AdsManagement = () => {
                                     const selectedStore = stores.find(s => (s.id || s._id) === selectedId);
                                     setStoreName(selectedStore ? selectedStore.name : '');
                                 }}
-                                className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full px-4 py-3 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none transition-all"
                             >
                                 <option value="">{t('Select Store')}</option>
                                 {stores.map(store => (
@@ -3479,7 +3527,7 @@ const AdsManagement = () => {
                                 type="number"
                                 value={price}
                                 onChange={(e) => setPrice(e.target.value)}
-                                className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full px-4 py-3 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none transition-all"
                                 placeholder={t('e.g., 100')}
                                 min="0"
                                 step="0.01"
@@ -3493,7 +3541,7 @@ const AdsManagement = () => {
                                 type="text"
                                 value={offerTitle}
                                 onChange={(e) => setOfferTitle(e.target.value)}
-                                className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full px-4 py-3 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none transition-all"
                                 placeholder={t('e.g., Special offer shawarma + chicken = 100 offer')}
                             />
                         </div>
@@ -3502,7 +3550,7 @@ const AdsManagement = () => {
                         <button
                             type="submit"
                             disabled={!newAdUrl || uploadingAd}
-                            className="px-6 py-2 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-6 py-2 bg-[#2E5A2E] text-white rounded-xl font-bold hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                         >
                             {editingAdId ? <Pencil size={20} /> : <Plus size={20} />}
                             {editingAdId ? t('Update Ad') : t('Add Ad')}
@@ -3547,7 +3595,7 @@ const AdsManagement = () => {
                                     </div>
                                     <div className="p-4 space-y-2">
                                         {ad.storeName && (
-                                            <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">{ad.storeName}</p>
+                                            <p className="text-sm font-bold text-[#2E5A2E] dark:text-[#CBF9B2]">{ad.storeName}</p>
                                         )}
                                         {ad.offerTitle && (
                                             <p className="font-medium text-gray-900 dark:text-white">{ad.offerTitle}</p>
@@ -3641,7 +3689,7 @@ const ServiceRequestManagement = () => {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2E5A2E]"></div>
             </div>
         );
     }
@@ -3650,7 +3698,7 @@ const ServiceRequestManagement = () => {
         <div className="max-w-6xl">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <ClipboardList className="text-blue-600" />
+                    <ClipboardList className="text-[#2E5A2E]" />
                     {t('Service Requests')}
                 </h2>
                 {serviceRequestsData.length > 0 && (
@@ -3746,7 +3794,7 @@ const ServiceRequestManagement = () => {
                                                             })()}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:underline mt-1"
+                                                            className="inline-flex items-center gap-1 text-xs text-[#2E5A2E] dark:text-[#CBF9B2] hover:underline mt-1 font-bold"
                                                         >
                                                             <MapPin size={12} />
                                                             {t('View Map')}
@@ -3762,7 +3810,7 @@ const ServiceRequestManagement = () => {
                                                         onChange={(e) => handleStatusUpdate(request._id || request.id, e.target.value)}
                                                         className={`px-3 py-1.5 rounded-lg border-2 text-sm font-semibold transition-colors outline-none
                                                             ${request.status === 'Completed' ? 'border-green-100 bg-green-50 text-green-700' :
-                                                                request.status === 'In Progress' ? 'border-blue-100 bg-blue-50 text-blue-700' :
+                                                                request.status === 'In Progress' ? 'border-[#CBF9B2] bg-[#E8F5E9] text-[#2E5A2E]' :
                                                                     request.status === 'Cancelled' ? 'border-red-100 bg-red-50 text-red-700' :
                                                                         'border-yellow-100 bg-yellow-50 text-yellow-700'}`}
                                                     >
@@ -3879,12 +3927,12 @@ const CityManagement = () => {
                         value={newCity}
                         onChange={(e) => setNewCity(e.target.value)}
                         placeholder={t('Enter city name')}
-                        className="w-full flex-1 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full flex-1 px-4 py-3 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none transition-all"
                     />
                     <button
                         type="submit"
                         disabled={!newCity.trim()}
-                        className="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-6 py-3 bg-[#2E5A2E] text-white rounded-xl font-bold hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                     >
                         <Plus size={20} />
                         {t('Add City')}
@@ -3943,7 +3991,7 @@ const SortableRow = ({ children, ...props }) => {
 
     return (
         <SortableItemContext.Provider value={{ attributes, listeners, ref: setActivatorNodeRef }}>
-            <tr ref={setNodeRef} style={style} className={`${props.className} ${isDragging ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}>
+            <tr ref={setNodeRef} style={style} className={`${props.className} ${isDragging ? 'bg-[#E8F5E9] dark:bg-[#2E5A2E]/20' : ''}`}>
                 {children}
             </tr>
         </SortableItemContext.Provider>

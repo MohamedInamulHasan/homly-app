@@ -496,7 +496,7 @@ const StoreManagement = () => {
                                 setStoreForm({ name: '', address: '', image: '', rating: 4.5, openingTime: '09:00', closingTime: '21:00', mobile: '', category: [] });
                                 setView('form');
                             }}
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors font-bold shadow-sm"
                         >
                             <Plus size={20} />
                             {t('Add New Store')}
@@ -506,7 +506,7 @@ const StoreManagement = () => {
                     {view === 'storeProducts' && (
                         <button
                             onClick={handleAddProductToStore}
-                            className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors text-sm md:text-base whitespace-nowrap font-normal"
+                            className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors text-sm md:text-base whitespace-nowrap font-bold shadow-sm"
                         >
                             <Plus size={18} className="md:w-5 md:h-5" />
                             {t('Add Product')}
@@ -527,7 +527,7 @@ const StoreManagement = () => {
                                     placeholder={t('Search by store name or location...')}
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full pl-10 pr-4 py-3 rounded-2xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none"
                                 />
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                             </div>
@@ -611,8 +611,8 @@ const StoreManagement = () => {
                                                     {/* Info Pill */}
                                                     <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-3 space-y-2 border border-gray-100 dark:border-gray-800/50">
                                                         <div className="flex items-center gap-3 truncate">
-                                                            <div className="p-2 bg-blue-500/10 rounded-xl">
-                                                                <MapPin size={16} className="text-blue-600 dark:text-blue-400" />
+                                                            <div className="p-2 bg-[#2E5A2E]/10 rounded-xl">
+                                                                <MapPin size={16} className="text-[#2E5A2E] dark:text-[#7CA90E]" />
                                                             </div>
                                                             <span className="text-xs font-bold text-gray-600 dark:text-gray-400 truncate opacity-80" title={store.address}>
                                                                 {store.address || t('No address')}
@@ -632,7 +632,7 @@ const StoreManagement = () => {
                                                     <div className="grid grid-cols-2 gap-2 mt-auto">
                                                         <button
                                                             onClick={(e) => { e.stopPropagation(); proceedToManageProducts(store); }}
-                                                            className="col-span-1 py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[1.25rem] shadow-xl shadow-blue-500/10 hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group/btn"
+                                                            className="col-span-1 py-3 px-4 bg-gradient-to-r from-[#2E5A2E] to-[#4A8A4A] text-white rounded-[1.25rem] shadow-xl shadow-[#2E5A2E]/10 hover:shadow-[#2E5A2E]/30 hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group/btn"
                                                         >
                                                             <Package size={18} className="transition-transform group-hover/btn:rotate-12" />
                                                             <span className="text-xs font-black uppercase tracking-wider">{t('Products')}</span>
@@ -659,7 +659,7 @@ const StoreManagement = () => {
                                                         <div className="col-span-2 flex items-center justify-center gap-4 mt-1 pt-3 border-t border-gray-100 dark:border-gray-700/50">
                                                             <button
                                                                 onClick={(e) => { e.stopPropagation(); handleEditStore(store); }}
-                                                                className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors px-3 py-1.5 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl"
+                                                                className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#2E5A2E] dark:text-[#7CA90E] hover:text-[#1a3d1a] dark:hover:text-[#CBF9B2] transition-colors px-3 py-1.5 hover:bg-[#E8F5E9] dark:hover:bg-[#2E5A2E]/20 rounded-xl"
                                                             >
                                                                 <Edit2 size={14} />
                                                                 {t('Edit')}
@@ -702,7 +702,7 @@ const StoreManagement = () => {
                         {isStoreAdmin && editingStore && (
                             <button
                                 onClick={() => proceedToManageProducts(editingStore)}
-                                className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors flex items-center gap-2"
+                                className="px-4 py-2 bg-[#E8F5E9] text-[#2E5A2E] rounded-xl hover:bg-[#CBF9B2] transition-colors flex items-center gap-2 font-bold"
                             >
                                 <Package size={18} />
                                 {t('Manage Products')}
@@ -741,7 +741,7 @@ const StoreManagement = () => {
                                         type="button"
                                         onClick={() => setStoreForm({ ...storeForm, timingType: 'daily' })}
                                         className={`px-4 py-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1 ${storeForm.timingType === 'daily'
-                                            ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+                                            ? 'border-[#2E5A2E] bg-[#E8F5E9] text-[#2E5A2E]'
                                             : 'border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500'
                                             }`}
                                     >
@@ -796,7 +796,7 @@ const StoreManagement = () => {
                                     type="text"
                                     value={storeForm.mobile}
                                     onChange={(e) => setStoreForm({ ...storeForm, mobile: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none"
                                     placeholder="e.g., +91 9876543210"
                                     required
                                 />
