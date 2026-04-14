@@ -27,15 +27,15 @@ const Cart = () => {
     if (cartItems.length === 0) {
         return (
             <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-12 transition-colors duration-200">
-                <div className="bg-gradient-to-tr from-[#7CA90E]/20 to-[#9ECB30]/20 p-8 rounded-full mb-8 shadow-xl animate-pulse-slow">
-                    <ShoppingBag className="h-16 w-16 text-[#7CA90E]" />
+                <div className="bg-[#2E5A2E]/5 dark:bg-[#2E5A2E]/10 p-8 rounded-full mb-8 animate-pulse-slow">
+                    <ShoppingBag className="h-16 w-16 text-[#2E5A2E]" />
                 </div>
                 <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white mb-3 text-center">
                     {t('Your cart is empty')}
                 </h2>
                 <Link
                     to="/store"
-                    className="mt-4 inline-flex items-center px-8 py-3.5 border border-transparent text-base font-bold rounded-full text-white bg-[#7CA90E] transition-all duration-300 shadow-lg hover:shadow-xl active:scale-95"
+                    className="mt-4 inline-flex items-center px-8 py-3.5 border border-transparent text-base font-bold rounded-full text-white bg-[#2E5A2E] transition-all duration-300 active:scale-95"
                 >
                     {t('Start Shopping')}
                 </Link>
@@ -44,7 +44,7 @@ const Cart = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 flex flex-col justify-between transition-colors duration-200 relative overflow-hidden mx-auto max-w-md w-full my-auto pb-48">
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 flex flex-col transition-colors duration-200 relative overflow-hidden mx-auto max-w-md w-full my-auto pb-10">
             
             {/* Simple Header */}
             <div className="w-full px-5 py-6">
@@ -124,40 +124,35 @@ const Cart = () => {
                     ))}
                 </div>
                 
+                {/* Order Summary Integrated in Flow */}
+                <div className="mt-4 bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-[0_4px_20px_-5px_rgba(0,0,0,0.03)] border border-gray-100 dark:border-gray-700">
+                     <div className="flex justify-between items-center mb-6">
+                          <h2 className="text-[16px] font-bold text-gray-900 dark:text-white">{t('Payment')}</h2>
+                          <span className="text-[12px] font-semibold text-gray-400">{cartItems.length} item{cartItems.length > 1 ? 's' : ''}</span>
+                     </div>
+    
+                     <div className="space-y-4 mb-8">
+                          <div className="flex justify-between items-center">
+                               <span className="text-[14px] text-gray-400 font-medium">{t('Payment')}</span>
+                               <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹ {cartTotal.toFixed(0)}</span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                               <span className="text-[14px] text-gray-400 font-medium">{t('Delivery')}</span>
+                               <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹ {deliveryCharge.toFixed(0)}</span>
+                          </div>
+                          <div className="flex justify-between items-center pt-2 border-t border-gray-50 dark:border-gray-700/50">
+                               <span className="text-[15px] text-gray-500 font-medium">{t('Total')}</span>
+                               <span className="text-[16px] font-bold text-gray-900 dark:text-white">₹ {finalTotal.toFixed(0)}</span>
+                          </div>
+                     </div>
+    
+                     <Link to="/checkout" className="w-full bg-black text-white rounded-full py-4 flex items-center justify-center font-normal text-[15px] active:scale-[0.98] transition-transform gap-2">
+                           <span>{t('Proceed to Checkout')}</span>
+                           <ShoppingBag size={20} />
+                     </Link>
+                </div>
+                
             </div>
-
-            {/* Bottom Pull-up Card (Order Summary) */}
-            <motion.div 
-                initial={{ y: '100%', x: '-50%' }}
-                animate={{ y: 0, x: '-50%' }}
-                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                className="bg-white dark:bg-gray-800 rounded-t-[3rem] pt-6 pb-6 px-8 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] fixed bottom-0 max-w-md w-full left-1/2 border-t border-gray-100 dark:border-gray-700 z-50"
-            >
-                 <div className="flex justify-between items-center mb-6">
-                      <h2 className="text-[16px] font-bold text-gray-900 dark:text-white">{t('Payment')}</h2>
-                      <span className="text-[12px] font-semibold text-gray-400">{cartItems.length} item{cartItems.length > 1 ? 's' : ''}</span>
-                 </div>
-
-                 <div className="space-y-4 mb-8">
-                      <div className="flex justify-between items-center">
-                           <span className="text-[14px] text-gray-400 font-medium">{t('Payment')}</span>
-                           <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹ {cartTotal.toFixed(0)}</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                           <span className="text-[14px] text-gray-400 font-medium">{t('Delivery')}</span>
-                           <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹ {deliveryCharge.toFixed(0)}</span>
-                      </div>
-                      <div className="flex justify-between items-center pt-2">
-                           <span className="text-[15px] text-gray-500 font-medium">{t('Total')}</span>
-                           <span className="text-[16px] font-bold text-gray-900 dark:text-white">₹ {finalTotal.toFixed(0)}</span>
-                      </div>
-                 </div>
-
-                 <Link to="/checkout" className="w-full bg-black text-white rounded-full py-4 flex items-center justify-center font-normal text-[15px] active:scale-[0.98] transition-transform gap-2">
-                       <span>{t('Proceed to Checkout')}</span>
-                       <ShoppingBag size={20} />
-                 </Link>
-            </motion.div>
         </div>
     );
 };

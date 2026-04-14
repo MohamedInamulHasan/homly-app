@@ -19,7 +19,7 @@ const OrderConfirmation = () => {
     const { setUser } = useAuth();
     const queryClient = useQueryClient();
 
-    const { formData, cartItems, cartTotal, deliveryCharge } = location.state || {};
+    const { formData, cartItems, cartTotal, deliveryCharge, isDirectPurchase } = location.state || {};
     const finalTotal = (cartTotal || 0) + (deliveryCharge || 0);
 
     if (!location.state) {
@@ -120,8 +120,13 @@ const OrderConfirmation = () => {
         try {
             const createdOrder = await addOrder(newOrder);
             console.log('✅ Order created successfully:', createdOrder);
-            clearCart();
-            setCreatedOrderId(createdOrder?._id || 'NEW');
+            
+            // Only clear cart if this was NOT a direct purchase
+            if (!isDirectPurchase) {
+                clearCart();
+            }
+            
+            setCreatedOrderId(createdOrderId || createdOrder?._id || 'NEW');
             setShowConfirmModal(false);
             setShowSuccessModal(true);
 
@@ -214,14 +219,14 @@ const OrderConfirmation = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 pb-[380px] md:pb-32 relative">
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 pb-10 md:pb-32 relative">
             {/* Simple Header */}
             <div className="w-full px-5 py-6">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                      <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95 border border-gray-100/50">
                          <ArrowLeft size={22} />
                      </button>
-                     <h1 className="text-[17px] font-bold text-gray-900 dark:text-white tracking-tight">{t('Review Order')}</h1>
+                     <h1 className="text-[17px] font-bold text-gray-900 dark:text-white tracking-tight">{t('Confirmation')}</h1>
                      <div className="w-[42px]" />
                 </div>
             </div>
@@ -249,7 +254,7 @@ const OrderConfirmation = () => {
                                             />
                                             <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
                                                 {item.isGold && (
-                                                    <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
+                                                    <span className="bg-[#16A34A] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
                                                         Free
                                                     </span>
                                                 )}
@@ -259,23 +264,23 @@ const OrderConfirmation = () => {
                                                     </span>
                                                 )}
                                             </div>
-                                            {item.unit && (
-                                                <div className="absolute bottom-0 right-0 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-tl-lg z-10 pointer-events-none shadow-sm">
-                                                    <span className="text-[9px] font-bold text-gray-900 leading-none block">
-                                                        {item.unit}
-                                                    </span>
-                                                </div>
-                                            )}
                                         </div>
                                         <div className="flex-1 min-w-0 flex flex-col justify-center">
-                                            <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-0.5 truncate" title={item.adTitle || item.title}>{item.adTitle || item.title}</h4>
+                                            <h4 className={`text-sm font-medium text-gray-900 dark:text-white mb-0.5 ${item.isFromAd ? '' : 'truncate'}`} title={item.adTitle || item.title}>{item.adTitle || item.title}</h4>
                                             {(item.storeId || item.storeName) && (
                                                 <p className="text-xs font-normal text-gray-500 dark:text-gray-400 truncate">
                                                     {getStoreName(item.storeId, stores) || item.storeName}
                                                 </p>
                                             )}
                                             <div className="flex items-center justify-between mt-1">
-                                                <p className="text-sm font-medium text-black dark:text-white">₹{((item.price * item.quantity) || 0).toFixed(0)}</p>
+                                                <div>
+                                                    <p className="text-sm font-medium text-black dark:text-white">₹{((item.price * item.quantity) || 0).toFixed(0)}</p>
+                                                    {item.unit && (
+                                                        <p className="text-[10px] text-gray-400 dark:text-gray-500 font-medium">
+                                                            {item.unit}
+                                                        </p>
+                                                    )}
+                                                </div>
                                                 <div className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300">
                                                     x{item.quantity}
                                                 </div>
@@ -320,78 +325,47 @@ const OrderConfirmation = () => {
                     </div>
                 </div>
 
-                <div className="hidden md:block mb-8">
-                     <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 p-8">
-                          <div className="space-y-4 mb-8">
-                               <div className="flex justify-between items-center text-gray-500 font-medium">
-                                    <span>{t('Subtotal')}</span>
-                                    <span className="text-gray-900 dark:text-white font-bold">₹{(cartTotal || 0).toFixed(0)}</span>
-                               </div>
-                               <div className="flex justify-between items-center text-gray-500 font-medium">
-                                    <span>{t('Delivery')}</span>
-                                    {(deliveryCharge === 0 || deliveryCharge === null) ? (
-                                        <span className="text-green-600 font-bold">FREE</span>
-                                    ) : (
-                                        <span className="text-gray-900 dark:text-white font-bold">₹{(deliveryCharge || 20).toFixed(0)}</span>
-                                    )}
-                               </div>
-                               <div className="flex justify-between items-center pt-2 border-t border-gray-50 dark:border-gray-700 text-gray-900 dark:text-white font-black text-lg">
-                                    <span>{t('Total')}</span>
-                                    <span className="text-2xl">₹{finalTotal.toFixed(0)}</span>
-                               </div>
-                          </div>
-                          <button
-                              onClick={handleConfirmOrder}
-                              className="w-full bg-black text-white py-4 px-6 text-lg rounded-full font-normal shadow-lg transition-transform active:scale-[0.98]"
-                          >
-                              {t('Place Order')}
-                          </button>
-                     </div>
+                <div className="block mb-8">
+                    <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] p-6 border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+                        <div className="flex justify-between items-center mb-8">
+                            <h2 className="text-[17px] font-bold text-gray-900 dark:text-white">{t('Payment')}</h2>
+                            <span className="text-[13px] font-medium text-gray-400 tracking-tight">{cartItems.length} items</span>
+                        </div>
+
+                        <div className="space-y-5 mb-8">
+                            <div className="flex justify-between items-center">
+                                <span className="text-[14px] text-gray-400 font-medium">{t('Subtotal')}</span>
+                                <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹{(cartTotal || 0).toFixed(0)}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-[14px] text-gray-400 font-medium">{t('Delivery Charge')}</span>
+                                {(deliveryCharge === 0 || deliveryCharge === null) ? (
+                                    <span className="text-[15px] font-bold text-green-600 dark:text-green-500">FREE</span>
+                                ) : (
+                                    <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹{(deliveryCharge || 20).toFixed(0)}</span>
+                                )}
+                            </div>
+                            <div className="flex justify-between items-center pt-3 border-t border-gray-50 dark:border-gray-700/50">
+                                <span className="text-[15px] text-gray-500 font-medium">{t('Total Amount')}</span>
+                                <span className="text-[17px] font-black text-gray-900 dark:text-white">₹{finalTotal.toFixed(0)}</span>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={handleConfirmOrder}
+                            className="w-full bg-black text-white rounded-full py-4 flex items-center justify-center font-normal text-[15px] active:scale-[0.98] transition-transform"
+                        >
+                            {t('Place Order')}
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            {/* Sticky Action Footer - Mobile Only (Premium Pull-up Card) */}
-            <motion.div 
-                initial={{ y: '100%', x: '-50%' }}
-                animate={{ y: 0, x: '-50%' }}
-                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                className="bg-white dark:bg-gray-800 rounded-t-[3rem] pt-6 pb-6 px-8 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] fixed bottom-0 max-w-md w-full left-1/2 border-t border-gray-100 dark:border-gray-700 z-50"
-            >
-                 <div className="flex justify-between items-center mb-6">
-                      <h2 className="text-[16px] font-bold text-gray-900 dark:text-white">{t('Payment')}</h2>
-                      <span className="text-[12px] font-semibold text-gray-400">{cartItems.length} items</span>
-                 </div>
 
-                 <div className="space-y-4 mb-8">
-                      <div className="flex justify-between items-center">
-                           <span className="text-[14px] text-gray-400 font-medium">{t('Subtotal')}</span>
-                           <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹{(cartTotal || 0).toFixed(0)}</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                           <span className="text-[14px] text-gray-400 font-medium">{t('Delivery Charge')}</span>
-                           {(deliveryCharge === 0 || deliveryCharge === null) ? (
-                                <span className="text-[15px] font-bold text-green-600 dark:text-green-400">FREE</span>
-                           ) : (
-                               <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹{(deliveryCharge || 20).toFixed(0)}</span>
-                           )}
-                      </div>
-                      <div className="flex justify-between items-center pt-2 border-t border-gray-50 dark:border-gray-700">
-                           <span className="text-[15px] text-gray-500 font-medium">{t('Total Amount')}</span>
-                           <span className="text-[16px] font-black text-gray-900 dark:text-white">₹{finalTotal.toFixed(0)}</span>
-                      </div>
-                 </div>
-
-                 <button
-                      onClick={handleConfirmOrder}
-                      className="w-full bg-black text-white rounded-full py-4 flex items-center justify-center font-normal text-[15px] active:scale-[0.98] transition-transform"
-                 >
-                      {t('Place Order')}
-                 </button>
-            </motion.div>
 
             {showConfirmModal && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
-                    <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl max-w-sm w-full p-8 transform transition-all border border-gray-100 dark:border-gray-700">
+                    <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] max-w-sm w-full p-8 transform transition-all border border-gray-100 dark:border-gray-700">
                         <div className="text-center">
                             <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-gray-50 dark:bg-gray-700 mb-6 shadow-inner relative">
                                 <div className="absolute inset-0 rounded-full bg-black opacity-5 animate-ping"></div>

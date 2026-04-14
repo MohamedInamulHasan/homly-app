@@ -18,7 +18,7 @@ const StoreCard = ({ store }) => {
     return (
         <div
             onClick={handleVisit}
-            className={`group relative bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 aspect-[16/9] md:aspect-[2.4/1] w-full cursor-pointer border border-gray-100 dark:border-gray-700/50 ${!isOpen ? 'opacity-90' : ''}`}
+            className={`group relative bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden transition-all duration-300 aspect-[16/9] md:aspect-[2.4/1] w-full cursor-pointer ${!isOpen ? 'opacity-90' : ''}`}
         >
             {/* Full Background Image */}
             <div className="absolute inset-0 z-0">
@@ -47,18 +47,18 @@ const StoreCard = ({ store }) => {
                 </div>
             )}
 
-            {/* Content Section - Overlaid on Green Banner at Bottom */}
+            {/* Content Section - Overlaid on White Banner at Bottom */}
             <div className={`absolute bottom-0 left-0 right-0 py-2.5 px-4 z-20 overflow-hidden transition-all duration-300 ${!isOpen ? 'blur-[2px] opacity-80' : ''}`}>
-                {/* Semi-transparent Green Banner Strip */}
-                <div className="absolute inset-0 bg-[#2E5A2E]/75 backdrop-blur-md border-t border-white/10" />
+                {/* Solid White Banner Strip */}
+                <div className="absolute inset-0 bg-white dark:bg-gray-800 border-t border-gray-50 dark:border-gray-700" />
                 
                 <div className="relative z-10">
-                    <h3 className="text-white text-[15px] font-semibold tracking-tight leading-tight mb-0.5 drop-shadow-sm truncate">
+                    <h3 className="text-gray-900 dark:text-white text-[15px] font-semibold tracking-tight leading-tight mb-0.5 truncate">
                         {t(store, 'name')}
                     </h3>
                     <div className="flex items-center gap-1.5 opacity-90">
-                        <MapPin size={10} className="text-[#CBF9B2] flex-shrink-0" />
-                        <p className="text-gray-100 text-[11px] font-normal truncate">
+                        <MapPin size={10} className="text-[#2E5A2E] dark:text-[#CBF9B2] flex-shrink-0" />
+                        <p className="text-gray-500 dark:text-gray-400 text-[11px] font-normal truncate">
                             {store.address || t('No address')}
                         </p>
                     </div>
@@ -67,9 +67,9 @@ const StoreCard = ({ store }) => {
 
             {/* Right Action - Floating Arrow (Synced with slimmer banner) */}
             <div className={`absolute bottom-4 right-4 z-20 transition-all duration-300 ${!isOpen ? 'blur-[1.5px] opacity-40 scale-75' : ''}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg ${
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
                     isOpen 
-                    ? 'bg-[#CBF9B2] text-[#2E5A2E] scale-90 group-hover:scale-105 active:scale-90' 
+                    ? 'bg-[#2E5A2E] text-white scale-90 group-hover:scale-105 active:scale-90' 
                     : 'bg-black/20 text-gray-400'
                 }`}>
                     <ArrowRight size={16} />

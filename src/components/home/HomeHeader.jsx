@@ -41,7 +41,7 @@ const HomeHeader = () => {
         <header className="flex items-center justify-between px-4 py-4 bg-transparent transition-colors duration-200">
             {/* Location Selector */}
             <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-black/5">
+                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-black/5">
                     <MapPin className="text-red-500" size={20} />
                 </div>
                 <div className="flex flex-col">
@@ -57,11 +57,11 @@ const HomeHeader = () => {
             <div className="flex items-center gap-3">
                 <Link 
                     to="/cart"
-                    className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-black/5 relative hover:bg-gray-50 transition-all active:scale-95"
+                    className="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-black/5 relative hover:bg-gray-50 transition-all active:scale-95"
                 >
                     <ShoppingCart size={20} className="text-gray-700" />
                     {cartCount > 0 && (
-                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-sm border border-white">
+                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center border border-white">
                             {cartCount}
                         </span>
                     )}

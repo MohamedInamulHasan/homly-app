@@ -111,10 +111,10 @@ const Home = () => {
     const isLoadingAll = loadingProducts || loadingStores || loadingCategories;
 
     return (
-        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-24 transition-colors duration-200">
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-8 transition-colors duration-200">
             
             {/* Premium Light Green Header Card */}
-            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-2 pt-4 pb-5 shadow-sm overflow-hidden">
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-2 pt-4 pb-5 overflow-hidden">
                 {/* Background Accents (Subtle light accents) */}
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
                 
@@ -264,7 +264,7 @@ const Home = () => {
                                                         </div>
                                                     )}
                                                     {product.unit && !isClosed && (
-                                                        <div className="absolute -bottom-1 -right-1 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg px-2 py-0.5 shadow-sm">
+                                                        <div className="absolute -bottom-1 -right-1 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg px-2 py-0.5">
                                                             <p className="text-gray-500 dark:text-gray-400 text-[9px] font-bold">
                                                                 {product.unit}
                                                             </p>

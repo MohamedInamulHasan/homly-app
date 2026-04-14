@@ -87,14 +87,26 @@ const ProductCard = ({ product, showCartControls = true, showHeart = true, store
     const featuredVariant = isGroup ? variants[currentVariantIndex] : product;
 
     return (
-        <div className={`relative flex flex-col h-full bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-[0_2px_15px_rgba(0,0,0,0.04)] border border-gray-100 dark:border-gray-700/50 group transition-all duration-300 ${!isOpen || !isAvailable ? 'opacity-80' : 'hover:shadow-[0_8px_25px_rgba(0,0,0,0.08)]'}`}>
+        <div className={`relative flex flex-col h-full bg-white dark:bg-gray-800 rounded-3xl overflow-hidden group transition-all duration-300 ${!isOpen || !isAvailable ? 'opacity-80' : ''}`}>
             
             <Link to={product.isGroup ? `/product-group/${encodeURIComponent(product.title)}` : `/product/${productId}`} className="flex-1">
                 {/* Badges Section */}
-                <div className="absolute top-3 left-3 z-[15] pointer-events-none">
-                    <div className="bg-[#FF5C5C] text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-sm">
-                        10% off
-                    </div>
+                <div className="absolute top-3 left-3 z-[15] pointer-events-none flex flex-col gap-1.5 items-start">
+                    {product.isGold && (
+                        <div className="bg-[#16A34A] text-white text-[9px] font-bold px-2.5 py-1 rounded-full">
+                            Free
+                        </div>
+                    )}
+                    {product.isFromAd && (
+                        <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-[9px] font-bold px-2.5 py-1 rounded-full">
+                            Offer
+                        </div>
+                    )}
+                    {!product.isGold && (
+                        <div className="bg-[#FF5C5C] text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow-sm">
+                            10% off
+                        </div>
+                    )}
                 </div>
 
 

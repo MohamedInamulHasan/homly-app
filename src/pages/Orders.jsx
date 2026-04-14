@@ -207,7 +207,7 @@ const Orders = () => {
                                 <div
                                     key={order._id || order.id}
                                     onClick={() => navigate(`/orders/${order._id || order.id}`)}
-                                    className={`bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm mb-4 border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer group`}
+                                    className="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-300 cursor-pointer group"
                                 >
                                     <div className="p-6">
                                         <div className="flex justify-between items-start gap-2 mb-4">
@@ -249,8 +249,8 @@ const Orders = () => {
 
                                         <div className="divide-y divide-gray-50 dark:divide-gray-700">
                                             {order.items?.slice(0, 2).map((item, idx) => (
-                                                <div key={idx} className="py-3 flex items-center gap-3">
-                                                    <div className="h-12 w-12 rounded-xl bg-[#F9FAFB] border border-gray-100 dark:border-gray-700 overflow-hidden flex-shrink-0 relative">
+                                                <div key={idx} className="py-4 flex items-center gap-4 first:pt-0">
+                                                    <div className="h-16 w-16 rounded-2xl bg-gray-50 border border-gray-100 dark:border-gray-700 overflow-hidden flex-shrink-0 relative">
                                                         <img
                                                             src={item.image && (item.image.startsWith('http') || item.image.startsWith('data:'))
                                                                 ? item.image
@@ -260,48 +260,41 @@ const Orders = () => {
                                                             alt={item.adTitle || item.name}
                                                             className="h-full w-full object-cover"
                                                             loading="lazy"
-                                                            onError={(e) => {
-                                                                e.target.onerror = null;
-                                                                if (item.image && item.image !== e.target.src) {
-                                                                    e.target.src = item.image;
-                                                                } else {
-                                                                    e.target.src = "https://via.placeholder.com/150?text=No+Image";
-                                                                }
-                                                            }}
+                                                            onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/150?text=No+Image"; }}
                                                         />
-                                                        {/* Status Tags */}
                                                         <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
                                                             {((item.isGold) || (item.product && item.product.isGold)) && (
-                                                                <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[6px] font-bold px-1 py-px rounded-br-md shadow-sm mb-[1px]">
+                                                                <span className="bg-[#16A34A] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg mb-[1px]">
                                                                     Free
                                                                 </span>
                                                             )}
                                                             {item.isFromAd && !item.isGold && !(item.product && item.product.isGold) && (
-                                                                <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-[6px] font-bold px-1 py-px rounded-br-md shadow-sm">
+                                                                <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg">
                                                                     Offer
                                                                 </span>
                                                             )}
                                                         </div>
-                                                        </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <p className={`text-sm font-medium text-gray-900 dark:text-white ${item.isFromAd ? 'mb-1 leading-normal' : 'truncate'}`}>
+                                                    </div>
+                                                    <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                                        <p className={`text-sm font-medium text-gray-900 dark:text-white ${item.isFromAd ? '' : 'truncate'}`}>
                                                             {item.adTitle || item.name}
                                                         </p>
                                                         {(item.storeId || item.storeName) && (
-                                                            <div className="flex items-center gap-1 mt-0.5">
-                                                                <p className="text-xs font-normal text-gray-500 dark:text-gray-400 truncate">
-                                                                    {getStoreName(item.storeId, stores) || item.storeName}
-                                                                </p>
-                                                            </div>
+                                                            <p className="text-xs font-normal text-gray-400 dark:text-gray-500 truncate mt-0.5">
+                                                                {getStoreName(item.storeId, stores) || item.storeName}
+                                                            </p>
                                                         )}
-                                                        <div className="flex items-center gap-2 mt-1.5">
-                                                            {(item.unit || item.product?.unit) && (
-                                                                <span className="text-xs font-normal text-gray-500 dark:text-gray-400">
-                                                                    {item.unit || item.product?.unit}
-                                                                </span>
-                                                            )}
-                                                            <div className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700/50 rounded-md text-xs font-normal text-gray-500 dark:text-gray-400 shrink-0">
-                                                                {item.quantity}
+                                                        <div className="flex items-center justify-between mt-1">
+                                                            <div>
+                                                                <p className="text-sm font-bold text-gray-900 dark:text-white">₹{((item.price * item.quantity) || 0).toFixed(0)}</p>
+                                                                {(item.unit || item.product?.unit) && (
+                                                                    <p className="text-[10px] text-gray-400 dark:text-gray-500 font-medium">
+                                                                        {item.unit || item.product?.unit}
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                            <div className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700/50 rounded-md text-xs font-bold text-gray-500 dark:text-gray-400">
+                                                                x{item.quantity}
                                                             </div>
                                                         </div>
                                                     </div>

@@ -45,7 +45,7 @@ const CategorySection = ({ categories = [], isLoading = false }) => {
                         to={`/store?category=${encodeURIComponent(category.name)}`}
                         className="flex flex-col items-center gap-2 group min-w-[72px]"
                     >
-                        <div className="w-16 h-16 rounded-full overflow-hidden bg-white dark:bg-gray-800 flex items-center justify-center transition-all group-hover:scale-110 shadow-sm border border-gray-100 dark:border-gray-700">
+                        <div className="w-16 h-16 rounded-full overflow-hidden bg-[#CBF9B2] dark:bg-green-900/30 flex items-center justify-center transition-all group-hover:scale-110 shadow-sm border-none">
                             <img
                                 src={category.image || `${API_BASE_URL}/categories/${category._id || category.id}/image`}
                                 alt={category.name}

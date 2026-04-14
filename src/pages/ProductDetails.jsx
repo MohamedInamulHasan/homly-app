@@ -237,7 +237,7 @@ const ProductDetails = () => {
             </div>
 
             {/* Bottom Section: Pull-up Content Card */}
-            <div className="flex-1 bg-white dark:bg-gray-800 rounded-t-[3.5rem] -mt-12 relative z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] px-8 pt-10 pb-12">
+            <div className="flex-1 bg-white dark:bg-gray-800 rounded-t-[3.5rem] -mt-12 relative z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] px-8 pt-10 pb-8">
                 <div className="max-w-2xl mx-auto">
                     {/* Header: Title Only (Ratings Removed) */}
                     <div className="mb-2">
@@ -339,10 +339,10 @@ const ProductDetails = () => {
                         ) : (
                             <button
                                 onClick={handleCheckout}
-                                className="w-full bg-black hover:bg-gray-900 text-white py-4 rounded-full font-normal text-lg transition-all active:scale-[0.95] flex items-center justify-center gap-2"
+                                className="w-full bg-black text-white py-4 rounded-full font-normal text-[15px] active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
                             >
-                                <Plus size={20} />
-                                {t('Add product')}
+                                <span>{t('Add product')}</span>
+                                <ShoppingBag size={18} />
                             </button>
                         )}
                     </div>

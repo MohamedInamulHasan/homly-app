@@ -241,19 +241,19 @@ const Checkout = () => {
     const finalTotal = displayTotal + deliveryCharge;
 
     return (
-        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 pb-[380px] md:pb-24 relative">
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 pb-12 md:pb-24 relative">
             {/* Simple Header */}
             <div className="w-full px-5 py-6">
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
+                <div className="max-w-md mx-auto flex items-center justify-between">
                      <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95 border border-gray-100/50">
                          <ArrowLeft size={22} />
                      </button>
                      <h1 className="text-[17px] font-bold text-gray-900 dark:text-white tracking-tight">{t('Checkout')}</h1>
-                     <div className="w-[42px]" /> {/* Spacer */}
+                     <div className="w-[42px]" /> 
                 </div>
             </div>
 
-            <div className="pt-2 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Location Toast Message */}
                 {locationMessage.show && (
@@ -275,423 +275,8 @@ const Checkout = () => {
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Checkout Form */}
                     <div className="lg:col-span-2 space-y-8">
-                        {/* Shipping Address */}
-                        <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 p-5 sm:p-6">
-                            <div className="flex items-center gap-3 mb-5">
-                                <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#7CA90E] dark:text-[#8bc910]">
-                                    <MapPin size={18} />
-                                </div>
-                                <h3 className="font-medium text-gray-900 dark:text-white text-base">
-                                    {t('Shipping Details')}
-                                </h3>
-                            </div>
-
-                            {!isInitialized || authLoading ? (
-                                // Skeleton Loading State
-                                <div className="animate-pulse space-y-4">
-                                    <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded-xl w-full"></div>
-                                    <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl w-full"></div>
-                                </div>
-                            ) : !isEditingAddress ? (
-                                // Address Card View
-                                <div className="relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm group transition-all">
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsEditingAddress(true)}
-                                        className="absolute top-4 right-4 p-2.5 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full shadow-sm transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:scale-110"
-                                        title={t('Edit Address')}
-                                    >
-                                        <Pencil size={18} />
-                                    </button>
-
-                                    <div className="flex items-start gap-4 pr-12">
-                                        <div className="flex-1 min-w-0">
-                                            <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-2">{formData.fullName}</h3>
-                                            <div className="space-y-1.5">
-                                                <p className="text-gray-700 dark:text-gray-200 text-sm leading-relaxed">
-                                                    {formData.address}
-                                                </p>
-                                                <p className="text-gray-700 dark:text-gray-200 text-sm font-medium">
-                                                    {formData.city} - {formData.zip}
-                                                </p>
-                                                <p className="text-gray-600 dark:text-gray-300 text-sm mt-2 flex items-center gap-1.5">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                                                    <span>{formData.mobile}</span>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="flex flex-col gap-6">
-                                    {/* NEW: Prominent Location Action Card - Simplified as Rectangle */}
-                                    <button
-                                        type="button"
-                                        onClick={async () => {
-                                            console.log('📍 Location button clicked');
-                                            setIsNavigating(true);
-
-                                            try {
-                                                // Always use browser's navigator.geolocation (works in Android WebView too)
-                                                console.log('📍 Using browser geolocation API...');
-
-                                                if (!navigator.geolocation) {
-                                                    console.error('📍 Geolocation not supported');
-                                                    setIsNavigating(false);
-                                                    setLocationMessage({ show: true, type: 'error', text: t('Location not supported on this device.') });
-                                                    setTimeout(() => setLocationMessage({ show: false, type: '', text: '' }), 4000);
-                                                    return;
-                                                }
-
-                                                const position = await new Promise((resolve, reject) => {
-                                                    navigator.geolocation.getCurrentPosition(resolve, reject, {
-                                                        enableHighAccuracy: false,  // Faster, uses network location instead of GPS
-                                                        timeout: 8000,              // Reduced from 15s to 8s
-                                                        maximumAge: 300000          // Accept cached position up to 5 minutes old
-                                                    });
-                                                });
-
-                                                console.log('📍 Position received:', position);
-
-                                                if (!position || !position.coords) {
-                                                    console.error('📍 No position data');
-                                                    setIsNavigating(false);
-                                                    setLocationMessage({ show: true, type: 'error', text: t('Unable to retrieve location data.') });
-                                                    setTimeout(() => setLocationMessage({ show: false, type: '', text: '' }), 4000);
-                                                    return;
-                                                }
-
-                                                const { latitude, longitude } = position.coords;
-                                                console.log('📍 Coordinates:', latitude, longitude);
-                                                const googleMapsUrl = `https://www.google.com/maps/place/${latitude}+${longitude}/@${latitude},${longitude},17z?entry=gps`;
-                                                console.log('📍 Maps link:', googleMapsUrl);
-
-                                                try {
-                                                    setFormData(prev => ({
-                                                        ...prev,
-                                                        location: googleMapsUrl
-                                                    }));
-                                                    console.log('📍 Form data updated');
-                                                } catch (formError) {
-                                                    console.error('📍 Form update error:', formError);
-                                                }
-
-                                                if (user) {
-                                                    try {
-                                                        const updatedUserData = {
-                                                            ...user,
-                                                            location: googleMapsUrl
-                                                        };
-                                                        setUser(updatedUserData);
-                                                        localStorage.setItem('userInfo', JSON.stringify(updatedUserData));
-                                                        console.log('📍 User data updated');
-
-                                                        updateUser(updatedUserData)
-                                                            .then(() => console.log('📍 Database updated'))
-                                                            .catch(err => console.error('📍 Database error:', err));
-                                                    } catch (userError) {
-                                                        console.error('📍 User update error:', userError);
-                                                    }
-                                                }
-
-                                                console.log('📍 Location update complete');
-                                                setIsNavigating(false);
-
-                                                // Show success message
-                                                setLocationMessage({ show: true, type: 'success', text: t('Location accessed successfully!') });
-                                                setTimeout(() => setLocationMessage({ show: false, type: '', text: '' }), 3000);
-                                            } catch (error) {
-                                                console.error('📍 Error:', error);
-                                                setIsNavigating(false);
-
-                                                // Handle specific error codes with actionable messages
-                                                if (error.code === 1) {
-                                                    // Permission denied
-                                                    setLocationMessage({
-                                                        show: true,
-                                                        type: 'error',
-                                                        text: t('Please allow location access in browser settings')
-                                                    });
-                                                } else if (error.code === 2) {
-                                                    // Position unavailable - GPS is off
-                                                    setLocationMessage({
-                                                        show: true,
-                                                        type: 'error',
-                                                        text: t('Please turn on GPS/Location in your device settings')
-                                                    });
-                                                } else if (error.code === 3) {
-                                                    // Timeout - usually means GPS is off or weak signal
-                                                    setLocationMessage({
-                                                        show: true,
-                                                        type: 'error',
-                                                        text: t('Please turn on GPS/Location in your device settings')
-                                                    });
-                                                } else {
-                                                    setLocationMessage({
-                                                        show: true,
-                                                        type: 'error',
-                                                        text: t('Unable to get location. Check GPS settings')
-                                                    });
-                                                }
-                                                setTimeout(() => setLocationMessage({ show: false, type: '', text: '' }), 5000);
-                                            }
-                                        }}
-                                        disabled={isNavigating}
-                                        className="w-full bg-[#2E5A2E] text-white p-4 rounded-[1.5rem] shadow-md hover:bg-[#1E3A1E] transition-all duration-300 text-left flex items-center justify-between"
-                                    >
-                                        <div className="flex items-center gap-4">
-                                            <div className="bg-white/20 p-2 rounded-lg flex-shrink-0">
-                                                {isNavigating ? (
-                                                    <div className="w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin" />
-                                                ) : (
-                                                    <MapPin className="text-white w-5 h-5" />
-                                                )}
-                                            </div>
-                                            <div>
-                                                <h3 className="font-semibold text-sm md:text-base">
-                                                    {isNavigating ? t('Detecting Location...') : t('Use Current Location')}
-                                                </h3>
-                                                <p className="text-gray-300 text-xs mt-0.5">
-                                                    {t('Tap to autofill address details')}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <ArrowLeft className="text-white/60 rotate-180" size={20} />
-                                    </button>
-
-                                    {/* Saved GPS Indicator */}
-                                    {formData.location && !isNavigating && (
-                                        <div className="flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl animate-fade-in">
-                                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                            <span className="text-xs font-semibold text-green-700 dark:text-green-300">
-                                                {t('Saved GPS Location Attached')}
-                                            </span>
-                                            <button 
-                                                type="button"
-                                                onClick={() => setFormData(prev => ({ ...prev, location: '' }))}
-                                                className="ml-auto text-gray-400 hover:text-red-500 transition-colors"
-                                                title={t('Clear Location')}
-                                            >
-                                                <X size={14} />
-                                            </button>
-                                        </div>
-                                    )}
-
-                                    {/* Separator */}
-                                    <div className="flex items-center gap-4">
-                                        <div className="h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
-                                        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">{t('OR ENTER MANUALLY')}</span>
-                                        <div className="h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
-                                    </div>
-
-                                    {/* Edit Address Form Container - Matches View Card Style */}
-                                    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div className="md:col-span-2">
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Full Name')}</label>
-                                                <input
-                                                    type="text"
-                                                    name="fullName"
-                                                    required
-                                                    value={formData.fullName}
-                                                    onChange={handleChange}
-                                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
-                                                    placeholder={t('Enter your full name')}
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Mobile Number')}</label>
-                                                <input
-                                                    type="tel"
-                                                    name="mobile"
-                                                    required
-                                                    value={formData.mobile}
-                                                    onChange={handleChange}
-                                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
-                                                    placeholder={t('Enter your mobile number')}
-                                                    maxLength={10}
-                                                    inputMode="numeric"
-                                                    pattern="\d{10}"
-                                                />
-                                            </div>
-                                            <div className="md:col-span-2">
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Address')}</label>
-                                                {/* <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        // Always try to fetch fresh location when clicked
-                                                        if (!navigator.geolocation) {
-                                                            alert(t('Geolocation is not supported by your browser'));
-                                                            return;
-                                                        }
-
-                                                        navigator.geolocation.getCurrentPosition(
-                                                            (position) => {
-                                                                const { latitude, longitude } = position.coords;
-                                                                // Update cache for next time
-                                                                setCachedLocation({ latitude, longitude });
-
-                                                                // Store as Google Maps URL for consistency
-                                                                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
-                                                                setFormData(prev => ({
-                                                                    ...prev,
-                                                                    location: mapsLink
-                                                                }));
-
-                                                                // Update User Location in Background Immediately
-                                                                if (user) {
-                                                                    const updatedUserData = {
-                                                                        ...user,
-                                                                        location: mapsLink
-                                                                    };
-
-                                                                    // Optimistic update
-                                                                    setUser(updatedUserData);
-                                                                    localStorage.setItem('userInfo', JSON.stringify(updatedUserData));
-
-                                                                    updateUser(updatedUserData)
-                                                                        .then(() => console.log('📍 Location updated in database'))
-                                                                        .catch(err => console.error('Failed to update location:', err));
-                                                                }
-                                                            },
-                                                                console.error("Error fetching location:", error);
-                                                                
-                                                                // Handle Timeout specifically with a Retry option
-                                                                if (error.code === 3) {
-                                                                    if (confirm(t('Location request timed out. Would you like to try again outside?'))) {
-                                                                        // Retry with longer timeout and high accuracy
-                                                                        navigator.geolocation.getCurrentPosition(
-                                                                            (position) => {
-                                                                                const { latitude, longitude } = position.coords;
-                                                                                setCachedLocation({ latitude, longitude });
-                                                                                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
-                                                                                setFormData(prev => ({ ...prev, location: mapsLink }));
-                                                                                if (user) {
-                                                                                    const updatedUserData = { ...user, location: mapsLink };
-                                                                                    setUser(updatedUserData);
-                                                                                    localStorage.setItem('userInfo', JSON.stringify(updatedUserData));
-                                                                                    updateUser(updatedUserData).catch(err => console.error('Failed to update location:', err));
-                                                                                }
-                                                                            },
-                                                                            (retryError) => {
-                                                                                alert(t('Still unable to retrieve location. Please check your GPS settings.'));
-                                                                            },
-                                                                            { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
-                                                                        );
-                                                                        return;
-                                                                    }
-                                                                }
-
-                                                                let errorMessage = t('Unable to retrieve your location. Please check if your device location is on.');
-                                                                if (error.code === 1) errorMessage = t('Location permission denied. Please enable location access in your browser settings.');
-                                                                else if (error.code === 2) errorMessage = t('Location unavailable. Please check if your device location/GPS is turned on.');
-                                                                
-                                                                alert(errorMessage);
-                                                            },
-                                                            {
-                                                                enableHighAccuracy: true,
-                                                                timeout: 15000,
-                                                                maximumAge: 0 // Force fresh location
-                                                            }
-                                                        );
-                                                    }}
-                                                    className="text-xs flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline font-medium bg-blue-50 dark:bg-gray-700 px-2 py-1 rounded-lg border border-blue-100 dark:border-gray-600"
-                                                >
-                                                    <MapPin size={12} />
-                                                    {t('📍 Use Current Location')}
-                                            </button> */}
-                                                <textarea
-                                                    name="address"
-                                                    required
-                                                    rows="3"
-                                                    value={formData.address}
-                                                    onChange={handleChange}
-                                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors resize-none"
-                                                    placeholder={t('Enter your full address')}
-                                                />
-                                            </div>
-                                            {/* City Dropdown & Zip Code */}
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                        {t('City')} <span className="text-red-500">*</span>
-                                                    </label>
-                                                    {loadingCities ? (
-                                                        <div className="animate-pulse h-12 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
-                                                    ) : (
-                                                        <select
-                                                            name="city"
-                                                            required
-                                                            value={formData.city}
-                                                            onChange={handleChange}
-                                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors appearance-none"
-                                                        >
-                                                            <option value="">{t('Select City')}</option>
-                                                            {cities.map((city, index) => (
-                                                                <option key={index} value={city}>{city}</option>
-                                                            ))}
-                                                        </select>
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                        {t('Pincode')} <span className="text-red-500">*</span>
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        name="zip"
-                                                        required
-                                                        value={formData.zip}
-                                                        onChange={handleChange}
-                                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
-                                                        placeholder={t('630702')}
-                                                        maxLength={6}
-                                                        inputMode="numeric"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            </div>
-
-                        {/* Payment Method */}
-                        <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 p-5 sm:p-6">
-                            <div className="flex items-center gap-3 mb-5">
-                                <div className="p-2 bg-gray-50 dark:bg-gray-700 rounded-lg text-gray-500 dark:text-gray-400">
-                                    <CreditCard size={18} />
-                                </div>
-                                <h3 className="font-medium text-gray-900 dark:text-white text-base">
-                                    {t('Payment Method')}
-                                </h3>
-                            </div>
-                            <div className="space-y-4">
-                                <label className={`flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all ${formData.paymentMethod === 'cod' ? 'border-[#2E5A2E] bg-green-50 dark:bg-gray-800' : 'border-gray-200 dark:border-gray-700 hover:border-[#2E5A2E]'}`}>
-                                    <input
-                                        type="radio"
-                                        name="paymentMethod"
-                                        value="cod"
-                                        checked={formData.paymentMethod === 'cod'}
-                                        onChange={handleChange}
-                                        className="w-5 h-5 text-[#2E5A2E] focus:ring-[#2E5A2E] accent-[#2E5A2E]"
-                                    />
-                                    <div className="ml-4">
-                                        <span className="block font-medium text-gray-900 dark:text-white">{t('Cash on Delivery')}</span>
-                                        <span className="block text-sm text-gray-500 dark:text-gray-400">{t('Pay when you receive your order')}</span>
-                                    </div>
-                                    <Truck className="ml-auto text-gray-400" size={24} />
-                                </label>
-
-
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Order Summary */}
-                    <div className="lg:col-span-1">
-                        <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden sticky top-32">
+                        {/* Order Summary (Items List) */}
+                        <div className="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 overflow-hidden">
                             <div className="p-5 border-b border-gray-50 dark:border-gray-700 flex items-center gap-3">
                                 <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#7CA90E] dark:text-[#8bc910]">
                                     <Package size={18} />
@@ -699,173 +284,261 @@ const Checkout = () => {
                                 <h3 className="font-medium text-gray-900 dark:text-white text-base">{t('Order Summary')}</h3>
                             </div>
 
-                            <div className="divide-y divide-gray-50 dark:divide-gray-700 max-h-[45vh] overflow-y-auto">
-                                {displayItems.map((item) => (
-                                    <div key={item.id} className="p-4 flex gap-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group">
-                                        <div className="h-16 w-16 bg-[#F9FAFB] border border-gray-100 dark:border-gray-700 rounded-xl overflow-hidden flex-shrink-0 relative">
-                                            <img
-                                                src={item.image || `${API_BASE_URL}/products/${item._id || item.id}/image`}
-                                                onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
-                                                alt={item.adTitle || item.title}
-                                                className="h-full w-full object-cover object-center"
-                                            />
-                                            <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
-                                                {item.isGold && (
-                                                    <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
-                                                        {t('Free')}
-                                                    </span>
-                                                )}
-                                                {item.isFromAd && (
-                                                    <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm">
-                                                        {t('Offer')}
-                                                    </span>
-                                                )}
+                            <div className="p-4 sm:p-6">
+                                <div className="divide-y divide-gray-50 dark:divide-gray-700">
+                                    {displayItems.map((item, index) => (
+                                        <div key={item.id || index} className="py-4 flex gap-4 first:pt-0">
+                                            <div className="h-16 w-16 bg-gray-50 rounded-2xl overflow-hidden flex-shrink-0 relative">
+                                                <img
+                                                    src={item.image || ((item._id || item.id || item.product) ? `${API_BASE_URL}/products/${item._id || item.id || item.product}/image` : "https://via.placeholder.com/150?text=No+Image")}
+                                                    alt={item.adTitle || item.title || item.name}
+                                                    className="h-full w-full object-cover"
+                                                    loading="lazy"
+                                                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
+                                                />
+                                                <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
+                                                    {(item.isGold || (item.product && item.product.isGold)) && (
+                                                        <span className="bg-[#16A34A] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
+                                                            Free
+                                                        </span>
+                                                    )}
+                                                    {item.isFromAd && (
+                                                        <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm">
+                                                            Offer
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="flex-1 min-w-0 flex flex-col justify-center">
-                                            {(() => {
-                                                const displayTitle = item.adTitle || item.title || item.name || t('Product');
-                                                const fullTitle = t(item, 'title') || displayTitle;
-                                                const titleClass = item.isFromAd ? 'line-clamp-2' : 'truncate';
-                                                return <h4 className={`text-sm font-medium text-gray-900 dark:text-white mb-0.5 ${titleClass}`} title={fullTitle}>{fullTitle}</h4>;
-                                            })()}
-                                            {(item.storeId || item.storeName) && (
-                                                <div className="flex items-center gap-1 mb-1 mt-0.5">
+                                            <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                                <h4 className={`text-sm font-medium text-gray-900 dark:text-white mb-0.5 ${item.isFromAd ? '' : 'truncate'}`} title={item.adTitle || item.title || item.name}>
+                                                    {item.adTitle || item.title || item.name}
+                                                </h4>
+                                                {(item.storeId || item.storeName) && (
                                                     <p className="text-xs font-normal text-gray-500 dark:text-gray-400 truncate">
                                                         {getStoreName(item.storeId, stores) || item.storeName}
                                                     </p>
-                                                </div>
-                                            )}
-                                            <div className="flex items-center justify-between mt-auto">
-                                                <div className="flex items-center gap-2">
-                                                    {(item.unit || item.product?.unit) && (
-                                                        <span className="text-xs font-normal text-gray-500 dark:text-gray-400">
-                                                            {item.unit || item.product?.unit}
-                                                        </span>
-                                                    )}
-                                                    <div className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700/50 rounded-md text-xs font-normal text-gray-500 dark:text-gray-400 shrink-0">
-                                                        {item.quantity}
+                                                )}
+                                                <div className="flex items-center justify-between mt-1">
+                                                    <div>
+                                                        <p className="text-sm font-medium text-black dark:text-white">₹{((item.price * item.quantity) || 0).toFixed(0)}</p>
+                                                        {(item.unit || item.weight) && (
+                                                            <p className="text-[10px] text-gray-400 dark:text-gray-500 font-medium">
+                                                                {item.unit || item.weight}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                    <div className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300">
+                                                        x{item.quantity}
                                                     </div>
                                                 </div>
-                                                <span className="font-bold text-gray-900 dark:text-white text-[15px]">₹{(item.price * item.quantity).toFixed(0)}</span>
                                             </div>
                                         </div>
-                                        {!directPurchase && (
-                                            <button
-                                                type="button"
-                                                onClick={() => removeFromCart(item.id)}
-                                                className="self-center p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100"
-                                                aria-label={t('Remove item')}
-                                            >
-                                                <Trash2 size={18} />
-                                            </button>
-                                        )}
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Shipping Address */}
+                        <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-[0_4px_20px_-5px_rgba(0,0,0,0.03)] border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
+                            <div className="flex items-center gap-4 mb-6">
+                                <div className="w-10 h-10 rounded-2xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-[#7CA90E]">
+                                    <MapPin size={20} />
+                                </div>
+                                <h2 className="text-[17px] font-bold text-gray-900 dark:text-white">{t('Shipping Details')}</h2>
                             </div>
 
-                            <div className="hidden md:block p-5 bg-gray-50/50 dark:bg-gray-800/80 border-t border-gray-100 dark:border-gray-700">
-                                <div className="space-y-3 mb-6">
-                                    <div className="flex items-center justify-between text-sm">
-                                        <span className="text-gray-600 dark:text-gray-400">{t('Subtotal')}</span>
-                                        <span className="font-medium text-gray-900 dark:text-white">₹{displayTotal.toFixed(0)}</span>
+                            {!isInitialized || authLoading ? (
+                                <div className="animate-pulse space-y-4">
+                                     <div className="h-32 bg-gray-50 dark:bg-gray-700 rounded-3xl w-full"></div>
+                                </div>
+                            ) : !isEditingAddress ? (
+                                <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 border border-gray-100 dark:border-gray-700 relative group">
+                                    <button 
+                                        type="button"
+                                        onClick={() => setIsEditingAddress(true)}
+                                        className="absolute top-6 right-6 p-2 bg-white dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-full text-gray-400 hover:text-black dark:hover:text-white transition-all active:scale-95"
+                                    >
+                                        <MoreHorizontal size={18} />
+                                    </button>
+                                    <div className="space-y-2 pr-10">
+                                        <p className="font-bold text-[16px] text-gray-900 dark:text-white">{formData.fullName || t('No name')}</p>
+                                        <p className="text-[14px] text-gray-500 dark:text-gray-400 leading-relaxed max-w-[200px]">{formData.address}</p>
+                                        <p className="text-[14px] text-gray-500 dark:text-gray-400 leading-relaxed font-medium">{formData.city} - {formData.zip}</p>
+                                        <div className="flex items-center gap-1.5 pt-1 text-gray-400">
+                                            <Truck size={14} className="opacity-50" />
+                                            <p className="text-[14px] font-medium">{formData.mobile}</p>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center justify-between text-sm">
-                                        <span className="text-gray-600 dark:text-gray-400">{t('Delivery Charge')}</span>
-                                        {(hasCoins || hasGoldProduct) ? (
-                                            <div className="text-right">
-                                                <span className="font-medium text-green-600 dark:text-green-400">FREE</span>
-                                                {hasGoldProduct ? (
-                                                    <p className="text-xs text-emerald-600 dark:text-emerald-500 flex items-center justify-end gap-1 font-bold">
-                                                        Free Delivery
-                                                    </p>
-                                                ) : (
-                                                    <p className="text-xs text-yellow-600 dark:text-yellow-500 flex items-center justify-end gap-1">
-                                                        <span>🪙</span> Coin Applied
-                                                    </p>
-                                                )}
-                                            </div>
-                                        ) : (
-                                            <span className="font-medium text-gray-900 dark:text-white">₹20</span>
-                                        )}
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Full Name')}</label>
+                                        <input
+                                            type="text"
+                                            name="fullName"
+                                            required
+                                            value={formData.fullName}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
+                                            placeholder={t('Enter your full name')}
+                                        />
                                     </div>
-                                    <div className="flex items-center justify-between text-base font-bold pt-3 border-t border-gray-200 dark:border-gray-700">
-                                        <span className="text-gray-900 dark:text-white">{t('Grand Total')}</span>
-                                        <span className="text-black dark:text-white">₹{finalTotal.toFixed(0)}</span>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Mobile Number')}</label>
+                                        <input
+                                            type="tel"
+                                            name="mobile"
+                                            required
+                                            value={formData.mobile}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
+                                            placeholder={t('Enter mobile number')}
+                                            maxLength={10}
+                                        />
                                     </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Address')}</label>
+                                        <textarea
+                                            name="address"
+                                            required
+                                            rows="3"
+                                            value={formData.address}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors resize-none mb-2"
+                                            placeholder={t('Enter full address')}
+                                        />
+                                        <button 
+                                            type="button" 
+                                            onClick={async () => {
+                                                setIsNavigating(true);
+                                                try {
+                                                    const position = await new Promise((resolve, reject) => {
+                                                        navigator.geolocation.getCurrentPosition(resolve, reject);
+                                                    });
+                                                    const { latitude, longitude } = position.coords;
+                                                    const mapsLink = `https://www.google.com/maps/place/${latitude}+${longitude}/@${latitude},${longitude},17z?entry=gps`;
+                                                    setFormData(prev => ({ ...prev, location: mapsLink }));
+                                                    setIsNavigating(false);
+                                                } catch (err) {
+                                                    setIsNavigating(false);
+                                                    alert(t('Unable to get location'));
+                                                }
+                                            }} 
+                                            className="text-sm text-[#7CA90E] flex items-center gap-1 font-medium"
+                                        >
+                                            <MapPin size={16} />
+                                            {formData.location ? t('Location Saved ✅') : t('Use Current Location')}
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('City')}</label>
+                                        <select
+                                            name="city"
+                                            required
+                                            value={formData.city}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-3 rounded-xl border bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
+                                        >
+                                            <option value="">{t('Select City')}</option>
+                                            {cities.map((city, index) => (
+                                                <option key={index} value={city}>{city}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('ZIP Code')}</label>
+                                        <input type="text" name="zip" required value={formData.zip} onChange={handleChange} className="w-full px-4 py-3 rounded-xl border bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white" />
+                                    </div>
+                                    <div className="md:col-span-2 flex justify-end gap-3 mt-2">
+                                        <button type="button" onClick={() => setIsEditingAddress(false)} className="px-6 py-2 bg-black text-white rounded-full text-sm font-medium active:scale-95 transition-transform">
+                                            {t('Save Details')}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Payment Method */}
+                        <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-[0_4px_20px_-5px_rgba(0,0,0,0.03)] border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
+                            <div className="flex items-center gap-4 mb-6">
+                                <div className="w-10 h-10 rounded-2xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400">
+                                    <CreditCard size={20} />
+                                </div>
+                                <h2 className="text-[17px] font-bold text-gray-900 dark:text-white">{t('Payment Method')}</h2>
+                            </div>
+
+                            <div className="space-y-4">
+                                <label className={`flex items-center p-4 rounded-3xl border-2 cursor-pointer transition-all ${formData.paymentMethod === 'cod' ? 'border-[#7CA90E] bg-[#7CA90E]/5 dark:bg-[#7CA90E]/10' : 'border-gray-100 dark:border-gray-700 hover:border-gray-200'}`}>
+                                    <div className="w-6 h-6 rounded-full border-2 border-gray-200 dark:border-gray-600 flex items-center justify-center mr-4">
+                                        {formData.paymentMethod === 'cod' && <div className="w-3 h-3 rounded-full bg-[#7CA90E]" />}
+                                    </div>
+                                    <input
+                                        type="radio"
+                                        name="paymentMethod"
+                                        value="cod"
+                                        checked={formData.paymentMethod === 'cod'}
+                                        onChange={handleChange}
+                                        className="hidden"
+                                    />
+                                    <div className="flex-1">
+                                        <span className="block font-bold text-[15px] text-gray-900 dark:text-white">{t('Cash on Delivery')}</span>
+                                        <span className="block text-[13px] text-gray-400 dark:text-gray-500">{t('Pay when you receive your order')}</span>
+                                    </div>
+                                    <div className="h-[90px] w-[90px] rounded-2xl overflow-hidden bg-gray-50 dark:bg-gray-800/50 flex-shrink-0 relative shadow-sm">
+                                        <Truck size={18} />
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Order Summary / Payment Card */}
+                    <div className="lg:col-span-1">
+                        <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-[0_4px_20px_-5px_rgba(0,0,0,0.03)] border border-gray-100 dark:border-gray-700 p-8 sticky top-32">
+                            <div className="flex justify-between items-center mb-8">
+                                <h2 className="text-[17px] font-bold text-gray-900 dark:text-white">{t('Payment')}</h2>
+                                <span className="text-[13px] font-medium text-gray-400 tracking-tight">{displayItems.length} items</span>
+                            </div>
+
+                            <div className="space-y-5 mb-8">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-[14px] text-gray-400 font-medium">{t('Subtotal')}</span>
+                                    <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹{displayTotal.toFixed(0)}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-[14px] text-gray-400 font-medium">{t('Delivery Charge')}</span>
+                                    {(hasCoins || hasGoldProduct) ? (
+                                        <span className="text-[15px] font-bold text-green-600 dark:text-green-500">FREE</span>
+                                    ) : (
+                                        <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹{deliveryCharge}</span>
+                                    )}
+                                </div>
+                                <div className="flex justify-between items-center pt-3 border-t border-gray-50 dark:border-gray-700/50">
+                                    <span className="text-[15px] text-gray-500 font-medium">{t('Total')}</span>
+                                    <span className="text-[17px] font-black text-gray-900 dark:text-white">₹{finalTotal.toFixed(0)}</span>
                                 </div>
                             </div>
 
-
                             <button
-                                onClick={handleSubmit}
+                                type="submit"
                                 disabled={isNavigating}
-                                className="hidden md:flex w-full mt-6 bg-black hover:bg-gray-900 text-white font-normal py-4 px-6 rounded-xl shadow-lg items-center justify-center gap-2 transition-all transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                className="w-full bg-black text-white rounded-full py-4 flex items-center justify-center font-normal text-[15px] active:scale-[0.98] transition-transform gap-2 disabled:opacity-50"
                             >
                                 {isNavigating ? (
-                                    <>
-                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                        {t('Loading...')}
-                                    </>
+                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                 ) : (
                                     <>
-                                        <ShoppingBag size={22} />
-                                        {t('Review Order')}
+                                        <span>{t('Review Order')}</span>
+                                        <ShoppingBag size={18} />
                                     </>
                                 )}
                             </button>
                         </div>
                     </div>
                 </form>
-            </div >
-
-            {/* Bottom Pull-up Card (Order Summary) - Mobile Only */}
-            <motion.div 
-                initial={{ y: '100%', x: '-50%' }}
-                animate={{ y: 0, x: '-50%' }}
-                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                className="bg-white dark:bg-gray-800 rounded-t-[3rem] pt-6 pb-8 px-8 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] fixed bottom-0 max-w-md w-full left-1/2 border-t border-gray-100 dark:border-gray-700 z-50 md:hidden"
-            >
-                 <div className="flex justify-between items-center mb-6">
-                      <h2 className="text-[16px] font-bold text-gray-900 dark:text-white">{t('Payment')}</h2>
-                      <span className="text-[12px] font-semibold text-gray-400">{displayItems.length} item{displayItems.length > 1 ? 's' : ''}</span>
-                 </div>
-
-                 <div className="space-y-4 mb-8">
-                      <div className="flex justify-between items-center">
-                           <span className="text-[14px] text-gray-400 font-medium">{t('Subtotal')}</span>
-                           <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹{displayTotal.toFixed(0)}</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                           <span className="text-[14px] text-gray-400 font-medium">{t('Delivery Charge')}</span>
-                           {(hasCoins || hasGoldProduct) ? (
-                               <span className="text-[15px] font-bold text-green-600">FREE</span>
-                           ) : (
-                               <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹20</span>
-                           )}
-                      </div>
-                      <div className="flex justify-between items-center pt-2">
-                           <span className="text-[15px] text-gray-500 font-medium">{t('Total')}</span>
-                           <span className="text-[16px] font-bold text-gray-900 dark:text-white">₹{finalTotal.toFixed(0)}</span>
-                      </div>
-                 </div>
-
-                 <button
-                      onClick={handleSubmit}
-                      disabled={isNavigating}
-                      className="w-full bg-black text-white rounded-full py-4 flex items-center justify-center font-normal text-[15px] active:scale-[0.98] transition-transform shadow-lg shadow-gray-200 dark:shadow-gray-900/20 disabled:opacity-70 disabled:grayscale gap-2"
-                 >
-                      {isNavigating ? (
-                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      ) : (
-                          <>
-                              <span>{t('Review Order')}</span>
-                              <ShoppingBag size={20} className="ml-1" />
-                          </>
-                      )}
-                 </button>
-            </motion.div>
-        </div >
+            </div>
+        </div>
     );
 };
 

@@ -170,7 +170,7 @@ const OrderDetails = () => {
                 <div className="space-y-5">
 
                 {/* Status Card & Timeline */}
-                <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                     {/* Status Banner */}
                     <div className={`p-6 ${
                         order.status === 'Cancelled' ? 'bg-[#fef2f2] dark:bg-red-900/10' :
@@ -241,7 +241,7 @@ const OrderDetails = () => {
                 </div>
 
                 {/* Items Card */}
-                <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                     <div className="p-4 border-b border-gray-50 dark:border-gray-700 flex items-center gap-2">
                         <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#7CA90E] dark:text-[#8bc910]">
                             <Package size={18} />
@@ -250,8 +250,8 @@ const OrderDetails = () => {
                     </div>
                     <div className="divide-y divide-gray-50 dark:divide-gray-700">
                         {order.items?.map((item, index) => (
-                            <div key={index} className="p-4 flex gap-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                <div className="h-16 w-16 bg-gray-50 border border-gray-100 dark:border-gray-700 rounded-xl overflow-hidden flex-shrink-0 relative">
+                            <div key={index} className="p-5 flex gap-4 hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition-colors first:pt-5">
+                                <div className="h-16 w-16 bg-gray-50 border border-gray-100 dark:border-gray-700 rounded-2xl overflow-hidden flex-shrink-0 relative">
                                     <img
                                         src={item.image && (item.image.startsWith('http') || item.image.startsWith('data:'))
                                             ? item.image
@@ -265,7 +265,7 @@ const OrderDetails = () => {
                                     {/* Status Tags */}
                                     <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
                                         {((item.isGold) || (item.product && item.product.isGold)) && (
-                                            <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
+                                            <span className="bg-[#16A34A] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
                                                 {t('Free')}
                                             </span>
                                         )}
@@ -277,39 +277,28 @@ const OrderDetails = () => {
                                     </div>
                                 </div>
                                 <div className="flex-1 min-w-0 flex flex-col justify-center">
-                                    {(() => {
-                                        const fullName = item.adTitle || item.name;
-                                        const bracketIndex = fullName.indexOf('(');
-                                        // Use line-clamp-2 for ads to show full title, truncate for regular items
-                                        const titleClass = item.isFromAd ? 'line-clamp-2' : 'truncate';
-
-                                        return (
-                                            <h4 className={`font-medium text-gray-900 dark:text-white text-sm ${titleClass} mb-0.5`} title={fullName}>
-                                                {fullName}
-                                            </h4>
-                                        );
-                                    })()}
+                                    <h4 className={`font-medium text-gray-900 dark:text-white text-sm ${item.isFromAd ? '' : 'truncate'} mb-0.5`} title={item.adTitle || item.name}>
+                                        {item.adTitle || item.name}
+                                    </h4>
 
                                     {(item.storeId || item.storeName) && (
-                                        <div className="flex items-center gap-1 mb-1">
-                                            <p className="text-xs font-normal text-gray-500 dark:text-gray-400 truncate">
-                                                {getStoreName(item.storeId, stores) || item.storeName}
-                                            </p>
-                                        </div>
+                                        <p className="text-xs font-normal text-gray-500 dark:text-gray-400 truncate mt-0.5">
+                                            {getStoreName(item.storeId, stores) || item.storeName}
+                                        </p>
                                     )}
 
-                                    <div className="flex items-center justify-between mt-auto">
-                                        <div className="flex items-center gap-2">
+                                    <div className="flex items-center justify-between mt-1">
+                                        <div>
+                                            <p className="text-[15px] font-bold text-gray-900 dark:text-white leading-none">₹{Number(item.price * item.quantity).toFixed(0)}</p>
                                             {(item.unit || item.product?.unit) && (
-                                                <span className="text-xs font-normal text-gray-500 dark:text-gray-400">
+                                                <p className="text-[10px] text-gray-400 dark:text-gray-500 font-medium mt-1">
                                                     {item.unit || item.product?.unit}
-                                                </span>
+                                                </p>
                                             )}
-                                            <div className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700/50 rounded-md text-xs font-normal text-gray-500 dark:text-gray-400 shrink-0">
-                                                {item.quantity}
-                                            </div>
                                         </div>
-                                        <span className="font-bold text-gray-900 dark:text-white text-[15px]">₹{Number(item.price * item.quantity).toFixed(0)}</span>
+                                        <div className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700/50 rounded-md text-xs font-bold text-gray-500 dark:text-gray-400 shrink-0">
+                                            x{item.quantity}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -318,7 +307,7 @@ const OrderDetails = () => {
                 </div>
 
                 {/* Address Card - Now Full Width */}
-                <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col justify-center">
+                <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col justify-center">
                     <div className="flex items-center gap-3 mb-3">
                         <div className="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-full text-orange-600 dark:text-orange-400">
                             <MapPin size={18} />
@@ -348,7 +337,7 @@ const OrderDetails = () => {
                 </div>
 
                 {/* Price Breakdown */}
-                <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+                <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-sm border border-gray-100 dark:border-gray-700 p-6 text-[15px]">
                     <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                         <CreditCard size={18} className="text-gray-400" />
                         {t('Payment Summary')}
