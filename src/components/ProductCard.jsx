@@ -9,9 +9,9 @@ import { isStoreOpen, getStoreName } from '../utils/storeHelpers';
 
 import { useData } from '../context/DataContext';
 
-const ProductCard = ({ product, showCartControls = true, showHeart = true, stores: propStores }) => {
-    const { addToCart, cartItems, updateQuantity, savedProducts, toggleSaveProduct } = useCart();
-    const { stores: contextStores } = useData();
+const ProductCard = ({ product, showCartControls = true, showHeart = false, stores: propStores }) => {
+    const { addToCart, cartItems, updateQuantity } = useCart();
+    const { stores: contextStores, savedProducts, toggleSaveProduct } = useData();
     const { t } = useLanguage();
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -128,7 +128,23 @@ const ProductCard = ({ product, showCartControls = true, showHeart = true, store
                 )}
 
                 {/* Image Container (Full Bleed) */}
-                <div className="aspect-square bg-[#F9FAFB] m-1 rounded-2xl overflow-hidden flex items-center justify-center">
+                <div className="aspect-square bg-[#F9FAFB] m-1 rounded-2xl overflow-hidden flex items-center justify-center relative">
+                    {showHeart && (
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                toggleSaveProduct(product);
+                            }}
+                            className="absolute top-2 right-2 z-[25] p-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-sm text-[#2E5A2E] transition-all active:scale-90"
+                        >
+                            <Bookmark 
+                                size={18} 
+                                fill={isSaved ? "currentColor" : "none"} 
+                                className={isSaved ? "fill-current" : ""}
+                            />
+                        </button>
+                    )}
                     <img
                         key={featuredVariant.image || currentVariantIndex} // Force new element per variant for animation
                         src={featuredVariant.image || `${API_BASE_URL}/products/${featuredVariant._id || featuredVariant.id}/image`}

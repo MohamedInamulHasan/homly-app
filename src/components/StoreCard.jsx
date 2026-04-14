@@ -48,11 +48,11 @@ const StoreCard = ({ store }) => {
             )}
 
             {/* Content Section - Overlaid on White Banner at Bottom */}
-            <div className={`absolute bottom-0 left-0 right-0 py-2.5 px-4 z-20 overflow-hidden transition-all duration-300 ${!isOpen ? 'blur-[2px] opacity-80' : ''}`}>
+            <div className={`absolute bottom-0 left-0 right-0 py-2.5 px-4 z-20 overflow-hidden transition-all duration-300`}>
                 {/* Solid White Banner Strip */}
                 <div className="absolute inset-0 bg-white dark:bg-gray-800 border-t border-gray-50 dark:border-gray-700" />
                 
-                <div className="relative z-10">
+                <div className={`relative z-10 ${!isOpen ? 'blur-[2px] opacity-80' : ''}`}>
                     <h3 className="text-gray-900 dark:text-white text-[15px] font-semibold tracking-tight leading-tight mb-0.5 truncate">
                         {t(store, 'name')}
                     </h3>

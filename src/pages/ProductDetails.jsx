@@ -237,12 +237,26 @@ const ProductDetails = () => {
             </div>
 
             {/* Bottom Section: Pull-up Content Card */}
-            <div className="flex-1 bg-white dark:bg-gray-800 rounded-t-[3.5rem] -mt-12 relative z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] px-8 pt-10 pb-8">
+            <div className="flex-1 bg-white dark:bg-gray-800 rounded-t-[2.5rem] -mt-12 relative z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] px-8 pt-10 pb-8">
                 <div className="max-w-2xl mx-auto">
                     {/* Header: Title Only (Ratings Removed) */}
                     <div className="mb-2">
                         <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white leading-tight mb-1">
-                            {t(product, 'title') || product.title}
+                            {(() => {
+                                const fullTitle = t(product, 'title') || product.title;
+                                const bracketIndex = fullTitle.indexOf('(');
+                                if (bracketIndex !== -1) {
+                                    const mainTitle = fullTitle.substring(0, bracketIndex).trim();
+                                    const bracketContent = fullTitle.substring(bracketIndex).trim();
+                                    return (
+                                        <>
+                                            <span className="mr-1">{mainTitle}</span>
+                                            <span className="inline-block">{bracketContent}</span>
+                                        </>
+                                    );
+                                }
+                                return fullTitle;
+                            })()}
                         </h1>
                         <p className="text-base text-gray-400 dark:text-gray-500 font-medium uppercase tracking-wide">
                             {product.unit || t('Standard Unit')}
@@ -299,31 +313,37 @@ const ProductDetails = () => {
                             )}
                         </div>
 
-                        {/* Parsed Tags Section */}
+                        {/* Parsed Tags Section - Table Format */}
                         {descTags.length > 0 && (
-                            <div className="mt-5 flex flex-wrap gap-2">
-                                {descTags.map((tag, index) => {
-                                    const dashIdx = tag.indexOf('-');
-                                    if (dashIdx !== -1) {
-                                        const key = tag.substring(0, dashIdx).trim();
-                                        const val = tag.substring(dashIdx + 1).trim();
-                                        return (
-                                            <div key={index} className="inline-flex items-center bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                                                <span className="px-3 py-1.5 bg-gray-100 dark:bg-gray-900/50 text-[11px] font-bold text-gray-800 dark:text-gray-200 uppercase tracking-wider border-r border-gray-200 dark:border-gray-700">
-                                                    {key}
-                                                </span>
-                                                <span className="px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300">
-                                                    {val}
-                                                </span>
-                                            </div>
-                                        );
-                                    }
-                                    return (
-                                        <div key={index} className="px-3 py-1.5 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg text-xs font-medium border border-gray-200 dark:border-gray-700">
-                                            {tag}
-                                        </div>
-                                    );
-                                })}
+                            <div className="mt-6 border border-black/10 dark:border-gray-700 rounded-2xl overflow-hidden shadow-sm">
+                                <table className="w-full text-left border-collapse">
+                                    <tbody>
+                                        {descTags.map((tag, index) => {
+                                            const dashIdx = tag.indexOf('-');
+                                            if (dashIdx !== -1) {
+                                                const key = tag.substring(0, dashIdx).trim();
+                                                const val = tag.substring(dashIdx + 1).trim();
+                                                return (
+                                                    <tr key={index} className="border-b border-black/10 dark:border-gray-700 last:border-0 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
+                                                        <td className="w-1/3 py-3 px-4 bg-gray-50/50 dark:bg-gray-900/30 text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest border-r border-black/10 dark:border-gray-700">
+                                                            {key}
+                                                        </td>
+                                                        <td className="py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                                            {val}
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            }
+                                            return (
+                                                <tr key={index} className="border-b border-black/10 dark:border-gray-700 last:border-0">
+                                                    <td colSpan="2" className="py-3 px-4 text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-50/20 dark:bg-gray-900/10">
+                                                        {tag}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
                             </div>
                         )}
                     </div>

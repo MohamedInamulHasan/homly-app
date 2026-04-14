@@ -111,7 +111,6 @@ const StoreSection = ({ section, products = [] }) => {
                             <ProductCard 
                                 product={product} 
                                 showCartControls={true} 
-                                showHeart={true}
                             />
                         </div>
                     ))}

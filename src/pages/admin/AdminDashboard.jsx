@@ -156,7 +156,7 @@ const AdminDashboard = () => {
     // --- STORE ADMIN VIEW ---
     if (isStoreAdmin) {
         return (
-            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 flex transition-colors duration-200 relative">
+            <div className="h-screen bg-[#E8EAEF] dark:bg-gray-900 flex transition-colors duration-200 relative overflow-hidden">
                 {/* Mobile Menu Button */}
                 <button
                     onClick={toggleMobileMenu}
@@ -176,16 +176,16 @@ const AdminDashboard = () => {
                 {/* Simplified Sidebar for Store Admin */}
                 <div className={`
                     fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 
-                    transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:flex flex-col
+                    transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static flex flex-col
                     ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
                 `}>
-                    <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
                         <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                             <Store className="text-[#2E5A2E] dark:text-[#7CA90E]" />
                             {t('My Store')}
                         </h1>
                     </div>
-                    <nav className="flex-1 p-4 space-y-2">
+                    <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                         <SidebarItem
                             icon={<Store size={20} />}
                             label={t('Store Details')}
@@ -229,27 +229,8 @@ const AdminDashboard = () => {
                 />
 
                 {/* Main Content */}
-                <div className="flex-1 overflow-auto w-full">
-                            {/* Premium Header Card */}
-                            <div className="bg-[#CBF9B2] rounded-b-[40px] px-6 pt-12 pb-10 mb-8 -mx-4 md:-mx-8 -mt-16 md:-mt-8 shadow-sm">
-                                <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
-                                    <div className="w-16 h-16 bg-white/80 backdrop-blur-md rounded-2xl flex items-center justify-center mb-4 shadow-sm">
-                                        {activeTab === 'stores' && <Store className="text-[#2E5A2E]" size={32} />}
-                                        {activeTab === 'products' && <Package className="text-[#2E5A2E]" size={32} />}
-                                        {activeTab === 'orders' && <ShoppingBag className="text-[#2E5A2E]" size={32} />}
-                                        {(activeTab !== 'stores' && activeTab !== 'products' && activeTab !== 'orders') && <LayoutDashboard className="text-[#2E5A2E]" size={32} />}
-                                    </div>
-                                    <h1 className="text-3xl font-bold text-[#2E5A2E]">
-                                        {activeTab === 'stores' ? t('My Store') :
-                                            activeTab === 'products' ? t('Product Inventory') :
-                                                activeTab === 'orders' ? t('Orders') : t('My Store')}
-                                    </h1>
-                                    <p className="text-[#2E5A2E]/70 text-sm font-medium mt-1">
-                                        {user?.name}
-                                    </p>
-                                </div>
-                            </div>
-                            {renderContent()}
+                <div className="flex-1 overflow-auto w-full p-6 md:p-10">
+                    {renderContent()}
                 </div>
             </div>
         );
@@ -258,7 +239,7 @@ const AdminDashboard = () => {
     // --- SERVICE ADMIN VIEW ---
     if (isServiceAdmin) {
         return (
-            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 flex transition-colors duration-200 relative">
+            <div className="h-screen bg-[#E8EAEF] dark:bg-gray-900 flex transition-colors duration-200 relative overflow-hidden">
                 {/* Mobile Menu Button */}
                 <button
                     onClick={toggleMobileMenu}
@@ -277,16 +258,16 @@ const AdminDashboard = () => {
                 {/* Simplified Sidebar for Service Admin */}
                 <div className={`
                     fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
-                    transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:flex flex-col
+                    transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static flex flex-col
                     ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
                 `}>
-                    <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
                         <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                             <Wrench className="text-[#2E5A2E] dark:text-[#7CA90E]" />
                             {t('My Service')}
                         </h1>
                     </div>
-                    <nav className="flex-1 p-4 space-y-2">
+                    <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                         <SidebarItem
                             icon={<Wrench size={20} />}
                             label={t('My Service')}
@@ -316,22 +297,8 @@ const AdminDashboard = () => {
                 />
 
                 {/* Main Content */}
-                <div className="flex-1 overflow-auto w-full">
-                            {/* Premium Header Card */}
-                            <div className="bg-[#CBF9B2] rounded-b-[40px] px-6 pt-12 pb-10 mb-8 -mx-4 md:-mx-8 -mt-16 md:-mt-8 shadow-sm">
-                                <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
-                                    <div className="w-16 h-16 bg-white/80 backdrop-blur-md rounded-2xl flex items-center justify-center mb-4 shadow-sm">
-                                        <Wrench className="text-[#2E5A2E]" size={32} />
-                                    </div>
-                                    <h1 className="text-3xl font-bold text-[#2E5A2E]">
-                                        {t('My Service')}
-                                    </h1>
-                                    <p className="text-[#2E5A2E]/70 text-sm font-medium mt-1">
-                                        {user?.name}
-                                    </p>
-                                </div>
-                            </div>
-                            {renderContent()}
+                <div className="flex-1 overflow-auto w-full p-6 md:p-10">
+                    {renderContent()}
                 </div>
             </div>
         );
@@ -340,7 +307,7 @@ const AdminDashboard = () => {
     // --- DELIVERY BOY VIEW ---
     if (isDeliveryBoy) {
         return (
-            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 flex transition-colors duration-200 relative">
+            <div className="h-screen bg-[#E8EAEF] dark:bg-gray-900 flex transition-colors duration-200 relative overflow-hidden">
                 <LogoutModal 
                     isOpen={showLogoutModal} 
                     onClose={() => setShowLogoutModal(false)} 
@@ -368,16 +335,16 @@ const AdminDashboard = () => {
                 {/* Simplified Sidebar for Delivery Boy */}
                 <div className={`
                     fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
-                    transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:flex flex-col
+                    transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static flex flex-col
                     ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
                 `}>
-                    <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
                         <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                             <ShoppingBag className="text-[#2E5A2E] dark:text-[#7CA90E]" />
                             {t('Deliveries')}
                         </h1>
                     </div>
-                    <nav className="flex-1 p-4 space-y-2 flex flex-col">
+                    <nav className="flex-1 p-4 space-y-2 overflow-y-auto flex flex-col">
                         <SidebarItem
                             icon={<ShoppingBag size={20} />}
                             label={t('Manage Orders')}
@@ -400,22 +367,8 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Main Content */}
-                <div className="flex-1 overflow-auto w-full">
-                            {/* Premium Header Card */}
-                            <div className="bg-[#CBF9B2] rounded-b-[40px] px-6 pt-12 pb-10 mb-8 -mx-4 md:-mx-8 -mt-16 md:-mt-8 shadow-sm">
-                                <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
-                                    <div className="w-16 h-16 bg-white/80 backdrop-blur-md rounded-2xl flex items-center justify-center mb-4 shadow-sm">
-                                        <ShoppingBag className="text-[#2E5A2E]" size={32} />
-                                    </div>
-                                    <h1 className="text-3xl font-bold text-[#2E5A2E]">
-                                        {t('Deliveries')}
-                                    </h1>
-                                    <p className="text-[#2E5A2E]/70 text-sm font-medium mt-1">
-                                        {user?.name}
-                                    </p>
-                                </div>
-                            </div>
-                            {renderContent()}
+                <div className="flex-1 overflow-auto w-full p-6 md:p-10">
+                    {renderContent()}
                 </div>
             </div>
         );
@@ -423,7 +376,7 @@ const AdminDashboard = () => {
 
     // --- GLOBAL ADMIN VIEW ---
     return (
-        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 flex transition-colors duration-200 relative">
+        <div className="h-screen bg-[#E8EAEF] dark:bg-gray-900 flex transition-colors duration-200 relative overflow-hidden">
             {/* Mobile Menu Button */}
             <button
                 onClick={toggleMobileMenu}
@@ -443,10 +396,10 @@ const AdminDashboard = () => {
             {/* Sidebar */}
             <div className={`
                 fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 
-                transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:flex flex-col
+                transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static flex flex-col
                 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
             `}>
-                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
                     <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                         <LayoutDashboard className="text-[#2E5A2E] dark:text-[#7CA90E]" />
                         {t('Admin Panel')}
@@ -584,45 +537,7 @@ const AdminDashboard = () => {
                 />
 
             {/* Main Content */}
-            <div className="flex-1 overflow-auto w-full">
-                {/* Premium Header Card */}
-                <div className="bg-[#CBF9B2] rounded-b-[40px] px-6 pt-12 pb-10 mb-8 shadow-sm">
-                    <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
-                        <div className="w-16 h-16 bg-white/80 backdrop-blur-md rounded-2xl flex items-center justify-center mb-4 shadow-sm">
-                            {activeTab === 'stores' && <Store className="text-[#2E5A2E]" size={32} />}
-                            {activeTab === 'products' && <Package className="text-[#2E5A2E]" size={32} />}
-                            {activeTab === 'news' && <Newspaper className="text-[#2E5A2E]" size={32} />}
-                            {activeTab === 'orders' && <ShoppingBag className="text-[#2E5A2E]" size={32} />}
-                            {activeTab === 'users' && <Users className="text-[#2E5A2E]" size={32} />}
-                            {activeTab === 'categories' && <List className="text-[#2E5A2E]" size={32} />}
-                            {activeTab === 'ads' && <ImageIcon className="text-[#2E5A2E]" size={32} />}
-                            {activeTab === 'services' && <Wrench className="text-[#2E5A2E]" size={32} />}
-                            {activeTab === 'service-requests' && <ClipboardList className="text-[#2E5A2E]" size={32} />}
-                            {activeTab === 'settings' && <Settings className="text-[#2E5A2E]" size={32} />}
-                            {activeTab === 'delivery-boys' && <Truck className="text-[#2E5A2E]" size={32} />}
-                            {activeTab === 'cities' && <MapPin className="text-[#2E5A2E]" size={32} />}
-                            {activeTab === 'signup-bonus' && <Gift className="text-[#2E5A2E]" size={32} />}
-                        </div>
-                        <h1 className="text-3xl font-bold text-[#2E5A2E]">
-                            {activeTab === 'stores' ? t('Stores') :
-                             activeTab === 'products' ? t('Products') :
-                             activeTab === 'news' ? t('News') :
-                             activeTab === 'orders' ? t('Orders') :
-                             activeTab === 'users' ? t('Users') :
-                             activeTab === 'categories' ? t('Categories') :
-                             activeTab === 'ads' ? t('Ads') :
-                             activeTab === 'services' ? t('Services') :
-                             activeTab === 'service-requests' ? t('Requests') :
-                             activeTab === 'settings' ? t('Settings') :
-                             activeTab === 'delivery-boys' ? t('Fleet') :
-                             activeTab === 'cities' ? t('Cities') :
-                             activeTab === 'signup-bonus' ? t('Rewards') : t('Admin Panel')}
-                        </h1>
-                        <p className="text-[#2E5A2E]/70 text-sm font-medium mt-1">
-                            {user?.name}
-                        </p>
-                    </div>
-                </div>
+            <div className="flex-1 overflow-auto w-full py-6 md:py-8">
                 <div className="px-4 md:px-8 pb-32">
                     <div className="max-w-4xl mx-auto">
                         {renderContent()}
@@ -694,8 +609,8 @@ const SignupBonusManagement = () => {
     return (
         <div className="max-w-4xl animate-fade-in">
             <div className="flex items-center gap-3 mb-8">
-                <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-2xl shadow-sm">
-                    <Gift className="text-yellow-600 dark:text-yellow-400" size={24} />
+                <div className="p-3 bg-[#CBF9B2] rounded-2xl shadow-sm">
+                    <Gift className="text-[#2E5A2E]" size={24} />
                 </div>
                 <div>
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('Signup Bonus Settings')}</h2>
@@ -704,7 +619,7 @@ const SignupBonusManagement = () => {
             </div>
 
             {message.text && (
-                <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 animate-fade-in border ${message.type === 'success' ? 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/10 dark:text-green-400 dark:border-green-800' : 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/10 dark:text-red-400 dark:border-red-800'}`}>
+                <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 animate-fade-in border ${message.type === 'success' ? 'bg-[#CBF9B2]/20 text-[#2E5A2E] border-[#CBF9B2]' : 'bg-red-50 text-red-700 border-red-100'}`}>
                     {message.type === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
                     <span className="font-medium text-sm">{message.text}</span>
                 </div>
@@ -712,84 +627,84 @@ const SignupBonusManagement = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 {/* Status Card */}
-                <div className={`p-6 rounded-3xl border shadow-sm transition-all ${config.isEnabled ? 'bg-green-50 border-green-100 dark:bg-green-900/10 dark:border-green-800' : 'bg-gray-50 border-gray-100 dark:bg-gray-800 dark:border-gray-700'}`}>
+                <div className={`p-8 rounded-[32px] border transition-all ${config.isEnabled ? 'bg-[#CBF9B2]/10 border-[#CBF9B2]' : 'bg-gray-50 border-gray-100 dark:bg-gray-800/50 dark:border-gray-700'}`}>
                     <div className="flex items-center justify-between mb-4">
-                        <span className="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">{t('Current Status')}</span>
-                        <div className={`w-3 h-3 rounded-full ${config.isEnabled ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`}></div>
+                        <span className="text-[10px] font-black text-[#2E5A2E]/50 uppercase tracking-[0.2em]">{t('Current Status')}</span>
+                        <div className={`w-2.5 h-2.5 rounded-full ${config.isEnabled ? 'bg-[#2E5A2E] animate-pulse' : 'bg-gray-300'}`}></div>
                     </div>
-                    <div className="text-3xl font-black mb-1 flex items-center gap-2">
+                    <div className="text-4xl font-black mb-1 flex items-center gap-2">
                         {config.isEnabled ? (
-                            <span className="text-green-600">{t('ACTIVE')}</span>
+                            <span className="text-[#2E5A2E]">{t('ACTIVE')}</span>
                         ) : (
-                            <span className="text-gray-500">{t('INACTIVE')}</span>
+                            <span className="text-gray-400">{t('INACTIVE')}</span>
                         )}
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {config.isEnabled ? t('System is currently rewarding new users with 1 gold coin.') : t('Bonus system is currently disabled for new signups.')}
+                    <p className="text-xs text-[#2E5A2E]/60 font-medium">
+                        {config.isEnabled ? t('System is currently rewarding new users.') : t('Bonus system is currently disabled.')}
                     </p>
                 </div>
 
                 {/* Counter Card */}
-                <div className="p-6 bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                <div className="p-8 bg-white dark:bg-gray-800 rounded-[32px] border border-gray-100 dark:border-gray-700 shadow-sm">
                     <div className="flex items-center justify-between mb-4">
-                        <span className="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-widest">{t('Remaining Rewards')}</span>
-                        <Coins className="text-yellow-500" size={20} />
+                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('Remaining Rewards')}</span>
+                        <Coins className="text-[#2E5A2E]" size={20} />
                     </div>
-                    <div className="text-4xl font-black text-gray-900 dark:text-white mb-1">
+                    <div className="text-5xl font-black text-gray-900 dark:text-white mb-1 tracking-tighter">
                         {config.remainingLimit}
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {t('Number of future signups eligible for the bonus.')}
+                    <p className="text-xs text-gray-400 font-medium">
+                        {t('Available bonus slots')}
                     </p>
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-[32px] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden mb-12">
                 <div className="p-8">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-                        <Settings className="text-blue-600" size={20} />
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-8 flex items-center gap-2">
+                        <Settings className="text-[#2E5A2E]" size={20} />
                         {t('Configure System')}
                     </h3>
                     
-                    <div className="space-y-6">
+                    <div className="space-y-8">
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                            <label className="block text-xs font-black text-[#2E5A2E] uppercase tracking-widest mb-3 ml-1">
                                 {t('Set User Limit')}
                             </label>
-                            <div className="flex gap-4">
+                            <div className="flex flex-col sm:flex-row gap-4">
                                 <div className="relative flex-1">
-                                    <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                                    <Users className="absolute left-5 top-1/2 -translate-y-1/2 text-[#2E5A2E]/30" size={20} />
                                     <input 
                                         type="number" 
                                         value={inputLimit}
                                         onChange={(e) => setInputLimit(e.target.value)}
-                                        placeholder="e.g. 20"
-                                        className="w-full pl-12 pr-4 py-3.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/50 dark:text-white text-lg font-bold transition-all"
+                                        placeholder="e.g. 50"
+                                        className="w-full pl-14 pr-6 py-4 bg-gray-50/50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-2xl outline-none focus:ring-2 focus:ring-[#2E5A2E]/20 dark:text-white text-xl font-bold transition-all"
                                     />
                                 </div>
                                 <button 
                                     onClick={handleUpdate}
                                     disabled={loading}
-                                    className="px-8 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/30 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                                    className="px-10 py-4 bg-[#2E5A2E] hover:bg-[#1a381a] text-white font-bold rounded-2xl shadow-xl shadow-[#2E5A2E]/20 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 group whitespace-nowrap"
                                 >
-                                    {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Power size={20} />}
-                                    {t('Start System')}
+                                    {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Power size={20} className="group-hover:rotate-12 transition-transform" />}
+                                    {t('Apply & Start')}
                                 </button>
                             </div>
-                            <p className="mt-2 text-xs text-gray-500 italic">
-                                {t('Setting a limit will activate the system immediately. It will automatically stop once the limit is reached.')}
+                            <p className="mt-4 text-[11px] text-[#2E5A2E]/50 font-medium leading-relaxed">
+                                {t('Once activated, the system will reward new registrations until the limit is reached.')}
                             </p>
                         </div>
 
                         {config.isEnabled && (
-                            <div className="pt-6 border-t border-gray-100 dark:border-gray-700">
+                            <div className="pt-8 border-t border-gray-50 dark:border-gray-700/50">
                                 <button 
                                     onClick={toggleOff}
                                     disabled={loading}
-                                    className="w-full py-4 bg-red-50 hover:bg-red-100 dark:bg-red-900/10 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 font-bold rounded-2xl transition-all flex items-center justify-center gap-2 border border-red-100 dark:border-red-900/20"
+                                    className="w-full py-4 bg-red-50 hover:bg-red-100 text-red-600 font-bold rounded-2xl transition-all flex items-center justify-center gap-2 border border-red-50 shadow-sm"
                                 >
                                     <AlertCircle size={20} />
-                                    {t('Deactivate System Now')}
+                                    {t('Emergency Deactivation')}
                                 </button>
                             </div>
                         )}

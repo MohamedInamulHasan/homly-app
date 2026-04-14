@@ -147,6 +147,22 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                         className={`absolute top-0 left-0 w-full h-full object-cover transition-all duration-700 animate-in fade-in zoom-in-95 ${(isStoreOpenCheck && product.anyStoreOpen) ? 'hover:scale-105' : 'grayscale'}`}
                         onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300?text=No+Image'; }}
                     />
+                    {showSave && (
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                toggleSaveProduct(product);
+                            }}
+                            className="absolute top-2 right-2 z-[30] p-1.5 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-sm text-[#2E5A2E] transition-all active:scale-90"
+                        >
+                            <Bookmark 
+                                size={14} 
+                                fill={savedProducts?.some(p => (p._id || p.id || p) === productId) ? "currentColor" : "none"} 
+                                className={savedProducts?.some(p => (p._id || p.id || p) === productId) ? "fill-current" : ""}
+                            />
+                        </button>
+                    )}
                     {/* Show Closed Overlay for Group ONLY if ALL stores are closed */}
                     {(!product.anyStoreOpen || !isStoreOpenCheck) && (
                         <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10">
@@ -276,6 +292,22 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                     className={`absolute top-0 left-0 w-full h-full object-cover transition-transform duration-300 ${isStoreOpenCheck && isAvailable ? 'group-hover:scale-105' : 'grayscale'}`}
                     onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300?text=No+Image'; }}
                 />
+                {showSave && (
+                    <button
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggleSaveProduct(product);
+                        }}
+                        className="absolute top-2 right-2 z-[30] p-1.5 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-sm text-[#2E5A2E] transition-all active:scale-90"
+                    >
+                        <Bookmark 
+                            size={14} 
+                            fill={savedProducts?.some(p => (p._id || p.id || p) === productId) ? "currentColor" : "none"} 
+                            className={savedProducts?.some(p => (p._id || p.id || p) === productId) ? "fill-current" : ""}
+                        />
+                    </button>
+                )}
                 {/* Subtle gradient overlay for depth */}
                 {isStoreOpenCheck && isAvailable && (
                     <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>

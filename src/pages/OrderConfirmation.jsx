@@ -234,7 +234,7 @@ const OrderConfirmation = () => {
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 space-y-6">
                 <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                     <div className="p-5 border-b border-gray-50 dark:border-gray-700 flex items-center gap-3">
-                        <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#7CA90E] dark:text-[#8bc910]">
+                        <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#2E5A2E] dark:text-[#8bc910]">
                             <Package size={18} />
                         </div>
                         <h3 className="font-medium text-gray-900 dark:text-white text-base">{t('Order Summary')}</h3>
@@ -294,23 +294,27 @@ const OrderConfirmation = () => {
 
                 <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                     <div className="p-5 border-b border-gray-50 dark:border-gray-700 flex items-center gap-3">
-                        <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#7CA90E] dark:text-[#8bc910]">
+                        <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#2E5A2E] dark:text-[#8bc910]">
                             <MapPin size={18} />
                         </div>
                         <h3 className="font-medium text-gray-900 dark:text-white text-base">{t('Shipping Details')}</h3>
                     </div>
                     <div className="p-6">
-                        <div className="text-gray-600 dark:text-gray-300 space-y-1">
-                            <p className="font-medium text-gray-900 dark:text-white">{formData.name}</p>
-                            <p>{formData.address}</p>
-                            <p>{formData.city}, {formData.pincode}</p>
-                            <p>{t('Mobile')}: {formData.mobile}</p>
+                        <div className="space-y-1.5">
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <p className="font-bold text-[16px] text-gray-900 dark:text-white">{formData.name}</p>
+                                <p className="text-[13px] font-bold text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700 px-2 py-0.5 rounded-lg border border-gray-100 dark:border-gray-600">
+                                    {formData.mobile}
+                                </p>
+                            </div>
+                            <p className="text-[14px] text-gray-500 dark:text-gray-400 leading-relaxed">{formData.address}</p>
+                            <p className="text-[14px] text-gray-500 dark:text-gray-400 leading-relaxed font-medium">{formData.city} - {formData.pincode}</p>
                         </div>
 
                         {formData.deliveryTime && (
                             <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                                <div className="flex items-center gap-3 text-emerald-600 dark:text-emerald-400">
-                                    <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center">
+                                <div className="flex items-center gap-3 text-[#2E5A2E] dark:text-[#8bc910]">
+                                    <div className="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
                                         <Clock size={20} />
                                     </div>
                                     <div>
@@ -340,7 +344,7 @@ const OrderConfirmation = () => {
                             <div className="flex justify-between items-center">
                                 <span className="text-[14px] text-gray-400 font-medium">{t('Delivery Charge')}</span>
                                 {(deliveryCharge === 0 || deliveryCharge === null) ? (
-                                    <span className="text-[15px] font-bold text-green-600 dark:text-green-500">FREE</span>
+                                    <span className="text-[15px] font-bold text-[#2E5A2E] dark:text-[#8bc910]">FREE</span>
                                 ) : (
                                     <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹{(deliveryCharge || 20).toFixed(0)}</span>
                                 )}
@@ -401,11 +405,11 @@ const OrderConfirmation = () => {
             )}
 
             {showSuccessModal && (
-                <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-emerald-500/20 backdrop-blur-md">
+                <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-[#2E5A2E]/20 backdrop-blur-md">
                     <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl max-w-sm w-full p-8 transform transition-all scale-100">
                         <div className="text-center">
-                            <div className="w-24 h-24 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <CheckCircle className="h-12 w-12 text-emerald-600 dark:text-emerald-400" />
+                            <div className="w-24 h-24 bg-green-50 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <CheckCircle className="h-12 w-12 text-[#2E5A2E] dark:text-[#8bc910]" />
                             </div>
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                                 {t('Order Placed!')}

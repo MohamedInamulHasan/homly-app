@@ -831,18 +831,42 @@ export const DataProvider = ({ children }) => {
         }
     };
 
-    const toggleSaveProduct = async (productId) => {
+    const toggleSaveProduct = async (productData) => {
+        let productId = productData?._id || productData?.id || productData;
+        if (!productId) return false;
+
+        // Strip "group-" prefix if present
+        productId = productId.toString().replace('group-', '');
+
+        // Optimistic UI Update: Immediately update state for instant feedback
+        const isCurrentlySaved = savedProducts.some(p => (p._id || p.id || p) === productId);
+        const previousSavedProducts = [...savedProducts];
+        
+        if (isCurrentlySaved) {
+            // Immediately remove from list
+            setSavedProducts(prev => prev.filter(p => (p._id || p.id || p) !== productId));
+        } else {
+            // Search for product details to add back optimistically
+            const productToAdd = products.find(p => (p._id || p.id) === productId);
+            if (productToAdd) {
+                setSavedProducts(prev => [...prev, productToAdd]);
+            }
+        }
+
         try {
             const response = await apiService.toggleSavedProduct(productId);
             if (response.success && response.data) {
-                // If the response is the updated list of IDs, we might need to re-fetch details
-                // But our backend returns populated objects now (based on controller update)
-                // Let's verify: controller returns updatedUser.savedProducts which IS populated.
+                // Sync the state with the actual data returned from server
                 setSavedProducts(response.data);
                 return true;
+            } else {
+                // Throw error if not success to trigger rollback
+                throw new Error('Toggle failed');
             }
         } catch (err) {
             console.error('Failed to toggle saved product:', err);
+            // Rollback to previous state on failure
+            setSavedProducts(previousSavedProducts);
             return false;
         }
     };

@@ -6,7 +6,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { useUserProfile } from '../hooks/queries/useUsers';
 import { getStoreName, calculateDeliveryCharge } from '../utils/storeHelpers';
-import { ArrowLeft, MapPin, CreditCard, ShoppingBag, Truck, AlertCircle, X, Navigation, ShieldCheck, Trash2, Store, Pencil, Package, MoreHorizontal } from 'lucide-react';
+import { ArrowLeft, MapPin, CreditCard, ShoppingBag, Truck, AlertCircle, X, Navigation, ShieldCheck, Trash2, Store, Pencil, Package, MoreHorizontal, CheckCircle } from 'lucide-react';
 import { checkLocationPermission, requestLocationPermission } from '../utils/locationHelpers';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -52,8 +52,9 @@ const Checkout = () => {
         fetchCities();
     }, []);
     const [isNavigating, setIsNavigating] = useState(false);
-    const [cachedLocation, setCachedLocation] = useState(null); // Store pre-fetched location for instant access
-    const [locationMessage, setLocationMessage] = useState({ show: false, type: '', text: '' }); // For location feedback
+    const [isLocationSearching, setIsLocationSearching] = useState(false);
+    const [cachedLocation, setCachedLocation] = useState(null); 
+    const [locationMessage, setLocationMessage] = useState({ show: false, type: '', text: '' });
 
     // PRE-FETCH LOCATION DISABLED - Causes crashes when permission dialog appears
     // User must manually click "Use Current Location" button
@@ -65,6 +66,7 @@ const Checkout = () => {
     // }, []);
     const [isEditingAddress, setIsEditingAddress] = useState(false);
     const [isInitialized, setIsInitialized] = useState(false);
+    const [permissionStatus, setPermissionStatus] = useState('prompt'); // granted, prompt, denied
 
 
     // Check if user is authenticated
@@ -124,6 +126,26 @@ const Checkout = () => {
     if (!user) {
         return null;
     }
+
+    // Check geolocation permission status on mount and when editing starts
+    useEffect(() => {
+        if (isEditingAddress && navigator.permissions && navigator.permissions.query) {
+            navigator.permissions.query({ name: 'geolocation' }).then(result => {
+                setPermissionStatus(result.state);
+                result.onchange = () => setPermissionStatus(result.state);
+            }).catch(err => console.warn('Permissions API not supported', err));
+        }
+    }, [isEditingAddress]);
+
+    // Auto-hide location messages
+    useEffect(() => {
+        if (locationMessage.show) {
+            const timer = setTimeout(() => {
+                setLocationMessage(prev => ({ ...prev, show: false }));
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [locationMessage.show]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -275,10 +297,145 @@ const Checkout = () => {
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Checkout Form */}
                     <div className="lg:col-span-2 space-y-8">
+                        {/* Shipping Address */}
+                        {/* Shipping Address */}
+                        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-9 h-9 rounded-xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-[#2E5A2E]">
+                                    <MapPin size={18} />
+                                </div>
+                                <h2 className="text-[17px] font-bold text-gray-900 dark:text-white">{t('Shipping Details')}</h2>
+                            </div>
+
+                            {!isInitialized || authLoading ? (
+                                <div className="animate-pulse space-y-4">
+                                     <div className="h-32 bg-gray-50 dark:bg-gray-700 rounded-2xl w-full"></div>
+                                </div>
+                            ) : !isEditingAddress ? (
+                                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-5 border border-gray-100 dark:border-gray-600 relative group">
+                                    <button 
+                                        type="button"
+                                        onClick={() => setIsEditingAddress(true)}
+                                        className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[#2E5A2E] transition-colors"
+                                    >
+                                        <Pencil size={16} />
+                                    </button>
+                                    <div className="space-y-1">
+                                        <div className="flex items-center gap-2">
+                                            <p className="font-bold text-gray-900 dark:text-white">{formData.fullName || t('No Name')}</p>
+                                            <span className="text-xs text-gray-400 px-2 py-0.5 bg-gray-100 dark:bg-gray-600 rounded-md">{formData.mobile}</span>
+                                        </div>
+                                        <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{formData.address}</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-300">{formData.city} - {formData.zip}</p>
+                                        
+                                        {formData.location && (
+                                            <div className="pt-2">
+                                                <div className="flex items-center gap-1.5 text-[#2E5A2E] text-[11px] font-bold bg-green-50 dark:bg-green-900/10 px-2.5 py-1 rounded-full w-fit">
+                                                    <MapPin size={11} />
+                                                    <span>{t('Location Saved')}</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="space-y-5">
+                                    <div className="flex items-center justify-between">
+                                        <button 
+                                            type="button"
+                                            onClick={async () => {
+                                                setIsLocationSearching(true);
+                                                try {
+                                                    const position = await new Promise((resolve, reject) => {
+                                                        navigator.geolocation.getCurrentPosition(resolve, reject);
+                                                    });
+                                                    const { latitude, longitude } = position.coords;
+                                                    setFormData(prev => ({ ...prev, location: `https://www.google.com/maps/place/${latitude}+${longitude}` }));
+                                                    setIsLocationSearching(false);
+                                                } catch (err) {
+                                                    setIsLocationSearching(false);
+                                                    alert(t('Unable to get location'));
+                                                }
+                                            }}
+                                            className="flex items-center gap-2 text-xs font-bold text-[#2E5A2E] bg-green-50 dark:bg-green-900/20 px-3 py-1.5 rounded-full active:scale-95 transition-transform"
+                                        >
+                                            <Navigation size={14} className={isLocationSearching ? 'animate-pulse' : ''} />
+                                            {isLocationSearching ? t('Locating...') : t('Use My Current Location')}
+                                        </button>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                        <div className="md:col-span-2">
+                                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">{t('Full Address')}</label>
+                                            <textarea
+                                                name="address"
+                                                required
+                                                rows="3"
+                                                value={formData.address}
+                                                onChange={handleChange}
+                                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm"
+                                                placeholder={t('House no, Flat, Street name, Landmark')}
+                                            />
+                                        </div>
+
+                                        <div className="md:col-span-2">
+                                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">{t('Mobile Number')}</label>
+                                            <input
+                                                type="tel"
+                                                name="mobile"
+                                                required
+                                                value={formData.mobile}
+                                                onChange={handleChange}
+                                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm"
+                                                placeholder={t('Enter 10-digit mobile number')}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">{t('City')}</label>
+                                            <select
+                                                name="city"
+                                                required
+                                                value={formData.city}
+                                                onChange={handleChange}
+                                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm"
+                                            >
+                                                <option value="">{t('Select City')}</option>
+                                                {cities.map((city, index) => (
+                                                    <option key={index} value={city}>{city}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">{t('ZIP Code')}</label>
+                                            <input 
+                                                type="text" 
+                                                name="zip" 
+                                                required 
+                                                value={formData.zip} 
+                                                onChange={handleChange} 
+                                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm" 
+                                                placeholder="6XXXXX"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setIsEditingAddress(false)} 
+                                        className="w-full py-3.5 bg-black text-white rounded-full font-bold text-[14px] active:scale-[0.98] transition-transform"
+                                    >
+                                        {t('Save Shipping Details')}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
                         {/* Order Summary (Items List) */}
-                        <div className="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 overflow-hidden">
+                        <div className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm">
                             <div className="p-5 border-b border-gray-50 dark:border-gray-700 flex items-center gap-3">
-                                <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#7CA90E] dark:text-[#8bc910]">
+                                <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#2E5A2E] dark:text-[#8bc910]">
                                     <Package size={18} />
                                 </div>
                                 <h3 className="font-medium text-gray-900 dark:text-white text-base">{t('Order Summary')}</h3>
@@ -338,129 +495,8 @@ const Checkout = () => {
                             </div>
                         </div>
 
-                        {/* Shipping Address */}
-                        <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-[0_4px_20px_-5px_rgba(0,0,0,0.03)] border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
-                            <div className="flex items-center gap-4 mb-6">
-                                <div className="w-10 h-10 rounded-2xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-[#7CA90E]">
-                                    <MapPin size={20} />
-                                </div>
-                                <h2 className="text-[17px] font-bold text-gray-900 dark:text-white">{t('Shipping Details')}</h2>
-                            </div>
-
-                            {!isInitialized || authLoading ? (
-                                <div className="animate-pulse space-y-4">
-                                     <div className="h-32 bg-gray-50 dark:bg-gray-700 rounded-3xl w-full"></div>
-                                </div>
-                            ) : !isEditingAddress ? (
-                                <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 border border-gray-100 dark:border-gray-700 relative group">
-                                    <button 
-                                        type="button"
-                                        onClick={() => setIsEditingAddress(true)}
-                                        className="absolute top-6 right-6 p-2 bg-white dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-full text-gray-400 hover:text-black dark:hover:text-white transition-all active:scale-95"
-                                    >
-                                        <MoreHorizontal size={18} />
-                                    </button>
-                                    <div className="space-y-2 pr-10">
-                                        <p className="font-bold text-[16px] text-gray-900 dark:text-white">{formData.fullName || t('No name')}</p>
-                                        <p className="text-[14px] text-gray-500 dark:text-gray-400 leading-relaxed max-w-[200px]">{formData.address}</p>
-                                        <p className="text-[14px] text-gray-500 dark:text-gray-400 leading-relaxed font-medium">{formData.city} - {formData.zip}</p>
-                                        <div className="flex items-center gap-1.5 pt-1 text-gray-400">
-                                            <Truck size={14} className="opacity-50" />
-                                            <p className="text-[14px] font-medium">{formData.mobile}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="md:col-span-2">
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Full Name')}</label>
-                                        <input
-                                            type="text"
-                                            name="fullName"
-                                            required
-                                            value={formData.fullName}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
-                                            placeholder={t('Enter your full name')}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Mobile Number')}</label>
-                                        <input
-                                            type="tel"
-                                            name="mobile"
-                                            required
-                                            value={formData.mobile}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
-                                            placeholder={t('Enter mobile number')}
-                                            maxLength={10}
-                                        />
-                                    </div>
-                                    <div className="md:col-span-2">
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Address')}</label>
-                                        <textarea
-                                            name="address"
-                                            required
-                                            rows="3"
-                                            value={formData.address}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-colors resize-none mb-2"
-                                            placeholder={t('Enter full address')}
-                                        />
-                                        <button 
-                                            type="button" 
-                                            onClick={async () => {
-                                                setIsNavigating(true);
-                                                try {
-                                                    const position = await new Promise((resolve, reject) => {
-                                                        navigator.geolocation.getCurrentPosition(resolve, reject);
-                                                    });
-                                                    const { latitude, longitude } = position.coords;
-                                                    const mapsLink = `https://www.google.com/maps/place/${latitude}+${longitude}/@${latitude},${longitude},17z?entry=gps`;
-                                                    setFormData(prev => ({ ...prev, location: mapsLink }));
-                                                    setIsNavigating(false);
-                                                } catch (err) {
-                                                    setIsNavigating(false);
-                                                    alert(t('Unable to get location'));
-                                                }
-                                            }} 
-                                            className="text-sm text-[#7CA90E] flex items-center gap-1 font-medium"
-                                        >
-                                            <MapPin size={16} />
-                                            {formData.location ? t('Location Saved ✅') : t('Use Current Location')}
-                                        </button>
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('City')}</label>
-                                        <select
-                                            name="city"
-                                            required
-                                            value={formData.city}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-3 rounded-xl border bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
-                                        >
-                                            <option value="">{t('Select City')}</option>
-                                            {cities.map((city, index) => (
-                                                <option key={index} value={city}>{city}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('ZIP Code')}</label>
-                                        <input type="text" name="zip" required value={formData.zip} onChange={handleChange} className="w-full px-4 py-3 rounded-xl border bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white" />
-                                    </div>
-                                    <div className="md:col-span-2 flex justify-end gap-3 mt-2">
-                                        <button type="button" onClick={() => setIsEditingAddress(false)} className="px-6 py-2 bg-black text-white rounded-full text-sm font-medium active:scale-95 transition-transform">
-                                            {t('Save Details')}
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
                         {/* Payment Method */}
-                        <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-[0_4px_20px_-5px_rgba(0,0,0,0.03)] border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
+                        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
                             <div className="flex items-center gap-4 mb-6">
                                 <div className="w-10 h-10 rounded-2xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400">
                                     <CreditCard size={20} />
@@ -469,9 +505,9 @@ const Checkout = () => {
                             </div>
 
                             <div className="space-y-4">
-                                <label className={`flex items-center p-4 rounded-3xl border-2 cursor-pointer transition-all ${formData.paymentMethod === 'cod' ? 'border-[#7CA90E] bg-[#7CA90E]/5 dark:bg-[#7CA90E]/10' : 'border-gray-100 dark:border-gray-700 hover:border-gray-200'}`}>
+                                <label className={`flex items-center p-4 rounded-3xl border-2 cursor-pointer transition-all ${formData.paymentMethod === 'cod' ? 'border-[#2E5A2E] bg-[#2E5A2E]/5 dark:bg-[#2E5A2E]/10' : 'border-gray-100 dark:border-gray-700 hover:border-gray-200'}`}>
                                     <div className="w-6 h-6 rounded-full border-2 border-gray-200 dark:border-gray-600 flex items-center justify-center mr-4">
-                                        {formData.paymentMethod === 'cod' && <div className="w-3 h-3 rounded-full bg-[#7CA90E]" />}
+                                        {formData.paymentMethod === 'cod' && <div className="w-3 h-3 rounded-full bg-[#2E5A2E]" />}
                                     </div>
                                     <input
                                         type="radio"
@@ -485,9 +521,6 @@ const Checkout = () => {
                                         <span className="block font-bold text-[15px] text-gray-900 dark:text-white">{t('Cash on Delivery')}</span>
                                         <span className="block text-[13px] text-gray-400 dark:text-gray-500">{t('Pay when you receive your order')}</span>
                                     </div>
-                                    <div className="h-[90px] w-[90px] rounded-2xl overflow-hidden bg-gray-50 dark:bg-gray-800/50 flex-shrink-0 relative shadow-sm">
-                                        <Truck size={18} />
-                                    </div>
                                 </label>
                             </div>
                         </div>
@@ -495,44 +528,39 @@ const Checkout = () => {
 
                     {/* Order Summary / Payment Card */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-[0_4px_20px_-5px_rgba(0,0,0,0.03)] border border-gray-100 dark:border-gray-700 p-8 sticky top-32">
-                            <div className="flex justify-between items-center mb-8">
-                                <h2 className="text-[17px] font-bold text-gray-900 dark:text-white">{t('Payment')}</h2>
-                                <span className="text-[13px] font-medium text-gray-400 tracking-tight">{displayItems.length} items</span>
+                        <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-[17px] font-bold text-gray-900 dark:text-white">{t('Summary')}</h2>
+                                <span className="text-[13px] font-medium text-gray-400 tracking-tight">{displayItems.length} {t('items')}</span>
                             </div>
 
-                            <div className="space-y-5 mb-8">
+                            <div className="space-y-4 mb-8">
                                 <div className="flex justify-between items-center">
                                     <span className="text-[14px] text-gray-400 font-medium">{t('Subtotal')}</span>
                                     <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹{displayTotal.toFixed(0)}</span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-[14px] text-gray-400 font-medium">{t('Delivery Charge')}</span>
-                                    {(hasCoins || hasGoldProduct) ? (
-                                        <span className="text-[15px] font-bold text-green-600 dark:text-green-500">FREE</span>
+                                    <span className="text-[14px] text-gray-400 font-medium">{t('Delivery')}</span>
+                                    {deliveryCharge === 0 ? (
+                                        <span className="text-[15px] font-bold text-[#2E5A2E]">FREE</span>
                                     ) : (
-                                        <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹{deliveryCharge}</span>
+                                        <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹{deliveryCharge.toFixed(0)}</span>
                                     )}
                                 </div>
-                                <div className="flex justify-between items-center pt-3 border-t border-gray-50 dark:border-gray-700/50">
+                                <div className="flex justify-between items-center pt-2 border-t border-gray-50 dark:border-gray-700/50">
                                     <span className="text-[15px] text-gray-500 font-medium">{t('Total')}</span>
-                                    <span className="text-[17px] font-black text-gray-900 dark:text-white">₹{finalTotal.toFixed(0)}</span>
+                                    <span className="text-[17px] font-bold text-gray-900 dark:text-white">₹{finalTotal.toFixed(0)}</span>
                                 </div>
                             </div>
-
+    
                             <button
                                 type="submit"
                                 disabled={isNavigating}
-                                className="w-full bg-black text-white rounded-full py-4 flex items-center justify-center font-normal text-[15px] active:scale-[0.98] transition-transform gap-2 disabled:opacity-50"
+                                className="w-full bg-black text-white rounded-full py-4 flex items-center justify-center font-normal text-[15px] active:scale-[0.98] transition-transform disabled:opacity-50"
                             >
                                 {isNavigating ? (
                                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                ) : (
-                                    <>
-                                        <span>{t('Review Order')}</span>
-                                        <ShoppingBag size={18} />
-                                    </>
-                                )}
+                                ) : t('Place Order')}
                             </button>
                         </div>
                     </div>

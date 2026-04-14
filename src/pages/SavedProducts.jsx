@@ -27,22 +27,22 @@ const SavedProducts = () => {
 
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200">
-            {/* Fixed Premium Header (matching Cart) */}
-            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-5 py-6 shadow-sm">
+            {/* Simple Header (matching Cart) */}
+            <div className="w-full px-5 py-6">
                 <div className="max-w-md mx-auto flex items-center justify-between">
-                     <button onClick={() => navigate(-1)} className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95">
-                         <ArrowLeft size={24} />
+                     <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95 border border-gray-100/50">
+                         <ArrowLeft size={22} />
                      </button>
-                     <h1 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight leading-none">{t('Saved Products')}</h1>
-                     <div className="w-12" /> {/* Spacer for centering */}
+                     <h1 className="text-[17px] font-bold text-gray-900 dark:text-white tracking-tight">{t('Saved Products')}</h1>
+                     <div className="w-[42px]" /> {/* Spacer for centering */}
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[115px] pb-20">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-20">
 
                 {savedProducts.length === 0 ? (
                     <div className="text-center py-24 flex flex-col items-center">
-                        <div className="w-32 h-32 bg-[#CBF9B2]/20 dark:bg-[#CBF9B2]/10 rounded-full flex items-center justify-center mb-8 shadow-sm">
+                        <div className="w-32 h-32 bg-[#2E5A2E]/10 dark:bg-[#2E5A2E]/20 rounded-full flex items-center justify-center mb-8 shadow-sm">
                             <Bookmark className="text-[#2E5A2E] dark:text-[#CBF9B2]" size={56} />
                         </div>
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
@@ -53,7 +53,7 @@ const SavedProducts = () => {
                         </p>
                         <Link
                             to="/store"
-                            className="inline-flex items-center justify-center px-10 py-4 border border-transparent text-base font-bold rounded-full text-white bg-[#7CA90E] shadow-lg hover:shadow-xl transition-all active:scale-95"
+                            className="inline-flex items-center justify-center px-10 py-4 border border-transparent text-base font-bold rounded-full text-white bg-[#2E5A2E] shadow-lg hover:shadow-xl transition-all active:scale-95"
                         >
                             {t('Browse Products')}
                         </Link>

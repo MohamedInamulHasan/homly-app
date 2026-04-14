@@ -498,7 +498,7 @@ const StoreProducts = () => {
                                 {groupName !== '_all_' && !selectedSubcategory && (
                                     <div className="flex justify-between items-center mb-6 bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm -mx-4 px-4 py-2.5 border-y border-gray-200 dark:border-gray-700/50">
                                         <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                            <div className="w-1.5 h-6 bg-blue-600 dark:bg-blue-500 rounded-full"></div>
+                                            <div className="w-1.5 h-6 bg-[#2E5A2E] dark:bg-[#8bc910] rounded-full"></div>
                                             {t(groupName)}
                                         </h2>
                                     </div>
@@ -508,7 +508,7 @@ const StoreProducts = () => {
                                         (fastMode) ? (
                                             <SimpleProductCard key={product._id || product.id} product={product} isFastPurchase={fastMode} />
                                         ) : (
-                                            <ProductCard key={product._id || product.id} product={product} showHeart={false} showCartControls={true} />
+                                            <ProductCard key={product._id || product.id} product={product} showCartControls={true} />
                                         )
                                     ))}
                                 </div>
@@ -531,7 +531,7 @@ const StoreProducts = () => {
                         {(searchQuery.trim() || selectedSubcategory) && (
                             <button
                                 onClick={() => { setSearchQuery(''); setSelectedSubcategory(null); }}
-                                className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold shadow-lg shadow-blue-500/20 transition-all active:scale-95"
+                                className="px-8 py-3 bg-[#2E5A2E] hover:opacity-90 text-white rounded-2xl font-bold shadow-lg shadow-green-500/20 transition-all active:scale-95"
                             >
                                 {t('Clear All Filters')}
                             </button>

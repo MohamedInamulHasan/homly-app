@@ -25,8 +25,8 @@ const Navbar = () => {
                         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                         className="flex items-center gap-2 group active:scale-95 transition-transform duration-200"
                     >
-                        <img src="/logo-new.png" alt="Ily Mart Logo" className="w-8 h-8 md:w-9 md:h-9 object-contain bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900 dark:to-indigo-900 rounded-xl shadow-[0_2px_10px_rgba(37,99,235,0.2)] ring-1 ring-blue-300/30 dark:ring-blue-700/30 transition-all duration-300" />
-                        <span className="text-xl md:text-2xl font-black tracking-tight flex items-center bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent dark:from-blue-400 dark:to-blue-600">
+                        <img src="/logo-new.png" alt="Ily Mart Logo" className="w-8 h-8 md:w-9 md:h-9 object-contain bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900 dark:to-green-950 rounded-xl shadow-[0_2px_10px_rgba(124,169,14,0.2)] ring-1 ring-green-300/30 dark:ring-green-700/30 transition-all duration-300" />
+                        <span className="text-xl md:text-2xl font-black tracking-tight flex items-center bg-gradient-to-r from-[#2E5A2E] to-[#5A7C0A] bg-clip-text text-transparent dark:from-blue-400 dark:to-blue-600">
                             ILY mart
                         </span>
                     </Link>
@@ -34,18 +34,18 @@ const Navbar = () => {
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center space-x-8">
 
-                        <Link to="/" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('Home')}</Link>
-                        <Link to="/store" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('Store')}</Link>
+                        <Link to="/" className="text-gray-600 dark:text-gray-300 hover:text-[#2E5A2E] dark:hover:text-[#8bc910] font-medium transition-colors">{t('Home')}</Link>
+                        <Link to="/store" className="text-gray-600 dark:text-gray-300 hover:text-[#2E5A2E] dark:hover:text-[#8bc910] font-medium transition-colors">{t('Store')}</Link>
 
-                        <Link to="/orders" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('Orders')}</Link>
+                        <Link to="/orders" className="text-gray-600 dark:text-gray-300 hover:text-[#2E5A2E] dark:hover:text-[#8bc910] font-medium transition-colors">{t('Orders')}</Link>
 
 
                         {user ? (
-                            <Link to="/profile" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">
+                            <Link to="/profile" className="text-gray-600 dark:text-gray-300 hover:text-[#2E5A2E] dark:hover:text-[#8bc910] font-medium transition-colors">
                                 {t('Profile')}
                             </Link>
                         ) : (
-                            <Link to="/login" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">{t('Login')}</Link>
+                            <Link to="/login" className="text-gray-600 dark:text-gray-300 hover:text-[#2E5A2E] dark:hover:text-[#8bc910] font-medium transition-colors">{t('Login')}</Link>
                         )}
 
                         {!isAdmin && (
@@ -54,8 +54,8 @@ const Navbar = () => {
                                 <button
                                     onClick={toggleFastMode}
                                     className={`relative p-2.5 rounded-full transition-all duration-300 group ${fastMode
-                                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md hover:shadow-lg'
-                                        : 'bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 text-blue-600 dark:text-blue-400 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/30 dark:hover:to-indigo-900/30 shadow-sm hover:shadow-md hover:scale-110'
+                                        ? 'bg-gradient-to-r from-[#2E5A2E] to-[#5A7C0A] text-white shadow-md hover:shadow-lg'
+                                        : 'bg-gradient-to-br from-green-50 to-green-100 dark:from-blue-900/20 dark:to-indigo-900/20 text-[#2E5A2E] dark:text-[#8bc910] hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/30 dark:hover:to-indigo-900/30 shadow-sm hover:shadow-md hover:scale-110'
                                         }`}
                                     title={fastMode ? t('Fast Mode ON') : t('Fast Mode')}
                                 >
@@ -65,18 +65,18 @@ const Navbar = () => {
 
                                 <Link to="/cart" className="group transition-transform active:scale-95 hover:scale-105 duration-200">
                                     {user && cartCount > 0 ? (
-                                        <div className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 pl-3 pr-2 py-1.5 rounded-full shadow-md hover:shadow-lg transition-all">
+                                        <div className="flex items-center gap-2 bg-gradient-to-r from-[#2E5A2E] to-[#5A7C0A] pl-3 pr-2 py-1.5 rounded-full shadow-md hover:shadow-lg transition-all">
                                             <span className="text-white font-bold text-sm">₹{cartTotal.toFixed(0)}</span>
                                             <div className="bg-white/20 p-1.5 rounded-full backdrop-blur-sm relative">
                                                 <ShoppingCart size={16} className="text-white" />
-                                                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center border-2 border-indigo-600">
+                                                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center border-2 border-[#2E5A2E]">
                                                     {cartCount}
                                                 </span>
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="relative p-2.5 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-full hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/30 dark:hover:to-indigo-900/30 transition-all duration-300 hover:scale-110 shadow-sm hover:shadow-md">
-                                            <ShoppingCart size={20} className="text-blue-600 dark:text-blue-400" />
+                                        <div className="relative p-2.5 bg-gradient-to-br from-green-50 to-green-100 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-full hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/30 dark:hover:to-indigo-900/30 transition-all duration-300 hover:scale-110 shadow-sm hover:shadow-md">
+                                            <ShoppingCart size={20} className="text-[#2E5A2E] dark:text-[#8bc910]" />
                                         </div>
                                     )}
                                 </Link>
@@ -92,8 +92,8 @@ const Navbar = () => {
                                 <button
                                     onClick={toggleFastMode}
                                     className={`relative p-2 rounded-full transition-all duration-300 ${fastMode
-                                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
-                                        : 'bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 text-blue-600 dark:text-blue-400 shadow-sm'
+                                        ? 'bg-gradient-to-r from-[#2E5A2E] to-[#5A7C0A] text-white shadow-md'
+                                        : 'bg-gradient-to-br from-green-50 to-green-100 dark:from-blue-900/20 dark:to-indigo-900/20 text-[#2E5A2E] dark:text-[#8bc910] shadow-sm'
                                         }`}
                                 >
                                     <Rocket size={20} className={fastMode ? 'fill-white' : ''} />
@@ -102,18 +102,18 @@ const Navbar = () => {
 
                                 <Link to="/cart" className="group transition-transform active:scale-95 duration-200">
                                     {user && cartCount > 0 ? (
-                                        <div className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 pl-3 pr-2 py-1.5 rounded-full shadow-md hover:shadow-lg transition-all">
+                                        <div className="flex items-center gap-2 bg-gradient-to-r from-[#2E5A2E] to-[#5A7C0A] pl-3 pr-2 py-1.5 rounded-full shadow-md hover:shadow-lg transition-all">
                                             <span className="text-white font-bold text-sm">₹{cartTotal.toFixed(0)}</span>
                                             <div className="bg-white/20 p-1.5 rounded-full backdrop-blur-sm relative">
                                                 <ShoppingCart size={16} className="text-white" />
-                                                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center border-2 border-indigo-600">
+                                                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center border-2 border-[#2E5A2E]">
                                                     {cartCount}
                                                 </span>
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="relative p-2.5 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-full transition-all duration-300 shadow-sm">
-                                            <ShoppingCart size={20} className="text-blue-600 dark:text-blue-400" />
+                                        <div className="relative p-2.5 bg-gradient-to-br from-green-50 to-green-100 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-full transition-all duration-300 shadow-sm">
+                                            <ShoppingCart size={20} className="text-[#2E5A2E] dark:text-[#8bc910]" />
                                         </div>
                                     )}
                                 </Link>
@@ -122,7 +122,7 @@ const Navbar = () => {
                         {/* {isAdmin && (
                             <button
                                 onClick={() => setIsOpen(!isOpen)}
-                                className="p-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                className="p-2 text-gray-600 dark:text-gray-300 hover:text-[#2E5A2E] dark:hover:text-[#8bc910] transition-colors"
                             >
                                 {isOpen ? <X size={24} /> : <LayoutDashboard size={24} />}
                             </button>
@@ -138,21 +138,21 @@ const Navbar = () => {
                         <div className="px-4 py-6 space-y-4">
                             <Link
                                 to="/"
-                                className="block px-4 py-3 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
+                                className="block px-4 py-3 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-[#2E5A2E] dark:hover:text-[#8bc910] font-medium transition-colors"
                                 onClick={() => setIsOpen(false)}
                             >
                                 {t('Home')}
                             </Link>
                             <Link
                                 to="/store"
-                                className="block px-4 py-3 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
+                                className="block px-4 py-3 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-[#2E5A2E] dark:hover:text-[#8bc910] font-medium transition-colors"
                                 onClick={() => setIsOpen(false)}
                             >
                                 {t('Store')}
                             </Link>
                             <Link
                                 to="/orders"
-                                className="block px-4 py-3 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
+                                className="block px-4 py-3 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-[#2E5A2E] dark:hover:text-[#8bc910] font-medium transition-colors"
                                 onClick={() => setIsOpen(false)}
                             >
                                 {t('Orders')}
@@ -162,7 +162,7 @@ const Navbar = () => {
                             {user ? (
                                 <Link
                                     to="/profile"
-                                    className="block px-4 py-3 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
+                                    className="block px-4 py-3 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-[#2E5A2E] dark:hover:text-[#8bc910] font-medium transition-colors"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     {t('Profile')}
@@ -170,7 +170,7 @@ const Navbar = () => {
                             ) : (
                                 <Link
                                     to="/login"
-                                    className="block px-4 py-3 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
+                                    className="block px-4 py-3 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-[#2E5A2E] dark:hover:text-[#8bc910] font-medium transition-colors"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     {t('Login')}

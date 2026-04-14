@@ -3,7 +3,8 @@ import {
     User, Package, Settings, ChevronRight, LogOut, 
     Shield, Wrench, Store, ArrowLeft, MoreHorizontal, 
     MapPin, Lock, HelpCircle, Pencil, Languages, Heart,
-    ChevronDown, ShoppingCart, Newspaper
+    ChevronDown, ShoppingCart, Newspaper, Coins,
+    Truck, CheckCircle2, XCircle, Clock
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
@@ -12,6 +13,7 @@ import { useLanguage } from '../context/LanguageContext';
 import AuthContext from '../context/AuthContext';
 import { useUserProfile } from '../hooks/queries/useUsers';
 import { useData } from '../context/DataContext';
+import { useOrders } from '../hooks/queries/useOrders';
 import LogoutModal from '../components/LogoutModal';
 
 const MenuLink = ({ icon, title, to, onClick, isRed = false }) => {
@@ -45,11 +47,26 @@ const Profile = () => {
     const { cartCount } = useCart();
 
     const { data: userProfile } = useUserProfile();
+    const { data: ordersData } = useOrders();
     
     const user = userProfile?.data || authUser;
+    const orders = ordersData?.data || ordersData || [];
     const navigate = useNavigate();
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+    // Filter relevant statuses for admins
+    const statusCounts = orders.reduce((acc, order) => {
+        const s = order.status;
+        if (s === 'Delivered') acc.delivered++;
+        if (s === 'Cancelled') acc.cancelled++;
+        if (s === 'Out for Delivery') acc.outForDelivery++;
+        if (s === 'Processing') acc.processing++;
+        return acc;
+    }, { delivered: 0, cancelled: 0, outForDelivery: 0, processing: 0 });
+
+    const roles = user ? (Array.isArray(user.role) ? user.role : [user.role || 'customer']) : [];
+    const isAdminView = roles.some(role => ['admin', 'store_admin', 'delivery_boy'].includes(role));
 
     useEffect(() => {
         setIsFooterHidden(showLogoutModal);
@@ -58,8 +75,6 @@ const Profile = () => {
 
     const handleLogout = () => setShowLogoutModal(true);
     const confirmLogout = () => { logout(); navigate('/login'); };
-
-    const roles = user ? (Array.isArray(user.role) ? user.role : [user.role || 'customer']) : [];
 
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 mx-auto max-w-md w-full relative pb-48">
@@ -103,28 +118,78 @@ const Profile = () => {
             <div className="px-5">
                 {/* Profile Widget */}
                 <div className="bg-white dark:bg-gray-800/80 rounded-[2.5rem] p-4 flex items-center justify-between mb-8 shadow-sm border border-gray-100 dark:border-gray-700">
-                     <div className="flex items-center gap-4">
-                          <div className="w-[60px] h-[60px] bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden">
-                               {/* Real image if available, else highly stylized fallback */}
-                               {user?.avatar ? (
-                                    <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
-                               ) : (
-                                    <img src="https://i.pravatar.cc/150?img=47" alt="Profile" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
-                               )}
-                               <div className="hidden w-full h-full items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300 text-gray-500">
-                                   <User size={24} />
+                     <div className="flex items-center gap-5">
+                          <div className="relative flex-shrink-0">
+                               <div className="w-[64px] h-[64px] bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden border-2 border-white dark:border-gray-800 shadow-sm">
+                                    {/* Real image if available, else highly stylized fallback */}
+                                    {user?.avatar ? (
+                                         <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
+                                    ) : (
+                                         <img src="https://i.pravatar.cc/150?img=47" alt="Profile" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                                    )}
+                                    <div className="hidden w-full h-full items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300 text-gray-500">
+                                        <User size={24} />
+                                    </div>
+                               </div>
+                               {/* Flat Coin Badge - Shadow Free */}
+                               <div className="absolute -bottom-0.5 -right-0.5 bg-[#FFCE31] rounded-full px-2 py-1 flex items-center gap-1 border-2 border-white dark:border-gray-800 z-10">
+                                   <Coins size={10} className="text-[#2E5A2E]" />
+                                   <span className="text-[11px] font-black text-[#2E5A2E] leading-none">
+                                       {user?.coins || 0}
+                                   </span>
                                </div>
                           </div>
                           <div>
-                               <h2 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight">
+                               <h2 className="text-[17px] font-bold text-gray-900 dark:text-white leading-tight tracking-tight">
                                    {user?.name || 'Guest User'}
                                </h2>
-                               <p className="text-[13px] font-medium text-gray-500 dark:text-gray-400 mt-0.5">
+                               <p className="text-[13px] font-medium text-gray-400 dark:text-gray-500 mt-0.5">
                                    {user?.email || 'Not logged in'}
                                </p>
                           </div>
                      </div>
                 </div>
+
+                {/* Performance Summary for Admins/Delivery Boys */}
+                {isAdminView && (
+                    <div className="grid grid-cols-4 gap-2 mb-8">
+                        {/* Processing */}
+                        <div className="bg-white dark:bg-gray-800/50 p-2.5 rounded-2xl border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center">
+                            <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/10 flex items-center justify-center text-blue-500 mb-2">
+                                <Clock size={16} />
+                            </div>
+                            <span className="text-[15px] font-black text-gray-900 dark:text-white leading-none mb-1">{statusCounts.processing}</span>
+                            <span className="text-[8.5px] font-bold text-gray-400 uppercase tracking-tight">{t('Process')}</span>
+                        </div>
+
+                        {/* Out for Delivery */}
+                        <div className="bg-white dark:bg-gray-800/50 p-2.5 rounded-2xl border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center">
+                            <div className="w-8 h-8 rounded-full bg-[#FFCE31]/10 flex items-center justify-center text-[#2E5A2E] mb-2">
+                                <Truck size={16} />
+                            </div>
+                            <span className="text-[15px] font-black text-gray-900 dark:text-white leading-none mb-1">{statusCounts.outForDelivery}</span>
+                            <span className="text-[8.5px] font-bold text-gray-400 uppercase tracking-tight">{t('Transit')}</span>
+                        </div>
+
+                        {/* Delivered */}
+                        <div className="bg-white dark:bg-gray-800/50 p-2.5 rounded-2xl border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center">
+                            <div className="w-8 h-8 rounded-full bg-green-50 dark:bg-green-900/10 flex items-center justify-center text-green-600 mb-2">
+                                <CheckCircle2 size={16} />
+                            </div>
+                            <span className="text-[15px] font-black text-gray-900 dark:text-white leading-none mb-1">{statusCounts.delivered}</span>
+                            <span className="text-[8.5px] font-bold text-gray-400 uppercase tracking-tight">{t('Deliver')}</span>
+                        </div>
+
+                        {/* Cancelled */}
+                        <div className="bg-white dark:bg-gray-800/50 p-2.5 rounded-2xl border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center">
+                            <div className="w-8 h-8 rounded-full bg-red-50 dark:bg-red-900/10 flex items-center justify-center text-red-500 mb-2">
+                                <XCircle size={16} />
+                            </div>
+                            <span className="text-[15px] font-black text-gray-900 dark:text-white leading-none mb-1">{statusCounts.cancelled}</span>
+                            <span className="text-[8.5px] font-bold text-gray-400 uppercase tracking-tight">{t('Cancel')}</span>
+                        </div>
+                    </div>
+                )}
 
                 {/* Account Section */}
                 <div className="mb-6">

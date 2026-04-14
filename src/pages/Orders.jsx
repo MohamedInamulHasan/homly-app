@@ -61,7 +61,7 @@ const Orders = () => {
 
     const getStatusColor = (status) => {
         switch (status) {
-            case 'Delivered': return 'text-[#16a34a] dark:text-[#4ade80] bg-[#f0fdf4] dark:bg-green-900/20 border-[#bbf7d0] dark:border-green-800';
+            case 'Delivered': return 'text-[#2E5A2E] dark:text-[#8bc910] bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800';
             case 'Shipped':
             case 'Out for Delivery': return 'text-[#0284c7] dark:text-[#38bdf8] bg-[#f0f9ff] dark:bg-blue-900/20 border-[#bae6fd] dark:border-blue-800';
             case 'Processing': return 'text-[#b45309] dark:text-[#fbbf24] bg-[#fffbeb] dark:bg-amber-900/20 border-[#fde68a] dark:border-amber-800';
@@ -83,7 +83,7 @@ const Orders = () => {
 
     const getCardBorderColor = (status) => {
         switch (status) {
-            case 'Delivered': return 'border-l-green-500 dark:border-l-green-400 shadow-green-100 dark:shadow-green-900/20';
+            case 'Delivered': return 'border-l-[#2E5A2E] dark:border-l-green-400 shadow-green-100 dark:shadow-green-900/20';
             case 'Shipped':
             case 'Out for Delivery': return 'border-l-blue-500 dark:border-l-blue-400 shadow-blue-100 dark:shadow-blue-900/20';
             case 'Processing': return 'border-l-amber-500 dark:border-l-amber-400 shadow-amber-100 dark:shadow-amber-900/20';
@@ -212,7 +212,7 @@ const Orders = () => {
                                     <div className="p-6">
                                         <div className="flex justify-between items-start gap-2 mb-4">
                                             <div className="flex items-center gap-2 flex-1 min-w-0">
-                                                <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#7CA90E] dark:text-[#8bc910] flex-shrink-0">
+                                                <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#2E5A2E] dark:text-[#8bc910] flex-shrink-0">
                                                     <Package size={18} />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
@@ -220,7 +220,7 @@ const Orders = () => {
                                                     <p className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 truncate">
                                                         {formatOrderDateTime(order.createdAt || order.date)}
                                                         {order.scheduledDeliveryTime && (
-                                                            <span className="text-[#7CA90E] dark:text-[#8bc910] ml-1">
+                                                            <span className="text-[#2E5A2E] dark:text-[#8bc910] ml-1">
                                                                 • {formatDeliveryTime(order.scheduledDeliveryTime)}
                                                             </span>
                                                         )}
@@ -328,7 +328,7 @@ const Orders = () => {
                                 <p className="text-gray-500 dark:text-gray-400 mb-6">{t('Try adjusting your search or filter to find what you\'re looking for.')}</p>
                                 <Link
                                     to="/"
-                                    className="inline-flex items-center px-4 py-2 bg-[#7CA90E] hover:bg-[#6a900c] text-white rounded-xl transition-colors font-bold"
+                                    className="inline-flex items-center px-4 py-2 bg-[#2E5A2E] hover:bg-[#6a900c] text-white rounded-xl transition-colors font-bold"
                                 >
                                     {t('Start Shopping')}
                                 </Link>

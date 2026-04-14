@@ -413,7 +413,7 @@ const CategoryProducts = () => {
                                                         <Link
                                                             to={`/store/${section.id}`}
                                                             state={{ fromCategory: categoryName }}
-                                                            className="flex p-2 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-500/20 hover:scale-110 active:scale-95 transition-all duration-300 ml-1"
+                                                            className="flex p-2 bg-[#2E5A2E] text-white rounded-xl shadow-lg shadow-green-500/20 hover:scale-110 active:scale-95 transition-all duration-300 ml-1"
                                                             title={t('Visit Store')}
                                                         >
                                                             <ArrowRight size={18} />
@@ -427,7 +427,7 @@ const CategoryProducts = () => {
                                                 </div>
                                                 {section.address && (
                                                     <div className="flex items-center text-gray-500 dark:text-gray-400 mt-2">
-                                                        <MapPin size={14} className="mr-1.5 text-blue-500/60" />
+                                                        <MapPin size={14} className="mr-1.5 text-[#2E5A2E]/60" />
                                                         <p className="text-xs font-bold truncate">
                                                             {section.address}
                                                         </p>
@@ -450,7 +450,6 @@ const CategoryProducts = () => {
                                                     <ProductCard
                                                         key={product._id || product.id}
                                                         product={product}
-                                                        showHeart={true}
                                                         showCartControls={true}
                                                         stores={stores}
                                                     />
