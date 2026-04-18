@@ -85,7 +85,7 @@ const StoreSection = ({ section, products = [] }) => {
             <div className="flex justify-between items-end mb-6 px-1">
                 <div className="flex flex-col min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white leading-tight truncate max-w-[280px] xs:max-w-[320px] sm:max-w-[450px]">
+                        <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white leading-tight truncate max-w-[280px] xs:max-w-[320px] sm:max-w-[450px] md:max-w-none">
                             {t(section.name)}
                         </h2>
                     </div>
@@ -106,7 +106,7 @@ const StoreSection = ({ section, products = [] }) => {
                     {displayProducts.map((product, idx) => (
                         <div 
                             key={`${product._id || product.id}-${idx}-${cycleIndex}`} 
-                            className="w-[165px] animate-in fade-in slide-in-from-right-2 duration-500"
+                            className="w-[165px] md:w-[190px] lg:w-[210px] shrink-0 animate-in fade-in slide-in-from-right-2 duration-500"
                         >
                             <ProductCard 
                                 product={product} 

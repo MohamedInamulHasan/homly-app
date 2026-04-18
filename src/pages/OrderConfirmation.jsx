@@ -300,15 +300,15 @@ const OrderConfirmation = () => {
                         <h3 className="font-medium text-gray-900 dark:text-white text-base">{t('Shipping Details')}</h3>
                     </div>
                     <div className="p-6">
-                        <div className="space-y-1.5">
-                            <div className="flex items-center gap-2 flex-wrap">
+                        <div className="space-y-2">
+                            <div className="flex flex-col gap-0.5">
                                 <p className="font-bold text-[16px] text-gray-900 dark:text-white">{formData.name}</p>
-                                <p className="text-[13px] font-bold text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700 px-2 py-0.5 rounded-lg border border-gray-100 dark:border-gray-600">
-                                    {formData.mobile}
-                                </p>
+                                <p className="text-[13px] text-gray-400 font-medium">{formData.mobile}</p>
                             </div>
-                            <p className="text-[14px] text-gray-500 dark:text-gray-400 leading-relaxed">{formData.address}</p>
-                            <p className="text-[14px] text-gray-500 dark:text-gray-400 leading-relaxed font-medium">{formData.city} - {formData.pincode}</p>
+                            <div className="space-y-0.5">
+                                <p className="text-[14px] text-gray-500 dark:text-gray-400 leading-relaxed">{formData.address}</p>
+                                <p className="text-[14px] text-gray-500 dark:text-gray-400 leading-relaxed font-medium">{formData.city} - {formData.pincode}</p>
+                            </div>
                         </div>
 
                         {formData.deliveryTime && (

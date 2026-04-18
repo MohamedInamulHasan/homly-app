@@ -14,7 +14,7 @@ const MyStore = () => {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2E5A2E]"></div>
             </div>
         );
     }
@@ -33,13 +33,13 @@ const MyStore = () => {
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 duration-200">
             {/* Header */}
-            <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                            <Store className="text-blue-600 dark:text-blue-400" size={24} />
+                        <div className="p-2 bg-[#E8F5E9] dark:bg-[#2E5A2E]/20 rounded-lg">
+                            <Store className="text-[#2E5A2E] dark:text-[#CBF9B2]" size={24} />
                         </div>
-                        <h1 className="text-xl font-bold text-gray-900 dark:text-white">{t('My Store')}</h1>
+                        <h1 className="text-xl font-normal text-gray-900 dark:text-white">{t('My Store')}</h1>
                     </div>
 
                     <div className="flex items-center gap-4">

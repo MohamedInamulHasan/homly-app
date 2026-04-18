@@ -338,7 +338,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                             <ArrowLeft size={24} />
                         </button>
                     )}
-                    <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white truncate">
+                    <h2 className="text-xl md:text-2xl font-normal text-gray-900 dark:text-white truncate">
                         {view === 'list' && t('Service Management')}
                         {view === 'form' && (editingService ? t('Edit Service') : t('Add New Service'))}
                         {view === 'serviceItems' && `${selectedService?.name} - ${t('Items')}`}
@@ -354,7 +354,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                 setServiceForm({ name: '', category: '', description: '', image: '', address: '', mobile: '' });
                                 setView('form');
                             }}
-                            className="flex items-center gap-2 px-4 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors font-bold shadow-sm"
+                            className="flex items-center gap-2 px-4 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors font-normal"
                         >
                             <Plus size={20} />
                             {t('Add Service')}
@@ -363,7 +363,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                     {view === 'serviceItems' && (
                         <button
                             onClick={handleAddItem}
-                            className="flex items-center gap-2 px-4 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors font-bold shadow-sm"
+                            className="flex items-center gap-2 px-4 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors font-normal"
                         >
                             <Plus size={20} />
                             {t('Add Item')}
@@ -428,7 +428,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                     type="text"
                                     value={serviceForm.name}
                                     onChange={(e) => setServiceForm({ ...serviceForm, name: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all"
+                                    className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all font-normal"
                                     required
                                 />
                             </div>
@@ -496,7 +496,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                             <button
                                 type="submit"
                                 disabled={uploadingImage}
-                                className="px-6 py-3 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 font-bold shadow-sm"
+                                className="px-6 py-3 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 font-normal"
                             >
                                 <Save size={20} />
                                 {editingService ? t('Update Service') : t('Add Service')}
@@ -508,7 +508,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
 
             {/* View: Service Items List */}
             {view === 'serviceItems' && selectedService && (
-                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 overflow-hidden">
                     <div className="overflow-x-auto">
                         <DndContext
                             sensors={sensors}
@@ -519,10 +519,10 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                 <thead>
                                     <tr className="bg-gray-50/50 dark:bg-gray-700/30 border-b border-gray-100 dark:border-gray-700">
                                         <th className="p-4 w-12"></th>
-                                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Image')}</th>
-                                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Name')}</th>
-                                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Available')}</th>
-                                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Actions')}</th>
+                                        <th className="p-4 text-[10px] font-normal uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Image')}</th>
+                                        <th className="p-4 text-[10px] font-normal uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Name')}</th>
+                                        <th className="p-4 text-[10px] font-normal uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Available')}</th>
+                                        <th className="p-4 text-[10px] font-normal uppercase tracking-widest text-gray-400 dark:text-gray-500">{t('Actions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -547,9 +547,9 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                                         />
                                                     </div>
                                                 </td>
-                                                <td className="p-4 font-bold text-gray-900 dark:text-white">
+                                                <td className="p-4 font-normal text-gray-900 dark:text-white">
                                                     <div className="truncate max-w-[200px]" title={item.name}>{item.name}</div>
-                                                    <div className="text-[10px] text-gray-400 font-medium truncate max-w-[200px]">{item.description}</div>
+                                                    <div className="text-[10px] text-gray-400 font-normal truncate max-w-[200px]">{item.description}</div>
                                                 </td>
                                                 <td className="p-4">
                                                     <button
@@ -600,7 +600,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                                         </button>
                                                         <button
                                                             onClick={() => handleDeleteItem(item._id || item.id)}
-                                                            className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors"
+                                                            className="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/30 rounded-xl transition-colors"
                                                             title={t('Delete')}
                                                         >
                                                             <Trash2 size={18} />
@@ -615,7 +615,7 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                             <td colSpan="6" className="p-12 text-center">
                                                 <div className="flex flex-col items-center gap-3 text-gray-500 dark:text-gray-400">
                                                     <Package size={48} className="opacity-20" />
-                                                    <p className="font-bold">{t('No items found. Add one to get started!')}</p>
+                                                    <p className="font-normal">{t('No items found. Add one to get started!')}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -723,7 +723,7 @@ const SortableServiceCard = ({ service, handleManageItems, handleEditService, ha
         <div
             ref={setNodeRef}
             style={style}
-            className={`group relative bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-xl hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-500 overflow-hidden border border-gray-100 dark:border-gray-700 flex flex-col h-full ${!isActive ? 'grayscale opacity-80' : ''}`}
+            className={`group relative bg-white dark:bg-gray-800 rounded-[2rem] transition-all duration-500 overflow-hidden border border-gray-100 dark:border-gray-700 flex flex-col h-full ${!isActive ? 'grayscale opacity-80' : ''}`}
         >
             <div className="relative h-40 overflow-hidden cursor-pointer" onClick={() => handleManageItems(service)}>
                 {/* Drag Handle (Only for global admin) */}
@@ -731,7 +731,7 @@ const SortableServiceCard = ({ service, handleManageItems, handleEditService, ha
                     <div
                         {...attributes}
                         {...listeners}
-                        className="absolute top-3 left-3 z-30 p-2 bg-black/50 hover:bg-black/70 text-white rounded-xl backdrop-blur-md transition-all cursor-grab active:cursor-grabbing border border-white/10 shadow-lg"
+                        className="absolute top-3 left-3 z-30 p-2 bg-black/50 hover:bg-black/70 text-white rounded-xl backdrop-blur-md transition-all cursor-grab active:cursor-grabbing border border-white/10"
                     >
                         <GripVertical size={18} />
                     </div>
@@ -749,9 +749,9 @@ const SortableServiceCard = ({ service, handleManageItems, handleEditService, ha
 
                 {/* Status Badge - Floating Glassmorphism */}
                 <div className="absolute top-3 right-3 z-20">
-                    <div className={`backdrop-blur-md px-3 py-1.5 rounded-xl shadow-xl border border-white/20 flex items-center gap-2 ${isActive ? 'bg-emerald-500/80' : 'bg-gray-600/80'} text-white`}>
+                    <div className={`backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 flex items-center gap-2 ${isActive ? 'bg-emerald-500/80' : 'bg-gray-600/80'} text-white`}>
                         <div className={`w-1.5 h-1.5 rounded-full animate-pulse bg-white`} />
-                        <span className="text-[9px] font-black uppercase tracking-widest whitespace-nowrap">
+                        <span className="text-[9px] font-normal uppercase tracking-widest whitespace-nowrap">
                             {isActive ? t('Active') : t('Inactive')}
                         </span>
                     </div>
@@ -760,23 +760,23 @@ const SortableServiceCard = ({ service, handleManageItems, handleEditService, ha
 
             <div className="p-4 flex flex-col flex-grow gap-3">
                 <div className="space-y-0.5">
-                    <h3 className="text-2xl font-black text-gray-900 dark:text-white leading-tight line-clamp-1 group-hover:text-[#2E5A2E] dark:group-hover:text-[#CBF9B2] transition-colors duration-300">
+                    <h3 className="text-2xl font-normal text-gray-900 dark:text-white leading-tight line-clamp-1 group-hover:text-[#2E5A2E] dark:group-hover:text-[#CBF9B2] transition-colors duration-300">
                         {service.name}
                     </h3>
                     <div className="flex flex-wrap gap-1.5">
-                        <span className="px-2 py-0.5 bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-[9px] uppercase tracking-widest font-black rounded-lg border border-gray-100 dark:border-gray-600">
+                        <span className="px-2 py-0.5 bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-[9px] uppercase tracking-widest font-normal rounded-lg border border-gray-100 dark:border-gray-600">
                             {service.category}
                         </span>
                     </div>
                 </div>
 
                 {/* Info Pill */}
-                <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-3 space-y-2 border border-gray-100 dark:border-gray-800/50">
+                <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-3 space-y-2 border border-gray-100 dark:border-gray-800/50 [box-shadow:none]">
                     <div className="flex items-center gap-2 truncate">
                         <div className="p-2 bg-blue-500/10 rounded-lg">
                             <MapPin size={16} className="text-[#2E5A2E] dark:text-[#CBF9B2]" />
                         </div>
-                        <span className="text-xs font-bold text-gray-600 dark:text-gray-400 truncate opacity-80" title={service.address}>
+                        <span className="text-xs font-normal text-gray-600 dark:text-gray-400 truncate opacity-80" title={service.address}>
                             {service.address || t('No address')}
                         </span>
                     </div>
@@ -784,7 +784,7 @@ const SortableServiceCard = ({ service, handleManageItems, handleEditService, ha
                         <div className="p-2 bg-orange-500/10 rounded-lg">
                             <Phone size={16} className="text-orange-600 dark:text-orange-400" />
                         </div>
-                        <span className="text-xs font-black text-gray-700 dark:text-gray-200">
+                        <span className="text-xs font-normal text-gray-700 dark:text-gray-200">
                             {service.mobile || t('No contact')}
                         </span>
                     </div>
@@ -794,10 +794,10 @@ const SortableServiceCard = ({ service, handleManageItems, handleEditService, ha
                 <div className="grid grid-cols-2 gap-2 mt-auto">
                     <button
                         onClick={() => handleManageItems(service)}
-                        className="col-span-2 py-3 px-4 bg-[#2E5A2E] text-white rounded-[1.25rem] shadow-xl shadow-[#2E5A2E]/10 hover:shadow-[#2E5A2E]/30 hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group/btn"
+                        className="col-span-2 py-3 px-4 bg-[#2E5A2E] text-white rounded-[1.25rem] hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group/btn"
                     >
                         <Package size={16} className="transition-transform group-hover/btn:rotate-12" />
-                        <span className="text-[10px] font-black uppercase tracking-wider">{t('Manage Items')}</span>
+                        <span className="text-[10px] font-normal uppercase tracking-wider">{t('Manage Items')}</span>
                     </button>
 
                     <div className="col-span-2 flex items-center justify-center gap-4 mt-1 pt-3 border-t border-gray-100 dark:border-gray-700/50">

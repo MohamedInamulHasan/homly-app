@@ -77,7 +77,7 @@ const HeroBanner = ({ slides = [], isLoading = false }) => {
     if (isLoading) {
         return (
             <div className="px-4 py-2">
-                <div className="w-full h-44 bg-gray-200 dark:bg-gray-800 rounded-3xl animate-pulse"></div>
+                <div className="w-full h-44 md:h-64 lg:h-80 xl:h-[400px] bg-gray-200 dark:bg-gray-800 rounded-3xl animate-pulse"></div>
             </div>
         );
     }
@@ -85,7 +85,7 @@ const HeroBanner = ({ slides = [], isLoading = false }) => {
     if (slides.length === 0) {
         return (
             <section className="px-4 py-2">
-                <div className="relative h-44 rounded-3xl overflow-hidden shadow-sm bg-gradient-to-br from-[#E6F9E6] to-[#D1F2D1] flex items-center justify-center">
+                <div className="relative h-44 md:h-64 lg:h-80 xl:h-[400px] rounded-3xl overflow-hidden shadow-sm bg-gradient-to-br from-[#E6F9E6] to-[#D1F2D1] flex items-center justify-center">
                     <img 
                         src="https://atlas-content-cdn.pixelbin.io/ast/feed_v2/static_assets/common/vegetable_basket.png" 
                         alt="Fresh Vegetables" 
@@ -98,7 +98,7 @@ const HeroBanner = ({ slides = [], isLoading = false }) => {
 
     return (
         <section className="px-4 py-2 relative">
-            <div className="relative rounded-3xl overflow-hidden shadow-sm bg-gray-100 dark:bg-gray-800 h-44">
+            <div className="relative rounded-3xl overflow-hidden shadow-sm bg-gray-100 dark:bg-gray-800 h-44 md:h-64 lg:h-80 xl:h-[400px]">
                 {/* Scrollable Container */}
                 <div 
                     ref={scrollRef}
@@ -139,10 +139,10 @@ const HeroBanner = ({ slides = [], isLoading = false }) => {
                                 </div>
                             )}
 
-                            {/* Store Name Badge */}
+                            {/* Store Name Badge - Now Very Small */}
                             {slide.storeName && (
-                                <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/30">
-                                    <p className="text-white text-[10px] font-bold tracking-tight uppercase">{slide.storeName}</p>
+                                <div className="absolute top-3 left-3 bg-white/10 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/20">
+                                    <p className="text-white text-[8px] font-bold tracking-widest uppercase opacity-80">{slide.storeName}</p>
                                 </div>
                             )}
                         </div>

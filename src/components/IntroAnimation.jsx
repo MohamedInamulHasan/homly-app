@@ -89,7 +89,7 @@ const IntroAnimation = () => {
             {isVisible && (
                 <motion.div
                     // Background: Clean Gradient
-                    className="fixed inset-0 z-[100] flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden"
+                    className="fixed inset-0 z-[100] flex items-center justify-center bg-[#2E5A2E] overflow-hidden"
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.5 }}
                 >
@@ -105,7 +105,7 @@ const IntroAnimation = () => {
                                         initial="hidden"
                                         animate="visible"
                                         variants={letterVariants}
-                                        className="inline-block text-7xl md:text-9xl font-bold tracking-tighter px-[1px] bg-gradient-to-br from-blue-400 via-blue-600 to-blue-800 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+                                        className="inline-block text-7xl md:text-9xl font-bold tracking-tighter px-[1px] text-white"
                                     >
                                         {char}
                                     </motion.span>
@@ -121,7 +121,7 @@ const IntroAnimation = () => {
                                         initial="hidden"
                                         animate="visible"
                                         variants={letterVariants}
-                                        className="inline-block text-7xl md:text-9xl font-bold tracking-tighter px-[1px] bg-gradient-to-br from-blue-400 via-blue-600 to-blue-800 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+                                        className="inline-block text-7xl md:text-9xl font-bold tracking-tighter px-[1px] text-white"
                                     >
                                         {char}
                                     </motion.span>
@@ -134,7 +134,7 @@ const IntroAnimation = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.8, duration: 1 }}
-                            className="text-sm md:text-base font-medium text-blue-500/80 uppercase mt-4 tracking-[0.2em]"
+                            className="text-sm md:text-base font-medium text-white/80 uppercase mt-4 tracking-[0.2em]"
                         >
                             Experience Premium
                         </motion.p>

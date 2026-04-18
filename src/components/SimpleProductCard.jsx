@@ -384,7 +384,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                                     <ShoppingCart size={16} className="text-gray-400" />
                                 </div>
                             ) : cartQuantity > 0 ? (
-                                <div className="w-10 h-10 flex items-center justify-center bg-[#2E5A2E] text-white rounded-full font-bold text-sm select-none active:scale-95 transition-transform">
+                                <div className="w-10 h-10 flex items-center justify-center bg-[#FF5C5C] text-white rounded-full font-bold text-sm select-none active:scale-95 transition-transform">
                                     {cartQuantity}
                                 </div>
                             ) : (

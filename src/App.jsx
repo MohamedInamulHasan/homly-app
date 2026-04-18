@@ -103,16 +103,17 @@ const Layout = ({ children, onRefresh }) => {
         return <MaintenanceScreen />;
     }
 
-    // Footer Visibility Refinement: Only show on specific main routes
-    const allowedFooterRoutes = ['/', '/store', '/orders', '/profile'];
-    const showMobileFooter = !isAuthPage && !isAdminRoute && !isFooterHidden && allowedFooterRoutes.includes(location.pathname);
+    // Footer Visibility Refinement: Only show on non-auth/checkout routes
+    const hiddenFooterRoutes = ['/checkout', '/order-confirmation', '/login', '/signup', '/forgot-password'];
+    const isHiddenRoute = hiddenFooterRoutes.includes(location.pathname) || location.pathname.startsWith('/product/') || location.pathname.startsWith('/reset-password');
+    const showMobileFooter = !isHiddenRoute && !isFooterHidden;
 
     return (
         <div className="flex flex-col min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200">
             <ScrollToTop />
             {/* {showNavbar && <Navbar />} */}
             {/* <PullToRefresh onRefresh={onRefresh} resistance={2.5} className="flex-grow flex flex-col"> */}
-            <main className={`flex-grow flex flex-col ${showMobileFooter ? 'pb-32' : ''} md:pb-0`}>
+            <main className={`flex-grow flex flex-col ${showMobileFooter ? 'pb-32 md:pb-0 md:pr-28' : ''}`}>
                 {children}
             </main>
             {/* </PullToRefresh> */}

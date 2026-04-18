@@ -317,12 +317,12 @@ const Services = () => {
                                             </div>
                                         </div>
  
-                                        {/* Right Side: Simple Arrow Icon */}
-                                        <div className="flex-shrink-0 pr-1">
-                                            <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-[#2E5A2E] dark:group-hover:text-[#CBF9B2] transition-colors">
-                                                <ArrowLeft size={16} className="rotate-180" />
-                                            </div>
-                                        </div>
+                                         {/* Right Side: Simple Arrow Icon - Now Forest Green */}
+                                         <div className="flex-shrink-0 pr-1">
+                                             <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-[#2E5A2E] dark:text-[#CBF9B2] transition-colors">
+                                                 <ArrowLeft size={16} className="rotate-180" />
+                                             </div>
+                                         </div>
                                     </div>
                                 ));
                             })()}
@@ -350,7 +350,7 @@ const Services = () => {
                                     <div
                                         key={sub._id || idx}
                                         onClick={() => handleSelectSubService(sub)}
-                                        className={`group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md transition-all duration-300 aspect-square w-full cursor-pointer border-2 ${selectedItem?._id === sub._id ? 'border-[#7CA90E] ring-4 ring-[#7CA90E]/20 scale-95' : 'border-transparent hover:shadow-xl'}`}
+                                         className={`group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md transition-all duration-300 aspect-square w-full cursor-pointer border-2 ${selectedItem?._id === sub._id ? 'border-[#2E5A2E] ring-4 ring-[#2E5A2E]/20 scale-95' : 'border-transparent hover:shadow-xl'}`}
                                     >
                                         {/* Full Background Image */}
                                         <div className="absolute inset-0">
@@ -364,12 +364,12 @@ const Services = () => {
                                             {/* Gradient Overlay */}
                                             <div className={`absolute inset-0 transition-opacity ${selectedItem?._id === sub._id ? 'bg-[#2E5A2E]/40' : 'bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-80'}`} />
 
-                                            {/* Selection Indicator */}
-                                            {selectedItem?._id === sub._id && (
-                                                <div className="absolute top-3 right-3 bg-[#7CA90E] text-white p-1.5 rounded-full shadow-lg animate-in fade-in zoom-in duration-200">
-                                                    <Check size={16} strokeWidth={3} />
-                                                </div>
-                                            )}
+                                             {/* Selection Indicator - Now Forest Green */}
+                                             {selectedItem?._id === sub._id && (
+                                                 <div className="absolute top-3 right-3 bg-[#2E5A2E] text-white p-1.5 rounded-full shadow-lg animate-in fade-in zoom-in duration-200">
+                                                     <Check size={16} strokeWidth={3} />
+                                                 </div>
+                                             )}
                                         </div>
 
                                         {/* Content Overlay */}
@@ -389,12 +389,12 @@ const Services = () => {
                                 // Fallback if no specific sub-services
                                 <div className="col-span-full text-center py-12">
                                     <p className="text-gray-500 dark:text-gray-400">{t('No specific sub-services listed.')}</p>
-                                    <button
-                                        onClick={() => handleRequestSubService({ name: 'General Service', price: 'TBD', description: 'Standard service request' })}
-                                        className="mt-4 px-6 py-3 bg-[#7CA90E] text-white rounded-xl font-bold"
-                                    >
-                                        {t('Request General Service')}
-                                    </button>
+                                     <button
+                                         onClick={() => handleRequestSubService({ name: 'General Service', price: 'TBD', description: 'Standard service request' })}
+                                         className="mt-4 px-6 py-3 bg-[#2E5A2E] text-white rounded-xl font-bold"
+                                     >
+                                         {t('Request General Service')}
+                                     </button>
                                 </div>
                             )}
                         </div>
@@ -412,84 +412,88 @@ const Services = () => {
                         }`}>
                         <button
                             onClick={() => selectedItem && handleRequestSubService(selectedItem)}
-                            className="bg-gray-900/90 dark:bg-white/90 backdrop-blur-xl text-white dark:text-gray-900 px-8 py-4 rounded-full shadow-2xl flex items-center gap-4 group hover:scale-105 transition-all duration-300 border border-white/10 dark:border-gray-200/50"
+                            className="bg-white dark:bg-gray-800 backdrop-blur-xl text-gray-900 dark:text-white px-8 py-4 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex items-center gap-4 group hover:scale-105 transition-all duration-300 border border-gray-100 dark:border-gray-700"
                         >
-                            <div className="flex flex-col items-start mr-2">
-                                <span className="text-[10px] uppercase tracking-wider font-bold opacity-70 leading-none mb-0.5">
+                            <div className="flex flex-col items-start mr-2 text-left">
+                                <span className="text-[10px] uppercase tracking-wider font-bold text-[#2E5A2E] opacity-70 leading-none mb-1">
                                     {t('Request Now')}
                                 </span>
-                                <span className="text-lg font-bold leading-none">
+                                <span className="text-[15px] font-bold leading-none tracking-tight">
                                     {selectedItem ? selectedItem.name : t('Service')}
                                 </span>
                             </div>
-                            <div className="w-10 h-10 bg-[#7CA90E] rounded-full flex items-center justify-center group-hover:bg-[#8DBD12] transition-colors shadow-sm">
-                                <Send size={18} className="ml-0.5 text-white" />
-                            </div>
+                             <div className="w-10 h-10 bg-[#2E5A2E] rounded-full flex items-center justify-center group-hover:bg-[#1a381a] transition-colors shadow-sm">
+                                 <Send size={18} className="ml-0.5 text-white" />
+                             </div>
                         </button>
                     </div>
                 </div>
 
-                {/* Confirmation Modal */}
+                {/* Confirmation Modal - Matches Order Confirmation Design */}
                 {showConfirmation && selectedService && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-sm p-6 transform transition-all scale-100 opacity-100">
-                            <div className="text-center mb-6">
-                                <div className="w-16 h-16 bg-[#7CA90E]/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <ShieldCheck className="text-[#7CA90E]" size={32} />
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+                        <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] max-w-sm w-full p-8 transform transition-all border border-gray-100 dark:border-gray-700 shadow-2xl">
+                            <div className="text-center">
+                                <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-gray-50 dark:bg-gray-700 mb-6 shadow-inner relative">
+                                    <div className="absolute inset-0 rounded-full bg-[#2E5A2E] opacity-5 animate-ping"></div>
+                                    <Wrench className="h-10 w-10 text-[#2E5A2E] relative z-10" />
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 tracking-tight">
                                     {t('Confirm Request')}
                                 </h3>
-                                <p className="text-gray-500 dark:text-gray-400 text-sm">
+                                <p className="text-base text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
                                     {t('Are you sure you want to request')} <br />
-                                    <span className="font-semibold text-gray-900 dark:text-white text-base block mt-1">"{selectedService.name}"</span>
+                                    <span className="font-bold text-gray-900 dark:text-white">"{selectedService.name}"</span>
                                 </p>
-                            </div>
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => setShowConfirmation(false)}
-                                    className="flex-1 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                                >
-                                    {t('Cancel')}
-                                </button>
-                                <button
-                                    onClick={confirmRequest}
-                                    className="flex-1 py-3 bg-[#7CA90E] text-white rounded-xl font-bold hover:bg-[#8DBD12] transition-colors"
-                                >
-                                    {isSubmitting ? t('Sending...') : t('Confirm')}
-                                </button>
+                                <div className="flex flex-col gap-3">
+                                    <button
+                                        onClick={confirmRequest}
+                                        disabled={isSubmitting}
+                                        className="w-full px-4 py-4 text-[15px] font-normal text-white bg-black hover:bg-gray-900 rounded-full shadow-lg shadow-gray-200 dark:shadow-gray-900/20 disabled:opacity-50 flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+                                    >
+                                        {isSubmitting ? (
+                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        ) : t('Confirm')}
+                                    </button>
+                                    <button
+                                        onClick={() => setShowConfirmation(false)}
+                                        disabled={isSubmitting}
+                                        className="w-full px-4 py-3 text-[14px] font-normal text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+                                    >
+                                        {t('Cancel')}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 )}
 
-                {/* Success Modal */}
+                {/* Success Modal - Matches Order Confirmation Design */}
                 {requestSuccess && selectedService && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-sm p-6 transform transition-all scale-100 opacity-100">
-                            <div className="text-center mb-6">
-                                <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <CheckCircle className="text-green-600 dark:text-green-400" size={32} />
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#2E5A2E]/20 backdrop-blur-md">
+                        <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl max-w-sm w-full p-8 transform transition-all scale-100">
+                            <div className="text-center">
+                                <div className="w-24 h-24 bg-green-50 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <CheckCircle className="h-12 w-12 text-[#2E5A2E] dark:text-[#8bc910]" />
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight">
                                     {t('Request Sent!')}
-                                </h3>
-                                <p className="text-gray-500 dark:text-gray-400 text-sm">
-                                    {t('Your request for')} <span className="font-semibold text-gray-900 dark:text-white">"{selectedService.name}"</span> {t('has been received')}.
+                                </h2>
+                                <p className="text-gray-500 dark:text-gray-400 mb-8 font-medium text-sm leading-relaxed px-2">
+                                    {t('Your request for')} <span className="font-bold text-gray-900 dark:text-white">"{selectedService.name}"</span> {t('has been received')}.
                                     <br />
-                                    {t('Our team will contact you shortly')}
-                                    {activeService?.mobile && <span> {t('at')} <span className="font-semibold text-[#2E5A2E]">{activeService.mobile}</span></span>}.
+                                    <span className="text-xs opacity-70 mt-2 block">{t('Our team will contact you shortly')}</span>
                                 </p>
+                                <button
+                                    onClick={() => {
+                                        setRequestSuccess(false);
+                                        setSelectedItem(null);
+                                    }}
+                                    className="w-full bg-black text-white py-4 px-6 rounded-full font-normal shadow-lg shadow-gray-200 dark:shadow-gray-900/20 active:scale-[0.98] transition-transform text-[15px]"
+                                >
+                                    {t('Close')}
+                                </button>
                             </div>
-                            <button
-                                onClick={() => {
-                                    setRequestSuccess(false);
-                                    setSelectedItem(null);
-                                }}
-                                className="w-full py-3 bg-[#7CA90E] text-white rounded-xl font-bold hover:bg-[#8DBD12] transition-colors"
-                            >
-                                {t('Close')}
-                            </button>
                         </div>
                     </div>
                 )}

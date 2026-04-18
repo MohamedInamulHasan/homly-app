@@ -61,54 +61,68 @@ const News = () => {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
                 {isNewsLoading ? (
-                    <div className="grid grid-cols-1 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                         {[...Array(6)].map((_, i) => (
-                            <div key={i} className="bg-white dark:bg-gray-800 rounded-2xl h-24 mb-2 shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden" />
+                            <div key={i} className="bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden border border-gray-100 dark:border-gray-700/50 flex flex-col h-[400px] animate-pulse">
+                                <div className="aspect-[16/9] bg-gray-200 dark:bg-gray-700 w-full" />
+                                <div className="p-6 space-y-4">
+                                    <div className="h-4 w-20 bg-gray-100 dark:bg-gray-700 rounded-full" />
+                                    <div className="h-6 w-full bg-gray-100 dark:bg-gray-700 rounded-lg" />
+                                    <div className="h-20 w-full bg-gray-50 dark:bg-gray-800 rounded-xl" />
+                                </div>
+                            </div>
                         ))}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                         {sortedNews.map((item, index) => {
                             return (
                                 <div 
                                     key={item.id} 
                                     onClick={() => openNews(item)} 
-                                    className="group flex items-center gap-4 bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 dark:border-gray-700/50 cursor-pointer"
+                                    className="group flex flex-col bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden transition-all duration-500 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:scale-[1.02] border border-gray-100 dark:border-gray-700/50"
                                 >
-                                    {/* Left Side: Square Image */}
-                                    <div className="w-20 h-20 flex-shrink-0 relative">
-                                        <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 rounded-xl" />
+                                    {/* Top Side: 16:9 Cinematic Image */}
+                                    <div className="aspect-[16/9] w-full relative overflow-hidden">
+                                        <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse" />
                                         <img
                                             src={item.image || (item.images && item.images[0])}
                                             alt={t(item, 'title')}
-                                            className="absolute inset-0 w-full h-full object-cover rounded-xl z-10"
-                                            onError={(e) => { e.target.src = 'https://placehold.co/200x200?text=News'; }}
+                                            className="absolute inset-0 w-full h-full object-cover z-10 transition-transform duration-700 group-hover:scale-110"
+                                            onError={(e) => { e.target.src = 'https://placehold.co/600x400?text=News'; e.target.className="absolute inset-0 w-full h-full object-cover z-10"; }}
                                         />
-                                    </div>
-
-                                    {/* Middle: Details */}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-1.5 mb-1">
-                                            <span className="px-1.5 py-0.5 bg-[#CBF9B2]/20 rounded text-[9px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] uppercase tracking-wider">
+                                        {/* Overlay Tag */}
+                                        <div className="absolute top-4 left-4 z-20">
+                                            <span className="px-3 py-1 bg-[#2E5A2E] text-white text-[10px] font-bold rounded-full uppercase tracking-widest shadow-lg shadow-[#2E5A2E]/20">
                                                 {t(item, 'category') || t('Update')}
                                             </span>
-                                            <div className="flex items-center text-[10px] text-gray-400 font-medium">
-                                                <Calendar size={10} className="mr-1" />
-                                                {new Date(item.createdAt || item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                            </div>
                                         </div>
-                                        <h3 className="text-gray-900 dark:text-white text-[15px] font-semibold truncate mb-1">
-                                            {t(item, 'title')}
-                                        </h3>
-                                        <p className="text-gray-500 dark:text-gray-400 text-[11px] line-clamp-2 leading-snug">
-                                            {item.content ? t(item, 'content') : t(item, 'description')}
-                                        </p>
                                     </div>
 
-                                    {/* Right Side: Simple Arrow Icon */}
-                                    <div className="flex-shrink-0 pr-1">
-                                        <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-[#2E5A2E] dark:group-hover:text-[#CBF9B2] transition-colors">
-                                            <ArrowLeft size={16} className="rotate-180" />
+                                    {/* Bottom: Details */}
+                                    <div className="p-6 flex flex-col flex-1">
+                                        <div className="flex items-center text-[11px] text-gray-400 font-bold uppercase tracking-tighter mb-2 opacity-60">
+                                            <Calendar size={12} className="mr-1.5" />
+                                            {new Date(item.createdAt || item.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                                        </div>
+                                        
+                                        <h3 className="text-gray-900 dark:text-white text-[18px] font-bold leading-tight mb-3 group-hover:text-[#2E5A2E] dark:group-hover:text-[#CBF9B2] transition-colors line-clamp-2">
+                                            {t(item, 'title')}
+                                        </h3>
+                                        
+                                        <p className="text-gray-500 dark:text-gray-400 text-[13px] line-clamp-3 leading-relaxed mb-6 opacity-80">
+                                            {item.content ? t(item, 'content') : t(item, 'description')}
+                                        </p>
+
+                                        <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-50 dark:border-gray-700/30">
+                                            <span className="text-[11px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] uppercase tracking-widest flex items-center gap-2 group-hover:gap-3 transition-all">
+                                                {t('Read Story')}
+                                                <ArrowLeft size={14} className="rotate-180" />
+                                            </span>
+                                            
+                                            <div className="w-8 h-8 rounded-full bg-[#2E5A2E]/5 dark:bg-[#CBF9B2]/5 flex items-center justify-center text-[#2E5A2E] dark:text-[#CBF9B2] group-hover:bg-[#2E5A2E] group-hover:text-white dark:group-hover:bg-[#CBF9B2] dark:group-hover:text-[#2E5A2E] transition-all duration-300">
+                                                <ArrowLeft size={16} className="rotate-180" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -121,10 +135,10 @@ const News = () => {
             {/* News Detail Modal */}
             {selectedNews && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={closeNews}>
-                    <div
-                        className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col transform transition-all scale-100 opacity-100"
-                        onClick={(e) => e.stopPropagation()}
-                    >
+                     <div
+                         className="bg-white dark:bg-gray-800 rounded-3xl shadow-none border border-gray-100 dark:border-gray-700 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col transform transition-all scale-100 opacity-100"
+                         onClick={(e) => e.stopPropagation()}
+                     >
                         {/* Modal Header Image */}
                         <div className="relative h-64 md:h-80 flex-shrink-0">
                             <img

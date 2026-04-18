@@ -106,38 +106,42 @@ const Orders = () => {
     // We handle 'loadingOrders' state inside the return block by showing a beautiful skeleton loader.
 
     return (
-        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 mx-auto max-w-md w-full relative pb-48">
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 w-full relative pb-48">
             {/* Premium Light Green Header Card */}
-            <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-md bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-6 pb-6 shadow-sm overflow-hidden">
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-6 pb-6 shadow-sm overflow-hidden">
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
                 
                 <div className="relative z-10">
-                    <div className="max-w-2xl mx-auto px-2 flex items-center justify-between">
-                        <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50">
-                            <ArrowLeft size={22} />
-                        </button>
-                        <div className="flex flex-col text-center">
-                            <h1 className="text-[18px] font-bold text-gray-900 tracking-tight">{t('My Orders')}</h1>
-                            <p className="text-[#2E5A2E] text-[13px] font-medium mt-0.5">{t('Track packages')}</p>
+                    <div className="w-full px-4 relative flex items-center justify-center min-h-[42px]">
+                        <div className="absolute left-2 top-1/2 -translate-y-1/2">
+                            <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50">
+                                <ArrowLeft size={22} />
+                            </button>
                         </div>
-                        <button 
-                            onClick={() => navigate('/cart')}
-                            className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-black/5 relative"
-                        >
-                            <ShoppingCart size={22} className="text-gray-700" />
-                            {cartCount > 0 && (
-                                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-5 w-5 rounded-full flex items-center justify-center shadow-sm border-2 border-white">
-                                    {cartCount}
-                                </span>
-                            )}
-                        </button>
+                        <div className="flex flex-col text-center">
+                            <h1 className="text-[18px] font-bold text-gray-900 tracking-tight leading-tight">{t('My Orders')}</h1>
+                            <p className="text-[#2E5A2E] text-[13px] font-medium leading-tight">{t('Track packages')}</p>
+                        </div>
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                            <button 
+                                onClick={() => navigate('/cart')}
+                                className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-black/5 relative"
+                            >
+                                <ShoppingCart size={22} className="text-gray-700" />
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-5 w-5 rounded-full flex items-center justify-center shadow-sm border-2 border-white">
+                                        {cartCount}
+                                    </span>
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <PullToRefreshLayout>
                 <div className="pt-[110px]">
-                <div className="px-5 mt-2">
+                <div className="px-5 mt-2 max-w-3xl mx-auto">
                     {/* Search Pill */}
                     <div className="relative mb-6">
                         <input
@@ -159,7 +163,7 @@ const Orders = () => {
                     </div>
 
                     {/* Tabs */}
-                    <div className="flex overflow-x-auto pb-4 mb-4 scrollbar-hide gap-3 -mx-5 px-5">
+                    <div className="flex overflow-x-auto pb-4 mb-4 scrollbar-hide gap-3 w-full">
                         {tabs.map(tab => (
                             <button
                                 key={tab}
@@ -180,7 +184,7 @@ const Orders = () => {
                     <div className="space-y-4">
                         {loadingOrders ? (
                             // Inline Loading State (Skeleton)
-                            <div className="space-y-4">
+                            <div className="grid grid-cols-1 gap-4 lg:gap-6 w-full">
                                 {[1, 2, 3].map((i) => (
                                     <div key={i} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 animate-pulse">
                                         <div className="flex gap-4 mb-4">
@@ -203,7 +207,8 @@ const Orders = () => {
                                 ))}
                             </div>
                         ) : filteredOrders.length > 0 ? (
-                            filteredOrders.map(order => (
+                            <div className="grid grid-cols-1 gap-4 lg:gap-6 w-full">
+                            {filteredOrders.map(order => (
                                 <div
                                     key={order._id || order.id}
                                     onClick={() => navigate(`/orders/${order._id || order.id}`)}
@@ -318,7 +323,8 @@ const Orders = () => {
                                         </div>
                                     </div>
                                 </div>
-                            ))
+                            ))}
+                            </div>
                         ) : (
                             <div className="text-center py-12">
                                 <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">

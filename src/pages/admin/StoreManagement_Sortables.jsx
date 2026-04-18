@@ -45,7 +45,7 @@ const SortableProductRow = ({ product, children }) => {
     };
 
     return (
-        <tr ref={setNodeRef} style={style} {...attributes} {...listeners} className={`${isDragging ? 'bg-blue-50 dark:bg-blue-900/30 shadow-lg' : 'hover:bg-gray-50 dark:hover:bg-gray-700/30'} transition-colors`}>
+        <tr ref={setNodeRef} style={style} {...attributes} {...listeners} className={`${isDragging ? 'bg-[#E8F5E9] dark:bg-[#2E5A2E]/20' : 'hover:bg-gray-50 dark:hover:bg-gray-700/30'} transition-colors`}>
             {children}
         </tr>
     );

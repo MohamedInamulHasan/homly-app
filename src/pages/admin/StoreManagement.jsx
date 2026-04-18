@@ -404,10 +404,20 @@ const StoreManagement = () => {
             return;
         }
 
+        const imagesArray = productForm.sliderImages.length > 0
+            ? productForm.sliderImages
+            : (productForm.image ? [productForm.image] : []);
+
         const productData = {
+            title: productForm.title,
+            description: productForm.description,
+            category: productForm.category,
+            subcategory: productForm.subcategory,
             price: parseFloat(productForm.price),
             storeId: selectedStore._id || selectedStore.id,
-            images: productForm.sliderImages.length > 0 ? productForm.sliderImages : [productForm.image],
+            image: productForm.image || imagesArray[0],
+            images: imagesArray,
+            unit: productForm.unit,
             useTimeLimit: productForm.useTimeLimit,
             openingTime: productForm.openingTime,
             closingTime: productForm.closingTime
@@ -544,7 +554,7 @@ const StoreManagement = () => {
 
                                     return (
                                         <SortableStoreCard key={store.id || store._id} store={store}>
-                                            <div className={`group relative bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-xl hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-500 overflow-hidden border border-gray-100 dark:border-gray-700 flex flex-col h-full ${isClosed ? 'grayscale opacity-80' : ''}`}>
+                                            <div className={`group relative bg-white dark:bg-gray-800 rounded-[2.5rem] transition-all duration-500 overflow-hidden border border-gray-100 dark:border-gray-700 flex flex-col h-full ${isClosed ? 'grayscale opacity-80' : ''}`}>
                                                 <div className="relative h-52 overflow-hidden">
                                                     <DragHandle className="absolute top-4 left-4 z-30 p-2.5 bg-black/50 hover:bg-black/70 text-white rounded-2xl backdrop-blur-md transition-all cursor-grab active:cursor-grabbing border border-white/10 shadow-lg">
                                                         <GripVertical size={20} />
@@ -562,23 +572,23 @@ const StoreManagement = () => {
 
                                                     {/* Status Overlay on Image */}
                                                     {isClosed && (
-                                                        <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/10 backdrop-blur-[1px]">
-                                                            <div className="px-6 py-2 bg-red-600/90 backdrop-blur-md rounded-full border-2 border-white shadow-2xl transform -rotate-12">
-                                                                <span className="text-sm font-black text-white tracking-widest uppercase">{t('CLOSED')}</span>
+                                                        <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/5 backdrop-blur-[1px]">
+                                                            <div className="px-6 py-2 bg-gray-600/90 backdrop-blur-md rounded-full border-2 border-white transform -rotate-12">
+                                                                <span className="text-sm font-normal text-white tracking-widest uppercase">{t('CLOSED')}</span>
                                                             </div>
                                                         </div>
                                                     )}
 
                                                     {/* Status Badge - Floating Glassmorphism */}
                                                     <div className="absolute top-4 right-4 z-20">
-                                                        <div className={`backdrop-blur-md px-4 py-2 rounded-2xl shadow-xl border border-white/20 flex items-center gap-2 ${store.isManuallyClosed
-                                                            ? 'bg-red-500/80 text-white'
+                                                        <div className={`backdrop-blur-md px-4 py-2 rounded-2xl border border-white/20 flex items-center gap-2 ${store.isManuallyClosed
+                                                            ? 'bg-gray-500/80 text-white'
                                                             : !isOpen
                                                                 ? 'bg-gray-600/80 text-white'
                                                                 : 'bg-emerald-500/80 text-white'
                                                             }`}>
                                                             <div className={`w-2 h-2 rounded-full animate-pulse ${isOpen ? 'bg-white' : 'bg-white/80'}`} />
-                                                            <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
+                                                            <span className="text-[10px] font-normal uppercase tracking-widest whitespace-nowrap">
                                                                 {store.isManuallyClosed
                                                                     ? t('Manually Closed')
                                                                     : !isOpen
@@ -591,7 +601,7 @@ const StoreManagement = () => {
 
                                                 <div className="p-4 flex flex-col flex-grow gap-3">
                                                     <div className="space-y-0.5">
-                                                        <h3 className="text-2xl font-black text-gray-900 dark:text-white leading-tight line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                                                        <h3 className="text-2xl font-normal text-gray-900 dark:text-white leading-tight line-clamp-1 group-hover:text-[#2E5A2E] dark:group-hover:text-[#8bc910] transition-colors duration-300">
                                                             {store.name}
                                                         </h3>
 
@@ -601,7 +611,7 @@ const StoreManagement = () => {
                                                                 .filter(cat => categories.some(c => c.name === cat))
                                                                 .slice(0, 3)
                                                                 .map((cat, idx) => (
-                                                                    <span key={idx} className="px-2.5 py-1 bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-[9px] uppercase tracking-widest font-black rounded-lg border border-gray-100 dark:border-gray-600">
+                                                                    <span key={idx} className="px-2.5 py-1 bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-[9px] uppercase tracking-widest font-normal rounded-lg border border-gray-100 dark:border-gray-600">
                                                                         {t(cat)}
                                                                     </span>
                                                                 ))}
@@ -614,7 +624,7 @@ const StoreManagement = () => {
                                                             <div className="p-2 bg-[#2E5A2E]/10 rounded-xl">
                                                                 <MapPin size={16} className="text-[#2E5A2E] dark:text-[#7CA90E]" />
                                                             </div>
-                                                            <span className="text-xs font-bold text-gray-600 dark:text-gray-400 truncate opacity-80" title={store.address}>
+                                                            <span className="text-xs font-normal text-gray-600 dark:text-gray-400 truncate opacity-80" title={store.address}>
                                                                 {store.address || t('No address')}
                                                             </span>
                                                         </div>
@@ -622,7 +632,7 @@ const StoreManagement = () => {
                                                             <div className="p-2 bg-orange-500/10 rounded-xl">
                                                                 <Clock size={16} className="text-orange-600 dark:text-orange-400" />
                                                             </div>
-                                                            <span className="text-xs font-black text-gray-700 dark:text-gray-200">
+                                                            <span className="text-xs font-normal text-gray-700 dark:text-gray-200">
                                                                 {store.timingType === 'permanent' ? t('Always Open') : `${formatTime12h(store.openingTime)} - ${formatTime12h(store.closingTime)}`}
                                                             </span>
                                                         </div>
@@ -632,34 +642,34 @@ const StoreManagement = () => {
                                                     <div className="grid grid-cols-2 gap-2 mt-auto">
                                                         <button
                                                             onClick={(e) => { e.stopPropagation(); proceedToManageProducts(store); }}
-                                                            className="col-span-1 py-3 px-4 bg-gradient-to-r from-[#2E5A2E] to-[#4A8A4A] text-white rounded-[1.25rem] shadow-xl shadow-[#2E5A2E]/10 hover:shadow-[#2E5A2E]/30 hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group/btn"
+                                                            className="col-span-1 py-3 px-4 bg-[#2E5A2E] text-white rounded-[1.25rem] hover:bg-[#1a3d1a] transition-all duration-300 flex items-center justify-center gap-2 group/btn"
                                                         >
                                                             <Package size={18} className="transition-transform group-hover/btn:rotate-12" />
-                                                            <span className="text-xs font-black uppercase tracking-wider">{t('Products')}</span>
+                                                            <span className="text-xs font-normal uppercase tracking-wider">{t('Products')}</span>
                                                         </button>
 
                                                         {isTimeOpen ? (
                                                             <button
                                                                 onClick={(e) => { e.stopPropagation(); handleToggleStatus(store); }}
-                                                                className={`col-span-1 py-3 px-4 rounded-[1.25rem] shadow-xl transition-all duration-300 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 group/btn ${store.isManuallyClosed
-                                                                    ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-emerald-500/20'
-                                                                    : 'bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-red-500/20'
+                                                                className={`col-span-1 py-3 px-4 rounded-[1.25rem] transition-all duration-300 flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 group/btn ${store.isManuallyClosed
+                                                                    ? 'bg-emerald-600 text-white'
+                                                                    : 'bg-gray-500 text-white'
                                                                     }`}
                                                             >
                                                                 <Power size={18} className="transition-transform group-hover/btn:scale-110" />
-                                                                <span className="text-xs font-black uppercase tracking-wider">{store.isManuallyClosed ? t('Open') : t('Close')}</span>
+                                                                <span className="text-xs font-normal uppercase tracking-wider">{store.isManuallyClosed ? t('Open') : t('Close')}</span>
                                                             </button>
                                                         ) : (
                                                             <div className="col-span-1 py-3 px-4 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 rounded-[1.25rem] border border-gray-200 dark:border-gray-700 flex items-center justify-center gap-2 cursor-not-allowed opacity-60">
                                                                 <Clock size={16} />
-                                                                <span className="text-xs font-black uppercase tracking-wider">{t('Closed')}</span>
+                                                                <span className="text-xs font-normal uppercase tracking-wider">{t('Closed')}</span>
                                                             </div>
                                                         )}
 
                                                         <div className="col-span-2 flex items-center justify-center gap-4 mt-1 pt-3 border-t border-gray-100 dark:border-gray-700/50">
                                                             <button
                                                                 onClick={(e) => { e.stopPropagation(); handleEditStore(store); }}
-                                                                className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#2E5A2E] dark:text-[#7CA90E] hover:text-[#1a3d1a] dark:hover:text-[#CBF9B2] transition-colors px-3 py-1.5 hover:bg-[#E8F5E9] dark:hover:bg-[#2E5A2E]/20 rounded-xl"
+                                                                className="flex items-center gap-2 text-[10px] font-normal uppercase tracking-widest text-[#2E5A2E] dark:text-[#7CA90E] hover:text-[#1a3d1a] dark:hover:text-[#CBF9B2] transition-colors px-3 py-1.5 hover:bg-[#E8F5E9] dark:hover:bg-[#2E5A2E]/20 rounded-xl"
                                                             >
                                                                 <Edit2 size={14} />
                                                                 {t('Edit')}
@@ -667,7 +677,7 @@ const StoreManagement = () => {
                                                             {!isStoreAdmin && (
                                                                 <button
                                                                     onClick={(e) => { e.stopPropagation(); handleDeleteStore(store.id || store._id); }}
-                                                                    className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors px-3 py-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl"
+                                                                    className="flex items-center gap-2 text-[10px] font-normal uppercase tracking-widest text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors px-3 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl"
                                                                 >
                                                                     <Trash2 size={14} />
                                                                     {t('Delete')}
@@ -753,7 +763,7 @@ const StoreManagement = () => {
                                         type="button"
                                         onClick={() => setStoreForm({ ...storeForm, timingType: 'permanent' })}
                                         className={`px-4 py-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1 ${storeForm.timingType === 'permanent'
-                                            ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+                                            ? 'border-[#2E5A2E] bg-[#E8F5E9] dark:bg-[#7CA90E]/20 text-[#2E5A2E] dark:text-[#7CA90E]'
                                             : 'border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500'
                                             }`}
                                     >
@@ -862,7 +872,7 @@ const StoreManagement = () => {
                                 disabled={uploadingImage}
                                 className={`px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2 ${uploadingImage
                                     ? 'bg-gray-400 cursor-not-allowed text-white'
-                                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                                    : 'bg-[#2E5A2E] text-white hover:bg-[#1a3d1a] shadow-sm'
                                     }`}
                             >
                                 {uploadingImage ? (
@@ -1107,7 +1117,7 @@ const StoreManagement = () => {
                                                                     alert(t('Failed to update status'));
                                                                 }
                                                             }}
-                                                            className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${product.isAvailable !== false ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'
+                                                            className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2E5A2E] ${product.isAvailable !== false ? 'bg-[#2E5A2E]' : 'bg-gray-200 dark:bg-gray-600'
                                                                 }`}
                                                             title={product.isAvailable !== false ? t('Available') : t('Out of Stock')}
                                                         >
@@ -1128,14 +1138,14 @@ const StoreManagement = () => {
                                                         <div className="flex gap-2">
                                                             <button
                                                                 onClick={() => handleDuplicateProduct(product)}
-                                                                className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
+                                                                className="p-2 text-[#2E5A2E] hover:bg-[#E8F5E9] dark:hover:bg-[#2E5A2E]/20 rounded-lg transition-colors"
                                                                 title={t('Duplicate Product')}
                                                             >
                                                                 <Copy size={18} />
                                                             </button>
                                                             <button
                                                                 onClick={() => handleEditProduct(product)}
-                                                                className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                                                                className="p-2 text-[#2E5A2E] hover:bg-[#E8F5E9] dark:hover:bg-[#2E5A2E]/20 rounded-lg transition-colors"
                                                             >
                                                                 <Edit2 size={18} />
                                                             </button>
@@ -1183,7 +1193,7 @@ const StoreManagement = () => {
                                             const store = stores.find(s => (s._id || s.id) === e.target.value);
                                             setSelectedStore(store);
                                         }}
-                                        className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                        className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none"
                                         required
                                     >
                                         <option value="">{t('Select Store')}</option>
@@ -1201,7 +1211,7 @@ const StoreManagement = () => {
                                     type="text"
                                     value={productForm.title}
                                     onChange={(e) => setProductForm({ ...productForm, title: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none"
                                     required
                                 />
                             </div>
@@ -1212,7 +1222,7 @@ const StoreManagement = () => {
                                     type="number"
                                     value={productForm.price}
                                     onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none"
                                     required
                                 />
                             </div>
@@ -1223,7 +1233,7 @@ const StoreManagement = () => {
                                     type="text"
                                     value={productForm.unit}
                                     onChange={(e) => setProductForm({ ...productForm, unit: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none"
                                     placeholder={t('e.g., 1 kg, 500g, 1 Pack')}
                                 />
                             </div>
@@ -1232,7 +1242,7 @@ const StoreManagement = () => {
                                 <select
                                     value={productForm.category}
                                     onChange={(e) => setProductForm({ ...productForm, category: e.target.value, subcategory: [] })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none"
                                     required
                                 >
                                     <option value="">{t('Select Category')}</option>
@@ -1278,7 +1288,7 @@ const StoreManagement = () => {
                                                                             : prev.subcategory.filter(s => s !== sub)
                                                                     }));
                                                                 }}
-                                                                className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                                                className="w-4 h-4 text-[#2E5A2E] rounded border-gray-300 focus:ring-[#2E5A2E]"
                                                             />
                                                             <span className="text-gray-700 dark:text-gray-300 text-sm">{t(sub)}</span>
                                                         </label>
@@ -1344,10 +1354,10 @@ const StoreManagement = () => {
 
                             {/* Product Timing Section */}
                             <div className="col-span-1 md:col-span-2">
-                                <div className="p-4 rounded-2xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30">
+                                <div className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600">
                                     <div className="flex items-center justify-between mb-4">
                                         <div className="flex items-center gap-2">
-                                            <div className="p-1.5 bg-blue-100 dark:bg-blue-900/40 rounded-lg text-blue-600 dark:text-blue-400">
+                                            <div className="p-1.5 bg-gray-200 dark:bg-gray-600 rounded-lg text-gray-700 dark:text-gray-300">
                                                 <Clock size={18} />
                                             </div>
                                             <div>
@@ -1362,7 +1372,7 @@ const StoreManagement = () => {
                                                 onChange={(e) => setProductForm({ ...productForm, useTimeLimit: e.target.checked })}
                                                 className="sr-only peer"
                                             />
-                                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#2E5A2E]"></div>
                                         </label>
                                     </div>
 
@@ -1374,7 +1384,7 @@ const StoreManagement = () => {
                                                     type="time"
                                                     value={productForm.openingTime}
                                                     onChange={(e) => setProductForm({ ...productForm, openingTime: e.target.value })}
-                                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none text-sm"
                                                     required={productForm.useTimeLimit}
                                                 />
                                             </div>
@@ -1384,7 +1394,7 @@ const StoreManagement = () => {
                                                     type="time"
                                                     value={productForm.closingTime}
                                                     onChange={(e) => setProductForm({ ...productForm, closingTime: e.target.value })}
-                                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none text-sm"
                                                     required={productForm.useTimeLimit}
                                                 />
                                             </div>
@@ -1399,7 +1409,7 @@ const StoreManagement = () => {
                                 value={productForm.description}
                                 onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
                                 rows="4"
-                                className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none"
                                 required
                             ></textarea>
                         </div>
@@ -1410,7 +1420,7 @@ const StoreManagement = () => {
                                 disabled={uploadingImage}
                                 className={`px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2 ${uploadingImage
                                     ? 'bg-gray-400 cursor-not-allowed text-white'
-                                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                                    : 'bg-[#2E5A2E] text-white hover:bg-[#1a3d1a]'
                                     }`}
                             >
                                 {uploadingImage ? (

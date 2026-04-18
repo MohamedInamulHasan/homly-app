@@ -206,39 +206,48 @@ const ProductDetails = () => {
     const displayDescription = isDescriptionExpanded ? mainDesc : mainDesc.slice(0, 150) + (shouldTruncate ? '...' : '');
 
     return (
-        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 flex flex-col">
-            {/* Top Section: Full Image Area */}
-            <div className="relative w-full aspect-[4/4] md:aspect-[16/8] bg-[#E8EAEF] dark:bg-gray-900 flex items-center justify-center p-0 overflow-hidden">
-                {/* Floating Navigation Buttons (Restored) */}
-                <div className="absolute top-6 left-6 right-6 flex items-center justify-between z-30">
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-90"
-                    >
-                        <ArrowLeft size={24} />
-                    </button>
-                    <button
-                        onClick={handleToggleSave}
-                        className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-90"
-                    >
-                        <Bookmark size={24} className={isSaved ? "fill-[#FF5C5C] text-[#FF5C5C]" : "text-gray-400"} />
-                    </button>
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 flex flex-col lg:py-12 lg:px-8">
+            
+            {/* Desktop Layout Container Wrapper */}
+            <div className="flex flex-col lg:flex-row lg:max-w-[1200px] lg:mx-auto lg:bg-white lg:dark:bg-gray-800 lg:rounded-[3rem] lg:shadow-sm lg:overflow-hidden flex-1 lg:flex-initial w-full">
+            
+                {/* Image Section (Top on mobile, Left on desktop) */}
+                <div className="relative w-full lg:w-1/2 aspect-square md:aspect-[16/8] lg:aspect-auto lg:min-h-[600px] bg-[#E8EAEF] lg:bg-gray-50/50 dark:bg-gray-900 lg:dark:bg-gray-900/50 flex items-center justify-center p-0 lg:p-12 overflow-hidden border-r-0 lg:border-r border-gray-100 dark:border-gray-700/50">
+                    {/* Floating Navigation Buttons */}
+                    <div className="absolute top-6 left-6 right-6 flex items-center justify-between z-30">
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-90"
+                        >
+                            <ArrowLeft size={24} />
+                        </button>
+                        <button
+                            onClick={handleToggleSave}
+                            className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-90"
+                        >
+                            <Bookmark size={24} className={isSaved ? "fill-[#FF5C5C] text-[#FF5C5C]" : "text-gray-400"} />
+                        </button>
+                    </div>
+
+                    {/* Main Product Image */}
+                    <div className="w-full h-full flex items-center justify-center relative">
+                        {product.unit && (
+                            <div className="absolute bottom-4 right-4 z-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur px-3 py-1.5 rounded-xl text-xs font-bold text-gray-700 dark:text-gray-300 shadow-sm border border-black/5 hidden lg:block">
+                                {product.unit}
+                            </div>
+                        )}
+                        <img
+                            src={product.image || 'https://via.placeholder.com/400x400?text=No+Image'}
+                            alt={product.title}
+                            className="w-full h-full object-contain lg:max-h-[500px]"
+                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/400x400?text=No+Image'; }}
+                        />
+                    </div>
                 </div>
 
-                {/* Main Product Image - Maximized */}
-                <div className="w-full h-full flex items-center justify-center">
-                    <img
-                        src={product.image || 'https://via.placeholder.com/400x400?text=No+Image'}
-                        alt={product.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/400x400?text=No+Image'; }}
-                    />
-                </div>
-            </div>
-
-            {/* Bottom Section: Pull-up Content Card */}
-            <div className="flex-1 bg-white dark:bg-gray-800 rounded-t-[2.5rem] -mt-12 relative z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] px-8 pt-10 pb-8">
-                <div className="max-w-2xl mx-auto">
+                {/* Content Section (Pull-up on mobile, Right on desktop) */}
+                <div className="flex-1 bg-white dark:bg-transparent rounded-t-[2.5rem] lg:rounded-none -mt-12 lg:mt-0 relative z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] lg:shadow-none px-8 pt-10 pb-8 lg:p-12 lg:flex lg:flex-col lg:justify-center">
+                    <div className="max-w-2xl mx-auto w-full">
                     {/* Header: Title Only (Ratings Removed) */}
                     <div className="mb-2">
                         <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white leading-tight mb-1">
@@ -369,6 +378,7 @@ const ProductDetails = () => {
                 </div>
             </div>
         </div>
+    </div>
     );
 };
 

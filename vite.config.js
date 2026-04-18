@@ -14,7 +14,7 @@ export default defineConfig({
         name: 'ILY mart - E-Commerce App',
         short_name: 'ILY mart',
         description: 'Your one-stop shop for all your needs. Browse products, manage orders, and shop with ease.',
-        theme_color: '#2563eb',
+        theme_color: '#2E5A2E',
         background_color: '#ffffff',
         display: 'standalone',
         scope: '/',

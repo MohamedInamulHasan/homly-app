@@ -146,7 +146,7 @@ const OrderDetails = () => {
     const timelineSteps = getTimelineSteps(order.status);
 
     return (
-        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 mx-auto max-w-md w-full relative pb-48">
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 mx-auto max-w-3xl w-full relative pb-48">
             <div className="px-5 pt-8">
                 {/* Header matching Profile & Cart */}
                 <div className="flex items-center justify-between mb-8 mt-2">

@@ -111,14 +111,13 @@ const MobileFooter = () => {
 
     if (location.pathname.startsWith('/product/') ||
         location.pathname === '/checkout' ||
-        location.pathname === '/order-confirmation' ||
-        location.pathname.startsWith('/admin')) {
+        location.pathname === '/order-confirmation') {
         return null;
     }
 
     return (
-        <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
-            <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-white/20 dark:border-gray-800/50 rounded-full px-6 py-2 flex items-center gap-4 shadow-xl shadow-black/5">
+        <div className="fixed z-50 bottom-6 left-1/2 -translate-x-1/2 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:left-auto md:right-6 md:translate-x-0">
+            <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-white/20 dark:border-gray-800/50 rounded-full px-6 py-2 md:px-2 md:py-6 flex flex-row md:flex-col items-center gap-4 shadow-xl shadow-black/5">
                 {navItems.map((item) => {
                     const active = isActive(item.path);
                     return (
@@ -128,7 +127,7 @@ const MobileFooter = () => {
                             className="relative flex items-center justify-center group"
                         >
                              <div 
-                                className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${active ? 'bg-black shadow-lg shadow-black/20 scale-110' : 'hover:bg-gray-100'}`}
+                                className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${active ? 'bg-black shadow-lg shadow-black/20 scale-110 md:scale-125' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
                             >
                                 <item.icon isActive={active} />
                             </div>

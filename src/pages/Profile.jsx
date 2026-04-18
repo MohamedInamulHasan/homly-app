@@ -77,7 +77,7 @@ const Profile = () => {
     const confirmLogout = () => { logout(); navigate('/login'); };
 
     return (
-        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 mx-auto max-w-md w-full relative pb-48">
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 w-full relative pb-48">
             
             {/* Logout Modal */}
             <LogoutModal 
@@ -87,35 +87,39 @@ const Profile = () => {
             />
 
             {/* Premium Light Green Header Card */}
-            <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-md bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-6 pb-6 shadow-sm overflow-hidden">
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-6 pb-6 shadow-sm overflow-hidden">
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
                 
                 <div className="relative z-10">
-                    <div className="max-w-2xl mx-auto px-2 flex items-center justify-between">
-                        <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50">
-                            <ArrowLeft size={22} />
-                        </button>
-                        <div className="flex flex-col text-center">
-                            <h1 className="text-[18px] font-bold text-gray-900 tracking-tight">{t('Profile')}</h1>
-                            <p className="text-[#2E5A2E] text-[13px] font-medium mt-0.5">{t('Manage your account')}</p>
+                    <div className="w-full px-4 relative flex items-center justify-center min-h-[42px]">
+                        <div className="absolute left-2 top-1/2 -translate-y-1/2">
+                            <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50">
+                                <ArrowLeft size={22} />
+                            </button>
                         </div>
-                        <button 
-                            onClick={() => navigate('/cart')}
-                            className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-black/5 relative"
-                        >
-                            <ShoppingCart size={22} className="text-gray-700" />
-                            {cartCount > 0 && (
-                                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-5 w-5 rounded-full flex items-center justify-center shadow-sm border-2 border-white">
-                                    {cartCount}
-                                </span>
-                            )}
-                        </button>
+                        <div className="flex flex-col text-center">
+                            <h1 className="text-[18px] font-bold text-gray-900 tracking-tight leading-tight">{t('Profile')}</h1>
+                            <p className="text-[#2E5A2E] text-[13px] font-medium leading-tight">{t('Manage your account')}</p>
+                        </div>
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                            <button 
+                                onClick={() => navigate('/cart')}
+                                className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-black/5 relative"
+                            >
+                                <ShoppingCart size={22} className="text-gray-700" />
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-5 w-5 rounded-full flex items-center justify-center shadow-sm border-2 border-white">
+                                        {cartCount}
+                                    </span>
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div className="pt-[115px]">
-            <div className="px-5">
+            <div className="px-5 mt-2 max-w-3xl mx-auto w-full">
                 {/* Profile Widget */}
                 <div className="bg-white dark:bg-gray-800/80 rounded-[2.5rem] p-4 flex items-center justify-between mb-8 shadow-sm border border-gray-100 dark:border-gray-700">
                      <div className="flex items-center gap-5">
@@ -131,13 +135,15 @@ const Profile = () => {
                                         <User size={24} />
                                     </div>
                                </div>
-                               {/* Flat Coin Badge - Shadow Free */}
-                               <div className="absolute -bottom-0.5 -right-0.5 bg-[#FFCE31] rounded-full px-2 py-1 flex items-center gap-1 border-2 border-white dark:border-gray-800 z-10">
-                                   <Coins size={10} className="text-[#2E5A2E]" />
-                                   <span className="text-[11px] font-black text-[#2E5A2E] leading-none">
-                                       {user?.coins || 0}
-                                   </span>
-                               </div>
+                                 {/* Flat Coin Badge - Shadow Free - Only show if > 0 */}
+                                 {Number(user?.coins || 0) > 0 && (
+                                     <div className="absolute -bottom-0.5 -right-0.5 bg-[#FFCE31] rounded-full px-2 py-1 flex items-center gap-1 border-2 border-white dark:border-gray-800 z-10">
+                                         <Coins size={10} className="text-[#2E5A2E]" />
+                                         <span className="text-[11px] font-black text-[#2E5A2E] leading-none">
+                                             {user?.coins}
+                                         </span>
+                                     </div>
+                                 )}
                           </div>
                           <div>
                                <h2 className="text-[17px] font-bold text-gray-900 dark:text-white leading-tight tracking-tight">

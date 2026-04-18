@@ -221,7 +221,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                                     e.preventDefault();
                                     e.stopPropagation();
                                 }}
-                                className={`w-10 h-10 bg-[#2E5A2E] hover:opacity-90 text-white rounded-full flex items-center justify-center transition-all active:scale-90 select-none`}
+                                className={`w-10 h-10 ${quantity > 0 ? 'bg-[#FF5C5C]' : 'bg-[#2E5A2E]'} hover:opacity-90 text-white rounded-full flex items-center justify-center transition-all active:scale-90 select-none`}
                                 disabled={!isAvailable || !isOpen}
                             >
                                 {quantity > 0 ? (

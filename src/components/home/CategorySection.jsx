@@ -43,9 +43,9 @@ const CategorySection = ({ categories = [], isLoading = false }) => {
                     <Link
                         key={category._id || category.id}
                         to={`/store?category=${encodeURIComponent(category.name)}`}
-                        className="flex flex-col items-center gap-2 group min-w-[72px]"
+                        className="flex flex-col items-center gap-2 md:gap-3 group min-w-[72px] md:min-w-[85px] lg:min-w-[110px]"
                     >
-                        <div className="w-16 h-16 rounded-full overflow-hidden bg-[#CBF9B2] dark:bg-green-900/30 flex items-center justify-center transition-all group-hover:scale-110 shadow-sm border-none">
+                        <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden bg-[#CBF9B2] dark:bg-green-900/30 flex items-center justify-center transition-all group-hover:scale-110 shadow-sm border-none">
                             <img
                                 src={category.image || `${API_BASE_URL}/categories/${category._id || category.id}/image`}
                                 alt={category.name}
@@ -54,7 +54,7 @@ const CategorySection = ({ categories = [], isLoading = false }) => {
                                 onError={(e) => { e.target.onerror = null; e.target.src = 'https://cdn-icons-png.flaticon.com/512/3014/3014470.png'; }}
                             />
                         </div>
-                        <span className="text-[11px] font-semibold text-gray-600 dark:text-gray-400 group-hover:text-[#2E5A2E] text-center max-w-[80px] transition-colors truncate">
+                        <span className="text-[11px] md:text-xs lg:text-sm font-semibold text-gray-600 dark:text-gray-400 group-hover:text-[#2E5A2E] text-center max-w-[80px] md:max-w-[110px] transition-colors truncate">
                             {t(category.name)}
                         </span>
                     </Link>

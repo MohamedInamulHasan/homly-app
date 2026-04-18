@@ -160,15 +160,15 @@ const AdminDashboard = () => {
                 {/* Mobile Menu Button */}
                 <button
                     onClick={toggleMobileMenu}
-                    className="md:hidden fixed top-4 right-4 z-50 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md text-gray-600 dark:text-gray-300"
+                    className="fixed bottom-12 right-6 z-50 p-4 bg-black text-white rounded-full shadow-xl hover:scale-110 active:scale-95 transition-all duration-300"
                 >
                     {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
 
-                {/* Sidebar Overlay for Mobile */}
+                {/* Sidebar Overlay */}
                 {isMobileMenuOpen && (
                     <div
-                        className="fixed inset-0 bg-black/50 z-30 md:hidden"
+                        className="fixed inset-0 bg-black/50 z-30"
                         onClick={() => setIsMobileMenuOpen(false)}
                     />
                 )}
@@ -176,11 +176,11 @@ const AdminDashboard = () => {
                 {/* Simplified Sidebar for Store Admin */}
                 <div className={`
                     fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 
-                    transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static flex flex-col
+                    transform transition-transform duration-300 ease-in-out flex flex-col
                     ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
                 `}>
                     <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
-                        <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <h1 className="text-xl font-normal text-gray-900 dark:text-white flex items-center gap-2">
                             <Store className="text-[#2E5A2E] dark:text-[#7CA90E]" />
                             {t('My Store')}
                         </h1>
@@ -230,7 +230,9 @@ const AdminDashboard = () => {
 
                 {/* Main Content */}
                 <div className="flex-1 overflow-auto w-full p-6 md:p-10">
-                    {renderContent()}
+                    <div className="max-w-7xl mx-auto w-full">
+                        {renderContent()}
+                    </div>
                 </div>
             </div>
         );
@@ -243,7 +245,7 @@ const AdminDashboard = () => {
                 {/* Mobile Menu Button */}
                 <button
                     onClick={toggleMobileMenu}
-                    className="md:hidden fixed top-4 right-4 z-50 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md text-gray-600 dark:text-gray-300"
+                    className="fixed bottom-12 right-6 z-50 p-4 bg-black text-white rounded-full shadow-xl hover:scale-110 active:scale-95 transition-all duration-300"
                 >
                     {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
@@ -258,11 +260,11 @@ const AdminDashboard = () => {
                 {/* Simplified Sidebar for Service Admin */}
                 <div className={`
                     fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
-                    transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static flex flex-col
+                    transform transition-transform duration-300 ease-in-out flex flex-col
                     ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
                 `}>
                     <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
-                        <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <h1 className="text-xl font-normal text-gray-900 dark:text-white flex items-center gap-2">
                             <Wrench className="text-[#2E5A2E] dark:text-[#7CA90E]" />
                             {t('My Service')}
                         </h1>
@@ -298,7 +300,9 @@ const AdminDashboard = () => {
 
                 {/* Main Content */}
                 <div className="flex-1 overflow-auto w-full p-6 md:p-10">
-                    {renderContent()}
+                    <div className="max-w-7xl mx-auto w-full">
+                        {renderContent()}
+                    </div>
                 </div>
             </div>
         );
@@ -320,14 +324,14 @@ const AdminDashboard = () => {
                 {/* Mobile Menu Button */}
                 <button
                     onClick={toggleMobileMenu}
-                    className="md:hidden fixed top-4 right-4 z-50 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md text-gray-600 dark:text-gray-300"
+                    className="fixed bottom-12 right-6 z-50 p-4 bg-black text-white rounded-full shadow-xl hover:scale-110 active:scale-95 transition-all duration-300"
                 >
                     {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
 
                 {isMobileMenuOpen && (
                     <div
-                        className="fixed inset-0 bg-black/50 z-30 md:hidden"
+                        className="fixed inset-0 bg-black/50 z-30"
                         onClick={() => setIsMobileMenuOpen(false)}
                     />
                 )}
@@ -335,11 +339,11 @@ const AdminDashboard = () => {
                 {/* Simplified Sidebar for Delivery Boy */}
                 <div className={`
                     fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
-                    transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static flex flex-col
+                    transform transition-transform duration-300 ease-in-out flex flex-col
                     ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
                 `}>
                     <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
-                        <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <h1 className="text-xl font-normal text-gray-900 dark:text-white flex items-center gap-2">
                             <ShoppingBag className="text-[#2E5A2E] dark:text-[#7CA90E]" />
                             {t('Deliveries')}
                         </h1>
@@ -357,7 +361,7 @@ const AdminDashboard = () => {
                         <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
                             <button
                                 onClick={() => setShowLogoutModal(true)}
-                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-bold"
+                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors font-normal"
                             >
                                 <LogOut size={20} />
                                 {t('Sign Out')}
@@ -368,7 +372,9 @@ const AdminDashboard = () => {
 
                 {/* Main Content */}
                 <div className="flex-1 overflow-auto w-full p-6 md:p-10">
-                    {renderContent()}
+                    <div className="max-w-7xl mx-auto w-full">
+                        {renderContent()}
+                    </div>
                 </div>
             </div>
         );
@@ -380,7 +386,7 @@ const AdminDashboard = () => {
             {/* Mobile Menu Button */}
             <button
                 onClick={toggleMobileMenu}
-                className="md:hidden fixed top-4 right-4 z-50 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-md text-gray-600 dark:text-gray-300"
+                className="md:hidden fixed bottom-12 right-6 z-50 p-4 bg-black text-white rounded-full shadow-xl hover:scale-110 active:scale-95 transition-all duration-300"
             >
                 {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -539,7 +545,7 @@ const AdminDashboard = () => {
             {/* Main Content */}
             <div className="flex-1 overflow-auto w-full py-6 md:py-8">
                 <div className="px-4 md:px-8 pb-32">
-                    <div className="max-w-4xl mx-auto">
+                    <div className="max-w-7xl mx-auto w-full">
                         {renderContent()}
                     </div>
                 </div>
@@ -607,19 +613,19 @@ const SignupBonusManagement = () => {
     };
 
     return (
-        <div className="max-w-4xl animate-fade-in">
+        <div className="max-w-7xl mx-auto w-full animate-fade-in">
             <div className="flex items-center gap-3 mb-8">
-                <div className="p-3 bg-[#CBF9B2] rounded-2xl shadow-sm">
+                <div className="p-3 bg-[#CBF9B2] rounded-2xl">
                     <Gift className="text-[#2E5A2E]" size={24} />
                 </div>
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('Signup Bonus Settings')}</h2>
+                    <h2 className="text-2xl font-normal text-gray-900 dark:text-white">{t('Signup Bonus Settings')}</h2>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{t('Manage automated rewards for new registrations')}</p>
                 </div>
             </div>
 
             {message.text && (
-                <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 animate-fade-in border ${message.type === 'success' ? 'bg-[#CBF9B2]/20 text-[#2E5A2E] border-[#CBF9B2]' : 'bg-red-50 text-red-700 border-red-100'}`}>
+                <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 animate-fade-in border ${message.type === 'success' ? 'bg-[#CBF9B2]/20 text-[#2E5A2E] border-[#CBF9B2]' : 'bg-gray-50 text-gray-600 border-gray-100 dark:bg-gray-800/50 dark:border-gray-700'}`}>
                     {message.type === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
                     <span className="font-medium text-sm">{message.text}</span>
                 </div>
@@ -627,48 +633,48 @@ const SignupBonusManagement = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 {/* Status Card */}
-                <div className={`p-8 rounded-[32px] border transition-all ${config.isEnabled ? 'bg-[#CBF9B2]/10 border-[#CBF9B2]' : 'bg-gray-50 border-gray-100 dark:bg-gray-800/50 dark:border-gray-700'}`}>
+                <div className={`p-8 rounded-[2rem] border transition-all ${config.isEnabled ? 'bg-[#CBF9B2]/10 border-[#CBF9B2]' : 'bg-gray-50 border-gray-100 dark:bg-gray-800/50 dark:border-gray-700'}`}>
                     <div className="flex items-center justify-between mb-4">
-                        <span className="text-[10px] font-black text-[#2E5A2E]/50 uppercase tracking-[0.2em]">{t('Current Status')}</span>
+                        <span className="text-[10px] font-normal text-[#2E5A2E]/50 uppercase tracking-[0.2em]">{t('Current Status')}</span>
                         <div className={`w-2.5 h-2.5 rounded-full ${config.isEnabled ? 'bg-[#2E5A2E] animate-pulse' : 'bg-gray-300'}`}></div>
                     </div>
-                    <div className="text-4xl font-black mb-1 flex items-center gap-2">
+                    <div className="text-4xl font-normal mb-1 flex items-center gap-2">
                         {config.isEnabled ? (
                             <span className="text-[#2E5A2E]">{t('ACTIVE')}</span>
                         ) : (
                             <span className="text-gray-400">{t('INACTIVE')}</span>
                         )}
                     </div>
-                    <p className="text-xs text-[#2E5A2E]/60 font-medium">
+                    <p className="text-xs text-[#2E5A2E]/60 font-normal">
                         {config.isEnabled ? t('System is currently rewarding new users.') : t('Bonus system is currently disabled.')}
                     </p>
                 </div>
 
                 {/* Counter Card */}
-                <div className="p-8 bg-white dark:bg-gray-800 rounded-[32px] border border-gray-100 dark:border-gray-700 shadow-sm">
+                <div className="p-8 bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center justify-between mb-4">
-                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('Remaining Rewards')}</span>
+                        <span className="text-[10px] font-normal text-gray-400 uppercase tracking-[0.2em]">{t('Remaining Rewards')}</span>
                         <Coins className="text-[#2E5A2E]" size={20} />
                     </div>
-                    <div className="text-5xl font-black text-gray-900 dark:text-white mb-1 tracking-tighter">
+                    <div className="text-5xl font-normal text-gray-900 dark:text-white mb-1 tracking-tighter">
                         {config.remainingLimit}
                     </div>
-                    <p className="text-xs text-gray-400 font-medium">
+                    <p className="text-xs text-gray-400 font-normal">
                         {t('Available bonus slots')}
                     </p>
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-[32px] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden mb-12">
+            <div className="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 overflow-hidden mb-12">
                 <div className="p-8">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-8 flex items-center gap-2">
+                    <h3 className="text-lg font-normal text-gray-900 dark:text-white mb-8 flex items-center gap-2">
                         <Settings className="text-[#2E5A2E]" size={20} />
                         {t('Configure System')}
                     </h3>
                     
                     <div className="space-y-8">
                         <div>
-                            <label className="block text-xs font-black text-[#2E5A2E] uppercase tracking-widest mb-3 ml-1">
+                            <label className="block text-xs font-normal text-[#2E5A2E] uppercase tracking-widest mb-3 ml-1">
                                 {t('Set User Limit')}
                             </label>
                             <div className="flex flex-col sm:flex-row gap-4">
@@ -679,13 +685,13 @@ const SignupBonusManagement = () => {
                                         value={inputLimit}
                                         onChange={(e) => setInputLimit(e.target.value)}
                                         placeholder="e.g. 50"
-                                        className="w-full pl-14 pr-6 py-4 bg-gray-50/50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-2xl outline-none focus:ring-2 focus:ring-[#2E5A2E]/20 dark:text-white text-xl font-bold transition-all"
+                                        className="w-full pl-14 pr-6 py-4 bg-gray-50/50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-2xl outline-none focus:ring-2 focus:ring-[#2E5A2E]/20 dark:text-white text-xl font-normal transition-all"
                                     />
                                 </div>
                                 <button 
                                     onClick={handleUpdate}
                                     disabled={loading}
-                                    className="px-10 py-4 bg-[#2E5A2E] hover:bg-[#1a381a] text-white font-bold rounded-2xl shadow-xl shadow-[#2E5A2E]/20 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 group whitespace-nowrap"
+                                    className="px-10 py-4 bg-[#2E5A2E] hover:bg-[#1a381a] text-white font-normal rounded-2xl transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 group whitespace-nowrap"
                                 >
                                     {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Power size={20} className="group-hover:rotate-12 transition-transform" />}
                                     {t('Apply & Start')}
@@ -736,7 +742,7 @@ const SidebarItem = ({ icon, label, id, active, onClick, hidden = false }) => {
         <button
             onClick={() => onClick(id)}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${active
-                ? 'bg-[#E8F5E9] text-[#2E5A2E] font-bold shadow-sm'
+                ? 'bg-[#E8F5E9] text-[#2E5A2E] font-normal translate-x-1'
                 : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:translate-x-1'
                 }`}
         >
@@ -1001,7 +1007,7 @@ const ProductManagement = () => {
                             setView('list');
                         }
                     }}
-                    className="px-4 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 font-medium shadow-sm"
+                    className="px-4 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 font-normal"
                 >
                     {view === 'list' ? <Plus size={20} /> : <List size={20} />}
                     {view === 'list' ? t('Add Product') : t('View List')}
@@ -1029,18 +1035,18 @@ const ProductManagement = () => {
                         collisionDetection={closestCenter}
                         onDragEnd={handleDragEnd}
                     >
-                        <div className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+                        <div className="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 overflow-hidden">
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left">
                                     <thead className="bg-gray-50 dark:bg-gray-700/50">
                                         <tr>
                                             <th className="p-4 w-12"></th>
-                                            <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Image')}</th>
-                                            <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Title')}</th>
-                                            <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Category')}</th>
-                                            <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Price')}</th>
-                                            <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Availability')}</th>
-                                            <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Actions')}</th>
+                                            <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400">{t('Image')}</th>
+                                            <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400">{t('Title')}</th>
+                                            <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400">{t('Category')}</th>
+                                            <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400">{t('Price')}</th>
+                                            <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400">{t('Availability')}</th>
+                                            <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400">{t('Actions')}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -1072,7 +1078,7 @@ const ProductManagement = () => {
                                                                 )}
                                                             </div>
                                                         </td>
-                                                        <td className="p-4 font-medium text-gray-900 dark:text-white">
+                                                        <td className="p-4 font-normal text-gray-900 dark:text-white">
                                                             {(() => {
                                                                 const fullTitle = product.title;
                                                                 const bracketIndex = fullTitle?.indexOf('(');
@@ -1108,7 +1114,7 @@ const ProductManagement = () => {
 
                                                                 return (
                                                                     <div className="max-w-[150px] flex flex-col">
-                                                                        <div className="truncate text-sm font-medium text-gray-900 dark:text-white" title={mainCategory}>{mainCategory}</div>
+                                                                        <div className="truncate text-sm font-normal text-gray-900 dark:text-white" title={mainCategory}>{mainCategory}</div>
                                                                         {bracketText && (
                                                                             <div className="text-xs text-gray-400 dark:text-gray-500 truncate" title={bracketText}>{bracketText}</div>
                                                                         )}
@@ -1126,7 +1132,7 @@ const ProductManagement = () => {
                                                                 );
                                                             })()}
                                                         </td>
-                                                        <td className="p-4 font-medium text-gray-900 dark:text-white">₹{product.price}</td>
+                                                        <td className="p-4 font-normal text-gray-900 dark:text-white">₹{product.price}</td>
                                                         <td className="p-4">
                                                             <div className="flex items-center">
                                                                 <button
@@ -1182,7 +1188,7 @@ const ProductManagement = () => {
                                                                     />
                                                                 </button>
                                                                 {!isProductScheduled(product) && (
-                                                                    <span className="ml-2 text-[10px] font-bold text-orange-500 flex items-center gap-1">
+                                                                    <span className="ml-2 text-[10px] font-normal text-orange-500 flex items-center gap-1">
                                                                         <RefreshCw size={10} className="animate-spin-slow" />
                                                                         {t('TIMED')}
                                                                     </span>
@@ -1232,7 +1238,7 @@ const ProductManagement = () => {
                                                                 </button>
                                                                 <button
                                                                     onClick={() => handleDuplicate(product)}
-                                                                    className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
+                                                                    className="p-2 text-[#2E5A2E] hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
                                                                     title={t('Duplicate Product')}
                                                                 >
                                                                     <Copy size={18} />
@@ -1652,7 +1658,7 @@ const NewsManagement = () => {
                                             {new Date(item.createdAt || item.date).toLocaleDateString()}
                                         </span>
                                     </div>
-                                    <h3 className="font-bold text-gray-900 dark:text-white truncate" title={item.title}>
+                                    <h3 className="font-normal text-gray-900 dark:text-white truncate" title={item.title}>
                                         {item.title}
                                     </h3>
                                     <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mt-1">
@@ -1889,10 +1895,10 @@ const OrderManagement = () => {
                             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                                 {ordersList.map(order => (
                                     <tr key={order._id || order.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                                        <td className="p-4 font-medium">
+                                        <td className="p-4 font-normal">
                                             <Link 
                                                 to={`/orders/${order._id || order.id}`}
-                                                className="text-[#2E5A2E] dark:text-[#7CA90E] hover:underline font-bold"
+                                                className="text-[#2E5A2E] dark:text-[#7CA90E] hover:underline font-normal"
                                                 title={t('View Order Details')}
                                             >
                                                 #{String(order._id || order.id).slice(-6).toUpperCase()}
@@ -1942,10 +1948,10 @@ const OrderManagement = () => {
                                                     value={order.status}
                                                     disabled={isDeliveryBoy && (order.status === 'Delivered' || order.status === 'Cancelled')}
                                                     onChange={(e) => updateStatus(order._id || order.id, e.target.value)}
-                                                    className={`px-3 py-1.5 rounded-lg border-2 text-sm font-semibold transition-colors outline-none
+                                                    className={`px-3 py-1.5 rounded-lg border-2 text-sm font-normal transition-colors outline-none
                                                         ${order.status === 'Delivered' ? 'border-green-100 bg-green-50 text-green-700' :
                                                             (order.status === 'Out for Delivery' || order.status === 'Shipped') ? 'border-[#CBF9B2] bg-[#E8F5E9] text-[#2E5A2E]' :
-                                                                    order.status === 'Cancelled' ? 'border-red-100 bg-red-50 text-red-700' :
+                                                                    order.status === 'Cancelled' ? 'border-gray-100 bg-gray-50 text-gray-500' :
                                                                         'border-yellow-100 bg-yellow-50 text-yellow-700'}`}
                                                 >
                                                     <option
@@ -1996,7 +2002,7 @@ const OrderManagement = () => {
                                                     </div>
                                                 ) : (
                                                     <div className="flex gap-2">
-                                                        <button onClick={() => handleDeleteOrder(order._id || order.id)} className="text-red-600 hover:text-red-700">
+                                                        <button onClick={() => handleDeleteOrder(order._id || order.id)} className="text-gray-400 hover:text-gray-600">
                                                             <Trash2 size={18} />
                                                         </button>
                                                     </div>
@@ -2021,7 +2027,7 @@ const OrderManagement = () => {
                     {orders.length > 0 && !isDeliveryBoy && (
                         <button
                             onClick={handleDeleteAllOrders}
-                            className="p-2 sm:px-4 sm:py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors flex items-center gap-2 font-medium"
+                            className="p-2 sm:px-4 sm:py-2 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-colors flex items-center gap-2 font-normal"
                             title={t('Delete All Orders')}
                         >
                             <Trash2 size={20} />
@@ -2042,7 +2048,7 @@ const OrderManagement = () => {
             {renderOrderTable(processingOrders, 'Processing Orders', 'text-amber-700 dark:text-amber-400')}
             {renderOrderTable(outForDeliveryOrders, 'Out for Delivery Orders', 'text-[#2E5A2E] dark:text-[#7CA90E]')}
             {renderOrderTable(deliveredOrders, 'Delivered Orders', 'text-green-700 dark:text-green-400')}
-            {renderOrderTable(cancelledOrders, 'Cancelled Orders', 'text-red-700 dark:text-red-400')}
+            {renderOrderTable(cancelledOrders, 'Cancelled Orders', 'text-gray-500 dark:text-gray-400')}
 
             {orders.length === 0 && (
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-12 text-center">
@@ -2309,7 +2315,7 @@ const CategoryManagement = () => {
                                                         </button>
                                                         <button
                                                             onClick={(e) => { e.stopPropagation(); handleDelete(category._id || category.id); }}
-                                                            className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                                            className="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors"
                                                         >
                                                             <Trash2 size={18} />
                                                         </button>
@@ -2365,7 +2371,7 @@ const CategoryManagement = () => {
                                     <button
                                         type="button"
                                         onClick={handleAddSubcategory}
-                                        className="px-4 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 font-bold shadow-sm"
+                                        className="px-4 py-2 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-colors flex items-center gap-2 font-normal"
                                     >
                                         <Plus size={20} />
                                         {t('Add')}
@@ -2397,7 +2403,7 @@ const CategoryManagement = () => {
                                                                 <button
                                                                     type="button"
                                                                     onClick={() => handleRemoveSubcategory(index)}
-                                                                    className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 p-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                                                    className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-400 p-1 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                                                                 >
                                                                     <XCircle size={18} />
                                                                 </button>
@@ -2610,7 +2616,7 @@ const UserManagement = () => {
 
     return (
         <div className="max-w-6xl">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">{t('User Database')}</h2>
+            <h2 className="text-2xl font-normal text-gray-900 dark:text-white mb-6">{t('User Database')}</h2>
 
             {/* Stats Cards */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
@@ -2621,7 +2627,7 @@ const UserManagement = () => {
                         </div>
                         <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">{t('Total Users')}</span>
                     </div>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalUsers}</p>
+                    <p className="text-2xl font-normal text-gray-900 dark:text-white">{totalUsers}</p>
                 </div>
                 <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-2">
@@ -2630,7 +2636,7 @@ const UserManagement = () => {
                         </div>
                         <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">{t('Customers')}</span>
                     </div>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{customerCount}</p>
+                    <p className="text-2xl font-normal text-gray-900 dark:text-white">{customerCount}</p>
                 </div>
                 <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-2">
@@ -2639,7 +2645,7 @@ const UserManagement = () => {
                         </div>
                         <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">{t('Store Admins')}</span>
                     </div>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{storeAdminCount}</p>
+                    <p className="text-2xl font-normal text-gray-900 dark:text-white">{storeAdminCount}</p>
                 </div>
                 <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-2">
@@ -2648,7 +2654,7 @@ const UserManagement = () => {
                         </div>
                         <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">{t('Service Admins')}</span>
                     </div>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{serviceAdminCount}</p>
+                    <p className="text-2xl font-normal text-gray-900 dark:text-white">{serviceAdminCount}</p>
                 </div>
                 <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3 mb-2">
@@ -2657,7 +2663,7 @@ const UserManagement = () => {
                         </div>
                         <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">{t('Admins')}</span>
                     </div>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{adminCount}</p>
+                    <p className="text-2xl font-normal text-gray-900 dark:text-white">{adminCount}</p>
                 </div>
             </div>
 
@@ -2682,8 +2688,8 @@ const UserManagement = () => {
             )}
 
             {error && (
-                <div className="bg-red-50 dark:bg-red-900/20 rounded-2xl border border-red-200 dark:border-red-800 p-6 mb-6">
-                    <p className="text-red-600 dark:text-red-400">{t('Error')}: {error}</p>
+                <div className="bg-gray-50 dark:bg-gray-900/20 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 mb-6">
+                    <p className="text-gray-600 dark:text-gray-400">{t('Error')}: {error}</p>
                     <button
                         onClick={() => fetchUsers()}
                         className="mt-4 px-4 py-2 bg-[#2E5A2E] text-white rounded-lg hover:bg-[#1a3d1a] transition-colors"
@@ -2694,16 +2700,16 @@ const UserManagement = () => {
             )}
 
             {!loading && !error && (
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead className="bg-gray-50 dark:bg-gray-700/50">
                                 <tr>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('User')}</th>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Contact')}</th>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Role')}</th>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Location')}</th>
-                                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Actions')}</th>
+                                    <th className="px-6 py-4 text-left text-xs font-normal text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('User')}</th>
+                                    <th className="px-6 py-4 text-left text-xs font-normal text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Contact')}</th>
+                                    <th className="px-6 py-4 text-left text-xs font-normal text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Role')}</th>
+                                    <th className="px-6 py-4 text-left text-xs font-normal text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Location')}</th>
+                                    <th className="px-6 py-4 text-right text-xs font-normal text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Actions')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -2719,11 +2725,11 @@ const UserManagement = () => {
                                     <tr key={user._id || user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center">
-                                                <div className="h-10 w-10 flex-shrink-0 bg-[#E8F5E9] dark:bg-[#2E5A2E]/30 rounded-full flex items-center justify-center text-[#2E5A2E] font-extrabold text-lg">
+                                                <div className="h-10 w-10 flex-shrink-0 bg-[#E8F5E9] dark:bg-[#2E5A2E]/30 rounded-full flex items-center justify-center text-[#2E5A2E] font-normal text-lg">
                                                     {user.name.charAt(0).toUpperCase()}
                                                 </div>
                                                 <div className="ml-4">
-                                                    <div className="text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">{user.name}</div>
+                                                    <div className="text-sm font-normal text-gray-900 dark:text-white whitespace-nowrap">{user.name}</div>
                                                     <div className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">{new Date(user.createdAt).toLocaleDateString()}</div>
                                                 </div>
                                             </div>
@@ -2747,7 +2753,7 @@ const UserManagement = () => {
                                             <div className="flex flex-col gap-1">
                                                 {(Array.isArray(user.role) ? user.role : [user.role || 'customer']).map((role, idx) => (
                                                     <div key={idx} className="flex flex-col">
-                                                        <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap w-fit
+                                                        <span className={`px-3 py-1 inline-flex text-xs leading-5 font-normal rounded-full whitespace-nowrap w-fit
                                                             ${role === 'admin' ? 'bg-[#2E5A2E]/10 text-[#2E5A2E] dark:bg-[#2E5A2E]/30 dark:text-[#CBF9B2]' :
                                                                 role === 'store_admin' ? 'bg-[#2E5A2E]/10 text-[#2E5A2E] dark:bg-[#2E5A2E]/30 dark:text-[#CBF9B2]' :
                                                                 role === 'service_admin' ? 'bg-[#2E5A2E]/10 text-[#2E5A2E] dark:bg-[#2E5A2E]/30 dark:text-[#CBF9B2]' :
@@ -2797,7 +2803,7 @@ const UserManagement = () => {
                                                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">{t('Edit User Role')}</h3>
                                                     <div className="space-y-4">
                                                         <div>
-                                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{t('User Roles')}</label>
+                                                            <label className="block text-sm font-normal text-gray-700 dark:text-gray-300 mb-3">{t('User Roles')}</label>
                                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-100 dark:border-gray-700">
                                                                 {[
                                                                     { id: 'customer', label: t('Customer'), icon: <CheckCircle size={16} /> },
@@ -3082,8 +3088,8 @@ const DeliveryBoyManagement = () => {
     return (
         <div className="max-w-6xl">
             <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('Delivery Boys')}</h2>
-                <div className="bg-[#E8F5E9] dark:bg-[#2E5A2E]/30 text-[#2E5A2E] px-4 py-2 rounded-xl flex items-center gap-2 font-bold">
+                <h2 className="text-2xl font-normal text-gray-900 dark:text-white">{t('Delivery Boys')}</h2>
+                <div className="bg-[#E8F5E9] dark:bg-[#2E5A2E]/30 text-[#2E5A2E] px-4 py-2 rounded-xl flex items-center gap-2 font-normal">
                     <Truck size={20} />
                     {deliveryBoys.length} {t('Active Personnel')}
                 </div>
@@ -3103,15 +3109,15 @@ const DeliveryBoyManagement = () => {
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead className="bg-gray-50 dark:bg-gray-700/50">
                             <tr>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Personnel')}</th>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Work Timing')}</th>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Status')}</th>
-                                <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Actions')}</th>
+                                <th className="px-6 py-4 text-left text-xs font-normal text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Personnel')}</th>
+                                <th className="px-6 py-4 text-left text-xs font-normal text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Work Timing')}</th>
+                                <th className="px-6 py-4 text-left text-xs font-normal text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Status')}</th>
+                                <th className="px-6 py-4 text-right text-xs font-normal text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('Actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -3129,7 +3135,7 @@ const DeliveryBoyManagement = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="text-sm font-semibold text-gray-900 dark:text-white whitespace-nowrap">
+                                        <div className="text-sm font-normal text-gray-900 dark:text-white whitespace-nowrap">
                                             ⏱️ {boy.deliverySettings?.workTimings?.start || '09:00'} - {boy.deliverySettings?.workTimings?.end || '21:00'}
                                         </div>
                                         <div className="text-[10px] text-gray-500 font-mono mt-1 w-full truncate max-w-[150px]" title={boy._id || boy.id}>
@@ -3137,7 +3143,7 @@ const DeliveryBoyManagement = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className={`px-3 py-1 text-xs font-semibold rounded-full ${boy.deliverySettings?.isActive ? 'bg-[#E8F5E9] text-[#2E5A2E]' : 'bg-red-100 text-red-700'}`}>
+                                        <span className={`px-3 py-1 text-xs font-normal rounded-full ${boy.deliverySettings?.isActive ? 'bg-[#E8F5E9] text-[#2E5A2E]' : 'bg-gray-100 text-gray-500'}`}>
                                             {boy.deliverySettings?.isActive ? t('Available') : t('Unavailable')}
                                         </span>
                                     </td>
@@ -3211,7 +3217,7 @@ const DeliveryBoyManagement = () => {
                                                 <button onClick={() => handleEdit(boy)} className="p-2 text-[#2E5A2E] hover:bg-[#E8F5E9] rounded-lg">
                                                     <Edit2 size={18} />
                                                 </button>
-                                                <button onClick={() => handleDelete(boy._id || boy.id)} className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
+                                                <button onClick={() => handleDelete(boy._id || boy.id)} className="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg">
                                                     <Trash2 size={18} />
                                                 </button>
                                             </div>
@@ -3370,7 +3376,7 @@ const AdsManagement = () => {
 
     return (
         <div className="max-w-6xl">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">{t('Ads Slider Management')}</h2>
+            <h2 className="text-2xl font-normal text-gray-900 dark:text-white mb-6">{t('Ads Slider Management')}</h2>
 
             {/* Add New/Edit Ad Form */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 mb-8">
@@ -3465,7 +3471,7 @@ const AdsManagement = () => {
                         <button
                             type="submit"
                             disabled={!newAdUrl || uploadingAd}
-                            className="px-6 py-2 bg-[#2E5A2E] text-white rounded-xl font-bold hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                            className="px-6 py-2 bg-[#2E5A2E] text-white rounded-xl font-normal hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {editingAdId ? <Pencil size={20} /> : <Plus size={20} />}
                             {editingAdId ? t('Update Ad') : t('Add Ad')}
@@ -3480,7 +3486,7 @@ const AdsManagement = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {ads.map(ad => (
                             <SortableAdCard key={ad._id || ad.id} ad={ad}>
-                                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden group relative">
+                                <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden group relative">
                                     <div className="aspect-video relative">
                                         <DragHandle className="absolute top-2 left-2 z-10 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full backdrop-blur-sm transition-colors cursor-grab active:cursor-grabbing">
                                             <GripVertical size={20} />
@@ -3646,17 +3652,17 @@ const ServiceRequestManagement = () => {
                 };
 
                 return (
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
                                 <thead className="bg-gray-50 dark:bg-gray-700/50">
                                     <tr>
-                                        <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400 min-w-[200px]">{t('Service')}</th>
-                                        <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Customer')}</th>
-                                        <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Mobile')}</th>
-                                        <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Date & Time')}</th>
-                                        <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Status')}</th>
-                                        <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Actions')}</th>
+                                        <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400 min-w-[200px]">{t('Service')}</th>
+                                        <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400">{t('Customer')}</th>
+                                        <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400">{t('Mobile')}</th>
+                                        <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400">{t('Date & Time')}</th>
+                                        <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400">{t('Status')}</th>
+                                        <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400">{t('Actions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -3679,7 +3685,7 @@ const ServiceRequestManagement = () => {
                                                                 className="w-full h-full object-cover"
                                                             />
                                                         </div>
-                                                        <span className="font-medium text-gray-900 dark:text-white truncate block max-w-[200px]" title={request.service?.name || t('Unknown Service')}>
+                                                        <span className="font-normal text-gray-900 dark:text-white truncate block max-w-[200px]" title={request.service?.name || t('Unknown Service')}>
                                                             {request.service?.name || t('Unknown Service')}
                                                         </span>
                                                     </div>
@@ -3693,7 +3699,7 @@ const ServiceRequestManagement = () => {
                                                     {request.user?.mobile || t('N/A')}
                                                 </td>
                                                 <td className="p-4 text-gray-600 dark:text-gray-300"> {/* New Address column */}
-                                                    <div className="text-sm text-gray-900 dark:text-white font-medium">
+                                                    <div className="text-sm text-gray-900 dark:text-white font-normal">
                                                         {request.address?.name || request.user?.name}
                                                     </div>
                                                     <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -3709,7 +3715,7 @@ const ServiceRequestManagement = () => {
                                                             })()}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="inline-flex items-center gap-1 text-xs text-[#2E5A2E] dark:text-[#CBF9B2] hover:underline mt-1 font-bold"
+                                                            className="inline-flex items-center gap-1 text-xs text-[#2E5A2E] dark:text-[#CBF9B2] hover:underline mt-1 font-normal"
                                                         >
                                                             <MapPin size={12} />
                                                             {t('View Map')}
@@ -3723,7 +3729,7 @@ const ServiceRequestManagement = () => {
                                                     <select
                                                         value={request.status}
                                                         onChange={(e) => handleStatusUpdate(request._id || request.id, e.target.value)}
-                                                        className={`px-3 py-1.5 rounded-lg border-2 text-sm font-semibold transition-colors outline-none
+                                                        className={`px-3 py-1.5 rounded-lg border-2 text-sm font-normal transition-colors outline-none
                                                             ${request.status === 'Completed' ? 'border-green-100 bg-green-50 text-green-700' :
                                                                 request.status === 'In Progress' ? 'border-[#CBF9B2] bg-[#E8F5E9] text-[#2E5A2E]' :
                                                                     request.status === 'Cancelled' ? 'border-red-100 bg-red-50 text-red-700' :
@@ -3833,9 +3839,9 @@ const CityManagement = () => {
 
     return (
         <div className="max-w-4xl">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">{t('City Management')}</h2>
+            <h2 className="text-2xl font-normal text-gray-900 dark:text-white mb-6">{t('City Management')}</h2>
 
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 sm:p-6 mb-6 sm:mb-8">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 sm:p-6 mb-6 sm:mb-8">
                 <form onSubmit={handleAddCity} className="flex flex-col sm:flex-row gap-4">
                     <input
                         type="text"
@@ -3847,7 +3853,7 @@ const CityManagement = () => {
                     <button
                         type="submit"
                         disabled={!newCity.trim()}
-                        className="px-6 py-3 bg-[#2E5A2E] text-white rounded-xl font-bold hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                        className="px-6 py-3 bg-[#2E5A2E] text-white rounded-xl font-normal hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <Plus size={20} />
                         {t('Add City')}
@@ -3855,17 +3861,17 @@ const CityManagement = () => {
                 </form>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
                 {loading ? (
                     <div className="p-8 text-center text-gray-500 dark:text-gray-400">{t('Loading cities...')}</div>
                 ) : cities.length > 0 ? (
                     <div className="divide-y divide-gray-100 dark:divide-gray-700">
                         {cities.map((city, index) => (
                             <div key={index} className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                                <span className="font-medium text-gray-900 dark:text-white">{city}</span>
+                                <span className="font-normal text-gray-900 dark:text-white">{city}</span>
                                 <button
                                     onClick={() => handleRemoveCity(city)}
-                                    className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                    className="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/30 rounded-lg transition-colors"
                                     title={t('Remove')}
                                 >
                                     <Trash2 size={18} />

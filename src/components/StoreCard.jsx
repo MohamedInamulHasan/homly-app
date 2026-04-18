@@ -18,7 +18,7 @@ const StoreCard = ({ store }) => {
     return (
         <div
             onClick={handleVisit}
-            className={`group relative bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden transition-all duration-300 aspect-[16/9] md:aspect-[2.4/1] w-full cursor-pointer ${!isOpen ? 'opacity-90' : ''}`}
+            className={`group relative bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden transition-all duration-300 aspect-[16/9] md:aspect-[3/2] lg:aspect-[4/3] w-full cursor-pointer ${!isOpen ? 'opacity-90' : ''}`}
         >
             {/* Full Background Image */}
             <div className="absolute inset-0 z-0">

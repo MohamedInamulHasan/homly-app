@@ -277,19 +277,20 @@ const Checkout = () => {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                {/* Location Toast Message */}
+                {/* Location Toast Message - Refined for clarity */}
                 {locationMessage.show && (
-                    <div className={`fixed top-24 left-1/2 transform -translate-x-1/2 z-[60] px-4 py-2 rounded-lg shadow-lg transition-all duration-300 max-w-[90vw] ${locationMessage.type === 'success'
-                        ? 'bg-green-500 text-white'
-                        : 'bg-red-500 text-white'
+                    <div className={`fixed top-32 left-1/2 transform -translate-x-1/2 z-[9999] px-6 py-3 rounded-full shadow-2xl transition-all duration-500 animate-in fade-in slide-in-from-top-4 max-w-[90vw] ${
+                        locationMessage.type === 'success'
+                        ? 'bg-[#2E5A2E] text-white'
+                        : 'bg-red-600 text-white'
                         }`}>
-                        <div className="flex items-center gap-2 whitespace-nowrap">
+                        <div className="flex items-center gap-3 whitespace-nowrap">
                             {locationMessage.type === 'success' ? (
-                                <ShieldCheck size={16} className="flex-shrink-0" />
+                                <ShieldCheck size={18} className="flex-shrink-0" />
                             ) : (
-                                <AlertCircle size={16} className="flex-shrink-0" />
+                                <AlertCircle size={18} className="flex-shrink-0" />
                             )}
-                            <span className="font-medium text-sm truncate">{locationMessage.text}</span>
+                            <span className="font-bold text-[13px] tracking-tight">{locationMessage.text}</span>
                         </div>
                     </div>
                 )}
@@ -320,18 +321,20 @@ const Checkout = () => {
                                     >
                                         <Pencil size={16} />
                                     </button>
-                                    <div className="space-y-1">
-                                        <div className="flex items-center gap-2">
-                                            <p className="font-bold text-gray-900 dark:text-white">{formData.fullName || t('No Name')}</p>
-                                            <span className="text-xs text-gray-400 px-2 py-0.5 bg-gray-100 dark:bg-gray-600 rounded-md">{formData.mobile}</span>
+                                    <div className="space-y-2">
+                                        <div className="flex flex-col gap-0.5">
+                                            <p className="font-bold text-[16px] text-gray-900 dark:text-white">{formData.fullName || t('No Name')}</p>
+                                            <p className="text-[13px] text-gray-400 font-medium">{formData.mobile}</p>
                                         </div>
-                                        <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{formData.address}</p>
-                                        <p className="text-sm text-gray-600 dark:text-gray-300">{formData.city} - {formData.zip}</p>
+                                        <div className="space-y-0.5">
+                                            <p className="text-[13px] text-gray-500 dark:text-gray-400 leading-relaxed">{formData.address}</p>
+                                            <p className="text-[13px] text-gray-500 dark:text-gray-400">{formData.city} - {formData.zip}</p>
+                                        </div>
                                         
                                         {formData.location && (
-                                            <div className="pt-2">
-                                                <div className="flex items-center gap-1.5 text-[#2E5A2E] text-[11px] font-bold bg-green-50 dark:bg-green-900/10 px-2.5 py-1 rounded-full w-fit">
-                                                    <MapPin size={11} />
+                                            <div className="pt-1">
+                                                <div className="flex items-center gap-1.5 text-[#2E5A2E] text-[10px] font-bold bg-[#E8F5E9] dark:bg-green-900/20 px-2.5 py-1 rounded-full w-fit border border-[#2E5A2E]/10">
+                                                    <CheckCircle size={11} className="text-[#2E5A2E]" />
                                                     <span>{t('Location Saved')}</span>
                                                 </div>
                                             </div>
@@ -347,14 +350,23 @@ const Checkout = () => {
                                                 setIsLocationSearching(true);
                                                 try {
                                                     const position = await new Promise((resolve, reject) => {
-                                                        navigator.geolocation.getCurrentPosition(resolve, reject);
+                                                        const timeoutId = setTimeout(() => reject({ code: 3, message: 'Timeout' }), 10000);
+                                                        navigator.geolocation.getCurrentPosition(
+                                                            (pos) => { clearTimeout(timeoutId); resolve(pos); },
+                                                            (err) => { clearTimeout(timeoutId); reject(err); },
+                                                            { enableHighAccuracy: true, timeout: 8000 }
+                                                        );
                                                     });
                                                     const { latitude, longitude } = position.coords;
                                                     setFormData(prev => ({ ...prev, location: `https://www.google.com/maps/place/${latitude}+${longitude}` }));
                                                     setIsLocationSearching(false);
+                                                    setLocationMessage({ show: true, type: 'success', text: t('Location Accessed Successfully') });
                                                 } catch (err) {
                                                     setIsLocationSearching(false);
-                                                    alert(t('Unable to get location'));
+                                                    let errorMsg = t('Unable to get location');
+                                                    if (err.code === 1) errorMsg = t('Location Access Denied');
+                                                    if (err.code === 3) errorMsg = t('Location Request Timed Out');
+                                                    setLocationMessage({ show: true, type: 'error', text: errorMsg });
                                                 }
                                             }}
                                             className="flex items-center gap-2 text-xs font-bold text-[#2E5A2E] bg-green-50 dark:bg-green-900/20 px-3 py-1.5 rounded-full active:scale-95 transition-transform"
