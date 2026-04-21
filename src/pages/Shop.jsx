@@ -92,7 +92,7 @@ const Shop = () => {
 
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-24 transition-colors duration-200">
-            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-2 pt-4 pb-5 shadow-sm overflow-hidden">
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-2 pt-2 pb-3 shadow-sm overflow-hidden">
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
                 <div className="relative z-10">
                     <HomeHeader />
@@ -100,7 +100,7 @@ const Shop = () => {
             </div>
             
             <PullToRefreshLayout>
-                <div className="pt-[115px]">
+                <div className="pt-[95px]">
                 <div className="max-w-7xl mx-auto px-4 mt-2">
                     <div className="mb-2">
                         {/* Removed Store/Service toggle for a cleaner experience */}

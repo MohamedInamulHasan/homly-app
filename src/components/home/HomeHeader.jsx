@@ -38,7 +38,7 @@ const HomeHeader = () => {
     })();
 
     return (
-        <header className="flex items-center justify-between px-4 py-4 bg-transparent transition-colors duration-200">
+        <header className="flex items-center justify-between px-4 py-2 bg-transparent transition-colors duration-200">
             {/* Location Selector */}
             <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-black/5">

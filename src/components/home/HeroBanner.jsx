@@ -16,7 +16,7 @@ const HeroBanner = ({ slides = [], isLoading = false }) => {
         const timer = setInterval(() => {
             const nextSlide = (currentSlide + 1) % slides.length;
             scrollToSlide(nextSlide);
-        }, 5000);
+        }, 60000);
         return () => clearInterval(timer);
     }, [slides.length, currentSlide]);
 

@@ -134,7 +134,7 @@ const EditAddress = () => {
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-12 transition-colors duration-200">
             {/* Premium Header */}
-            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-5 py-6 shadow-sm">
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-5 py-4 shadow-sm">
                 <div className="max-w-xl mx-auto flex items-center justify-between">
                     <button onClick={() => navigate(-1)} className="w-11 h-11 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95">
                         <ArrowLeft size={22} />
@@ -144,7 +144,7 @@ const EditAddress = () => {
                 </div>
             </div>
 
-            <div className="pt-[115px] max-w-xl mx-auto px-5">
+            <div className="pt-[95px] max-w-xl mx-auto px-5">
                 {/* Status Message */}
                 {message.text && (
                     <div className={`mb-6 p-4 rounded-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-2 ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>

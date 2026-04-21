@@ -265,7 +265,7 @@ const Checkout = () => {
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 pb-12 md:pb-24 relative">
             {/* Simple Header */}
-            <div className="w-full px-5 py-6">
+            <div className="w-full px-5 py-4">
                 <div className="max-w-md mx-auto flex items-center justify-between">
                      <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95 border border-gray-100/50">
                          <ArrowLeft size={22} />

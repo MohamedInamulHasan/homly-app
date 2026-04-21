@@ -188,7 +188,7 @@ const CategoryProducts = () => {
     return (
         <PullToRefreshLayout>
             <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-20 transition-colors duration-200">
-                <div className="relative max-w-7xl mx-auto px-4 pt-8 pb-4 flex items-center justify-center">
+                <div className="relative max-w-7xl mx-auto px-4 pt-4 pb-2 flex items-center justify-center">
                     <button
                         onClick={() => navigate(-1)}
                         className="absolute left-4 w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-[0_2px_15px_rgba(0,0,0,0.06)] dark:shadow-none text-gray-700 dark:text-gray-300 transition-all active:scale-90 z-10"

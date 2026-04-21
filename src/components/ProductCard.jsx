@@ -80,7 +80,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
         if (!isGroup) return;
         const interval = setInterval(() => {
             setCurrentVariantIndex(prev => (prev + 1) % variants.length);
-        }, 3000); // Cycle every 3 seconds
+        }, 10000); // Cycle every 10 seconds
         return () => clearInterval(interval);
     }, [isGroup, variants.length]);
 

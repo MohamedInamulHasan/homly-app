@@ -87,7 +87,7 @@ const Profile = () => {
             />
 
             {/* Premium Light Green Header Card */}
-            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-6 pb-6 shadow-sm overflow-hidden">
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm overflow-hidden">
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
                 
                 <div className="relative z-10">
@@ -118,7 +118,7 @@ const Profile = () => {
                 </div>
             </div>
 
-            <div className="pt-[115px]">
+            <div className="pt-[100px]">
             <div className="px-5 mt-2 max-w-3xl mx-auto w-full">
                 {/* Profile Widget */}
                 <div className="bg-white dark:bg-gray-800/80 rounded-[2.5rem] p-4 flex items-center justify-between mb-8 shadow-sm border border-gray-100 dark:border-gray-700">

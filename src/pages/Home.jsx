@@ -17,6 +17,7 @@ import PullToRefreshLayout from '../components/PullToRefreshLayout';
 
 const Home = () => {
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('All');
     const { globalSortOrder, setGlobalSortOrder } = useData();
     const navigate = useNavigate();
     const { t } = useLanguage();
@@ -74,7 +75,13 @@ const Home = () => {
         // 1. Add real stores
         stores.forEach(s => {
             const storeId = s._id || s.id;
-            if (groupedByStore[storeId]) {
+            const storeProducts = groupedByStore[storeId] || [];
+            
+            // Filter by selected category if not 'All'
+            const matchesCategory = selectedCategory === 'All' || 
+                                    storeProducts.some(p => p.category === selectedCategory);
+
+            if (storeProducts.length > 0 && matchesCategory) {
                 sections.push({
                     id: storeId,
                     name: s.name,
@@ -85,16 +92,18 @@ const Home = () => {
             }
         });
 
-        // 2. Add orphan category sections
+        // 2. Add orphan category sections (only if 'All' or matching)
         Object.entries(groupedByStore).forEach(([key, products]) => {
             if (key.startsWith('category_')) {
                 const categoryName = key.replace('category_', '');
-                sections.push({
-                    id: key,
-                    name: categoryName,
-                    type: 'category',
-                    data: { name: categoryName }
-                });
+                if (selectedCategory === 'All' || categoryName === selectedCategory) {
+                    sections.push({
+                        id: key,
+                        name: categoryName,
+                        type: 'category',
+                        data: { name: categoryName }
+                    });
+                }
             }
         });
 
@@ -106,7 +115,7 @@ const Home = () => {
             if (!aOpen && bOpen) return 1;
             return 0;
         });
-    }, [stores, groupedByStore]);
+    }, [stores, groupedByStore, selectedCategory]);
 
     const isLoadingAll = loadingProducts || loadingStores || loadingCategories;
 
@@ -114,7 +123,7 @@ const Home = () => {
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-8 transition-colors duration-200">
             
             {/* Premium Light Green Header Card */}
-            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-2 pt-4 pb-5 overflow-hidden">
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-2 pt-2 pb-3 overflow-hidden">
                 {/* Background Accents (Subtle light accents) */}
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
                 
@@ -124,7 +133,7 @@ const Home = () => {
             </div>
 
             <PullToRefreshLayout>
-                <div className="pt-[130px]">
+                <div className="pt-[95px]">
                 {/* Search Bar (Now Below the Design with Filter) */}
                 <section className="px-4 relative z-20 mb-8">
                     <div className="flex items-center gap-3 max-w-2xl mx-auto relative">
@@ -253,7 +262,7 @@ const Home = () => {
                                                             src={product.image || `${API_BASE_URL}/products/${productId}/image`}
                                                             onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=No+Image'; }}
                                                             alt={product.title}
-                                                            className="w-full h-full object-contain"
+                                                            className="w-full h-full object-cover"
                                                         />
                                                     </div>
                                                     {isClosed && (
@@ -297,7 +306,12 @@ const Home = () => {
                 <HeroBanner slides={ads} isLoading={loadingAds} />
 
                 {/* Categories */}
-                <CategorySection categories={featuredCategories} isLoading={loadingCategories} />
+                <CategorySection 
+                    categories={featuredCategories} 
+                    isLoading={loadingCategories} 
+                    selectedCategory={selectedCategory}
+                    onSelectCategory={setSelectedCategory}
+                />
 
                 {/* Store Sections */}
                 {isLoadingAll ? (

@@ -109,9 +109,8 @@ const MobileFooter = () => {
         { path: user ? '/profile' : '/login', icon: ProfileIcon, label: user ? t('profile') : t('login') },
     ];
 
-    if (location.pathname.startsWith('/product/') ||
-        location.pathname === '/checkout' ||
-        location.pathname === '/order-confirmation') {
+    const allowedFooterRoutes = ['/', '/store', '/orders', '/profile'];
+    if (!allowedFooterRoutes.includes(location.pathname)) {
         return null;
     }
 

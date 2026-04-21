@@ -32,7 +32,7 @@ const StoreSection = ({ section, products = [] }) => {
         if (productsByCategory.length === 0) return;
         const interval = setInterval(() => {
             setCycleIndex(prev => prev + 1);
-        }, 10000);
+        }, 60000);
         return () => clearInterval(interval);
     }, [productsByCategory]);
 

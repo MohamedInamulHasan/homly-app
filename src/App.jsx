@@ -103,10 +103,9 @@ const Layout = ({ children, onRefresh }) => {
         return <MaintenanceScreen />;
     }
 
-    // Footer Visibility Refinement: Only show on non-auth/checkout routes
-    const hiddenFooterRoutes = ['/checkout', '/order-confirmation', '/login', '/signup', '/forgot-password'];
-    const isHiddenRoute = hiddenFooterRoutes.includes(location.pathname) || location.pathname.startsWith('/product/') || location.pathname.startsWith('/reset-password');
-    const showMobileFooter = !isHiddenRoute && !isFooterHidden;
+    // Footer Visibility: Only show on top-level navigation pages
+    const allowedFooterRoutes = ['/', '/store', '/orders', '/profile'];
+    const showMobileFooter = allowedFooterRoutes.includes(location.pathname) && !isFooterHidden;
 
     return (
         <div className="flex flex-col min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200">
