@@ -269,7 +269,7 @@ export const updateUserProfile = async (req, res, next) => {
         const user = await User.findById(req.user._id);
 
         if (user) {
-            user.name = req.body.name || user.name;
+            user.name = req.body.name || req.body.fullName || user.name;
             user.email = req.body.email || user.email;
             user.mobile = req.body.mobile || user.mobile;
             user.address = req.body.address || user.address;

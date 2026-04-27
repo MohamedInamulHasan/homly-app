@@ -11,7 +11,7 @@ const EditAddress = () => {
     const navigate = useNavigate();
     const { user, setUser } = useAuth();
     const { t } = useLanguage();
-    const { updateUser } = useData();
+    const { updateProfile } = useData();
 
     const [formData, setFormData] = useState({
         fullName: '',
@@ -105,9 +105,8 @@ const EditAddress = () => {
         }
 
         setIsSaving(true);
-        const updatedUser = {
-            ...user,
-            fullName: formData.fullName,
+        const profileData = {
+            name: formData.fullName, // Map fullName to name for backend
             mobile: formData.mobile,
             address: {
                 street: formData.street,
@@ -119,12 +118,16 @@ const EditAddress = () => {
         };
 
         try {
-            await updateUser(updatedUser);
-            setUser(updatedUser);
-            localStorage.setItem('userInfo', JSON.stringify(updatedUser));
-            setMessage({ type: 'success', text: t('Address updated successfully!') });
-            setTimeout(() => navigate('/profile'), 1500);
+            const result = await updateProfile(profileData);
+            if (result) {
+                // Update local auth state with returned data
+                setUser(result);
+                localStorage.setItem('userInfo', JSON.stringify(result));
+                setMessage({ type: 'success', text: t('Address updated successfully!') });
+                setTimeout(() => navigate('/profile'), 1500);
+            }
         } catch (err) {
+            console.error('Update Profile Error:', err);
             setMessage({ type: 'error', text: t('Failed to update address') });
         } finally {
             setIsSaving(false);

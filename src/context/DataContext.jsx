@@ -704,6 +704,20 @@ export const DataProvider = ({ children }) => {
         }
     };
 
+    const updateProfile = async (profileData) => {
+        try {
+            const response = await apiService.updateProfile(profileData);
+            if (response.success && response.data) {
+                // If the update was successful, the AuthContext usually handles the main state,
+                // but we return the data so components can update locally if needed.
+                return response.data;
+            }
+        } catch (err) {
+            console.error('Failed to update profile:', err);
+            throw err;
+        }
+    };
+
     const deleteUser = async (id) => {
         try {
             await apiService.deleteUser(id);
@@ -984,6 +998,7 @@ export const DataProvider = ({ children }) => {
         deleteCategory,
         fetchUsers,
         updateUser,
+        updateProfile,
         deleteUser,
         fetchServices, // Exporting fetchServices
         addService,

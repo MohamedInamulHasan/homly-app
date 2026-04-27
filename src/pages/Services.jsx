@@ -259,10 +259,10 @@ const Services = () => {
 
                     {viewMode === 'list' ? (
                         /* MAIN SERVICES LIST - Premium Horizontal Banners */
-                        <div className="grid grid-cols-1 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
                             {servicesLoading ? (
                                 [...Array(6)].map((_, i) => (
-                                    <div key={i} className="bg-white dark:bg-gray-800 rounded-2xl h-24 mb-2 shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden" />
+                                    <div key={i} className="bg-white dark:bg-gray-800 rounded-[2rem] aspect-[16/9] animate-pulse shadow-sm border border-gray-100 dark:border-gray-700/50" />
                                 ))
                             ) : (() => {
                                 const filteredServices = services.filter(service =>
@@ -286,43 +286,57 @@ const Services = () => {
                                     <div 
                                         key={service._id || index} 
                                         onClick={() => handleViewServices(service)}
-                                        className="group flex items-center gap-4 bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 dark:border-gray-700/50 cursor-pointer"
+                                        className="group relative bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden transition-all duration-300 aspect-[16/9] w-full cursor-pointer shadow-sm hover:shadow-md"
                                     >
-                                        {/* Left Side: Square Image */}
-                                        <div className="w-20 h-20 flex-shrink-0 relative">
-                                            <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 rounded-xl" />
+                                        {/* Full Background Image */}
+                                        <div className="absolute inset-0 z-0">
+                                            <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700" />
                                             <img
                                                 src={service.image || `${API_BASE_URL}/services/${service._id || service.id}/image`}
                                                 alt={service.name}
-                                                className="absolute inset-0 w-full h-full object-cover rounded-xl z-10"
-                                                onError={(e) => { e.target.src = 'https://placehold.co/200x200?text=Service'; }}
+                                                className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110 z-10"
+                                                loading="lazy"
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = "https://placehold.co/800x450?text=Service";
+                                                }}
                                             />
+                                            
+                                            {/* Dark Gradient Overlay */}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
                                         </div>
- 
-                                        {/* Middle: Details */}
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-1.5 mb-1">
-                                                <span className="px-1.5 py-0.5 bg-[#CBF9B2]/20 rounded text-[9px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] uppercase tracking-wider">
-                                                    {service.category || t('Service')}
-                                                </span>
-                                            </div>
-                                            <h3 className="text-gray-900 dark:text-white text-[15px] font-semibold truncate mb-1">
-                                                {service.name}
-                                            </h3>
-                                            <div className="flex items-center gap-1 opacity-60">
-                                                <MapPin size={12} className="text-[#2E5A2E] dark:text-[#CBF9B2]" />
-                                                <p className="text-gray-600 dark:text-gray-400 text-[11px] truncate">
-                                                    {service.address || t('Available Locally')}
-                                                </p>
+
+                                        {/* Content Section - White Banner at Bottom */}
+                                        <div className="absolute bottom-0 left-0 right-0 py-2 px-3 z-20 overflow-hidden">
+                                            {/* Solid White Banner Strip */}
+                                            <div className="absolute inset-0 bg-white dark:bg-gray-800 border-t border-gray-50 dark:border-gray-700" />
+                                            
+                                            <div className="relative z-10">
+                                                <h3 className="text-gray-900 dark:text-white text-[13px] font-semibold tracking-tight leading-tight mb-0.5 truncate pr-6">
+                                                    {service.name}
+                                                </h3>
+                                                <div className="flex items-center gap-1 opacity-90">
+                                                    <MapPin size={9} className="text-[#2E5A2E] dark:text-[#CBF9B2] flex-shrink-0" />
+                                                    <p className="text-gray-500 dark:text-gray-400 text-[10px] font-normal truncate">
+                                                        {service.address || t('Available Locally')}
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
- 
-                                         {/* Right Side: Simple Arrow Icon - Now Forest Green */}
-                                         <div className="flex-shrink-0 pr-1">
-                                             <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-[#2E5A2E] dark:text-[#CBF9B2] transition-colors">
-                                                 <ArrowLeft size={16} className="rotate-180" />
-                                             </div>
-                                         </div>
+
+                                        {/* Right Action Arrow */}
+                                        <div className="absolute bottom-3 right-3 z-30 transition-all duration-300">
+                                            <div className="w-6 h-6 rounded-full bg-[#2E5A2E] text-white flex items-center justify-center scale-90 group-hover:scale-105 active:scale-90 transition-all shadow-sm">
+                                                <ArrowLeft size={12} className="rotate-180" />
+                                            </div>
+                                        </div>
+
+                                        {/* Category Tag Overlay (Top Left) */}
+                                        <div className="absolute top-3 left-3 z-20">
+                                            <span className="px-2 py-0.5 bg-[#CBF9B2] text-[#2E5A2E] text-[8px] font-bold rounded-full uppercase tracking-widest shadow-sm">
+                                                {service.category || t('Service')}
+                                            </span>
+                                        </div>
                                     </div>
                                 ));
                             })()}
