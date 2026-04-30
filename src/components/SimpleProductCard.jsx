@@ -384,13 +384,25 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                                     <ShoppingCart size={16} className="text-gray-400" />
                                 </div>
                             ) : cartQuantity > 0 ? (
-                                <div className="w-10 h-10 flex items-center justify-center bg-[#FF5C5C] text-white rounded-full font-bold text-sm select-none active:scale-95 transition-transform">
-                                    {cartQuantity}
+                                <div className="flex items-center bg-[#2E5A2E] text-white rounded-full h-10 px-1 shadow-sm overflow-hidden">
+                                    <button 
+                                        onClick={handleDecrement}
+                                        className="w-8 h-full flex items-center justify-center active:bg-black/10 transition-colors"
+                                    >
+                                        <Minus size={16} />
+                                    </button>
+                                    <span className="font-bold text-sm min-w-[20px] text-center select-none">{cartQuantity}</span>
+                                    <button 
+                                        onClick={handleIncrement}
+                                        className="w-8 h-full flex items-center justify-center active:bg-black/10 transition-colors"
+                                    >
+                                        <Plus size={16} />
+                                    </button>
                                 </div>
                             ) : (
                                 <button
                                     onClick={handleFastPurchaseClick}
-                                    className={`w-10 h-10 flex items-center justify-center rounded-full bg-[#2E5A2E] text-white active:scale-95 transition-transform`}
+                                    className="w-10 h-10 flex items-center justify-center rounded-full bg-[#2E5A2E] text-white active:scale-95 transition-transform"
                                 >
                                     <ShoppingCart size={16} />
                                 </button>

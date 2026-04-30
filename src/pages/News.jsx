@@ -31,29 +31,26 @@ const News = () => {
 
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200">
-            {/* Premium Light Green Header Card */}
-            <div className="w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm relative overflow-hidden mb-8">
-                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
+            {/* Premium Light Green Header Card / Dark Mode Adjusted */}
+            <div className="w-full bg-[#CBF9B2] dark:bg-[#1a381a] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm relative overflow-hidden mb-8">
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#2E5A2E]/20 rounded-full blur-3xl pointer-events-none"></div>
                 
                 <div className="relative z-10">
                     <div className="max-w-7xl mx-auto px-2 relative">
                         <div className="absolute left-2 top-1/2 -translate-y-1/2">
                             <button 
                                 onClick={() => navigate(-1)} 
-                                className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50"
+                                className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-700"
                             >
                                 <ArrowLeft size={22} />
                             </button>
                         </div>
                         
                         <div className="flex flex-col items-center text-center">
-                            <h1 className="text-[18px] font-bold text-gray-900 tracking-tight flex items-center justify-center gap-2">
-                                <Newspaper className="text-[#2E5A2E]" size={20} />
+                            <h1 className="text-[18px] font-bold text-gray-900 dark:text-white tracking-tight flex items-center justify-center gap-2">
+                                <Newspaper className="text-[#2E5A2E] dark:text-[#CBF9B2]" size={20} />
                                 {t('News & Updates')}
                             </h1>
-                            <p className="text-[#2E5A2E] text-[13px] font-medium mt-0.5">
-                                {t('Stay updated with Homly')}
-                            </p>
                         </div>
                     </div>
                 </div>
@@ -66,7 +63,7 @@ const News = () => {
                             <div key={i} className="bg-white dark:bg-gray-800 rounded-[2.5rem] h-32 animate-pulse shadow-sm border border-gray-100 dark:border-gray-700/50" />
                         ))}
                     </div>
-                ) : (
+                ) : sortedNews.length > 0 ? (
                     <div className="grid grid-cols-1 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
                         {sortedNews.map((item, index) => {
                             const dateStr = new Date(item.createdAt || item.date).toLocaleDateString('en-US', { 
@@ -119,6 +116,18 @@ const News = () => {
                                 </div>
                             );
                         })}
+                    </div>
+                ) : (
+                    <div className="flex flex-col items-center justify-center py-20 px-4 text-center animate-in fade-in zoom-in duration-500">
+                        <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800/50 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                            <Newspaper size={40} className="text-gray-400 dark:text-gray-500" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 tracking-tight">
+                            {t('No News Yet')}
+                        </h2>
+                        <p className="text-gray-500 dark:text-gray-400 max-w-sm mx-auto text-base leading-relaxed">
+                            {t('There are currently no news or updates available. Check back later!')}
+                        </p>
                     </div>
                 )}
             </div>

@@ -36,6 +36,8 @@ export const LanguageProvider = ({ children }) => {
         'Checkout': { en: 'Checkout', ta: 'செக்அவுட்' },
         'Admin': { en: 'Admin', ta: 'நிர்வாகி' },
         'Categories': { en: 'Categories', ta: 'வகைகள்' },
+        'Services': { en: 'Services', ta: 'சேவைகள்' },
+        'Service': { en: 'Service', ta: 'சேவை' },
         'Search': { en: 'Search', ta: 'தேடல்' },
         'Search products...': { en: 'Search products...', ta: 'தயாரிப்புகளைத் தேடவும்...' },
         'Search by store name or location...': { en: 'Search by store name or location...', ta: 'கடை பெயர் அல்லது இடத்தின் மூலம் தேடவும்...' },

@@ -128,29 +128,26 @@ const Services = () => {
     return (
         <PullToRefreshLayout>
             <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200">
-                {/* Premium Light Green Header Card */}
-                <div className="w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm relative overflow-hidden mb-8">
-                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
+                {/* Premium Light Green Header Card / Dark Mode Adjusted */}
+                <div className="w-full bg-[#CBF9B2] dark:bg-[#1a381a] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm relative overflow-hidden mb-8">
+                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#2E5A2E]/20 rounded-full blur-3xl pointer-events-none"></div>
                     
                     <div className="relative z-10">
                         <div className="max-w-7xl mx-auto px-2 relative">
                             <div className="absolute left-2 top-1/2 -translate-y-1/2">
                                 <button 
                                     onClick={() => viewMode === 'details' ? handleBackToList() : navigate(-1)} 
-                                    className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50"
+                                    className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-700"
                                 >
                                     <ArrowLeft size={22} />
                                 </button>
                             </div>
                             
                             <div className="flex flex-col items-center text-center">
-                                <h1 className="text-[18px] font-bold text-gray-900 tracking-tight flex items-center justify-center gap-2">
-                                    <Wrench className="text-[#2E5A2E]" size={20} />
+                                <h1 className="text-[18px] font-bold text-gray-900 dark:text-white tracking-tight flex items-center justify-center gap-2">
+                                    <Wrench className="text-[#2E5A2E] dark:text-[#CBF9B2]" size={20} />
                                     {viewMode === 'details' && activeService ? activeService.name : t('Premium Services')}
                                 </h1>
-                                <p className="text-[#2E5A2E] text-[13px] font-medium mt-0.5">
-                                    {viewMode === 'details' ? t('View service details') : t('Expert local solutions')}
-                                </p>
                             </div>
                         </div>
                     </div>
@@ -166,13 +163,13 @@ const Services = () => {
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder={t('Search services...')}
-                                    className="w-full pl-12 pr-6 py-4 rounded-full border border-gray-100 bg-white text-gray-900 placeholder-gray-400 focus:outline-none transition-all duration-300"
+                                    className="w-full pl-12 pr-6 py-4 rounded-full border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none transition-all duration-300 shadow-sm"
                                 />
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2E5A2E] transition-colors" size={20} />
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2E5A2E] dark:group-focus-within:text-[#CBF9B2] transition-colors" size={20} />
                                 {searchQuery && (
                                     <button
                                         onClick={() => setSearchQuery('')}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-[#2E5A2E] transition-colors"
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-[#2E5A2E] dark:hover:text-[#CBF9B2] transition-colors"
                                     >
                                         <Check className="rotate-45 scale-125" size={16} /> 
                                     </button>
@@ -286,7 +283,7 @@ const Services = () => {
                                     <div 
                                         key={service._id || index} 
                                         onClick={() => handleViewServices(service)}
-                                        className="group relative bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden transition-all duration-300 aspect-[16/9] w-full cursor-pointer shadow-sm hover:shadow-md"
+                                        className="group relative bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden transition-all duration-300 aspect-[16/9] md:aspect-[3/2] lg:aspect-[4/3] w-full cursor-pointer shadow-sm hover:shadow-md"
                                     >
                                         {/* Full Background Image */}
                                         <div className="absolute inset-0 z-0">
@@ -307,17 +304,17 @@ const Services = () => {
                                         </div>
 
                                         {/* Content Section - White Banner at Bottom */}
-                                        <div className="absolute bottom-0 left-0 right-0 py-2 px-3 z-20 overflow-hidden">
+                                        <div className="absolute bottom-0 left-0 right-0 py-2.5 px-4 z-20 overflow-hidden">
                                             {/* Solid White Banner Strip */}
                                             <div className="absolute inset-0 bg-white dark:bg-gray-800 border-t border-gray-50 dark:border-gray-700" />
                                             
                                             <div className="relative z-10">
-                                                <h3 className="text-gray-900 dark:text-white text-[13px] font-semibold tracking-tight leading-tight mb-0.5 truncate pr-6">
+                                                <h3 className="text-gray-900 dark:text-white text-[15px] font-semibold tracking-tight leading-tight mb-0.5 truncate pr-8">
                                                     {service.name}
                                                 </h3>
-                                                <div className="flex items-center gap-1 opacity-90">
-                                                    <MapPin size={9} className="text-[#2E5A2E] dark:text-[#CBF9B2] flex-shrink-0" />
-                                                    <p className="text-gray-500 dark:text-gray-400 text-[10px] font-normal truncate">
+                                                <div className="flex items-center gap-1.5 opacity-90">
+                                                    <MapPin size={10} className="text-[#2E5A2E] dark:text-[#CBF9B2] flex-shrink-0" />
+                                                    <p className="text-gray-500 dark:text-gray-400 text-[11px] font-normal truncate">
                                                         {service.address || t('Available Locally')}
                                                     </p>
                                                 </div>
@@ -325,15 +322,15 @@ const Services = () => {
                                         </div>
 
                                         {/* Right Action Arrow */}
-                                        <div className="absolute bottom-3 right-3 z-30 transition-all duration-300">
-                                            <div className="w-6 h-6 rounded-full bg-[#2E5A2E] text-white flex items-center justify-center scale-90 group-hover:scale-105 active:scale-90 transition-all shadow-sm">
-                                                <ArrowLeft size={12} className="rotate-180" />
+                                        <div className="absolute bottom-4 right-4 z-30 transition-all duration-300">
+                                            <div className="w-8 h-8 rounded-full bg-[#2E5A2E] text-white flex items-center justify-center scale-90 group-hover:scale-105 active:scale-90 transition-all shadow-sm">
+                                                <ArrowLeft size={16} className="rotate-180" />
                                             </div>
                                         </div>
 
                                         {/* Category Tag Overlay (Top Left) */}
-                                        <div className="absolute top-3 left-3 z-20">
-                                            <span className="px-2 py-0.5 bg-[#CBF9B2] text-[#2E5A2E] text-[8px] font-bold rounded-full uppercase tracking-widest shadow-sm">
+                                        <div className="absolute top-4 left-4 z-20">
+                                            <span className="px-3 py-1 bg-[#CBF9B2] text-[#2E5A2E] text-[10px] font-bold rounded-full uppercase tracking-widest shadow-sm">
                                                 {service.category || t('Service')}
                                             </span>
                                         </div>

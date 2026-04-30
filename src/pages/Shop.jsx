@@ -17,7 +17,7 @@ const Shop = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const { stores, categories: dbCategories, loading, initialLoading } = useData();
     const { data: services = [], isLoading: servicesLoading } = useServices();
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
 
     // Create a Set of valid category names for filtering store tags
     const validCategoryNames = useMemo(() => new Set((dbCategories || []).map(c => c.name.toLowerCase())), [dbCategories]);
@@ -92,8 +92,9 @@ const Shop = () => {
 
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-24 transition-colors duration-200">
-            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-2 pt-2 pb-3 shadow-sm overflow-hidden">
-                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
+            {/* Premium Light Green Header Card / Dark Mode Adjusted */}
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] dark:bg-[#1a381a] rounded-b-[2.5rem] px-2 pt-2 pb-3 shadow-sm overflow-hidden">
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#2E5A2E]/20 rounded-full blur-3xl pointer-events-none"></div>
                 <div className="relative z-10">
                     <HomeHeader />
                 </div>
@@ -302,7 +303,44 @@ const Shop = () => {
                                                         : 'text-gray-400 hover:text-black dark:hover:text-white'
                                                         }`}
                                                 >
-                                                    {t(category.name)}
+                                                    {(() => {
+                                                        const fullTitle = t(category.name);
+                                                        let mainPart = fullTitle;
+                                                        let bracketPart = null;
+
+                                                        const bracketIndex = fullTitle.indexOf('(');
+                                                        if (bracketIndex !== -1) {
+                                                            const part1 = fullTitle.substring(0, bracketIndex).trim();
+                                                            const part2 = fullTitle.substring(bracketIndex + 1, fullTitle.length - 1).trim();
+                                                            
+                                                            const isPart1Tamil = /[\u0B80-\u0BFF]/.test(part1);
+                                                            const isPart2Tamil = /[\u0B80-\u0BFF]/.test(part2);
+                                                            
+                                                            let tamStr = '';
+                                                            let engStr = '';
+                                                            
+                                                            if (isPart1Tamil && !isPart2Tamil) {
+                                                                tamStr = part1;
+                                                                engStr = part2;
+                                                            } else if (isPart2Tamil && !isPart1Tamil) {
+                                                                tamStr = part2;
+                                                                engStr = part1;
+                                                            } else {
+                                                                engStr = part1;
+                                                                tamStr = part2;
+                                                            }
+
+                                                            if (language === 'ta') {
+                                                                mainPart = tamStr || engStr;
+                                                                bracketPart = tamStr && engStr ? `(${engStr})` : null;
+                                                            } else {
+                                                                mainPart = engStr || tamStr;
+                                                                bracketPart = engStr && tamStr ? `(${tamStr})` : null;
+                                                            }
+                                                        }
+
+                                                        return bracketPart ? `${mainPart} ${bracketPart}` : mainPart;
+                                                    })()}
                                                     {isActive && (
                                                         <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-black dark:bg-white rounded-full"></div>
                                                     )}

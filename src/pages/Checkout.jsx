@@ -249,8 +249,13 @@ const Checkout = () => {
     const displayItems = directPurchase ? directPurchase.items : cartItems;
     const displayTotal = directPurchase ? directPurchase.total : cartTotal;
 
+    useEffect(() => {
+        if (displayItems.length === 0) {
+            navigate('/cart');
+        }
+    }, [displayItems.length, navigate]);
+
     if (displayItems.length === 0) {
-        navigate('/cart');
         return null;
     }
 
@@ -468,7 +473,7 @@ const Checkout = () => {
                                                 <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
                                                     {(item.isGold || (item.product && item.product.isGold)) && (
                                                         <span className="bg-[#16A34A] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
-                                                            Free
+                                                            {t('Free Delivery')}
                                                         </span>
                                                     )}
                                                     {item.isFromAd && (
@@ -496,8 +501,23 @@ const Checkout = () => {
                                                             </p>
                                                         )}
                                                     </div>
-                                                    <div className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300">
-                                                        x{item.quantity}
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300">
+                                                            x{item.quantity}
+                                                        </div>
+                                                        {!directPurchase && (
+                                                            <button 
+                                                                type="button"
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    removeFromCart(item.id);
+                                                                }}
+                                                                className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                                                                title={t('Remove item')}
+                                                            >
+                                                                <Trash2 size={16} />
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>

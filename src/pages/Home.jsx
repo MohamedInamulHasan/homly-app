@@ -122,10 +122,10 @@ const Home = () => {
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-8 transition-colors duration-200">
             
-            {/* Premium Light Green Header Card */}
-            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-2 pt-2 pb-3 overflow-hidden">
+            {/* Premium Light Green Header Card / Dark Mode Adjusted */}
+            <div className="fixed top-0 left-0 right-0 z-[100] w-full bg-[#CBF9B2] dark:bg-[#1a381a] rounded-b-[2.5rem] px-2 pt-2 pb-3 overflow-hidden">
                 {/* Background Accents (Subtle light accents) */}
-                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#2E5A2E]/20 rounded-full blur-3xl pointer-events-none"></div>
                 
                 <div className="relative z-10">
                     <HomeHeader />
@@ -135,7 +135,7 @@ const Home = () => {
             <PullToRefreshLayout>
                 <div className="pt-[95px]">
                 {/* Search Bar (Now Below the Design with Filter) */}
-                <section className="px-4 relative z-20 mb-8">
+                <section className="px-4 relative z-50 mb-8">
                     <div className="flex items-center gap-3 max-w-2xl mx-auto relative">
                         <div className="relative group flex-1">
                             <form
@@ -151,10 +151,10 @@ const Home = () => {
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder={t('Search by fresh groceries...')}
-                                    className="w-full pl-12 pr-4 py-4 rounded-full border border-gray-100 bg-white text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none transition-all duration-300"
+                                    className="w-full pl-12 pr-4 py-4 rounded-full border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none transition-all duration-300 shadow-sm"
                                 />
                                 <Search 
-                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2E5A2E] transition-colors" 
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2E5A2E] dark:group-focus-within:text-[#CBF9B2] transition-colors" 
                                     size={20} 
                                 />
                             </form>

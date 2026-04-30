@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
@@ -147,6 +147,7 @@ function App() {
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="/store" element={<Shop />} />
+                                <Route path="/shop" element={<Navigate to="/store" replace />} />
                                 <Route path="/store/:id" element={<StoreProducts />} />
                                 <Route path="/product/:id" element={<ProductDetails />} />
                                 <Route path="/news" element={<News />} />
@@ -247,6 +248,7 @@ function App() {
                                         </PrivateRoute>
                                     }
                                 />
+                                <Route path="*" element={<Navigate to="/" replace />} />
                             </Routes>
                         </Layout>
                     </CartProvider>

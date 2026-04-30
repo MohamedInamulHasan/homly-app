@@ -107,29 +107,28 @@ const Orders = () => {
 
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 w-full relative pb-48">
-            {/* Premium Light Green Header Card */}
-            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm overflow-hidden">
-                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
+            {/* Premium Light Green Header Card / Dark Mode Adjusted */}
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] dark:bg-[#1a381a] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm overflow-hidden">
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#2E5A2E]/20 rounded-full blur-3xl pointer-events-none"></div>
                 
                 <div className="relative z-10">
                     <div className="w-full px-4 relative flex items-center justify-center min-h-[42px]">
                         <div className="absolute left-2 top-1/2 -translate-y-1/2">
-                            <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50">
+                            <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-700">
                                 <ArrowLeft size={22} />
                             </button>
                         </div>
                         <div className="flex flex-col text-center">
-                            <h1 className="text-[18px] font-bold text-gray-900 tracking-tight leading-tight">{t('My Orders')}</h1>
-                            <p className="text-[#2E5A2E] text-[13px] font-medium leading-tight">{t('Track packages')}</p>
+                            <h1 className="text-[18px] font-bold text-gray-900 dark:text-white tracking-tight leading-tight">{t('My Orders')}</h1>
                         </div>
                         <div className="absolute right-2 top-1/2 -translate-y-1/2">
                             <button 
                                 onClick={() => navigate('/cart')}
-                                className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-black/5 relative"
+                                className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-black/5 dark:border-gray-700 relative"
                             >
-                                <ShoppingCart size={22} className="text-gray-700" />
+                                <ShoppingCart size={22} className="text-gray-700 dark:text-gray-300" />
                                 {cartCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-5 w-5 rounded-full flex items-center justify-center shadow-sm border-2 border-white">
+                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-5 w-5 rounded-full flex items-center justify-center shadow-sm border-2 border-white dark:border-gray-800">
                                         {cartCount}
                                     </span>
                                 )}
@@ -212,8 +211,13 @@ const Orders = () => {
                                 <div
                                     key={order._id || order.id}
                                     onClick={() => navigate(`/orders/${order._id || order.id}`)}
-                                    className="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-300 cursor-pointer group"
+                                    className="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-300 cursor-pointer group relative"
                                 >
+                                    {order.status === 'Processing' && (
+                                        <div className="absolute top-0 left-0 w-full h-[4px] bg-amber-50 dark:bg-amber-900/20 overflow-hidden z-10">
+                                            <div className="h-full bg-amber-400 dark:bg-amber-500 w-1/3 animate-loading-bar rounded-full" />
+                                        </div>
+                                    )}
                                     <div className="p-6">
                                         <div className="flex justify-between items-start gap-2 mb-4">
                                             <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -270,7 +274,7 @@ const Orders = () => {
                                                         <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
                                                             {((item.isGold) || (item.product && item.product.isGold)) && (
                                                                 <span className="bg-[#16A34A] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg mb-[1px]">
-                                                                    Free
+                                                                    {t('Free Delivery')}
                                                                 </span>
                                                             )}
                                                             {item.isFromAd && !item.isGold && !(item.product && item.product.isGold) && (

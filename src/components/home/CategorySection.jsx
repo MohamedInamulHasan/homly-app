@@ -4,17 +4,17 @@ import { API_BASE_URL } from '../../utils/api';
 import { useLanguage } from '../../context/LanguageContext';
 
 const CategorySection = ({ categories = [], isLoading = false, selectedCategory = 'All', onSelectCategory }) => {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const [isExpanded, setIsExpanded] = useState(false);
 
     if (isLoading) {
         return (
-            <section className="px-4 py-4 mt-2">
-                <div className="flex justify-between items-center mb-4 px-1">
+            <section className="py-4 mt-2">
+                <div className="flex justify-between items-center mb-4 px-4">
                     <div className="h-6 w-32 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
                     <div className="h-4 w-16 bg-gray-100 dark:bg-gray-800 rounded animate-pulse"></div>
                 </div>
-                <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+                <div className="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-4">
                     {[1, 2, 3, 4, 5].map((i) => (
                         <div key={i} className="flex flex-col items-center gap-2">
                             <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-800 animate-pulse"></div>
@@ -29,8 +29,8 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
     if (categories.length === 0) return null;
 
     return (
-        <section className="px-4 py-4 mt-2">
-            <div className="flex justify-between items-center mb-4 px-1">
+        <section className="py-4 mt-2">
+            <div className="flex justify-between items-center mb-4 px-4">
                 <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                     {t('Shop By Categories')}
                 </h2>
@@ -43,8 +43,8 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
             </div>
             
             <div className={isExpanded 
-                ? "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-x-2 gap-y-6 px-1"
-                : "flex gap-4 overflow-x-auto scrollbar-hide pb-2 px-1"
+                ? "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-x-2 gap-y-6 p-2 px-4"
+                : "flex gap-4 overflow-x-auto scrollbar-hide py-2 px-4"
             }>
                 {/* All Categories Option */}
                 <div
@@ -87,9 +87,55 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                                     onError={(e) => { e.target.onerror = null; e.target.src = 'https://cdn-icons-png.flaticon.com/512/3014/3014470.png'; }}
                                 />
                             </div>
-                            <span className={`text-[11px] md:text-xs lg:text-sm font-semibold text-center max-w-[80px] md:max-w-[110px] transition-colors truncate ${isSelected ? 'text-[#2E5A2E] font-bold' : 'text-gray-600 dark:text-gray-400'}`}>
-                                {t(category.name)}
-                            </span>
+                            <div className={`flex flex-col items-center justify-center text-center w-full max-w-[80px] md:max-w-[110px] transition-colors ${isSelected ? 'text-[#2E5A2E]' : 'text-gray-600 dark:text-gray-400'}`}>
+                                {(() => {
+                                    const fullTitle = t(category.name);
+                                    let mainPart = fullTitle;
+                                    let bracketPart = null;
+
+                                    const bracketIndex = fullTitle.indexOf('(');
+                                    if (bracketIndex !== -1) {
+                                        const part1 = fullTitle.substring(0, bracketIndex).trim();
+                                        const part2 = fullTitle.substring(bracketIndex + 1, fullTitle.length - 1).trim();
+                                        
+                                        // Detect which part contains Tamil characters
+                                        const isPart1Tamil = /[\u0B80-\u0BFF]/.test(part1);
+                                        const isPart2Tamil = /[\u0B80-\u0BFF]/.test(part2);
+                                        
+                                        let tamStr = '';
+                                        let engStr = '';
+                                        
+                                        if (isPart1Tamil && !isPart2Tamil) {
+                                            tamStr = part1;
+                                            engStr = part2;
+                                        } else if (isPart2Tamil && !isPart1Tamil) {
+                                            tamStr = part2;
+                                            engStr = part1;
+                                        } else {
+                                            // Fallback default assumption: First part is English, second is Tamil
+                                            engStr = part1;
+                                            tamStr = part2;
+                                        }
+
+                                        if (language === 'ta') {
+                                            mainPart = tamStr || engStr; // Use Tamil if available, else fallback to whatever is there
+                                            bracketPart = tamStr && engStr ? `(${engStr})` : null;
+                                        } else {
+                                            mainPart = engStr || tamStr; // Use English if available
+                                            bracketPart = engStr && tamStr ? `(${tamStr})` : null;
+                                        }
+                                    }
+
+                                    return (
+                                        <>
+                                            <span className={`text-[11px] md:text-xs lg:text-sm truncate w-full ${isSelected ? 'font-bold' : 'font-semibold'}`}>{mainPart}</span>
+                                            {bracketPart && (
+                                                <span className={`text-[9px] md:text-[10px] lg:text-[11px] truncate w-full opacity-80 ${isSelected ? 'font-semibold' : 'font-medium'}`}>{bracketPart}</span>
+                                            )}
+                                        </>
+                                    );
+                                })()}
+                            </div>
                         </div>
                     );
                 })}

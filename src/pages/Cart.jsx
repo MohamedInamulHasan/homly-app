@@ -72,6 +72,18 @@ const Cart = () => {
                                       className="h-full w-full object-cover" 
                                       onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/100x100?text=No+Image'; }}
                                   />
+                                  <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
+                                      {item.isGold && (
+                                          <span className="bg-[#16A34A] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
+                                              {t('Free Delivery')}
+                                          </span>
+                                      )}
+                                      {item.isFromAd && (
+                                          <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm">
+                                              {t('Offer')}
+                                          </span>
+                                      )}
+                                  </div>
                              </div>
                              
                              {/* Content block */}
@@ -138,7 +150,11 @@ const Cart = () => {
                           </div>
                           <div className="flex justify-between items-center">
                                <span className="text-[14px] text-gray-400 font-medium">{t('Delivery')}</span>
-                               <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹ {deliveryCharge.toFixed(0)}</span>
+                               {deliveryCharge === 0 ? (
+                                   <span className="text-[15px] font-bold text-[#2E5A2E]">{t('FREE')}</span>
+                               ) : (
+                                   <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹ {deliveryCharge.toFixed(0)}</span>
+                               )}
                           </div>
                           <div className="flex justify-between items-center pt-2 border-t border-gray-50 dark:border-gray-700/50">
                                <span className="text-[15px] text-gray-500 font-medium">{t('Total')}</span>

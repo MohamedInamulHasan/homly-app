@@ -266,7 +266,7 @@ const OrderDetails = () => {
                                     <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-10">
                                         {((item.isGold) || (item.product && item.product.isGold)) && (
                                             <span className="bg-[#16A34A] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm mb-[1px]">
-                                                {t('Free')}
+                                                {t('Free Delivery')}
                                             </span>
                                         )}
                                         {item.isFromAd && !item.isGold && !(item.product && item.product.isGold) && (

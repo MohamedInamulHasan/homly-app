@@ -10,9 +10,9 @@ import { isStoreOpen, getStoreName } from '../utils/storeHelpers';
 import { useData } from '../context/DataContext';
 
 const ProductCard = ({ product, showCartControls = true, showHeart = false, stores: propStores }) => {
-    const { addToCart, cartItems, updateQuantity } = useCart();
+    const { addToCart, cartItems, updateQuantity, removeFromCart } = useCart();
     const { stores: contextStores, savedProducts, toggleSaveProduct } = useData();
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const { user } = useAuth();
     const navigate = useNavigate();
 
@@ -32,44 +32,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
         : isStoreOpen(storeToUse);
     const isAvailable = product.isGroup ? true : product.isAvailable !== false;
 
-    // Timer refs for long press decrement
-    const timerRef = useRef(null);
-    const isLongPressRef = useRef(false);
 
-    const handlePressStart = (e) => {
-        if (!isAvailable || !isOpen) return;
-        e.preventDefault();
-        e.stopPropagation();
-        isLongPressRef.current = false;
-        timerRef.current = setTimeout(() => {
-            isLongPressRef.current = true;
-            if (quantity > 0) {
-                if (!user) {
-                    navigate('/login');
-                    return;
-                }
-                updateQuantity(productId, quantity - 1);
-            }
-        }, 600); // 600ms hold to reduce
-    };
-
-    const handlePressEnd = (e) => {
-        if (!isAvailable || !isOpen) return;
-        e.preventDefault();
-        e.stopPropagation();
-        clearTimeout(timerRef.current);
-        if (!isLongPressRef.current) {
-            if (!user) {
-                navigate('/login');
-                return;
-            }
-            if (quantity === 0) {
-                addToCart(product);
-            } else {
-                updateQuantity(productId, quantity + 1);
-            }
-        }
-    };
 
     // Auto-cycling variants logic (for Group cards)
     const [currentVariantIndex, setCurrentVariantIndex] = useState(0);
@@ -94,7 +57,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                 <div className="absolute top-3 left-3 z-[15] pointer-events-none flex flex-col gap-1.5 items-start">
                     {product.isGold && (
                         <div className="bg-[#16A34A] text-white text-[9px] font-bold px-2.5 py-1 rounded-full">
-                            Free
+                            {t('Free Delivery')}
                         </div>
                     )}
                     {product.isFromAd && (
@@ -102,11 +65,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                             Offer
                         </div>
                     )}
-                    {!product.isGold && (
-                        <div className="bg-[#FF5C5C] text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow-sm">
-                            10% off
-                        </div>
-                    )}
+
                 </div>
 
 
@@ -160,27 +119,51 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                     <div className="flex-1 min-h-[42px] mb-1 w-full flex flex-col justify-center transition-opacity duration-300">
                         {(() => {
                             const fullTitle = t(featuredVariant, 'title');
+                            let mainTitle = fullTitle;
+                            let bracketText = null;
+
                             const bracketIndex = fullTitle.indexOf('(');
-                            
                             if (bracketIndex !== -1) {
-                                const mainTitle = fullTitle.substring(0, bracketIndex).trim();
-                                const bracketText = fullTitle.substring(bracketIndex).trim();
-                                return (
-                                    <>
-                                        <h3 className="text-sm font-semibold text-gray-800 dark:text-white truncate w-full">
-                                            {mainTitle}
-                                        </h3>
-                                        <p className="text-sm font-semibold text-gray-800 dark:text-white truncate w-full">
-                                            {bracketText}
-                                        </p>
-                                    </>
-                                );
+                                const part1 = fullTitle.substring(0, bracketIndex).trim();
+                                const part2 = fullTitle.substring(bracketIndex + 1, fullTitle.length - 1).trim();
+                                
+                                const isPart1Tamil = /[\u0B80-\u0BFF]/.test(part1);
+                                const isPart2Tamil = /[\u0B80-\u0BFF]/.test(part2);
+                                
+                                let tamStr = '';
+                                let engStr = '';
+                                
+                                if (isPart1Tamil && !isPart2Tamil) {
+                                    tamStr = part1;
+                                    engStr = part2;
+                                } else if (isPart2Tamil && !isPart1Tamil) {
+                                    tamStr = part2;
+                                    engStr = part1;
+                                } else {
+                                    engStr = part1;
+                                    tamStr = part2;
+                                }
+
+                                if (language === 'ta') {
+                                    mainTitle = tamStr || engStr;
+                                    bracketText = tamStr && engStr ? `(${engStr})` : null;
+                                } else {
+                                    mainTitle = engStr || tamStr;
+                                    bracketText = engStr && tamStr ? `(${tamStr})` : null;
+                                }
                             }
                             
                             return (
-                                <h3 className="text-sm font-semibold text-gray-800 dark:text-white line-clamp-2 w-full">
-                                    {fullTitle}
-                                </h3>
+                                <>
+                                    <h3 className="text-sm font-semibold text-gray-800 dark:text-white truncate w-full">
+                                        {mainTitle}
+                                    </h3>
+                                    {bracketText && (
+                                        <p className="text-sm font-semibold text-gray-800 dark:text-white truncate w-full opacity-80">
+                                            {bracketText}
+                                        </p>
+                                    )}
+                                </>
                             );
                         })()}
                     </div>
@@ -200,9 +183,6 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                                         <span className="text-base font-bold text-gray-900 dark:text-white">
                                             ₹{Number(product.price).toFixed(0)}
                                         </span>
-                                        <span className="text-[11px] text-gray-400 line-through">
-                                            ₹{Math.round(Number(product.price) * 1.2)}
-                                        </span>
                                     </>
                                 )}
                             </div>
@@ -212,24 +192,56 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                         </div>
 
                         {showCartControls && !product.isGroup && (
-                            <button 
-                                onPointerDown={handlePressStart}
-                                onPointerUp={handlePressEnd}
-                                onPointerLeave={() => clearTimeout(timerRef.current)}
-                                onContextMenu={(e) => e.preventDefault()}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                }}
-                                className={`w-10 h-10 ${quantity > 0 ? 'bg-[#FF5C5C]' : 'bg-[#2E5A2E]'} hover:opacity-90 text-white rounded-full flex items-center justify-center transition-all active:scale-90 select-none`}
-                                disabled={!isAvailable || !isOpen}
-                            >
-                                {quantity > 0 ? (
-                                    <span className="text-sm font-bold">{quantity}</span>
-                                ) : (
+                            quantity > 0 ? (
+                                <div 
+                                    className="flex items-center bg-[#2E5A2E] text-white rounded-full h-10 px-1 shadow-sm overflow-hidden"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                    }}
+                                >
+                                    <button 
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            if (!user) { navigate('/login'); return; }
+                                            if (quantity > 1) {
+                                                updateQuantity(productId, quantity - 1);
+                                            } else {
+                                                removeFromCart(productId);
+                                            }
+                                        }}
+                                        className="w-8 h-full flex items-center justify-center active:bg-black/10 transition-colors"
+                                    >
+                                        <Minus size={16} />
+                                    </button>
+                                    <span className="font-bold text-sm min-w-[20px] text-center select-none">{quantity}</span>
+                                    <button 
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            if (!user) { navigate('/login'); return; }
+                                            updateQuantity(productId, quantity + 1);
+                                        }}
+                                        className="w-8 h-full flex items-center justify-center active:bg-black/10 transition-colors"
+                                    >
+                                        <Plus size={16} />
+                                    </button>
+                                </div>
+                            ) : (
+                                <button 
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        if (!user) { navigate('/login'); return; }
+                                        addToCart(product);
+                                    }}
+                                    className="w-10 h-10 bg-[#2E5A2E] hover:opacity-90 text-white rounded-full flex items-center justify-center transition-all active:scale-90 select-none"
+                                    disabled={!isAvailable || !isOpen}
+                                >
                                     <ShoppingCart size={18} />
-                                )}
-                            </button>
+                                </button>
+                            )
                         )}
                     </div>
                 </div>

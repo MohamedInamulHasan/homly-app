@@ -86,29 +86,28 @@ const Profile = () => {
                 onConfirm={confirmLogout} 
             />
 
-            {/* Premium Light Green Header Card */}
-            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm overflow-hidden">
-                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
+            {/* Premium Light Green Header Card / Dark Mode Adjusted */}
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] dark:bg-[#1a381a] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm overflow-hidden">
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#2E5A2E]/20 rounded-full blur-3xl pointer-events-none"></div>
                 
                 <div className="relative z-10">
                     <div className="w-full px-4 relative flex items-center justify-center min-h-[42px]">
                         <div className="absolute left-2 top-1/2 -translate-y-1/2">
-                            <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50">
+                            <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-700">
                                 <ArrowLeft size={22} />
                             </button>
                         </div>
                         <div className="flex flex-col text-center">
-                            <h1 className="text-[18px] font-bold text-gray-900 tracking-tight leading-tight">{t('Profile')}</h1>
-                            <p className="text-[#2E5A2E] text-[13px] font-medium leading-tight">{t('Manage your account')}</p>
+                            <h1 className="text-[18px] font-bold text-gray-900 dark:text-white tracking-tight leading-tight">{t('Profile')}</h1>
                         </div>
                         <div className="absolute right-2 top-1/2 -translate-y-1/2">
                             <button 
                                 onClick={() => navigate('/cart')}
-                                className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-black/5 relative"
+                                className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-black/5 dark:border-gray-700 relative"
                             >
-                                <ShoppingCart size={22} className="text-gray-700" />
+                                <ShoppingCart size={22} className="text-gray-700 dark:text-gray-300" />
                                 {cartCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-5 w-5 rounded-full flex items-center justify-center shadow-sm border-2 border-white">
+                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-5 w-5 rounded-full flex items-center justify-center shadow-sm border-2 border-white dark:border-gray-800">
                                         {cartCount}
                                     </span>
                                 )}
@@ -122,7 +121,7 @@ const Profile = () => {
             <div className="px-5 mt-2 max-w-3xl mx-auto w-full">
                 {/* Profile Widget */}
                 <div className="bg-white dark:bg-gray-800/80 rounded-[2.5rem] p-4 flex items-center justify-between mb-8 shadow-sm border border-gray-100 dark:border-gray-700">
-                     <div className="flex items-center gap-5">
+                     <div className="flex items-center gap-5 flex-1 min-w-0">
                           <div className="relative flex-shrink-0">
                                <div className="w-[64px] h-[64px] bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden border-2 border-white dark:border-gray-800 shadow-sm">
                                     {/* Real image if available, else highly stylized fallback */}
@@ -145,11 +144,11 @@ const Profile = () => {
                                      </div>
                                  )}
                           </div>
-                          <div>
-                               <h2 className="text-[17px] font-bold text-gray-900 dark:text-white leading-tight tracking-tight">
+                          <div className="flex-1 min-w-0">
+                               <h2 className="text-[17px] font-bold text-gray-900 dark:text-white leading-tight tracking-tight truncate">
                                    {user?.name || 'Guest User'}
                                </h2>
-                               <p className="text-[13px] font-medium text-gray-400 dark:text-gray-500 mt-0.5">
+                               <p className="text-[13px] font-medium text-gray-400 dark:text-gray-500 mt-0.5 truncate">
                                    {user?.email || 'Not logged in'}
                                </p>
                           </div>
