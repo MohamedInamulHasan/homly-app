@@ -7,7 +7,7 @@ import { useData } from '../../context/DataContext';
 import ProductCard from '../ProductCard';
 import { useState, useEffect, useMemo } from 'react';
 
-const StoreSection = ({ section, products = [] }) => {
+const StoreSection = ({ section, products = [], singleStore = false }) => {
     const { t } = useLanguage();
     const { stores: contextStores, globalSortOrder } = useData();
     const [cycleIndex, setCycleIndex] = useState(0);
@@ -99,23 +99,38 @@ const StoreSection = ({ section, products = [] }) => {
                     {t('See All')}
                 </Link>
             </div>
-            
-            {/* Horizontal Scroll Layout (Fixed at 7 Cards) */}
-            <div className="flex overflow-x-auto scrollbar-hide gap-4 pb-2 px-1">
-                <div className="flex gap-4">
-                    {displayProducts.map((product, idx) => (
-                        <div 
-                            key={`${product._id || product.id}-${idx}-${cycleIndex}`} 
-                            className="w-[165px] md:w-[190px] lg:w-[210px] shrink-0 animate-in fade-in slide-in-from-right-2 duration-500"
+
+            {singleStore ? (
+                <div className="flex flex-wrap gap-4 px-1">
+                    {products.map((product, idx) => (
+                        <div
+                            key={`${product._id || product.id}-${idx}`}
+                            className="w-[165px] md:w-[190px] lg:w-[210px] animate-in fade-in duration-300"
                         >
-                            <ProductCard 
-                                product={product} 
-                                showCartControls={true} 
+                            <ProductCard
+                                product={product}
+                                showCartControls={true}
                             />
                         </div>
                     ))}
                 </div>
-            </div>
+            ) : (
+                <div className="flex overflow-x-auto scrollbar-hide gap-4 pb-2 px-1">
+                    <div className="flex gap-4">
+                        {displayProducts.map((product, idx) => (
+                            <div 
+                                key={`${product._id || product.id}-${idx}-${cycleIndex}`} 
+                                className="w-[165px] md:w-[190px] lg:w-[210px] shrink-0 animate-in fade-in slide-in-from-right-2 duration-500"
+                            >
+                                <ProductCard 
+                                    product={product} 
+                                    showCartControls={true} 
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </section>
     );
 };

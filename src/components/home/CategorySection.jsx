@@ -6,6 +6,7 @@ import { useLanguage } from '../../context/LanguageContext';
 const CategorySection = ({ categories = [], isLoading = false, selectedCategory = 'All', onSelectCategory }) => {
     const { t, language } = useLanguage();
     const [isExpanded, setIsExpanded] = useState(false);
+    const allCategoryImage = localStorage.getItem('allCategoryImage') || '';
 
     if (isLoading) {
         return (
@@ -53,15 +54,23 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                         isExpanded ? 'w-full' : 'min-w-[72px] md:min-w-[85px] lg:min-w-[110px]'
                     } flex flex-col items-center gap-2 md:gap-3 group cursor-pointer`}
                 >
-                    <div className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 shadow-sm border-2 bg-[#CBF9B2] ${selectedCategory === 'All' ? 'border-[#2E5A2E]' : 'border-transparent'}`}>
-                        <div className={`flex flex-col items-center justify-center ${selectedCategory === 'All' ? 'text-[#2E5A2E]' : 'text-gray-400'}`}>
-                            <div className="grid grid-cols-2 gap-0.5">
-                                <div className="w-1.5 h-1.5 bg-current rounded-sm"></div>
-                                <div className="w-1.5 h-1.5 bg-current rounded-sm"></div>
-                                <div className="w-1.5 h-1.5 bg-current rounded-sm"></div>
-                                <div className="w-1.5 h-1.5 bg-current rounded-sm"></div>
+                    <div className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 border-2 bg-[#CBF9B2] dark:bg-[#2E5A2E] ${selectedCategory === 'All' ? 'border-[#2E5A2E] dark:border-[#CBF9B2]' : 'border-transparent'}`}>
+                        {allCategoryImage ? (
+                            <img src={allCategoryImage} alt="All" className="w-full h-full object-cover rounded-full" />
+                        ) : (
+                            <div className="grid grid-cols-3 gap-[3px] p-2 w-full h-full">
+                                {[...Array(9)].map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className={`rounded-[3px] ${
+                                            selectedCategory === 'All'
+                                                ? 'bg-[#2E5A2E] dark:bg-[#CBF9B2]'
+                                                : 'bg-[#2E5A2E]/50 dark:bg-[#CBF9B2]/60'
+                                        }`}
+                                    />
+                                ))}
                             </div>
-                        </div>
+                        )}
                     </div>
                     <span className={`text-[11px] md:text-xs lg:text-sm font-bold transition-colors truncate ${selectedCategory === 'All' ? 'text-[#2E5A2E]' : 'text-gray-400'}`}>
                         {t('All')}
@@ -78,11 +87,11 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                                 isExpanded ? 'w-full' : 'min-w-[72px] md:min-w-[85px] lg:min-w-[110px]'
                             } flex flex-col items-center gap-2 md:gap-3 group cursor-pointer`}
                         >
-                            <div className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 shadow-sm border-2 bg-[#CBF9B2] dark:bg-green-900/30 ${isSelected ? 'border-[#2E5A2E]' : 'border-transparent'}`}>
+                            <div className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 shadow-sm border-2 bg-[#CBF9B2] dark:bg-[#2E5A2E] ${isSelected ? 'border-[#2E5A2E] dark:border-[#CBF9B2]' : 'border-transparent'}`}>
                                 <img
                                     src={category.image || `${API_BASE_URL}/categories/${category._id || category.id}/image`}
                                     alt={category.name}
-                                    className={`w-full h-full object-cover ${isSelected ? 'scale-90 transition-transform' : ''}`}
+                                    className={`w-full h-full object-cover rounded-full ${isSelected ? 'scale-90 transition-transform' : ''}`}
                                     loading="lazy"
                                     onError={(e) => { e.target.onerror = null; e.target.src = 'https://cdn-icons-png.flaticon.com/512/3014/3014470.png'; }}
                                 />

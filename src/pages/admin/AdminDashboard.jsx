@@ -2077,6 +2077,12 @@ const CategoryManagement = () => {
     });
     const [newSubcategory, setNewSubcategory] = useState(''); // For adding new subcategories
 
+    // "All" category image (stored in localStorage)
+    const [allCategoryImage, setAllCategoryImage] = useState(
+        () => localStorage.getItem('allCategoryImage') || ''
+    );
+    const [editingAllImage, setEditingAllImage] = useState(false);
+
     // Local state for DnD
     const [items, setItems] = useState([]);
 
@@ -2090,6 +2096,19 @@ const CategoryManagement = () => {
     }, [categories]);
 
     const { uploadImage, uploading: uploadingCategory } = useCloudinaryUpload();
+
+    const handleAllImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        try {
+            const url = await uploadImage(file);
+            setAllCategoryImage(url);
+            localStorage.setItem('allCategoryImage', url);
+            setEditingAllImage(false);
+        } catch (err) {
+            alert(t('Failed to upload image'));
+        }
+    };
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -2262,6 +2281,47 @@ const CategoryManagement = () => {
                                         items={items.map(cat => cat._id || cat.id)}
                                         strategy={verticalListSortingStrategy}
                                     >
+                                        {/* Pinned "All" row - non-deletable */}
+                                        <tr className="bg-[#f0faf0] dark:bg-[#1a3d1a]/40 border-b border-gray-100 dark:border-gray-700">
+                                            <td className="p-4 text-gray-300 dark:text-gray-600">
+                                                <GripVertical size={20} />
+                                            </td>
+                                            <td className="p-4">
+                                                <div className="relative w-16 h-16 group/allimg">
+                                                    <div className="w-16 h-16 rounded-full overflow-hidden ring-2 ring-[#2E5A2E]/30 dark:ring-[#CBF9B2]/30 bg-[#CBF9B2] dark:bg-[#2E5A2E] flex items-center justify-center">
+                                                        {allCategoryImage ? (
+                                                            <img src={allCategoryImage} alt="All" className="w-full h-full object-cover rounded-full" />
+                                                        ) : (
+                                                            <div className="grid grid-cols-3 gap-0.5">
+                                                                {[...Array(9)].map((_, i) => (
+                                                                    <div key={i} className="w-2 h-2 rounded-[2px] bg-[#2E5A2E] dark:bg-[#CBF9B2]" />
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    {/* Hover overlay to trigger upload */}
+                                                    <label className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover/allimg:opacity-100 transition-opacity cursor-pointer flex items-center justify-center">
+                                                        <Upload size={16} className="text-white" />
+                                                        <input type="file" accept="image/*" className="hidden" onChange={handleAllImageUpload} />
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td className="p-4 font-medium text-gray-900 dark:text-white">
+                                                <div className="flex items-center gap-2">
+                                                    {t('All')}
+                                                    <span className="text-[10px] bg-[#2E5A2E] text-white px-2 py-0.5 rounded-full font-bold">SYSTEM</span>
+                                                </div>
+                                            </td>
+                                            <td className="p-4">
+                                                <div className="flex gap-2 items-center">
+                                                    <label className="p-2 text-[#2E5A2E] hover:bg-[#E8F5E9] rounded-xl transition-colors cursor-pointer" title={t('Change Image')}>
+                                                        <Edit2 size={18} />
+                                                        <input type="file" accept="image/*" className="hidden" onChange={handleAllImageUpload} />
+                                                    </label>
+                                                    <span className="text-xs text-gray-400 italic">{t('Cannot be deleted')}</span>
+                                                </div>
+                                            </td>
+                                        </tr>
                                         {items.length > 0 ? items.map(category => (
                                             <SortableRow key={category._id || category.id} data-id={category._id || category.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors bg-white dark:bg-gray-800">
                                                 <td className="p-4">

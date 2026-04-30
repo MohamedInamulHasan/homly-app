@@ -329,7 +329,8 @@ const Home = () => {
                             <StoreSection 
                                 key={section.id} 
                                 section={section} 
-                                products={groupedByStore[section.id]} 
+                                products={groupedByStore[section.id]}
+                                singleStore={displaySections.length === 1}
                             />
                         ))}
                     </div>
