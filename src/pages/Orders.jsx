@@ -120,6 +120,7 @@ const Orders = () => {
                         </div>
                         <div className="flex flex-col text-center">
                             <h1 className="text-[18px] font-bold text-gray-900 dark:text-white tracking-tight leading-tight">{t('My Orders')}</h1>
+                            <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400 mt-0.5">{t('Track packages')}</p>
                         </div>
                         <div className="absolute right-2 top-1/2 -translate-y-1/2">
                             <button 

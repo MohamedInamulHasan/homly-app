@@ -222,7 +222,7 @@ const OrderDetails = () => {
                                 {timelineSteps.map((step, idx) => (
                                     <div key={idx} className="flex flex-col items-center z-10">
                                         <div className={`w-9 h-9 rounded-full flex items-center justify-center border-4 transition-all duration-300 ${step.completed
-                                            ? 'bg-[#2E5A2E] border-white dark:border-gray-800 text-white shadow-lg shadow-green-500/30'
+                                            ? 'bg-[#2E5A2E] border-white dark:border-gray-800 text-white'
                                             : 'bg-white dark:bg-gray-700 border-gray-100 dark:border-gray-600 text-gray-300'
                                             }`}>
                                             <step.icon size={14} strokeWidth={3} />

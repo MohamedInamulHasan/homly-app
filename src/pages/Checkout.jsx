@@ -369,7 +369,7 @@ const Checkout = () => {
                                                 } catch (err) {
                                                     setIsLocationSearching(false);
                                                     let errorMsg = t('Unable to get location');
-                                                    if (err.code === 1) errorMsg = t('Location Access Denied');
+                                                    if (err.code === 1) errorMsg = t('Please turn on the location');
                                                     if (err.code === 3) errorMsg = t('Location Request Timed Out');
                                                     setLocationMessage({ show: true, type: 'error', text: errorMsg });
                                                 }

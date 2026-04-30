@@ -113,8 +113,6 @@ const HeroBanner = ({ slides = [], isLoading = false }) => {
                                 if (slide.link) {
                                     if (slide.link.startsWith('/')) navigate(slide.link);
                                     else window.open(slide.link, '_blank');
-                                } else {
-                                    navigate('/shop');
                                 }
                             }}
                             className="w-full h-full flex-shrink-0 snap-center cursor-pointer relative group"

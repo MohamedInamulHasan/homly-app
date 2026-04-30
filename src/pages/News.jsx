@@ -51,6 +51,7 @@ const News = () => {
                                 <Newspaper className="text-[#2E5A2E] dark:text-[#CBF9B2]" size={20} />
                                 {t('News & Updates')}
                             </h1>
+                            <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400 mt-0.5">{t('Stay informed with the latest')}</p>
                         </div>
                     </div>
                 </div>

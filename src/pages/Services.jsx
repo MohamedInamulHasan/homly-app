@@ -148,6 +148,9 @@ const Services = () => {
                                     <Wrench className="text-[#2E5A2E] dark:text-[#CBF9B2]" size={20} />
                                     {viewMode === 'details' && activeService ? activeService.name : t('Premium Services')}
                                 </h1>
+                                <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400 mt-0.5">
+                                    {viewMode === 'details' && activeService ? activeService.category : t('Professional help at your doorstep')}
+                                </p>
                             </div>
                         </div>
                     </div>

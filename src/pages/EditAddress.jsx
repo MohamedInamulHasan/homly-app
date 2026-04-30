@@ -89,7 +89,7 @@ const EditAddress = () => {
             (error) => {
                 console.error('GPS Error:', error);
                 let errText = t('Unable to get location');
-                if (error.code === 1) errText = t('Permission denied');
+                if (error.code === 1) errText = t('Please turn on the location');
                 setMessage({ type: 'error', text: errText });
                 setIsDetecting(false);
             },

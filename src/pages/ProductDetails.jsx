@@ -239,7 +239,7 @@ const ProductDetails = () => {
                         <img
                             src={product.image || 'https://via.placeholder.com/400x400?text=No+Image'}
                             alt={product.title}
-                            className="w-full h-full object-contain lg:max-h-[500px]"
+                            className="w-full h-full object-cover lg:max-h-[500px]"
                             onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/400x400?text=No+Image'; }}
                         />
                     </div>
@@ -328,8 +328,9 @@ const ProductDetails = () => {
                                 <table className="w-full text-left border-collapse">
                                     <tbody>
                                         {descTags.map((tag, index) => {
-                                            const dashIdx = tag.indexOf('-');
-                                            if (dashIdx !== -1) {
+                                            const dashMatch = tag.match(/[-–—]/);
+                                            if (dashMatch) {
+                                                const dashIdx = dashMatch.index;
                                                 const key = tag.substring(0, dashIdx).trim();
                                                 const val = tag.substring(dashIdx + 1).trim();
                                                 return (
