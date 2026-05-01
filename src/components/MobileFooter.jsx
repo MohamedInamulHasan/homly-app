@@ -115,7 +115,10 @@ const MobileFooter = () => {
     }
 
     return (
-        <div className="fixed z-50 bottom-6 left-1/2 -translate-x-1/2 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:left-auto md:right-6 md:translate-x-0">
+        <div 
+            className="fixed z-50 left-1/2 -translate-x-1/2 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:left-auto md:right-6 md:translate-x-0"
+            style={{ bottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}
+        >
             <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-white/20 dark:border-gray-800/50 rounded-full px-6 py-2 md:px-2 md:py-6 flex flex-row md:flex-col items-center gap-4 shadow-xl shadow-black/5">
                 {navItems.map((item) => {
                     const active = isActive(item.path);

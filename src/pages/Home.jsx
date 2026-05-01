@@ -287,9 +287,6 @@ const Home = () => {
                                                         </p>
                                                         <div className="flex items-center gap-1.5">
                                                             <span className={`text-[#2E5A2E] dark:text-[#CBF9B2] font-medium text-[11px] ${isClosed ? 'grayscale opacity-50' : ''}`}>₹{Number(product.price).toFixed(0)}</span>
-                                                            {product.originalPrice > product.price && (
-                                                                <span className="text-gray-400 text-[10px] line-through font-normal opacity-40">₹{product.originalPrice}</span>
-                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>

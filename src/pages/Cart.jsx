@@ -110,9 +110,7 @@ const Cart = () => {
                                                  <span className="text-[15px] font-bold text-gray-900 dark:text-white leading-none">
                                                      ₹ {(item.price * item.quantity).toFixed(0)}
                                                  </span>
-                                                 <span className="text-[11px] font-medium text-gray-400 line-through leading-none">
-                                                     ₹ {Math.round((item.price * item.quantity) * 1.2)}
-                                                 </span>
+
                                             </div>
                                             <span className="text-[10px] text-gray-400 font-medium mt-1">
                                                 {item.unit || "1 Unit"}

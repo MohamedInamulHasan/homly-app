@@ -277,10 +277,7 @@ const ProductDetails = () => {
                         <div className="flex flex-col">
                             <div className="flex items-center gap-3">
                                 <p className="text-4xl font-semibold text-[#2E5A2E] dark:text-green-400">
-                                    ₹{Number(product.price).toFixed(0)}
-                                </p>
-                                <p className="text-lg text-gray-400 line-through mt-1">
-                                    ₹{Math.round(Number(product.price) * 1.2)}
+                                    ₹{totalPrice}
                                 </p>
                             </div>
                         </div>
@@ -359,7 +356,7 @@ const ProductDetails = () => {
                     </div>
 
                     {/* Action Button */}
-                    <div className="w-full flex justify-center mt-4">
+                    <div className="w-full flex justify-center mt-4 mb-8">
                         {!isCurrentlyAvailable ? (
                             <div className="w-full py-4 bg-red-50 dark:bg-red-900/10 rounded-full border border-red-100 dark:border-red-800 text-center">
                                 <p className="text-red-600 dark:text-red-400 font-bold">

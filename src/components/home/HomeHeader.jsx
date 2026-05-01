@@ -42,7 +42,7 @@ const HomeHeader = () => {
             {/* Location Selector */}
             <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center border border-black/5 dark:border-gray-700">
-                    <MapPin className="text-[#2E5A2E] dark:text-[#7CA90E]" size={20} />
+                    <MapPin className="text-red-500 dark:text-red-500" size={20} />
                 </div>
                 <div className="flex flex-col">
                     <span className="text-[10px] text-gray-800 dark:text-gray-300 font-bold uppercase tracking-wider">{t('Delivery to')}</span>

@@ -79,6 +79,11 @@ const StoreSection = ({ section, products = [], singleStore = false }) => {
         return slots;
     })();
 
+    const singleStoreProducts = useMemo(() => {
+        if (!singleStore) return [];
+        return groupProducts(products, contextStores, { forcedStoreId: section.type === 'store' ? section.id : null });
+    }, [products, singleStore, contextStores, section.type, section.id]);
+
     return (
         <section className={`px-4 py-8 dark:bg-gray-900 border-b border-gray-50 dark:border-gray-800 last:border-b-0 transition-opacity duration-300 ${!isOpen ? 'opacity-80' : ''}`}>
             {/* Header */}
@@ -101,11 +106,11 @@ const StoreSection = ({ section, products = [], singleStore = false }) => {
             </div>
 
             {singleStore ? (
-                <div className="flex flex-wrap gap-4 px-1">
-                    {products.map((product, idx) => (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 px-1">
+                    {singleStoreProducts.map((product, idx) => (
                         <div
                             key={`${product._id || product.id}-${idx}`}
-                            className="w-[165px] md:w-[190px] lg:w-[210px] animate-in fade-in duration-300"
+                            className="animate-in fade-in duration-300"
                         >
                             <ProductCard
                                 product={product}

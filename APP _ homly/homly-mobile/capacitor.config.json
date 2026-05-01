@@ -15,6 +15,21 @@
     ]
   },
   "plugins": {
+    "StatusBar": {
+      "style": "DARK",
+      "overlaysWebView": false,
+      "backgroundColor": "#ffffff",
+      "visible": true
+    },
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#ffffff",
+      "showSpinner": false,
+      "androidSpinnerStyle": "small",
+      "spinnerColor": "#2563eb",
+      "splashFullScreen": false,
+      "splashImmersive": false
+    },
     "Geolocation": {
       "permissions": [
         "location"
