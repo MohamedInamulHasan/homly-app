@@ -29,8 +29,15 @@ const Home = () => {
     const { data: rawStores = [], isLoading: loadingStores } = useStores();
 
     const products = useMemo(() => {
-        return Array.isArray(rawProducts) ? rawProducts : (rawProducts?.data || []);
-    }, [rawProducts]);
+        const allProducts = Array.isArray(rawProducts) ? rawProducts : (rawProducts?.data || []);
+        if (!selectedCategory || selectedCategory === 'All') return allProducts;
+        
+        // Robust normalization for comparison
+        const normalize = (str) => String(str || '').toLowerCase().replace(/\s+/g, ' ').trim();
+        const normalizedSelected = normalize(selectedCategory);
+        
+        return allProducts.filter(p => normalize(p.category) === normalizedSelected);
+    }, [rawProducts, selectedCategory]);
 
     const stores = Array.isArray(rawStores) ? rawStores : (rawStores?.data || []);
 
@@ -326,7 +333,8 @@ const Home = () => {
                             <StoreSection 
                                 key={section.id} 
                                 section={section} 
-                                products={groupedByStore[section.id]}
+                                products={groupedByStore[section.id] || []}
+                                selectedCategory={selectedCategory}
                                 singleStore={displaySections.length === 1}
                             />
                         ))}

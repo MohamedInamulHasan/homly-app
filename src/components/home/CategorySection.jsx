@@ -98,52 +98,52 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                             </div>
                             <div className={`flex flex-col items-center justify-center text-center w-full max-w-[80px] md:max-w-[110px] transition-colors ${isSelected ? 'text-[#2E5A2E]' : 'text-gray-600 dark:text-gray-400'}`}>
                                 {(() => {
-                                    const fullTitle = t(category.name);
-                                    let mainPart = fullTitle;
-                                    let bracketPart = null;
+                                   const fullTitle = t(category.name);
+                                   let mainPart = fullTitle;
+                                   let bracketPart = null;
 
-                                    const bracketIndex = fullTitle.indexOf('(');
-                                    if (bracketIndex !== -1) {
-                                        const part1 = fullTitle.substring(0, bracketIndex).trim();
-                                        const part2 = fullTitle.substring(bracketIndex + 1, fullTitle.length - 1).trim();
-                                        
-                                        // Detect which part contains Tamil characters
-                                        const isPart1Tamil = /[\u0B80-\u0BFF]/.test(part1);
-                                        const isPart2Tamil = /[\u0B80-\u0BFF]/.test(part2);
-                                        
-                                        let tamStr = '';
-                                        let engStr = '';
-                                        
-                                        if (isPart1Tamil && !isPart2Tamil) {
+                                   const bracketIndex = fullTitle.indexOf('(');
+                                   if (bracketIndex !== -1) {
+                                       const part1 = fullTitle.substring(0, bracketIndex).trim();
+                                       const part2 = fullTitle.substring(bracketIndex + 1, fullTitle.length - 1).trim();
+                                       
+                                       // Detect which part contains Tamil characters
+                                       const isPart1Tamil = /[\u0B80-\u0BFF]/.test(part1);
+                                       const isPart2Tamil = /[\u0B80-\u0BFF]/.test(part2);
+                                       
+                                       let tamStr = '';
+                                       let engStr = '';
+                                       
+                                       if (isPart1Tamil && !isPart2Tamil) {
                                             tamStr = part1;
                                             engStr = part2;
-                                        } else if (isPart2Tamil && !isPart1Tamil) {
+                                       } else if (isPart2Tamil && !isPart1Tamil) {
                                             tamStr = part2;
                                             engStr = part1;
-                                        } else {
+                                       } else {
                                             // Fallback default assumption: First part is English, second is Tamil
                                             engStr = part1;
                                             tamStr = part2;
-                                        }
+                                       }
 
-                                        if (language === 'ta') {
+                                       if (language === 'ta') {
                                             mainPart = tamStr || engStr; // Use Tamil if available, else fallback to whatever is there
                                             bracketPart = tamStr && engStr ? `(${engStr})` : null;
-                                        } else {
+                                       } else {
                                             mainPart = engStr || tamStr; // Use English if available
                                             bracketPart = engStr && tamStr ? `(${tamStr})` : null;
-                                        }
-                                    }
+                                       }
+                                   }
 
-                                    return (
-                                        <>
+                                   return (
+                                       <>
                                             <span className={`text-[11px] md:text-xs lg:text-sm truncate w-full ${isSelected ? 'font-bold' : 'font-semibold'}`}>{mainPart}</span>
                                             {bracketPart && (
                                                 <span className={`text-[9px] md:text-[10px] lg:text-[11px] truncate w-full opacity-80 ${isSelected ? 'font-semibold' : 'font-medium'}`}>{bracketPart}</span>
                                             )}
-                                        </>
-                                    );
-                                })()}
+                                       </>
+                                   );
+                               })()}
                             </div>
                         </div>
                     );

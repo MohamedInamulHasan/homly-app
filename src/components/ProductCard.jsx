@@ -52,7 +52,15 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
     return (
         <div className={`relative flex flex-col h-full bg-white dark:bg-gray-800 rounded-3xl overflow-hidden group transition-all duration-300 ${!isOpen || !isAvailable ? 'opacity-80' : ''}`}>
             
-            <Link to={product.isGroup ? `/product-group/${encodeURIComponent(product.title)}` : `/product/${productId}`} className="flex-1">
+            <Link 
+                to={(!isOpen || !isAvailable) ? '#' : (product.isGroup ? `/product-group/${encodeURIComponent(product.title)}` : `/product/${productId}`)} 
+                className={`flex-1 ${(!isOpen || !isAvailable) ? 'cursor-default' : ''}`}
+                onClick={(e) => {
+                    if (!isOpen || !isAvailable) {
+                        e.preventDefault();
+                    }
+                }}
+            >
                 {/* Badges Section */}
                 <div className="absolute top-3 left-3 z-[15] pointer-events-none flex flex-col gap-1.5 items-start">
                     {product.isGold && (
@@ -115,7 +123,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                 </div>
 
                 {/* Content Section */}
-                <div className="p-3 bg-white dark:bg-gray-800 flex flex-col flex-1 border-t border-gray-100 dark:border-gray-700">
+                <div className="px-3.5 pb-4 pt-1 flex flex-col items-start flex-1 min-w-0 transition-opacity duration-300">
                     <div className="flex-1 min-h-[42px] mb-1 w-full flex flex-col justify-center transition-opacity duration-300">
                         {(() => {
                             const fullTitle = t(featuredVariant, 'title');

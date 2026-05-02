@@ -26,7 +26,7 @@ const ProductSkeleton = ({ fastMode }) => (
 const StoreProducts = () => {
     const { id } = useParams();
     const { products, stores, categories, loading, fastMode, toggleFastMode, globalSortOrder, setGlobalSortOrder } = useData();
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const [selectedSubcategory, setSelectedSubcategory] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const storeId = id;
@@ -447,7 +447,23 @@ const StoreProducts = () => {
                                     : 'text-gray-400 hover:text-black dark:hover:text-white'
                                 }`}
                             >
-                                {t(name)}
+                                {(() => {
+                                    const fullTitle = t(name);
+                                    if (language !== 'ta') return fullTitle;
+                                    
+                                    const bracketIndex = fullTitle.indexOf('(');
+                                    if (bracketIndex === -1) return fullTitle;
+
+                                    const part1 = fullTitle.substring(0, bracketIndex).trim();
+                                    const part2 = fullTitle.substring(bracketIndex + 1, fullTitle.length - 1).trim();
+                                    
+                                    const isPart1Tamil = /[\u0B80-\u0BFF]/.test(part1);
+                                    const isPart2Tamil = /[\u0B80-\u0BFF]/.test(part2);
+                                    
+                                    if (isPart1Tamil && !isPart2Tamil) return `${part1} (${part2})`;
+                                    if (isPart2Tamil && !isPart1Tamil) return `${part2} (${part1})`;
+                                    return fullTitle;
+                                })()}
                                 {selectedSubcategory === name && (
                                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-black dark:bg-white rounded-full"></div>
                                 )}
@@ -496,7 +512,23 @@ const StoreProducts = () => {
                                     <div className="flex justify-between items-center mb-6 bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm -mx-4 px-4 py-2.5 border-y border-gray-200 dark:border-gray-700/50">
                                         <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
                                             <div className="w-1.5 h-6 bg-[#2E5A2E] dark:bg-[#8bc910] rounded-full"></div>
-                                            {t(groupName)}
+                                            {(() => {
+                                                const fullTitle = t(groupName);
+                                                if (language !== 'ta') return fullTitle;
+                                                
+                                                const bracketIndex = fullTitle.indexOf('(');
+                                                if (bracketIndex === -1) return fullTitle;
+
+                                                const part1 = fullTitle.substring(0, bracketIndex).trim();
+                                                const part2 = fullTitle.substring(bracketIndex + 1, fullTitle.length - 1).trim();
+                                                
+                                                const isPart1Tamil = /[\u0B80-\u0BFF]/.test(part1);
+                                                const isPart2Tamil = /[\u0B80-\u0BFF]/.test(part2);
+                                                
+                                                if (isPart1Tamil && !isPart2Tamil) return `${part1} (${part2})`;
+                                                if (isPart2Tamil && !isPart1Tamil) return `${part2} (${part1})`;
+                                                return fullTitle;
+                                            })()}
                                         </h2>
                                     </div>
                                 )}

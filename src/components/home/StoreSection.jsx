@@ -7,10 +7,20 @@ import { useData } from '../../context/DataContext';
 import ProductCard from '../ProductCard';
 import { useState, useEffect, useMemo } from 'react';
 
-const StoreSection = ({ section, products = [], singleStore = false }) => {
+const StoreSection = ({ section, products: rawProducts = [], singleStore = false, selectedCategory = 'All' }) => {
     const { t } = useLanguage();
     const { stores: contextStores, globalSortOrder } = useData();
     const [cycleIndex, setCycleIndex] = useState(0);
+
+    // Helper to normalize strings for robust comparison
+    const normalize = (str) => String(str || '').toLowerCase().replace(/\s+/g, ' ').trim();
+
+    // 0. Filter products at the source if a category is selected
+    const products = useMemo(() => {
+        if (!selectedCategory || selectedCategory === 'All') return rawProducts;
+        const normalizedSelected = normalize(selectedCategory);
+        return rawProducts.filter(p => normalize(p.category) === normalizedSelected);
+    }, [rawProducts, selectedCategory]);
 
     // 1. Group products by their category/subcategory
     const productsByCategory = useMemo(() => {
@@ -130,7 +140,7 @@ const StoreSection = ({ section, products = [], singleStore = false }) => {
                                 <ProductCard 
                                     product={product} 
                                     showCartControls={true} 
-                                />
+                                 />
                             </div>
                         ))}
                     </div>

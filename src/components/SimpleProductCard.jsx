@@ -35,7 +35,6 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
     const handleClick = (e) => {
         if (!isStoreOpenCheck) {
             e.preventDefault();
-            alert(t('This store is currently closed.'));
         }
     };
 
@@ -126,8 +125,13 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
     if (product.isGroup) {
         return (
             <Link
-                to={`/product-group/${encodeURIComponent(product.title)}?${isFastPurchase ? 'fast=true&' : ''}${product.storeId ? `storeId=${product.storeId._id || product.storeId}` : ''}`}
-                className={`rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 ${(product.anyStoreOpen && isStoreOpenCheck) ? 'hover:scale-[1.01]' : 'opacity-75 grayscale-[0.5]'}`}
+                to={(!product.anyStoreOpen || !isStoreOpenCheck) ? '#' : `/product-group/${encodeURIComponent(product.title)}?${isFastPurchase ? 'fast=true&' : ''}${product.storeId ? `storeId=${product.storeId._id || product.storeId}` : ''}`}
+                className={`rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 ${(product.anyStoreOpen && isStoreOpenCheck) ? 'hover:scale-[1.01]' : 'opacity-75 grayscale-[0.5] cursor-default'}`}
+                onClick={(e) => {
+                    if (!product.anyStoreOpen || !isStoreOpenCheck) {
+                        e.preventDefault();
+                    }
+                }}
             >
             <div className={`relative pb-[100%] m-1 rounded-2xl overflow-hidden bg-[#F9FAFB]`}>
                     
@@ -267,14 +271,13 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
         <Link
             to={(isStoreOpenCheck && isAvailable) ? `/product/${productId}` : '#'}
             onClick={(e) => {
-                if (!isAvailable) {
+                if (!isAvailable || !isStoreOpenCheck) {
                     e.preventDefault();
-                    // Optional: Alert or just do nothing
                     return;
                 }
                 handleClick(e);
             }}
-            className={`rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 ${isStoreOpenCheck && isAvailable ? 'hover:scale-[1.01]' : 'opacity-75 grayscale-[0.5] cursor-not-allowed'
+            className={`rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 ${isStoreOpenCheck && isAvailable ? 'hover:scale-[1.01]' : 'opacity-75 grayscale-[0.5] cursor-default'
                 }`}
         >
             <div className={`relative pb-[100%] m-1 rounded-2xl overflow-hidden bg-[#F9FAFB]`}>

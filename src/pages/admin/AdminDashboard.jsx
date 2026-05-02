@@ -421,6 +421,15 @@ const AdminDashboard = () => {
                             onClick={setActiveTab}
                         />
                     )}
+                    {isAdmin && (
+                        <SidebarItem
+                            icon={<Package size={20} />}
+                            label={t('Products')}
+                            id="products"
+                            active={activeTab === 'products'}
+                            onClick={setActiveTab}
+                        />
+                    )}
                     <SidebarItem
                         icon={<ShoppingBag size={20} />}
                         label={t('Orders')}

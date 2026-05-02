@@ -12,7 +12,7 @@ import CancelOrderModal from '../components/CancelOrderModal';
 const OrderDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const { orders, loading, stores, cancelOrder, setIsFooterHidden } = useData();
     const { user, refreshUser } = useAuth();
     const [cancelConfirmation, setCancelConfirmation] = useState(false);
@@ -278,7 +278,23 @@ const OrderDetails = () => {
                                 </div>
                                 <div className="flex-1 min-w-0 flex flex-col justify-center">
                                     <h4 className={`font-medium text-gray-900 dark:text-white text-sm ${item.isFromAd ? '' : 'truncate'} mb-0.5`} title={item.adTitle || item.name}>
-                                        {item.adTitle || item.name}
+                                        {(() => {
+                                            const fullTitle = t(item, 'name') || t(item, 'title') || item.adTitle || item.name || item.title;
+                                            if (language !== 'ta') return fullTitle;
+                                            
+                                            const bracketIndex = fullTitle.indexOf('(');
+                                            if (bracketIndex === -1) return fullTitle;
+
+                                            const part1 = fullTitle.substring(0, bracketIndex).trim();
+                                            const part2 = fullTitle.substring(bracketIndex + 1, fullTitle.length - 1).trim();
+                                            
+                                            const isPart1Tamil = /[\u0B80-\u0BFF]/.test(part1);
+                                            const isPart2Tamil = /[\u0B80-\u0BFF]/.test(part2);
+                                            
+                                            if (isPart1Tamil && !isPart2Tamil) return `${part1} (${part2})`;
+                                            if (isPart2Tamil && !isPart1Tamil) return `${part2} (${part1})`;
+                                            return fullTitle;
+                                        })()}
                                     </h4>
 
                                     {(item.storeId || item.storeName) && (
