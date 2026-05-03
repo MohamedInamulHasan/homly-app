@@ -282,6 +282,8 @@ export const LanguageProvider = ({ children }) => {
         'Slow Connection': { en: 'Slow Connection', ta: 'மெதுவான இணைப்பு' },
         'Please check your network settings.': { en: 'Please check your network settings.', ta: 'உங்கள் பிணைய அமைப்புகளைச் சரிபார்க்கவும்.' },
         'Your connection is slow. Features may be limited.': { en: 'Your connection is slow. Features may be limited.', ta: 'உங்கள் இணைப்பு மெதுவாக உள்ளது. சில அம்சங்கள் குறைவாக இருக்கலாம்.' },
+        'Please check your internet connection': { en: 'Please check your internet connection', ta: 'தயவுசெய்து உங்கள் இணைய இணைப்பைச் சரிபார்க்கவும்' },
+        'Passwords do not match': { en: 'Passwords do not match', ta: 'கடவுச்சொற்கள் பொருந்தவில்லை' },
     };
 
     const t = (key, field = null) => {

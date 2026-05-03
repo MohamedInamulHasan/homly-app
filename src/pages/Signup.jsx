@@ -1,6 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { User, Mail, Lock, ArrowRight, Loader, Eye, EyeOff } from 'lucide-react';
 
 const Signup = () => {
@@ -13,6 +14,7 @@ const Signup = () => {
     const [message, setMessage] = useState(null);
 
     const { register, error, user } = useContext(AuthContext);
+    const { t } = useLanguage();
     const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -80,7 +82,7 @@ const Signup = () => {
                             </div>
                             <div className="ml-3">
                                 <p className="text-sm text-red-700 dark:text-red-200">
-                                    {message || error}
+                                    {message ? t(message) : t(error)}
                                 </p>
                             </div>
                         </div>

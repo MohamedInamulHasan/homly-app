@@ -54,11 +54,17 @@ api.interceptors.response.use(
         return response.data;
     },
     (error) => {
-        const message = error.response?.data?.message || error.message || 'An error occurred';
+        let message = error.response?.data?.message || error.message || 'An error occurred';
+        
+        // Handle timeout and network errors specifically
+        if (error.code === 'ECONNABORTED' || message.includes('timeout') || message.includes('Network Error')) {
+            message = 'Please check your internet connection';
+        }
 
         // Enhanced error logging for debugging
         console.error('API Error Details:', {
             message,
+            code: error.code,
             status: error.response?.status,
             statusText: error.response?.statusText,
             url: error.config?.url,
