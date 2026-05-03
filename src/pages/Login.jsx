@@ -92,12 +92,12 @@ const Login = () => {
                 <form className="mt-8 space-y-6" onSubmit={submitHandler}>
                     <div className="space-y-5">
                         <div className="group">
-                            <label htmlFor="email-address" shaking className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 transition-colors group-focus-within:text-[#2E5A2E] dark:group-focus-within:text-green-400">
+                            <label htmlFor="email-address" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                                 Email address
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Mail className="h-5 w-5 text-gray-400 group-focus-within:text-[#2E5A2E] transition-colors" />
+                                    <Mail className="h-5 w-5 text-gray-400" />
                                 </div>
                                 <input
                                     id="email-address"
@@ -105,7 +105,7 @@ const Login = () => {
                                     type="email"
                                     autoComplete="email"
                                     required
-                                    className="appearance-none relative block w-full pl-11 pr-4 py-3.5 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-[#2E5A2E]/10 focus:border-[#2E5A2E] focus:z-10 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 transition-all duration-200"
+                                    className="appearance-none relative block w-full pl-11 pr-4 py-3.5 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:border-[#2E5A2E] focus:ring-0 shadow-none focus:z-10 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 [ -webkit-tap-highlight-color:transparent]"
                                     placeholder="you@example.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -113,12 +113,12 @@ const Login = () => {
                             </div>
                         </div>
                         <div className="group">
-                            <label htmlFor="password" shaking className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 transition-colors group-focus-within:text-[#2E5A2E] dark:group-focus-within:text-green-400">
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                                 Password
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-[#2E5A2E] transition-colors" />
+                                    <Lock className="h-5 w-5 text-gray-400" />
                                 </div>
                                 <input
                                     id="password"
@@ -126,7 +126,7 @@ const Login = () => {
                                     type={showPassword ? "text" : "password"}
                                     autoComplete="current-password"
                                     required
-                                    className="appearance-none relative block w-full pl-11 pr-12 py-3.5 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:ring-4 focus:ring-[#2E5A2E]/10 focus:border-[#2E5A2E] focus:z-10 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 transition-all duration-200"
+                                    className="appearance-none relative block w-full pl-11 pr-12 py-3.5 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:border-[#2E5A2E] focus:ring-0 shadow-none focus:z-10 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 [ -webkit-tap-highlight-color:transparent]"
                                     placeholder="••••••••"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
