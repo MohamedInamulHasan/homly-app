@@ -310,7 +310,7 @@ const Checkout = () => {
                                 <div className="w-9 h-9 rounded-xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-[#2E5A2E]">
                                     <MapPin size={18} />
                                 </div>
-                                <h2 className="text-[17px] font-bold text-gray-900 dark:text-white">{t('Shipping Details')}</h2>
+                                <h2 className="text-[17px] font-bold text-gray-900 dark:text-white">{t('Shipping details')}</h2>
                             </div>
 
                             {!isInitialized || authLoading ? (
@@ -455,7 +455,7 @@ const Checkout = () => {
                                 <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#2E5A2E] dark:text-[#8bc910]">
                                     <Package size={18} />
                                 </div>
-                                <h3 className="font-medium text-gray-900 dark:text-white text-base">{t('Order Summary')}</h3>
+                                <h3 className="font-medium text-gray-900 dark:text-white text-base">{t('Total Summary')}</h3>
                             </div>
 
                             <div className="p-4 sm:p-6">
@@ -578,7 +578,7 @@ const Checkout = () => {
                     <div className="lg:col-span-1">
                         <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 border border-gray-100 dark:border-gray-700 relative overflow-hidden">
                             <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-[17px] font-bold text-gray-900 dark:text-white">{t('Summary')}</h2>
+                                <h2 className="text-[17px] font-bold text-gray-900 dark:text-white">{t('Total Summary')}</h2>
                                 <span className="text-[13px] font-medium text-gray-400 tracking-tight">{displayItems.length} {t('items')}</span>
                             </div>
 

@@ -237,7 +237,7 @@ const OrderConfirmation = () => {
                         <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#2E5A2E] dark:text-[#8bc910]">
                             <Package size={18} />
                         </div>
-                        <h3 className="font-medium text-gray-900 dark:text-white text-base">{t('Order Summary')}</h3>
+                        <h3 className="font-medium text-gray-900 dark:text-white text-base">{t('Total Summary')}</h3>
                     </div>
 
                     <div className="p-4 sm:p-6">
@@ -315,7 +315,7 @@ const OrderConfirmation = () => {
                         <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#2E5A2E] dark:text-[#8bc910]">
                             <MapPin size={18} />
                         </div>
-                        <h3 className="font-medium text-gray-900 dark:text-white text-base">{t('Shipping Details')}</h3>
+                        <h3 className="font-medium text-gray-900 dark:text-white text-base">{t('Shipping details')}</h3>
                     </div>
                     <div className="p-6">
                         <div className="space-y-2">

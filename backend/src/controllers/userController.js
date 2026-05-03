@@ -45,6 +45,7 @@ const sendTokenResponse = (user, statusCode, res) => {
                 storeId: user.storeId,
                 serviceId: user.serviceId,
                 coins: user.coins || 0,
+                avatar: user.avatar || '',
                 isFastMode: user.isFastMode || false
             }
         });
@@ -249,6 +250,7 @@ export const getUserProfile = async (req, res, next) => {
                     storeId: user.storeId,
                     serviceId: user.serviceId,
                     coins: user.coins || 0,
+                    avatar: user.avatar || '',
                     deliverySettings: user.deliverySettings
                 }
             });
@@ -273,6 +275,7 @@ export const updateUserProfile = async (req, res, next) => {
             user.email = req.body.email || user.email;
             user.mobile = req.body.mobile || user.mobile;
             user.address = req.body.address || user.address;
+            user.avatar = req.body.avatar || user.avatar;
 
             user.address = req.body.address || user.address;
 

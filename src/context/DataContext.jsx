@@ -63,7 +63,8 @@ export const DataProvider = ({ children }) => {
     const [settings, setSettings] = useState({
         deliveryTimes: [],
         deliveryTimingType: 'permanent', // Default to permanent as requested
-        maintenanceMode: false // Default false
+        maintenanceMode: false, // Default false
+        maintenanceMessage: '' // Custom message for maintenance
     });
 
     // Global Fast Purchase Mode State (User-Specific)
@@ -395,7 +396,7 @@ export const DataProvider = ({ children }) => {
             // Start interval loop
             const intervalId = setInterval(() => {
                 backgroundRefresh();
-            }, 60000); // Poll every 60 seconds (reduced from 2s)
+            }, 10000); // Poll every 10 seconds for faster settings updates
 
             // Cleanup
             return () => clearInterval(intervalId);
@@ -910,6 +911,7 @@ export const DataProvider = ({ children }) => {
                         if (setting.key === 'delivery_times') settingsMap.deliveryTimes = setting.value;
                         if (setting.key === 'delivery_timing_type') settingsMap.deliveryTimingType = setting.value;
                         if (setting.key === 'maintenance_mode') settingsMap.maintenanceMode = setting.value;
+                        if (setting.key === 'maintenance_message') settingsMap.maintenanceMessage = setting.value;
                     });
                 }
 
@@ -958,6 +960,20 @@ export const DataProvider = ({ children }) => {
             return false;
         } catch (err) {
             console.error('Failed to update delivery timing type:', err);
+            throw err;
+        }
+    };
+
+    const updateMaintenanceMessage = async (message) => {
+        try {
+            const response = await apiService.settings.update('maintenance_message', message);
+            if (response.success && response.data) {
+                setSettings(prev => ({ ...prev, maintenanceMessage: response.data.value }));
+                return true;
+            }
+            return false;
+        } catch (err) {
+            console.error('Failed to update maintenance message:', err);
             throw err;
         }
     };
@@ -1016,6 +1032,7 @@ export const DataProvider = ({ children }) => {
         updateDeliverySettings, // Export update function
         updateDeliveryTimingType,
         updateMaintenanceMode,
+        updateMaintenanceMessage,
         fetchSettings, // Export fetch function for refresh
         fastMode,
         toggleFastMode,

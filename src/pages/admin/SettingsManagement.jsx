@@ -5,7 +5,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { formatDeliveryRange } from '../../utils/storeHelpers';
 
 const SettingsManagement = () => {
-    const { settings, updateDeliverySettings, updateMaintenanceMode, updateDeliveryTimingType } = useData();
+    const { settings, updateDeliverySettings, updateMaintenanceMode, updateDeliveryTimingType, updateMaintenanceMessage } = useData();
     const { t } = useLanguage();
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
@@ -29,12 +29,13 @@ const SettingsManagement = () => {
 
     const allSlots = generateAllSlots();
 
-    // Initialize state from context
+    // Initialize state from context - only once to prevent overwriting local edits
     const [allowedSlots, setAllowedSlots] = useState([]);
     const [deliveryTimingMode, setDeliveryTimingMode] = useState('permanent');
+    const [hasInitialized, setHasInitialized] = useState(false);
 
     useEffect(() => {
-        if (settings) {
+        if (settings && !hasInitialized) {
             if (settings.deliveryTimes) {
                 setAllowedSlots(settings.deliveryTimes);
             }
@@ -44,11 +45,23 @@ const SettingsManagement = () => {
             if (settings.maintenanceMode !== undefined) {
                 setMaintenanceMode(settings.maintenanceMode);
             }
+            if (settings.maintenanceMessage !== undefined) {
+                setMaintenanceMessage(settings.maintenanceMessage);
+            }
+            setHasInitialized(true);
         }
-    }, [settings]);
+    }, [settings, hasInitialized]);
+
+    // Handle external toggle changes (e.g., from the switch) without overwriting the message
+    useEffect(() => {
+        if (settings && settings.maintenanceMode !== undefined) {
+            setMaintenanceMode(settings.maintenanceMode);
+        }
+    }, [settings?.maintenanceMode]);
 
     // Maintenance Mode State
     const [maintenanceMode, setMaintenanceMode] = useState(false);
+    const [maintenanceMessage, setMaintenanceMessage] = useState('');
 
     const toggleMaintenanceMode = async () => {
         setLoading(true);
@@ -101,7 +114,8 @@ const SettingsManagement = () => {
         try {
             await Promise.all([
                 updateDeliverySettings(allowedSlots),
-                updateDeliveryTimingType(deliveryTimingMode)
+                updateDeliveryTimingType(deliveryTimingMode),
+                updateMaintenanceMessage(maintenanceMessage)
             ]);
             setMessage({ type: 'success', text: t('Settings saved successfully!') });
         } catch (error) {
@@ -174,6 +188,47 @@ const SettingsManagement = () => {
                             `}
                         />
                     </button>
+                </div>
+
+                {/* Maintenance Message Input */}
+                <div className="px-6 pb-6 border-t border-gray-100 dark:border-gray-700/50">
+                    <div className="mt-4">
+                        <div className="flex items-center justify-between mb-2">
+                            <label htmlFor="maintenanceMessage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {t('Maintenance Message (Shown to users)')}
+                            </label>
+                            <button
+                                onClick={async () => {
+                                    setLoading(true);
+                                    try {
+                                        await updateMaintenanceMessage(maintenanceMessage);
+                                        setMessage({ type: 'success', text: t('Message updated successfully!') });
+                                    } catch (err) {
+                                        setMessage({ type: 'error', text: t('Failed to update message.') });
+                                    } finally {
+                                        setLoading(false);
+                                        setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+                                    }
+                                }}
+                                disabled={loading}
+                                className="px-3 py-1 bg-[#2E5A2E] text-white text-xs rounded-lg hover:bg-[#1a3d1a] transition-colors flex items-center gap-1 disabled:opacity-50"
+                            >
+                                <Save size={14} />
+                                {t('Save Message')}
+                            </button>
+                        </div>
+                        <textarea
+                            id="maintenanceMessage"
+                            rows={3}
+                            value={maintenanceMessage}
+                            onChange={(e) => setMaintenanceMessage(e.target.value)}
+                            placeholder={t('e.g., App opens at 5pm, or System update in progress...')}
+                            className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#2E5A2E] focus:border-transparent transition-all text-gray-900 dark:text-white"
+                        />
+                        <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                            {t('This message will be displayed on the screen when the app is in maintenance mode.')}
+                        </p>
+                    </div>
                 </div>
             </div>
 

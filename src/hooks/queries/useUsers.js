@@ -42,6 +42,16 @@ export const useUpdateUser = () => {
     });
 };
 
+export const useUpdateProfile = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data) => apiService.updateProfile(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries(userKeys.profile());
+        }
+    });
+};
+
 export const useDeleteUser = () => {
     const queryClient = useQueryClient();
     return useMutation({

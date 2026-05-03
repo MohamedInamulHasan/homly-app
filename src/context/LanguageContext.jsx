@@ -273,6 +273,11 @@ export const LanguageProvider = ({ children }) => {
         'Shop By Categories': { en: 'Shop By Categories', ta: 'வகைகள்' },
         'See All': { en: 'See All', ta: 'See All' },
         'Show Less': { en: 'Show Less', ta: 'Show Less' },
+        'Add product': { en: 'Add product', ta: 'பொருளைச் சேர்க்கவும்' },
+        'Total Summary': { en: 'Total Summary', ta: 'மொத்த விவரம்' },
+        'Delivery': { en: 'Delivery', ta: 'டெலிவரி' },
+        'Shipping details': { en: 'Shipping details', ta: 'ஷிப்பிங் விவரங்கள்' },
+        'Payment': { en: 'Payment', ta: 'கட்டணம்' },
     };
 
     const t = (key, field = null) => {

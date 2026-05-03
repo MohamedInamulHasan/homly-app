@@ -35,6 +35,8 @@ import { useAuth } from './context/AuthContext';
 import MaintenanceScreen from './components/MaintenanceScreen';
 import useBackButton from './utils/useBackButton';
 import PrivateRoute from './components/PrivateRoute';
+import OfflineScreen from './components/OfflineScreen';
+import { useState } from 'react';
 
 import ScrollToTop from './components/ScrollToTop';
 import { App as CapacitorApp } from '@capacitor/app';
@@ -126,6 +128,20 @@ import PullToRefresh from 'react-simple-pull-to-refresh';
 
 function App() {
     const { initialLoading, refreshData } = useData();
+    const [isOffline, setIsOffline] = useState(!navigator.onLine);
+
+    useEffect(() => {
+        const handleOnline = () => setIsOffline(false);
+        const handleOffline = () => setIsOffline(true);
+
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+
+        return () => {
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+        };
+    }, []);
 
     const handleRefresh = async () => {
         if (refreshData) {
@@ -137,11 +153,15 @@ function App() {
         <AuthProvider>
             <Router>
                 <DeepLinkHandler />
-                {/* Show intro animation during initial load */}
-                {initialLoading && <IntroAnimation />}
+                
+                {/* Show offline screen first if no internet */}
+                {isOffline && <OfflineScreen />}
 
-                {/* Main app content - hidden during intro */}
-                <div style={{ display: initialLoading ? 'none' : 'block' }}>
+                {/* Show intro animation during initial load if online */}
+                {!isOffline && initialLoading && <IntroAnimation />}
+
+                {/* Main app content - hidden during intro or offline */}
+                <div style={{ display: (initialLoading || isOffline) ? 'none' : 'block' }}>
                     <CartProvider>
                         <Layout onRefresh={handleRefresh}>
                             <Routes>

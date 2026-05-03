@@ -246,7 +246,7 @@ const ProductDetails = () => {
                 </div>
 
                 {/* Content Section (Pull-up on mobile, Right on desktop) */}
-                <div className="flex-1 bg-white dark:bg-transparent rounded-t-[2.5rem] lg:rounded-none -mt-12 lg:mt-0 relative z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] lg:shadow-none px-8 pt-10 pb-8 lg:p-12 lg:flex lg:flex-col lg:justify-center">
+                <div className="flex-1 bg-white dark:bg-[#1a1f26] rounded-t-[2.5rem] lg:rounded-none -mt-12 lg:mt-0 relative z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.4)] lg:shadow-none px-8 pt-10 pb-8 lg:p-12 lg:flex lg:flex-col lg:justify-center border-t border-transparent dark:border-white/5">
                     <div className="max-w-2xl mx-auto w-full">
                     {/* Header: Title Only (Ratings Removed) */}
                     <div className="mb-2">
