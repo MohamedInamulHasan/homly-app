@@ -113,7 +113,7 @@ const ProductDetails = () => {
             const shareTitle = t(product, 'title') || product.title;
             const sharePrice = Number(product.price).toFixed(0);
             const shareUrl = window.location.href;
-            const shareText = `${t('Checkout this')} ${shareTitle} ${t('for only')} ₹${sharePrice} ${t('on')} ILY mart!`;
+            const shareText = `${t('Checkout this')} ${shareTitle} ${t('for only')} ₹${sharePrice} ${t('on')} Homly!`;
 
             if (navigator.share) {
                 await navigator.share({

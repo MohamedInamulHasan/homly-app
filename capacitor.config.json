@@ -1,6 +1,6 @@
 {
   "appId": "com.homly.app",
-  "appName": "ILY mart",
+  "appName": "Homly",
   "webDir": "dist",
   "server": {
     "url": "https://antigravity-homly-app.vercel.app",

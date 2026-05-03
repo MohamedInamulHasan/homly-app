@@ -20,7 +20,7 @@ export const sendCustomerOrderConfirmationEmail = async (order) => {
         const customerLocation = shippingAddr.location || '';
 
         const mailOptions = {
-            from: `"ILY mart" <${process.env.EMAIL_USER}>`,
+            from: `"Homly" <${process.env.EMAIL_USER}>`,
             to: customerEmail,
             subject: `Order Confirmed #${order._id.toString().slice(-8).toUpperCase()}`,
             html: `
@@ -70,7 +70,7 @@ export const sendCustomerOrderConfirmationEmail = async (order) => {
                     </div>
                     
                     <div style="text-align: center; margin-top: 20px; color: #9ca3af; font-size: 12px;">
-                        <p>© ${new Date().getFullYear()} ILY mart. All rights reserved.</p>
+                        <p>© ${new Date().getFullYear()} Homly. All rights reserved.</p>
                     </div>
                 </div>
             `

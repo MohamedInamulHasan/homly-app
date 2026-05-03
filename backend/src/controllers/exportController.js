@@ -10,8 +10,8 @@ import ServiceRequest from '../models/ServiceRequest.js';
 export const exportData = async (req, res, next) => {
     try {
         const workbook = new ExcelJS.Workbook();
-        workbook.creator = 'ILY mart Admin';
-        workbook.lastModifiedBy = 'ILY mart Admin';
+        workbook.creator = 'Homly Admin';
+        workbook.lastModifiedBy = 'Homly Admin';
         workbook.created = new Date();
         workbook.modified = new Date();
 

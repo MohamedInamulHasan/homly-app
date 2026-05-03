@@ -36,7 +36,7 @@ ${customerAddress}
 ${order.items.map(item => `- ${item.quantity}x ${item.name || item.product?.title || 'Item'}`).join('\n')}
 
 ------------------------
-_ILY mart Order Alert_
+_Homly Order Alert_
 `.trim();
 
         // CallMeBot API URL

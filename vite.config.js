@@ -11,8 +11,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
       manifest: {
-        name: 'ILY mart - E-Commerce App',
-        short_name: 'ILY mart',
+        name: 'Homly - E-Commerce App',
+        short_name: 'Homly',
         description: 'Your one-stop shop for all your needs. Browse products, manage orders, and shop with ease.',
         theme_color: '#2E5A2E',
         background_color: '#ffffff',
