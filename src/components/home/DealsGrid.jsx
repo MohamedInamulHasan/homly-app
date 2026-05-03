@@ -86,7 +86,7 @@ const DealsGrid = ({ products = [], isLoading = false }) => {
                                     {t(product, 'title')}
                                 </h3>
                                 <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium truncate mb-2">
-                                    {product.storeId?.name || product.brand || "Homly Direct"}
+                                    {product.storeId?.name || product.brand || "ILY mart Direct"}
                                 </p>
                             </div>
                         </div>

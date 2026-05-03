@@ -25,9 +25,9 @@ const Navbar = () => {
                         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                         className="flex items-center gap-2 group active:scale-95 transition-transform duration-200"
                     >
-                        <img src="/logo-new.png" alt="Homly Logo" className="w-8 h-8 md:w-9 md:h-9 object-contain bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900 dark:to-green-950 rounded-xl shadow-[0_2px_10px_rgba(124,169,14,0.2)] ring-1 ring-green-300/30 dark:ring-green-700/30 transition-all duration-300" />
+                        <img src="/logo-new.png" alt="Ily Mart Logo" className="w-8 h-8 md:w-9 md:h-9 object-contain bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900 dark:to-green-950 rounded-xl shadow-[0_2px_10px_rgba(124,169,14,0.2)] ring-1 ring-green-300/30 dark:ring-green-700/30 transition-all duration-300" />
                         <span className="text-xl md:text-2xl font-black tracking-tight flex items-center bg-gradient-to-r from-[#2E5A2E] to-[#5A7C0A] bg-clip-text text-transparent dark:from-blue-400 dark:to-blue-600">
-                            Homly
+                            ILY mart
                         </span>
                     </Link>
 
@@ -119,14 +119,12 @@ const Navbar = () => {
                                 </Link>
                             </>
                         )}
-                        {/* {isAdmin && (
-                            <button
-                                onClick={() => setIsOpen(!isOpen)}
-                                className="p-2 text-gray-600 dark:text-gray-300 hover:text-[#2E5A2E] dark:hover:text-[#8bc910] transition-colors"
-                            >
-                                {isOpen ? <X size={24} /> : <LayoutDashboard size={24} />}
-                            </button>
-                        )} */}
+                        <button
+                            onClick={() => setIsOpen(!isOpen)}
+                            className="p-2 text-gray-600 dark:text-gray-300 hover:text-[#2E5A2E] dark:hover:text-[#8bc910] transition-colors"
+                        >
+                            {isOpen ? <X size={24} /> : <Menu size={24} />}
+                        </button>
                     </div>
                 </div>
             </div >

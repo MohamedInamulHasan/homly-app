@@ -18,7 +18,7 @@ const Footer = () => {
                                 <ShoppingBag size={26} strokeWidth={2.5} />
                             </div>
                             <span className="text-[26px] font-black tracking-tight text-white uppercase">
-                                Homly
+                                ILY mart
                             </span>
                         </Link>
                         <p className="text-gray-300 leading-relaxed mb-8 text-[15px] font-medium max-w-sm">
@@ -99,7 +99,7 @@ const Footer = () => {
 
                 <div className="border-t border-white/10 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
                     <div className="text-gray-500 text-sm font-medium flex items-center gap-2">
-                        <span>© {new Date().getFullYear()} Homly.</span>
+                        <span>© {new Date().getFullYear()} ILY mart.</span>
                         <span className="h-1 w-1 bg-gray-600 rounded-full"></span>
                         <span>{t('Experience Better')}</span>
                     </div>

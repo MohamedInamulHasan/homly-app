@@ -88,11 +88,11 @@ ${mapsLink ? `🗺️ <a href="${mapsLink}">View Location on Map</a>` : ''}
 🛒 <b>ORDER ITEMS</b>
 ${order.items.map((item, idx) => `${idx + 1}. ${item.name || item.product?.title || 'Item'} ${item.isFromAd ? '🔥 <b>[OFFER]</b>' : ''}
    Quantity: ${item.quantity}x @ ₹${item.price.toFixed(0)}${item.unit ? ` / ${item.unit}` : ''}
-   Store: ${item.storeId?.name || 'Homly'}
+   Store: ${item.storeId?.name || 'ILY mart'}
    Subtotal: ₹${(item.price * item.quantity).toFixed(0)}`).join('\n\n')}
 
 ━━━━━━━━━━━━━━━━━━━━
-<i>Homly Order Management System</i>
+<i>ILY mart Order Management System</i>
 `.trim();
 
         // Telegram API URL
@@ -227,7 +227,7 @@ ${effectiveLocation && effectiveLocation !== requestLocation ? `\n(GPS/Link: ${e
 ${mapsLink ? `🗺️ <a href="${mapsLink}">View on Map</a>` : ''}
 
 ------------------------
-<i>Homly Service Request Alert</i>
+<i>ILY mart Service Request Alert</i>
 `.trim();
 
         const url = `https://api.telegram.org/bot${token}/sendMessage`;

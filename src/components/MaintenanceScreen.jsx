@@ -62,7 +62,7 @@ const MaintenanceScreen = () => {
                 </div>
 
                 <p className="mt-10 text-sm text-gray-400 dark:text-gray-500 font-medium italic">
-                    &copy; {new Date().getFullYear()} Homly. App is currently in safe mode.
+                    &copy; {new Date().getFullYear()} ILY mart. App is currently in safe mode.
                 </p>
             </div>
 

@@ -111,7 +111,7 @@ const Cart = () => {
                                                 })()}
                                             </h3>
                                             <p className="text-[12px] text-gray-400 dark:text-gray-500 mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
-                                                {getStoreName(item.storeId, stores) || "Homly Direct"}
+                                                {getStoreName(item.storeId, stores) || "ILY mart Direct"}
                                             </p>
                                        </div>
                                        <button onClick={() => removeFromCart(item.id)} className="text-gray-400 hover:text-red-500 mt-1 transition-colors">

@@ -176,7 +176,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                         })()}
                     </div>
                     <p className="text-[11px] text-gray-400 dark:text-gray-500 font-medium truncate mb-2 w-full">
-                       {getStoreName(product.storeId, stores) || "Homly Direct"}
+                       {getStoreName(product.storeId, stores) || "ILY mart Direct"}
                     </p>
                     
                     <div className="flex items-center justify-between mt-2 w-full">
