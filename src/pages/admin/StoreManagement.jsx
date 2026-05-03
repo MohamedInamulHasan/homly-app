@@ -399,8 +399,8 @@ const StoreManagement = () => {
     const handleProductSubmit = async (e) => {
         e.preventDefault();
 
-        if (!selectedStore) {
-            alert(t('No store selected. Please go back and select a store.'));
+        if (!selectedStore && !isStoreAdmin) {
+            alert(t('No store selected. Please select a store or choose "None".'));
             return;
         }
 
@@ -414,7 +414,7 @@ const StoreManagement = () => {
             category: productForm.category,
             subcategory: productForm.subcategory,
             price: parseFloat(productForm.price),
-            storeId: selectedStore._id || selectedStore.id,
+            storeId: (selectedStore?.id === 'none' || !selectedStore) ? null : (selectedStore._id || selectedStore.id),
             image: productForm.image || imagesArray[0],
             images: imagesArray,
             unit: productForm.unit,
@@ -1188,15 +1188,20 @@ const StoreManagement = () => {
                                 <div className="md:col-span-2">
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Select Store')}</label>
                                     <select
-                                        value={selectedStore?._id || selectedStore?.id || ''}
+                                        value={selectedStore?.id === 'none' ? 'none' : (selectedStore?._id || selectedStore?.id || '')}
                                         onChange={(e) => {
-                                            const store = stores.find(s => (s._id || s.id) === e.target.value);
-                                            setSelectedStore(store);
+                                            if (e.target.value === 'none') {
+                                                setSelectedStore({ id: 'none', name: 'None' });
+                                            } else {
+                                                const store = stores.find(s => (s._id || s.id) === e.target.value);
+                                                setSelectedStore(store);
+                                            }
                                         }}
                                         className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none"
                                         required
                                     >
                                         <option value="">{t('Select Store')}</option>
+                                        <option value="none">{t('None (Move to General Products)')}</option>
                                         {stores.map((s) => (
                                             <option key={s._id || s.id} value={s._id || s.id}>
                                                 {s.name}
