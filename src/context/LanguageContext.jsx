@@ -278,6 +278,10 @@ export const LanguageProvider = ({ children }) => {
         'Delivery': { en: 'Delivery', ta: 'டெலிவரி' },
         'Shipping details': { en: 'Shipping details', ta: 'ஷிப்பிங் விவரங்கள்' },
         'Payment': { en: 'Payment', ta: 'கட்டணம்' },
+        'No Internet Connection': { en: 'No Internet Connection', ta: 'இணைய இணைப்பு இல்லை' },
+        'Slow Connection': { en: 'Slow Connection', ta: 'மெதுவான இணைப்பு' },
+        'Please check your network settings.': { en: 'Please check your network settings.', ta: 'உங்கள் பிணைய அமைப்புகளைச் சரிபார்க்கவும்.' },
+        'Your connection is slow. Features may be limited.': { en: 'Your connection is slow. Features may be limited.', ta: 'உங்கள் இணைப்பு மெதுவாக உள்ளது. சில அம்சங்கள் குறைவாக இருக்கலாம்.' },
     };
 
     const t = (key, field = null) => {

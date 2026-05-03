@@ -36,6 +36,7 @@ import MaintenanceScreen from './components/MaintenanceScreen';
 import useBackButton from './utils/useBackButton';
 import PrivateRoute from './components/PrivateRoute';
 import OfflineScreen from './components/OfflineScreen';
+import ConnectionStatus from './components/ConnectionStatus';
 import { useState } from 'react';
 
 import ScrollToTop from './components/ScrollToTop';
@@ -153,6 +154,7 @@ function App() {
         <AuthProvider>
             <Router>
                 <DeepLinkHandler />
+                <ConnectionStatus />
                 
                 {/* Show offline screen first if no internet */}
                 {isOffline && <OfflineScreen />}
