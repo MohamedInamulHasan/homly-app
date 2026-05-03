@@ -81,7 +81,9 @@ export const uploadImage = async (req, res) => {
 
         const result = await cloudinary.uploader.upload(dataURI, {
             folder: 'homly_products',
-            resource_type: 'auto'
+            resource_type: 'auto',
+            quality: 'auto',
+            fetch_format: 'auto'
         });
 
         console.log('✅ Image uploaded successfully:', result.secure_url);

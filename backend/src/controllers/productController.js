@@ -84,11 +84,11 @@ export const getProducts = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            count: products.length,
+            count: processedProducts.length,
             total,
             page: pageNum,
             pages: Math.ceil(total / limitNum),
-            data: products
+            data: processedProducts
         });
     } catch (error) {
         next(error);
@@ -233,8 +233,15 @@ export const getProductImage = async (req, res, next) => {
             });
             res.end(buffer);
         } else {
-            // It's a URL (Cloudinary or placeholder) - redirect to it
-            res.redirect(product.image);
+            // It's a URL (Cloudinary or placeholder)
+            // Add Cloudinary optimization params if it's a cloudinary URL
+            let imageUrl = imageToServe;
+            if (imageUrl.includes('cloudinary.com')) {
+                // Insert q_auto,f_auto into the URL for optimization
+                // Typically after /upload/
+                imageUrl = imageUrl.replace('/upload/', '/upload/q_auto,f_auto/');
+            }
+            res.redirect(imageUrl);
         }
     } catch (error) {
         next(error);

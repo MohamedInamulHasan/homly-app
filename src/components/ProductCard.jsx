@@ -114,7 +114,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                     )}
                     <img
                         key={featuredVariant.image || currentVariantIndex} // Force new element per variant for animation
-                        src={featuredVariant.image || `${API_BASE_URL}/products/${featuredVariant._id || featuredVariant.id}/image`}
+                        src={featuredVariant.image || `${API_BASE_URL}/products/${productId}/image`}
                         alt={t(featuredVariant, 'title')}
                         className={`w-full h-full object-cover transition-all duration-700 animate-in fade-in zoom-in-95 ${isAvailable && isOpen ? 'group-hover:scale-110' : ''}`}
                         loading="lazy"

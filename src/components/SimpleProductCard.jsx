@@ -145,7 +145,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                     </div>
                     <img
                         key={featuredVariant.image || currentVariantIndex}
-                        src={featuredVariant.image || `${API_BASE_URL}/products/${(featuredVariant._id || featuredVariant.id)?.toString().replace('group-', '')}/image`}
+                        src={featuredVariant.image || `${API_BASE_URL}/products/${productId}/image`}
                         alt={t(featuredVariant, 'title')}
                         loading="lazy"
                         className={`absolute top-0 left-0 w-full h-full object-cover transition-all duration-700 animate-in fade-in zoom-in-95 ${(isStoreOpenCheck && product.anyStoreOpen) ? 'hover:scale-105' : 'grayscale'}`}
