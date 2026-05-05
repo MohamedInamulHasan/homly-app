@@ -122,19 +122,37 @@ const Home = () => {
             }
         });
 
-        // Sort by Store Status
+        // Sort by Type then Status
         return sections.sort((a, b) => {
-            // Keep Free Delivery at the very top
+            // 1. Keep Free Delivery at the very top
             if (a.id === 'free_delivery') return -1;
             if (b.id === 'free_delivery') return 1;
 
-            const aOpen = a.type === 'store' ? isStoreOpen(a.data) : true;
-            const bOpen = b.type === 'store' ? isStoreOpen(b.data) : true;
-            if (aOpen && !bOpen) return -1;
-            if (!aOpen && bOpen) return 1;
+            // 2. Prioritize Category Sections over Store Sections
+            if (a.type === 'category' && b.type === 'store') return -1;
+            if (a.type === 'store' && b.type === 'category') return 1;
+
+            // 3. For Category Sections, sort based on featuredCategories order
+            if (a.type === 'category' && b.type === 'category') {
+                const aIndex = featuredCategories.findIndex(cat => cat.name === a.name);
+                const bIndex = featuredCategories.findIndex(cat => cat.name === b.name);
+                // If found, sort by index. If not found (e.g. "Other"), put at the end.
+                const aPos = aIndex === -1 ? 999 : aIndex;
+                const bPos = bIndex === -1 ? 999 : bIndex;
+                return aPos - bPos;
+            }
+
+            // 4. For Store Sections, sort by Status (Open first)
+            if (a.type === 'store' && b.type === 'store') {
+                const aOpen = isStoreOpen(a.data);
+                const bOpen = isStoreOpen(b.data);
+                if (aOpen && !bOpen) return -1;
+                if (!aOpen && bOpen) return 1;
+            }
+
             return 0;
         });
-    }, [stores, groupedByStore, selectedCategory, freeProducts]);
+    }, [stores, groupedByStore, selectedCategory, freeProducts, featuredCategories]);
 
     const isLoadingAll = loadingProducts || loadingStores || loadingCategories;
 

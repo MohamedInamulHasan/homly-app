@@ -377,11 +377,19 @@ const Shop = () => {
                                     </div>
                                 ) : (
                                     <div className="text-center py-12">
-                                        <div className="bg-gray-100 dark:bg-gray-800 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                        <div className="bg-white dark:bg-gray-800 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-sm">
                                             <Search className="text-gray-400 dark:text-gray-500" size={32} />
                                         </div>
                                         <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">{t('No stores found')}</h3>
-                                        <p className="text-gray-500 dark:text-gray-400">{t('Try adjusting your search terms or category filter.')}</p>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{t('Try adjusting your search terms or category filter.')}</p>
+                                        {(searchQuery.trim() || categoryFilter !== 'All') && (
+                                            <button
+                                                onClick={() => { setSearchQuery(''); setSearchParams({ category: 'All' }); }}
+                                                className="px-6 py-2 bg-[#2E5A2E] text-white rounded-xl font-bold text-sm active:scale-95 transition-all shadow-sm"
+                                            >
+                                                {t('Clear All')}
+                                            </button>
+                                        )}
                                     </div>
                                 )}
                             </motion.div>
@@ -408,11 +416,19 @@ const Shop = () => {
                                     if (filteredServices.length === 0) {
                                         return (
                                             <div className="text-center py-12">
-                                                <div className="bg-gray-100 dark:bg-gray-800 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                                <div className="bg-white dark:bg-gray-800 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-sm">
                                                     <Store className="text-gray-400 dark:text-gray-500" size={32} />
                                                 </div>
                                                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">{t('No services found')}</h3>
-                                                <p className="text-gray-500 dark:text-gray-400">{t('Try searching for something else.')}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{t('Try searching for something else.')}</p>
+                                                {(searchQuery.trim() || categoryFilter !== 'All') && (
+                                                    <button
+                                                        onClick={() => { setSearchQuery(''); setSearchParams({ category: 'All' }); }}
+                                                        className="px-6 py-2 bg-[#2E5A2E] text-white rounded-xl font-bold text-sm active:scale-95 transition-all shadow-sm"
+                                                    >
+                                                        {t('Clear All')}
+                                                    </button>
+                                                )}
                                             </div>
                                         );
                                     }

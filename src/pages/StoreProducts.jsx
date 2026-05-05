@@ -140,8 +140,13 @@ const StoreProducts = () => {
     const sections = useMemo(() => {
         const groups = {};
 
-        // Only filter by subcategory, NOT search query for the main grid as requested
-        const filteredList = groupedStoreProducts;
+        // Pre-filter by search query to allow "No results" feedback in the main grid
+        const filteredList = searchQuery.trim()
+            ? groupedStoreProducts.filter(p =>
+                p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase()))
+            )
+            : groupedStoreProducts;
 
         if (!selectedSubcategory) {
             const allItems = filteredList;
@@ -531,7 +536,29 @@ const StoreProducts = () => {
                             </div>
                         ))}
                     </div>
-                ) : null}
+                ) : (
+                    <div className="text-center py-12">
+                        <div className="bg-white dark:bg-gray-800 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-sm">
+                            <Search className="text-gray-400 dark:text-gray-500" size={32} />
+                        </div>
+                        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                            {searchQuery.trim() || selectedSubcategory ? t('No matches found') : t('Store is Empty')}
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                            {searchQuery.trim() || selectedSubcategory 
+                                ? t('Try adjusting your search or category filter.')
+                                : t('This store has no products yet.')}
+                        </p>
+                        {(searchQuery.trim() || selectedSubcategory) && (
+                            <button
+                                onClick={() => { setSearchQuery(''); setSelectedSubcategory(null); }}
+                                className="px-6 py-2 bg-[#2E5A2E] text-white rounded-xl font-bold text-sm active:scale-95 transition-all shadow-sm"
+                            >
+                                {t('Clear All')}
+                            </button>
+                        )}
+                    </div>
+                )}
                 </div>
             </div>
         </PullToRefreshLayout>
