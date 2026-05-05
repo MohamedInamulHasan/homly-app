@@ -2335,10 +2335,7 @@ const CategoryManagement = () => {
                                             </td>
                                             <td className="p-4">
                                                 <div className="flex gap-2 items-center">
-                                                    <label className="p-2 text-[#2E5A2E] hover:bg-[#E8F5E9] rounded-xl transition-colors cursor-pointer" title={t('Change Image')}>
-                                                        <Edit2 size={18} />
-                                                        <input type="file" accept="image/*" className="hidden" onChange={handleAllImageUpload} />
-                                                    </label>
+
                                                     <span className="text-xs text-gray-400 italic">{t('Cannot be deleted')}</span>
                                                 </div>
                                             </td>

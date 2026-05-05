@@ -96,7 +96,9 @@ const StoreManagement = () => {
                 const storeProducts = products.filter(p => {
                     const pStoreId = p.storeId?._id || p.storeId;
                     const targetId = selectedStore._id || selectedStore.id;
-                    return pStoreId == targetId || String(pStoreId) === String(targetId);
+                    return targetId === 'none' 
+                        ? (!pStoreId || pStoreId === 'none') 
+                        : (pStoreId == targetId || String(pStoreId) === String(targetId));
                 });
 
                 const oldIndex = storeProducts.findIndex((p) => (p.id || p._id) === active.id);
@@ -918,14 +920,18 @@ const StoreManagement = () => {
                                             items={products.filter(p => {
                                                 const pStoreId = p.storeId?._id || p.storeId;
                                                 const targetId = selectedStore._id || selectedStore.id;
-                                                return pStoreId == targetId || String(pStoreId) === String(targetId);
+                                                return targetId === 'none' 
+                                                    ? (!pStoreId || pStoreId === 'none') 
+                                                    : (pStoreId == targetId || String(pStoreId) === String(targetId));
                                             }).map(p => p._id || p.id)}
                                             strategy={verticalListSortingStrategy}
                                         >
                                             {products.filter(p => {
                                                 const pStoreId = p.storeId?._id || p.storeId;
                                                 const targetId = selectedStore._id || selectedStore.id;
-                                                return pStoreId == targetId || String(pStoreId) === String(targetId);
+                                                return targetId === 'none' 
+                                                    ? (!pStoreId || pStoreId === 'none') 
+                                                    : (pStoreId == targetId || String(pStoreId) === String(targetId));
                                             }).map(product => (
                                                 <SortableProductRow key={product._id || product.id} product={product}>
                                                     <td className="p-4">
@@ -997,12 +1003,12 @@ const StoreManagement = () => {
                                                                     {bracketText && (
                                                                         <span className="text-xs text-gray-500 dark:text-gray-400 truncate" title={bracketText}>{bracketText}</span>
                                                                     )}
-                                                                    {product.subcategory && Array.isArray(product.subcategory) && product.subcategory.length > 0 && (
+                                                                    {selectedStore?.id !== 'none' && product.subcategory && Array.isArray(product.subcategory) && product.subcategory.length > 0 && (
                                                                         <span className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5" title={product.subcategory.join(', ')}>
                                                                             {product.subcategory.join(', ')}
                                                                         </span>
                                                                     )}
-                                                                    {product.subcategory && typeof product.subcategory === 'string' && (
+                                                                    {selectedStore?.id !== 'none' && product.subcategory && typeof product.subcategory === 'string' && (
                                                                         <span className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5" title={product.subcategory}>
                                                                             {product.subcategory}
                                                                         </span>
@@ -1147,7 +1153,9 @@ const StoreManagement = () => {
                                         {products.filter(p => {
                                             const pStoreId = p.storeId?._id || p.storeId;
                                             const targetId = selectedStore._id || selectedStore.id;
-                                            return pStoreId == targetId || String(pStoreId) === String(targetId);
+                                            return targetId === 'none' 
+                                                ? (!pStoreId || pStoreId === 'none') 
+                                                : (pStoreId == targetId || String(pStoreId) === String(targetId));
                                         }).length === 0 && (
                                                 <tr>
                                                     <td colSpan="4" className="p-8 text-center text-gray-500 dark:text-gray-400">
@@ -1175,7 +1183,7 @@ const StoreManagement = () => {
                                         value={selectedStore?.id === 'none' ? 'none' : (selectedStore?._id || selectedStore?.id || '')}
                                         onChange={(e) => {
                                             if (e.target.value === 'none') {
-                                                setSelectedStore({ id: 'none', name: 'None' });
+                                                setSelectedStore({ id: 'none', name: t('General Products') });
                                             } else {
                                                 const store = stores.find(s => (s._id || s.id) === e.target.value);
                                                 setSelectedStore(store);
