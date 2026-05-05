@@ -7,7 +7,7 @@ import { useCategories } from '../hooks/queries/useCategories';
 import { useStores } from '../hooks/queries/useStores';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
-import { isStoreOpen } from '../utils/storeHelpers';
+import { isStoreOpen, isProductScheduled } from '../utils/storeHelpers';
 import HomeHeader from '../components/home/HomeHeader';
 import HeroBanner from '../components/home/HeroBanner';
 import CategorySection from '../components/home/CategorySection';
@@ -49,21 +49,9 @@ const Home = () => {
 
     // Grouping Logic (Only available products for main categories/sections)
     const groupedByStore = useMemo(() => {
-        const now = new Date();
-        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-
         const availableProducts = products.filter(p => {
             if (p.isAvailable === false) return false;
-            if (p.useTimeLimit) {
-                const opening = p.openingTime || '00:00';
-                const closing = p.closingTime || '23:59';
-                if (opening <= closing) {
-                    if (currentTime < opening || currentTime > closing) return false;
-                } else {
-                    if (currentTime < opening && currentTime > closing) return false;
-                }
-            }
-            return true;
+            return isProductScheduled(p);
         });
 
         return availableProducts.reduce((acc, product) => {
@@ -75,9 +63,29 @@ const Home = () => {
         }, {});
     }, [products]);
 
+    // Extract Free Products for special section
+    const freeProducts = useMemo(() => {
+        return products.filter(p => 
+            p.isGold === true && 
+            p.isAvailable !== false && 
+            isProductScheduled(p)
+        );
+    }, [products]);
+
     // Create sections list
     const displaySections = useMemo(() => {
         const sections = [];
+
+        // 0. Add Free Delivery section if products exist
+        if (freeProducts.length > 0) {
+            sections.push({
+                id: 'free_delivery',
+                name: 'Free Delivery',
+                slogan: 'Zero delivery charges on these selected items',
+                type: 'special',
+                data: {}
+            });
+        }
 
         // 1. Add real stores
         stores.forEach(s => {
@@ -116,13 +124,17 @@ const Home = () => {
 
         // Sort by Store Status
         return sections.sort((a, b) => {
+            // Keep Free Delivery at the very top
+            if (a.id === 'free_delivery') return -1;
+            if (b.id === 'free_delivery') return 1;
+
             const aOpen = a.type === 'store' ? isStoreOpen(a.data) : true;
             const bOpen = b.type === 'store' ? isStoreOpen(b.data) : true;
             if (aOpen && !bOpen) return -1;
             if (!aOpen && bOpen) return 1;
             return 0;
         });
-    }, [stores, groupedByStore, selectedCategory]);
+    }, [stores, groupedByStore, selectedCategory, freeProducts]);
 
     const isLoadingAll = loadingProducts || loadingStores || loadingCategories;
 
@@ -184,19 +196,10 @@ const Home = () => {
                                             const bStore = stores.find(s => (s._id || s.id) === (b.storeId?._id || b.storeId));
                                             
                                             // Check product-specific availability + store status
-                                            const now = new Date();
-                                            const curTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-                                            
                                             const checkOpen = (p, s) => {
                                                 if (p.isAvailable === false) return false;
                                                 if (!isStoreOpen(s)) return false;
-                                                if (p.useTimeLimit) {
-                                                    const op = p.openingTime || '00:00';
-                                                    const cl = p.closingTime || '23:59';
-                                                    if (op <= cl) return curTime >= op && curTime <= cl;
-                                                    return curTime >= op || curTime <= cl;
-                                                }
-                                                return true;
+                                                return isProductScheduled(p);
                                             };
 
                                             const aOpen = checkOpen(a, aStore);
@@ -232,18 +235,10 @@ const Home = () => {
                                         const productId = product._id || product.id;
                                         const productStore = stores.find(s => (s._id || s.id) === (product.storeId?._id || product.storeId));
                                         
-                                        const now = new Date();
-                                        const curTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
                                         const checkOpen = (p, s) => {
                                             if (p.isAvailable === false) return false;
                                             if (!isStoreOpen(s)) return false;
-                                            if (p.useTimeLimit) {
-                                                const op = p.openingTime || '00:00';
-                                                const cl = p.closingTime || '23:59';
-                                                if (op <= cl) return curTime >= op && curTime <= cl;
-                                                return curTime >= op || curTime <= cl;
-                                            }
-                                            return true;
+                                            return isProductScheduled(p);
                                         };
 
                                         const productOpen = checkOpen(product, productStore);
@@ -333,7 +328,7 @@ const Home = () => {
                             <StoreSection 
                                 key={section.id} 
                                 section={section} 
-                                products={groupedByStore[section.id] || []}
+                                products={section.id === 'free_delivery' ? freeProducts : groupedByStore[section.id] || []}
                                 selectedCategory={selectedCategory}
                                 singleStore={displaySections.length === 1}
                             />

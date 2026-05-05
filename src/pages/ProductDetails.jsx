@@ -5,7 +5,7 @@ import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Plus, ArrowLeft, Minus, ShoppingBag, ShoppingCart, ChevronLeft, ChevronRight, Star, Share2, Bookmark, Store as StoreIcon } from 'lucide-react';
-import { isStoreOpen } from '../utils/storeHelpers';
+import { isStoreOpen, isProductScheduled } from '../utils/storeHelpers';
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -176,23 +176,7 @@ const ProductDetails = () => {
 
     // Availability Logic (Manual + Time-based)
     const isManualAvailable = product.isAvailable !== false;
-    let isScheduled = true;
-    let timingInfo = null;
-
-    if (product.useTimeLimit) {
-        const now = new Date();
-        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-        const opening = product.openingTime || '00:00';
-        const closing = product.closingTime || '23:59';
-        timingInfo = `${opening} - ${closing}`;
-
-        if (opening <= closing) {
-            if (currentTime < opening || currentTime > closing) isScheduled = false;
-        } else {
-            // Overnights
-            if (currentTime < opening && currentTime > closing) isScheduled = false;
-        }
-    }
+    const isScheduled = isProductScheduled(product);
 
     const isStoreCurrentlyOpen = store ? isStoreOpen(store) : true;
     const isCurrentlyAvailable = isManualAvailable && isScheduled && isStoreCurrentlyOpen;
@@ -229,19 +213,48 @@ const ProductDetails = () => {
                         </button>
                     </div>
 
-                    {/* Main Product Image */}
-                    <div className="w-full h-full flex items-center justify-center relative">
+                    {/* Main Product Image Carousel */}
+                    <div className="w-full h-full relative overflow-hidden">
+                        <div 
+                            id="product-slider"
+                            onScroll={handleScroll}
+                            className="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+                            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                        >
+                            {images.map((img, index) => (
+                                <div key={index} className="w-full h-full flex-shrink-0 snap-center flex items-center justify-center">
+                                    <img
+                                        src={img || `${API_BASE_URL}/products/${productId}/image`}
+                                        alt={`${product.title} - ${index + 1}`}
+                                        className="w-full h-full object-cover lg:max-h-[500px]"
+                                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/400x400?text=No+Image'; }}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Pagination Dots */}
+                        {images.length > 1 && (
+                            <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-30">
+                                {images.map((_, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => scrollToImage(index)}
+                                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                                            currentImageIndex === index 
+                                                ? 'w-6 bg-[#2E5A2E]' 
+                                                : 'bg-gray-300 dark:bg-gray-600'
+                                        }`}
+                                    />
+                                ))}
+                            </div>
+                        )}
+
                         {product.unit && (
                             <div className="absolute bottom-4 right-4 z-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur px-3 py-1.5 rounded-xl text-xs font-bold text-gray-700 dark:text-gray-300 shadow-sm border border-black/5 hidden lg:block">
                                 {product.unit}
                             </div>
                         )}
-                        <img
-                            src={product.image || 'https://via.placeholder.com/400x400?text=No+Image'}
-                            alt={product.title}
-                            className="w-full h-full object-cover lg:max-h-[500px]"
-                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/400x400?text=No+Image'; }}
-                        />
                     </div>
                 </div>
 

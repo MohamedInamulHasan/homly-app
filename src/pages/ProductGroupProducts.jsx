@@ -7,7 +7,7 @@ import SimpleProductCard from '../components/SimpleProductCard';
 import ProductCard from '../components/ProductCard';
 import PullToRefreshLayout from '../components/PullToRefreshLayout';
 import { ChevronLeft, Zap } from 'lucide-react';
-import { isStoreOpen } from '../utils/storeHelpers';
+import { isStoreOpen, isProductScheduled } from '../utils/storeHelpers';
 import { useStores } from '../hooks/queries/useStores';
 
 const ProductGroupProducts = () => {
@@ -65,19 +65,7 @@ const ProductGroupProducts = () => {
             // Consistent availability check (Manual + Time-based)
             if (product.isAvailable === false) return false;
 
-            if (product.useTimeLimit) {
-                const now = new Date();
-                const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-                const opening = product.openingTime || '00:00';
-                const closing = product.closingTime || '23:59';
-                
-                if (opening <= closing) {
-                    if (currentTime < opening || currentTime > closing) return false;
-                } else {
-                    // Overnights
-                    if (currentTime < opening && currentTime > closing) return false;
-                }
-            }
+            if (!isProductScheduled(product)) return false;
 
             // Apply storeId filter when present in the URL.
             // - From store page: storeId IS set → only show that store's products ✅
@@ -115,7 +103,7 @@ const ProductGroupProducts = () => {
                     >
                         <ChevronLeft size={28} strokeWidth={1.5} />
                     </button>
-                    <h1 className="text-xl font-normal text-gray-700 dark:text-gray-300 truncate leading-normal text-center px-16">
+                    <h1 className="text-xl font-medium text-gray-700 dark:text-gray-300 truncate leading-normal text-center px-16">
                         {(() => {
                             const fullTitle = t(decodedName);
                             const bracketIndex = fullTitle.indexOf('(');

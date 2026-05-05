@@ -64,7 +64,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                 {/* Badges Section */}
                 <div className="absolute top-3 left-3 z-[15] pointer-events-none flex flex-col gap-1.5 items-start">
                     {product.isGold && (
-                        <div className="bg-[#16A34A] text-white text-[9px] font-bold px-2.5 py-1 rounded-full">
+                        <div className="bg-[#16A34A] text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow-sm">
                             {t('Free Delivery')}
                         </div>
                     )}

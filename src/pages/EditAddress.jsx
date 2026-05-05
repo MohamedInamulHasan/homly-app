@@ -142,7 +142,10 @@ const EditAddress = () => {
                     <button onClick={() => navigate(-1)} className="w-11 h-11 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95">
                         <ArrowLeft size={22} />
                     </button>
-                    <h1 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">{t('My Address')}</h1>
+                    <div className="flex flex-col text-center">
+                        <h1 className="text-[18px] font-bold text-gray-900 dark:text-white tracking-tight leading-tight">{t('My Address')}</h1>
+                        <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400 mt-0.5">{t('Manage delivery locations & ensures reachability')}</p>
+                    </div>
                     <div className="w-11" />
                 </div>
             </div>
@@ -292,34 +295,17 @@ const EditAddress = () => {
                                 />
                             </div>
                         </div>
+
+                        <div className="pt-4">
+                            <button
+                                type="submit"
+                                disabled={isSaving}
+                                className="w-full bg-black text-white py-4 rounded-full font-bold text-[15px] active:scale-[0.98] transition-all disabled:opacity-50"
+                            >
+                                {isSaving ? t('Saving Changes...') : t('Update Address')}
+                            </button>
+                        </div>
                     </div>
-
-                    {/* Mobile Pull-up Card for Update Address */}
-                    <div className="h-20 md:hidden" /> {/* Spacer */}
-                    
-                    <motion.div 
-                        initial={{ y: '100%', x: '-50%' }}
-                        animate={{ y: 0, x: '-50%' }}
-                        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                        className="bg-white dark:bg-gray-800 rounded-t-[3rem] pt-8 pb-8 px-8 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] fixed bottom-0 max-w-md w-full left-1/2 border-t border-gray-100 dark:border-gray-700 z-50 md:hidden"
-                    >
-                        <button
-                            type="submit"
-                            disabled={isSaving}
-                            className="w-full bg-black text-white py-4 rounded-full font-bold text-[15px] active:scale-[0.98] transition-all disabled:opacity-50"
-                        >
-                            {isSaving ? t('Saving Changes...') : t('Update Address')}
-                        </button>
-                    </motion.div>
-
-                    {/* Desktop Button */}
-                    <button
-                        type="submit"
-                        disabled={isSaving}
-                        className="hidden md:block w-full bg-black text-white py-5 rounded-full font-bold text-[15px] shadow-xl shadow-gray-200 dark:shadow-none active:scale-95 transition-all disabled:opacity-50"
-                    >
-                        {isSaving ? t('Saving Changes...') : t('Update Address')}
-                    </button>
                 </form>
             </div>
         </div>

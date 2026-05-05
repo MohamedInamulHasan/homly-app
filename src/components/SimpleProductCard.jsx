@@ -138,8 +138,8 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                     {/* Delivery Tag */}
                     <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-[25] pointer-events-none">
                         {product.isGold && (
-                            <span className="bg-[#2E5A2E] text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-br-lg">
-                                Free Delivery
+                            <span className="bg-[#16A34A] text-white text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-br-lg shadow-sm">
+                                {t('Free Delivery')}
                             </span>
                         )}
                     </div>
@@ -283,8 +283,8 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
             <div className={`relative pb-[100%] m-1 rounded-2xl overflow-hidden bg-[#F9FAFB]`}>
                     <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-[25] pointer-events-none">
                         {product.isGold && (
-                            <span className="bg-[#2E5A2E] text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-br-lg">
-                                Free Delivery
+                            <span className="bg-[#16A34A] text-white text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-br-lg shadow-sm">
+                                {t('Free Delivery')}
                             </span>
                         )}
                     </div>

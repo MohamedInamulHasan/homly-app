@@ -49,4 +49,65 @@ input[type="password"]::-ms-clear {
     .animate-loading-bar {
         animation: loading-bar 1.5s infinite ease-in-out;
     }
+
+    @keyframes shine {
+        0% { left: -100%; }
+        20% { left: 100%; }
+        100% { left: 100%; }
+    }
+
+    .animate-shine {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .animate-shine::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+            to right,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+        );
+        transform: skewX(-25deg);
+        animation: shine 3s infinite;
+    }
+
+    @keyframes text-shine {
+        0% { background-position: 150% center; }
+        100% { background-position: -150% center; }
+    }
+
+    .animate-text-shine {
+        background: linear-gradient(
+            to right,
+            #2E5A2E 0%,
+            #2E5A2E 35%,
+            #CBF9B2 50%,
+            #2E5A2E 65%,
+            #2E5A2E 100%
+        );
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: text-shine 4s ease-in-out infinite;
+    }
+
+    .dark .animate-text-shine {
+        background: linear-gradient(
+            to right,
+            #CBF9B2 0%,
+            #CBF9B2 35%,
+            #ffffff 50%,
+            #CBF9B2 65%,
+            #CBF9B2 100%
+        );
+        background-size: 200% auto;
+    }
 }

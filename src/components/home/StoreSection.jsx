@@ -100,19 +100,32 @@ const StoreSection = ({ section, products: rawProducts = [], singleStore = false
             <div className="flex justify-between items-end mb-6 px-1">
                 <div className="flex flex-col min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                        <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white leading-tight truncate max-w-[280px] xs:max-w-[320px] sm:max-w-[450px] md:max-w-none">
-                            {t(section.name)}
-                        </h2>
+                        {section.id === 'free_delivery' ? (
+                            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold leading-tight animate-text-shine uppercase tracking-wider">
+                                {t(section.name)}
+                            </h2>
+                        ) : (
+                            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white leading-tight truncate max-w-[280px] xs:max-w-[320px] sm:max-w-[450px] md:max-w-none">
+                                {t(section.name)}
+                            </h2>
+                        )}
                     </div>
                     {section.address && (
                         <p className="text-[11px] text-gray-400 font-medium mt-1 truncate max-w-[260px] sm:max-w-[400px]">
                             {section.address}
                         </p>
                     )}
+                    {section.slogan && (
+                        <p className="text-[11px] text-gray-400 font-medium mt-1 truncate max-w-[260px] sm:max-w-[400px]">
+                            {t(section.slogan)}
+                        </p>
+                    )}
                 </div>
-                <Link to={navigateTo} className="text-[13px] font-bold text-[#2E5A2E] dark:text-green-400 hover:opacity-70 transition-all underline decoration-[2.5px] underline-offset-[6px]">
-                    {t('See All')}
-                </Link>
+                {section.type !== 'special' && (
+                    <Link to={navigateTo} className="text-[13px] font-bold text-[#2E5A2E] dark:text-green-400 hover:opacity-70 transition-all underline decoration-[2.5px] underline-offset-[6px]">
+                        {t('See All')}
+                    </Link>
+                )}
             </div>
 
             {singleStore ? (

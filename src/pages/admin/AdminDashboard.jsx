@@ -52,6 +52,7 @@ import StoreManagement from './StoreManagement';
 import SettingsManagement from './SettingsManagement';
 import ServiceManagement from './ServiceManagement';
 import useCloudinaryUpload from '../../hooks/useCloudinaryUpload';
+import { isProductScheduled } from '../../utils/storeHelpers';
 
 // New Query Hooks
 import { useProducts, useCreateProduct, useUpdateProduct, useDeleteProduct, useUpdateProductOrder } from '../../hooks/queries/useProducts';
@@ -71,6 +72,7 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSo
 import { SortableAdCard, SortableProductRow, DragHandle, SortableItemContext, SortableSubcategoryItem } from './AdminDashboard_Sortables';
 import { CSS } from '@dnd-kit/utilities';
 import LogoutModal from '../../components/LogoutModal';
+
 
 const AdminDashboard = () => {
     const { user, logout } = useAuth(); // Get current user & logout method
@@ -187,17 +189,17 @@ const AdminDashboard = () => {
                     </div>
                     <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                         <SidebarItem
-                            icon={<Store size={20} />}
-                            label={t('Store Details')}
-                            id="stores"
-                            active={activeTab === 'stores'}
-                            onClick={setActiveTab}
-                        />
-                        <SidebarItem
                             icon={<Package size={20} />}
                             label={t('Products')}
                             id="products"
                             active={activeTab === 'products'}
+                            onClick={setActiveTab}
+                        />
+                        <SidebarItem
+                            icon={<Store size={20} />}
+                            label={t('Store Details')}
+                            id="stores"
+                            active={activeTab === 'stores'}
                             onClick={setActiveTab}
                         />
                         <SidebarItem
@@ -412,21 +414,21 @@ const AdminDashboard = () => {
                     </h1>
                 </div>
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-                    {(isAdmin || isStoreAdmin) && (
-                        <SidebarItem
-                            icon={<Store size={20} />}
-                            label={t('Stores')}
-                            id="stores"
-                            active={activeTab === 'stores'}
-                            onClick={setActiveTab}
-                        />
-                    )}
                     {isAdmin && (
                         <SidebarItem
                             icon={<Package size={20} />}
                             label={t('Products')}
                             id="products"
                             active={activeTab === 'products'}
+                            onClick={setActiveTab}
+                        />
+                    )}
+                    {(isAdmin || isStoreAdmin) && (
+                        <SidebarItem
+                            icon={<Store size={20} />}
+                            label={t('Stores')}
+                            id="stores"
+                            active={activeTab === 'stores'}
                             onClick={setActiveTab}
                         />
                     )}
@@ -1054,8 +1056,9 @@ const ProductManagement = () => {
                                             <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400">{t('Title')}</th>
                                             <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400">{t('Category')}</th>
                                             <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400">{t('Price')}</th>
-                                            <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400">{t('Availability')}</th>
-                                            <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400">{t('Actions')}</th>
+                                            <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400 text-center">{t('Free Delivery')}</th>
+                                            <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400 text-center">{t('Status')}</th>
+                                            <th className="p-4 text-sm font-normal text-gray-500 dark:text-gray-400 text-right">{t('Actions')}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -1072,6 +1075,11 @@ const ProductManagement = () => {
                                                 )
                                                 .map(product => (
                                                     <SortableProductRow key={product.id || product._id} product={product}>
+                                                        <td className="p-4">
+                                                            <DragHandle className="text-gray-400 hover:text-gray-600">
+                                                                <GripVertical size={20} />
+                                                            </DragHandle>
+                                                        </td>
                                                         <td className="p-4">
                                                             <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-white">
                                                                 <img
@@ -1143,7 +1151,50 @@ const ProductManagement = () => {
                                                         </td>
                                                         <td className="p-4 font-normal text-gray-900 dark:text-white">₹{product.price}</td>
                                                         <td className="p-4">
-                                                            <div className="flex items-center">
+                                                            <div className="flex justify-center">
+                                                                <button
+                                                                    onClick={async () => {
+                                                                        const currentIsGold = product.isGold === true;
+                                                                        const productId = product._id || product.id;
+
+                                                                        // Optimistic update
+                                                                        queryClient.setQueryData(['products'], (old) => {
+                                                                            const oldData = Array.isArray(old) ? old : (old?.data || []);
+                                                                            return oldData.map(p =>
+                                                                                (p._id || p.id) === productId
+                                                                                    ? { ...p, isGold: !currentIsGold }
+                                                                                    : p
+                                                                            );
+                                                                        });
+
+                                                                        try {
+                                                                            await updateProduct({ id: productId, data: { isGold: !currentIsGold } });
+                                                                        } catch (error) {
+                                                                            // Rollback
+                                                                            queryClient.setQueryData(['products'], (old) => {
+                                                                                const oldData = Array.isArray(old) ? old : (old?.data || []);
+                                                                                return oldData.map(p =>
+                                                                                    (p._id || p.id) === productId
+                                                                                        ? { ...p, isGold: currentIsGold }
+                                                                                        : p
+                                                                                );
+                                                                            });
+                                                                            console.error("Failed to toggle gold status", error);
+                                                                            alert(t('Failed to update product status'));
+                                                                        }
+                                                                    }}
+                                                                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 ${product.isGold ? 'bg-yellow-400' : 'bg-gray-200 dark:bg-gray-600'}`}
+                                                                    title={product.isGold ? t('Free Delivery Product') : t('Standard Product')}
+                                                                >
+                                                                    <span
+                                                                        className={`${product.isGold ? 'translate-x-6' : 'translate-x-1'
+                                                                            } inline-block h-4 w-4 transform rounded-full bg-white shadow-md`}
+                                                                    />
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                        <td className="p-4">
+                                                            <div className="flex items-center justify-center">
                                                                 <button
                                                                     onClick={async () => {
                                                                         const currentStatus = product.isAvailable !== false;
@@ -1205,64 +1256,25 @@ const ProductManagement = () => {
                                                             </div>
                                                         </td>
                                                         <td className="p-4">
-                                                            <div className="flex gap-2">
-                                                                <button
-                                                                    onClick={async () => {
-                                                                        const currentIsGold = product.isGold === true;
-                                                                        const productId = product._id || product.id;
-
-                                                                        // Optimistic update
-                                                                        queryClient.setQueryData(['products'], (old) => {
-                                                                            const oldData = Array.isArray(old) ? old : (old?.data || []);
-                                                                            return oldData.map(p =>
-                                                                                (p._id || p.id) === productId
-                                                                                    ? { ...p, isGold: !currentIsGold }
-                                                                                    : p
-                                                                            );
-                                                                        });
-
-                                                                        try {
-                                                                            await updateProduct({ id: productId, data: { isGold: !currentIsGold } });
-                                                                        } catch (error) {
-                                                                            // Rollback
-                                                                            queryClient.setQueryData(['products'], (old) => {
-                                                                                const oldData = Array.isArray(old) ? old : (old?.data || []);
-                                                                                return oldData.map(p =>
-                                                                                    (p._id || p.id) === productId
-                                                                                        ? { ...p, isGold: currentIsGold }
-                                                                                        : p
-                                                                                );
-                                                                            });
-                                                                            console.error("Failed to toggle gold status", error);
-                                                                            alert(t('Failed to update product status'));
-                                                                        }
-                                                                    }}
-                                                                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 ${product.isGold ? 'bg-yellow-400' : 'bg-gray-200 dark:bg-gray-600'}`}
-                                                                    title={product.isGold ? t('Gold Product') : t('Standard Product')}
-                                                                >
-                                                                    <span
-                                                                        className={`${product.isGold ? 'translate-x-6' : 'translate-x-1'
-                                                                            } inline-block h-4 w-4 transform rounded-full bg-white shadow-md`}
-                                                                    />
-                                                                </button>
+                                                            <div className="flex gap-3 justify-end items-center">
                                                                 <button
                                                                     onClick={() => handleDuplicate(product)}
                                                                     className="p-2 text-[#2E5A2E] hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
                                                                     title={t('Duplicate Product')}
                                                                 >
-                                                                    <Copy size={18} />
+                                                                    <Copy size={20} />
                                                                 </button>
                                                                 <button
                                                                     onClick={() => handleEdit(product)}
                                                                     className="p-2 text-[#2E5A2E] hover:bg-[#E8F5E9] dark:hover:bg-[#2E5A2E]/20 rounded-lg transition-colors"
                                                                 >
-                                                                    <Edit2 size={18} />
+                                                                    <Edit2 size={20} />
                                                                 </button>
                                                                 <button
                                                                     onClick={() => handleDelete(product.id || product._id)}
                                                                     className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                                                                 >
-                                                                    <Trash2 size={18} />
+                                                                    <Trash2 size={20} />
                                                                 </button>
                                                             </div>
                                                         </td>

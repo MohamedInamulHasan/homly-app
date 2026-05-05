@@ -83,17 +83,7 @@ const HeroBanner = ({ slides = [], isLoading = false }) => {
     }
 
     if (slides.length === 0) {
-        return (
-            <section className="px-4 py-2">
-                <div className="relative h-44 md:h-64 lg:h-80 xl:h-[400px] rounded-3xl overflow-hidden shadow-sm bg-gradient-to-br from-[#E6F9E6] to-[#D1F2D1] flex items-center justify-center">
-                    <img 
-                        src="https://atlas-content-cdn.pixelbin.io/ast/feed_v2/static_assets/common/vegetable_basket.png" 
-                        alt="Fresh Vegetables" 
-                        className="w-full h-full object-cover"
-                    />
-                </div>
-            </section>
-        );
+        return null;
     }
 
     return (

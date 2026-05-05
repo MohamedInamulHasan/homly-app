@@ -5,7 +5,7 @@ import { useProducts } from '../hooks/queries/useProducts';
 import { useStores } from '../hooks/queries/useStores';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
-import { isStoreOpen } from '../utils/storeHelpers';
+import { isStoreOpen, isProductScheduled } from '../utils/storeHelpers';
 import { sortProductsByGoldAndOpen } from '../utils/productSorting';
 import SimpleProductCard from '../components/SimpleProductCard';
 import PullToRefreshLayout from '../components/PullToRefreshLayout';
@@ -49,16 +49,7 @@ const CategoryProducts = () => {
     const checkProductOpen = (product, store) => {
         if (product.isAvailable === false) return false;
         if (!isStoreOpen(store)) return false;
-        
-        if (product.useTimeLimit) {
-            const now = new Date();
-            const curTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-            const op = product.openingTime || '00:00';
-            const cl = product.closingTime || '23:59';
-            if (op <= cl) return curTime >= op && curTime <= cl;
-            return curTime >= op || curTime <= cl;
-        }
-        return true;
+        return isProductScheduled(product);
     };
 
     // Main display products (ONLY available/open)
@@ -332,7 +323,7 @@ const CategoryProducts = () => {
                 </div>
 
                 {/* Subcategories Scroller */}
-                {subInFilter.length > 0 && !loading?.categories && (
+                {subcategories.length > 0 && !loading?.categories && (
                     <div className="pb-2 mb-1 transition-colors duration-200">
                         <div className="max-w-7xl mx-auto px-4 overflow-x-auto p-2 pb-4 scrollbar-hide">
                             <div className="flex justify-start">

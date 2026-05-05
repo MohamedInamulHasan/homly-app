@@ -1,6 +1,6 @@
 import { API_BASE_URL } from '../../utils/api';
 import { useState, useEffect } from 'react';
-import { isStoreOpen, formatTime12h } from '../../utils/storeHelpers';
+import { isStoreOpen, formatTime12h, isProductScheduled } from '../../utils/storeHelpers';
 import { motion } from 'framer-motion';
 import {
     Store,
@@ -895,23 +895,7 @@ const StoreManagement = () => {
             {view === 'storeProducts' && selectedStore && (
                 <div className="space-y-6">
 
-                    {/* Product Timing Logic Helper */}
-                    {(() => {
-                        window.isProductScheduled = (product) => {
-                            if (!product.useTimeLimit) return true;
-                            const now = new Date();
-                            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-                            const opening = product.openingTime || '00:00';
-                            const closing = product.closingTime || '23:59';
 
-                            if (opening <= closing) {
-                                return currentTime >= opening && currentTime <= closing;
-                            } else {
-                                return currentTime >= opening || currentTime <= closing;
-                            }
-                        };
-                        return null;
-                    })()}
 
                     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                         <div className="overflow-x-auto">
@@ -924,9 +908,9 @@ const StoreManagement = () => {
                                             <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Title')}</th>
                                             <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Category')}</th>
                                             <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Price')}</th>
-                                            {!isStoreAdmin && <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Gold')}</th>}
+                                            <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Free Delivery')}</th>
                                             <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Status')}</th>
-                                            <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Actions')}</th>
+                                            <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400 text-right">{t('Actions')}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -987,7 +971,7 @@ const StoreManagement = () => {
                                                                 );
                                                             })()}
                                                             {product.useTimeLimit && (
-                                                                <div className={`mt-1 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider ${window.isProductScheduled(product) ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
+                                                                <div className={`mt-1 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider ${isProductScheduled(product) ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
                                                                     <Clock size={10} />
                                                                     <span>{t('TIMED')}</span>
                                                                     <span className="opacity-70">({formatTime12h(product.openingTime)} - {formatTime12h(product.closingTime)})</span>
@@ -1028,10 +1012,10 @@ const StoreManagement = () => {
                                                         })()}
                                                     </td>
                                                     <td className="p-4 font-medium text-gray-900 dark:text-white">₹{product.price}</td>
-                                                    {!isStoreAdmin && (
-                                                        <td className="p-4">
-                                                            <button
+                                                    <td className="p-4">
+                                                        <button
                                                                 onClick={async () => {
+                                                                    if (isStoreAdmin) return;
                                                                     const currentGold = product.isGold || false;
                                                                     const productId = product._id || product.id;
 
@@ -1058,14 +1042,15 @@ const StoreManagement = () => {
                                                                                 (p._id || p.id) === productId
                                                                                     ? { ...p, isGold: currentGold }
                                                                                     : p
-                                                                            );
+                                                                        );
                                                                         });
                                                                         console.error('Failed to toggle gold status:', error);
                                                                         alert(t('Failed to update status'));
                                                                     }
                                                                 }}
-                                                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 ${product.isGold ? 'bg-yellow-400' : 'bg-gray-200 dark:bg-gray-600'}`}
-                                                                title={product.isGold ? t('Gold Product') : t('Standard Product')}
+                                                                disabled={isStoreAdmin}
+                                                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 ${product.isGold ? 'bg-yellow-400' : 'bg-gray-200 dark:bg-gray-600'} ${isStoreAdmin ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                                                title={isStoreAdmin ? (product.isGold ? t('Free Delivery Product') : t('Standard Product')) : (product.isGold ? t('Disable Free Delivery') : t('Enable Free Delivery'))}
                                                             >
                                                                 <span
                                                                     className={`${product.isGold ? 'translate-x-6' : 'translate-x-1'
@@ -1073,11 +1058,10 @@ const StoreManagement = () => {
                                                                 />
                                                             </button>
                                                         </td>
-                                                    )}
                                                     <td className="p-4">
                                                         <button
                                                             onClick={async () => {
-                                                                const isScheduled = window.isProductScheduled(product);
+                                                                const isScheduled = isProductScheduled(product);
                                                                 const currentStatus = product.isAvailable !== false;
 
                                                                 // If product is currently OFF due to timing, and user tries to turn it ON manually
@@ -1124,36 +1108,36 @@ const StoreManagement = () => {
                                                             <motion.span
                                                                 layout
                                                                 transition={{ type: "spring", stiffness: 700, damping: 30 }}
-                                                                animate={{ x: (product.isAvailable !== false && window.isProductScheduled(product)) ? 22 : 2 }}
+                                                                animate={{ x: (product.isAvailable !== false && isProductScheduled(product)) ? 22 : 2 }}
                                                                 className="inline-block h-5 w-5 transform rounded-full bg-white shadow-md"
                                                             />
                                                         </button>
-                                                        {!window.isProductScheduled(product) && product.isAvailable !== false && (
+                                                        {!isProductScheduled(product) && product.isAvailable !== false && (
                                                             <div className="mt-1 text-[9px] font-black uppercase text-amber-500 tracking-tighter text-center leading-none">
                                                                 {t('Auto Off')}
                                                             </div>
                                                         )}
                                                     </td>
                                                     <td className="p-4">
-                                                        <div className="flex gap-2">
+                                                        <div className="flex gap-3 justify-end items-center">
                                                             <button
                                                                 onClick={() => handleDuplicateProduct(product)}
                                                                 className="p-2 text-[#2E5A2E] hover:bg-[#E8F5E9] dark:hover:bg-[#2E5A2E]/20 rounded-lg transition-colors"
                                                                 title={t('Duplicate Product')}
                                                             >
-                                                                <Copy size={18} />
+                                                                <Copy size={20} />
                                                             </button>
                                                             <button
                                                                 onClick={() => handleEditProduct(product)}
                                                                 className="p-2 text-[#2E5A2E] hover:bg-[#E8F5E9] dark:hover:bg-[#2E5A2E]/20 rounded-lg transition-colors"
                                                             >
-                                                                <Edit2 size={18} />
+                                                                <Edit2 size={20} />
                                                             </button>
                                                             <button
                                                                 onClick={() => handleDeleteProduct(product._id || product.id)}
                                                                 className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                                                             >
-                                                                <Trash2 size={18} />
+                                                                <Trash2 size={20} />
                                                             </button>
                                                         </div>
                                                     </td>

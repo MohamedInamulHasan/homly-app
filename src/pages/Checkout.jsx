@@ -268,7 +268,7 @@ const Checkout = () => {
     const finalTotal = displayTotal + deliveryCharge;
 
     return (
-        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 pb-12 md:pb-24 relative">
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 pb-20 md:pb-40 relative">
             {/* Simple Header */}
             <div className="w-full px-5 py-4">
                 <div className="max-w-md mx-auto flex items-center justify-between">

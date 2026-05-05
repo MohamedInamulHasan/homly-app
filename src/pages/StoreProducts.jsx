@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, MapPin, Clock, Phone, ChevronRight, AlertCircle, Zap, Search, ListFilter } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useLanguage } from '../context/LanguageContext';
-import { isStoreOpen } from '../utils/storeHelpers';
+import { isStoreOpen, isProductScheduled } from '../utils/storeHelpers';
 import PullToRefreshLayout from '../components/PullToRefreshLayout';
 import { API_BASE_URL } from '../utils/api';
 import { groupProducts } from '../utils/productGrouping';
@@ -49,16 +49,7 @@ const StoreProducts = () => {
     const checkProductOpen = (p, s) => {
         if (p.isAvailable === false) return false;
         if (!isStoreOpen(s)) return false;
-        
-        if (p.useTimeLimit) {
-            const now = new Date();
-            const curTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-            const op = p.openingTime || '00:00';
-            const cl = p.closingTime || '23:59';
-            if (op <= cl) return curTime >= op && curTime <= cl;
-            return curTime >= op || curTime <= cl;
-        }
-        return true;
+        return isProductScheduled(p);
     };
 
     // Filtered products for main display (ONLY available)
@@ -420,8 +411,8 @@ const StoreProducts = () => {
                 </div>
             </section>
 
-            {/* Subcategory Tabs (As per reference image) */}
-            <div className="max-w-7xl mx-auto px-4 mb-6">
+            {subcategoryData.length > 0 && (
+                <div className="max-w-7xl mx-auto px-4 mb-6">
                     <div className="flex items-center gap-6 overflow-x-auto scrollbar-hide border-b border-gray-100/50">
                         <button
                             onClick={() => setSelectedSubcategory(null)}
@@ -471,6 +462,7 @@ const StoreProducts = () => {
                         ))}
                     </div>
                 </div>
+            )}
 
                 <div className="max-w-7xl mx-auto px-4 -mt-4">
                     {/* The search dropdown was previously here but moved inside the relative container above */}

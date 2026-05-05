@@ -112,7 +112,8 @@ export const getCurrentTimeInMinutes = () => {
 
 // Check if a store is currently open based on opening and closing times
 export const isStoreOpen = (store) => {
-    if (!store) return false;
+    // If no store is provided (e.g., platform-direct products), assume it's open
+    if (!store) return true;
 
     // Manual override: if store is manually closed, return false
     if (store.isManuallyClosed) return false;
@@ -181,6 +182,23 @@ export const isStoreOpen = (store) => {
 
     // If we can't determine, assume the store is open
     return true;
+};
+
+// Check if a product is currently scheduled to be available
+export const isProductScheduled = (product) => {
+    if (!product || !product.useTimeLimit) return true;
+    
+    const openingMinutes = parseTime(product.openingTime || '00:00');
+    const closingMinutes = parseTime(product.closingTime || '23:59');
+    const currentMinutes = getCurrentTimeInMinutes();
+
+    if (openingMinutes === null || closingMinutes === null) return true;
+
+    if (openingMinutes <= closingMinutes) {
+        return currentMinutes >= openingMinutes && currentMinutes < closingMinutes;
+    } else {
+        return currentMinutes >= openingMinutes || currentMinutes < closingMinutes;
+    }
 };
 
 export const calculateDeliveryCharge = (items) => {

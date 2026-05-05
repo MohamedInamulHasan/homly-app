@@ -47,8 +47,7 @@ const News = () => {
                         </div>
                         
                         <div className="flex flex-col items-center text-center">
-                            <h1 className="text-[18px] font-bold text-gray-900 dark:text-white tracking-tight flex items-center justify-center gap-2">
-                                <Newspaper className="text-[#2E5A2E] dark:text-[#CBF9B2]" size={20} />
+                            <h1 className="text-[18px] font-bold text-gray-900 dark:text-white tracking-tight">
                                 {t('News & Updates')}
                             </h1>
                             <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400 mt-0.5">{t('Stay informed with the latest')}</p>

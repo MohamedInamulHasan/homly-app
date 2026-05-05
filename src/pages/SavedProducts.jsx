@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import SimpleProductCard from '../components/SimpleProductCard';
 import { useStores } from '../hooks/queries/useStores';
-import { isStoreOpen } from '../utils/storeHelpers';
+import { isStoreOpen, isProductScheduled } from '../utils/storeHelpers';
 import { sortProductsByGoldAndOpen } from '../utils/productSorting';
 import { groupProducts } from '../utils/productGrouping';
 
@@ -27,18 +27,21 @@ const SavedProducts = () => {
 
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200">
-            {/* Simple Header (matching Cart) */}
-            <div className="w-full px-5 py-4">
-                <div className="max-w-md mx-auto flex items-center justify-between">
-                     <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95 border border-gray-100/50">
-                         <ArrowLeft size={22} />
-                     </button>
-                     <h1 className="text-[17px] font-bold text-gray-900 dark:text-white tracking-tight">{t('Saved Products')}</h1>
-                     <div className="w-[42px]" /> {/* Spacer for centering */}
+            {/* Premium Header (matching Address Page) */}
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-5 py-4 shadow-sm">
+                <div className="max-w-xl mx-auto flex items-center justify-between">
+                    <button onClick={() => navigate(-1)} className="w-11 h-11 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95">
+                        <ArrowLeft size={22} />
+                    </button>
+                    <div className="flex flex-col text-center">
+                        <h1 className="text-[18px] font-bold text-gray-900 dark:text-white tracking-tight leading-tight">{t('Saved Products')}</h1>
+                        <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400 mt-0.5">{t('Your favorite items')}</p>
+                    </div>
+                    <div className="w-11" />
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-20">
+            <div className="pt-[95px] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
 
                 {savedProducts.length === 0 ? (
                     <div className="text-center py-24 flex flex-col items-center">
@@ -62,24 +65,8 @@ const SavedProducts = () => {
                     <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                         {groupProducts(sortProductsByGoldAndOpen(savedProducts, stores), stores)
                             .filter(product => {
-                                // Manual check
                                 if (product.isAvailable === false) return false;
-
-                                // Timing check
-                                if (product.useTimeLimit) {
-                                    const now = new Date();
-                                    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-                                    const opening = product.openingTime || '00:00';
-                                    const closing = product.closingTime || '23:59';
-                                    
-                                    if (opening <= closing) {
-                                        if (currentTime < opening || currentTime > closing) return false;
-                                    } else {
-                                        // Overnights
-                                        if (currentTime < opening && currentTime > closing) return false;
-                                    }
-                                }
-                                return true;
+                                return isProductScheduled(product);
                             })
                             .map((product) => {
                                 // Ensure product is an object (in case populate failed or mixed types)

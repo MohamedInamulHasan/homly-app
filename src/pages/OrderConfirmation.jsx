@@ -219,7 +219,7 @@ const OrderConfirmation = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 pb-10 md:pb-32 relative">
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 pb-20 md:pb-40 relative">
             {/* Simple Header */}
             <div className="w-full px-5 py-6">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -347,7 +347,7 @@ const OrderConfirmation = () => {
                     </div>
                 </div>
 
-                <div className="block mb-8">
+                <div className="block mb-16">
                     <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] p-6 border border-gray-100 dark:border-gray-700 relative overflow-hidden">
                         <div className="flex justify-between items-center mb-8">
                             <h2 className="text-[17px] font-bold text-gray-900 dark:text-white">{t('Payment')}</h2>

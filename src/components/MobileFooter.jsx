@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -99,6 +100,20 @@ const MobileFooter = () => {
     const { cartCount } = useCart();
     const { user } = useAuth();
     const { t } = useLanguage();
+    const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+
+    useEffect(() => {
+        // Detect keyboard on mobile by monitoring window resize
+        const handleResize = () => {
+            // If the window height is significantly smaller than the screen height, keyboard is likely open
+            // We use a threshold of 150px
+            const isKeyboardActive = window.innerHeight < window.screen.height - 150;
+            setIsKeyboardOpen(isKeyboardActive);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const isActive = (path) => location.pathname === path;
 
@@ -110,7 +125,7 @@ const MobileFooter = () => {
     ];
 
     const allowedFooterRoutes = ['/', '/store', '/orders', '/profile'];
-    if (!allowedFooterRoutes.includes(location.pathname)) {
+    if (!allowedFooterRoutes.includes(location.pathname) || isKeyboardOpen) {
         return null;
     }
 
