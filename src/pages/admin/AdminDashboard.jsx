@@ -82,7 +82,7 @@ const AdminDashboard = () => {
     const isDeliveryBoy = Array.isArray(user?.role) ? user?.role.includes('delivery_boy') : user?.role === 'delivery_boy';
     const isAdmin = Array.isArray(user?.role) ? user?.role.includes('admin') : user?.role === 'admin';
     const isCustomer = Array.isArray(user?.role) ? user?.role.includes('customer') : user?.role === 'customer';
-    const defaultTab = isStoreAdmin ? 'stores' : isServiceAdmin ? 'services' : isDeliveryBoy ? 'orders' : (isAdmin ? 'stores' : 'products');
+    const defaultTab = isStoreAdmin ? 'stores' : isServiceAdmin ? 'services' : isDeliveryBoy ? 'orders' : (isAdmin ? 'products' : 'products');
     const [activeTab, setActiveTab] = useState(defaultTab);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { t } = useLanguage();

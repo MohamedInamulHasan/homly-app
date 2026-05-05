@@ -154,7 +154,7 @@ function App() {
         <AuthProvider>
             <Router>
                 <DeepLinkHandler />
-                <ConnectionStatus />
+
                 
                 {/* Show offline screen first if no internet */}
                 {isOffline && <OfflineScreen />}

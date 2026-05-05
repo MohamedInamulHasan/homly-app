@@ -315,10 +315,10 @@ const Home = () => {
                 {/* Store Sections */}
                 {isLoadingAll ? (
                    <section className="px-4 py-4 mt-2">
-                        <div className="h-6 w-32 bg-gray-200 dark:bg-gray-800 rounded animate-pulse mb-6"></div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="h-6 w-48 bg-white dark:bg-gray-800/50 rounded-xl animate-pulse mb-8 shadow-sm"></div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             {[1, 2, 3, 4].map((i) => (
-                                <div key={i} className="aspect-[4/5] bg-gray-200 dark:bg-gray-800 rounded-3xl animate-pulse"></div>
+                                <div key={i} className="aspect-[4/5] bg-white dark:bg-gray-800/50 rounded-2xl animate-pulse shadow-sm border border-gray-100 dark:border-gray-700/50"></div>
                             ))}
                         </div>
                     </section>

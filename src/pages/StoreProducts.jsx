@@ -140,13 +140,8 @@ const StoreProducts = () => {
     const sections = useMemo(() => {
         const groups = {};
 
-        // Pre-filter by search query
-        const filteredList = searchQuery.trim()
-            ? groupedStoreProducts.filter(p =>
-                p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase()))
-            )
-            : groupedStoreProducts;
+        // Only filter by subcategory, NOT search query for the main grid as requested
+        const filteredList = groupedStoreProducts;
 
         if (!selectedSubcategory) {
             const allItems = filteredList;
@@ -536,29 +531,7 @@ const StoreProducts = () => {
                             </div>
                         ))}
                     </div>
-                ) : (
-                    <div className="flex flex-col items-center justify-center py-24 bg-white dark:bg-gray-800 rounded-[3rem] border-2 border-dashed border-gray-200 dark:border-gray-700 shadow-sm transition-all animate-in fade-in zoom-in duration-500">
-                        <div className="w-28 h-28 bg-gray-50 dark:bg-gray-700/50 rounded-full flex items-center justify-center mb-8 shadow-inner">
-                            <span className="text-6xl animate-bounce">📦</span>
-                        </div>
-                        <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-4 tracking-tight">
-                            {searchQuery.trim() || selectedSubcategory ? t('No matches found') : t('Store is Empty')}
-                        </h2>
-                        <p className="text-gray-500 dark:text-gray-400 max-w-sm mx-auto text-center text-lg leading-relaxed mb-10 px-6">
-                            {searchQuery.trim() || selectedSubcategory
-                                ? t('We couldn\'t find any products matching your current filters. Try adjusting your search or category.')
-                                : t('This store hasn\'t added any products yet. Please check back later or explore other stores.')}
-                        </p>
-                        {(searchQuery.trim() || selectedSubcategory) && (
-                            <button
-                                onClick={() => { setSearchQuery(''); setSelectedSubcategory(null); }}
-                                className="px-8 py-3 bg-[#2E5A2E] hover:opacity-90 text-white rounded-2xl font-bold shadow-lg shadow-green-500/20 transition-all active:scale-95"
-                            >
-                                {t('Clear All Filters')}
-                            </button>
-                        )}
-                    </div>
-                )}
+                ) : null}
                 </div>
             </div>
         </PullToRefreshLayout>

@@ -364,9 +364,9 @@ const Shop = () => {
                             >
                                 {isStoresLoading ? (
                                     // Skeleton Loader
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                                         {[1, 2, 3, 4, 5, 6].map((i) => (
-                                            <div key={i} className="bg-white dark:bg-gray-800 rounded-[2rem] h-80 shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden animate-pulse" />
+                                            <div key={i} className="bg-white dark:bg-gray-800 rounded-2xl aspect-[16/9] md:aspect-[3/2] lg:aspect-[4/3] w-full shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden animate-pulse" />
                                         ))}
                                     </div>
                                 ) : filteredStores.length > 0 ? (
@@ -396,7 +396,7 @@ const Shop = () => {
                                 {servicesLoading ? (
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
                                         {[1, 2, 3, 4, 5, 6].map((i) => (
-                                            <div key={i} className="bg-white dark:bg-gray-800 rounded-[2rem] h-80 shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden animate-pulse" />
+                                            <div key={i} className="bg-white dark:bg-gray-800 rounded-2xl aspect-[16/9] md:aspect-[3/2] lg:aspect-[4/3] w-full shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden animate-pulse" />
                                         ))}
                                     </div>
                                 ) : (() => {

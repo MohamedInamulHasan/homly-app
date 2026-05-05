@@ -167,11 +167,10 @@ const Profile = () => {
                                     {user?.avatar ? (
                                          <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
                                     ) : (
-                                         <img src="https://i.pravatar.cc/150?img=47" alt="Profile" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                                         <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#CBF9B2] to-[#2E5A2E]/10 text-[#2E5A2E]">
+                                            <User size={32} strokeWidth={1.5} />
+                                        </div>
                                     )}
-                                     <div className="hidden w-full h-full items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300 text-gray-500">
-                                        <User size={24} />
-                                    </div>
                                </div>
 
                                {/* Edit Overlay Button */}
