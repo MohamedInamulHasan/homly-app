@@ -18,6 +18,7 @@ import {
     Star,
     Power,
     GripVertical,
+    ShoppingBag,
     Copy // Added Copy
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -484,7 +485,8 @@ const StoreManagement = () => {
                             <ArrowLeft size={24} />
                         </button>
                     )}
-                    <h2 className="text-xl md:text-2xl font-normal text-gray-900 dark:text-white truncate">
+                    <h2 className="text-xl md:text-2xl font-normal text-gray-900 dark:text-white truncate flex items-center gap-2">
+                        {view === 'storeProducts' && <ShoppingBag className="text-[#2E5A2E] dark:text-[#7CA90E] flex-shrink-0" size={24} />}
                         {view === 'list' ? (!isStoreAdmin ? t('Manage Stores') : t('My Store')) :
                             view === 'form' ? (editingStore ? t('Edit Store') : t('Add New Store')) :
                                 view === 'storeProducts' ? `${selectedStore?.name || ''}` :

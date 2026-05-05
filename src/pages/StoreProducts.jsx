@@ -1,7 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, MapPin, Clock, Phone, ChevronRight, AlertCircle, Zap, Search, ListFilter } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, Phone, ChevronRight, AlertCircle, Zap, Search, ListFilter, ShoppingCart } from 'lucide-react';
 import { useData } from '../context/DataContext';
+import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
 import { isStoreOpen, isProductScheduled } from '../utils/storeHelpers';
 import PullToRefreshLayout from '../components/PullToRefreshLayout';
@@ -26,6 +27,7 @@ const ProductSkeleton = ({ fastMode }) => (
 const StoreProducts = () => {
     const { id } = useParams();
     const { products, stores, categories, loading, fastMode, toggleFastMode, globalSortOrder, setGlobalSortOrder } = useData();
+    const { cartCount } = useCart();
     const { t, language } = useLanguage();
     const [selectedSubcategory, setSelectedSubcategory] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
@@ -274,9 +276,9 @@ const StoreProducts = () => {
                         <div className="max-w-2xl mx-auto px-2 relative flex items-center justify-center min-h-[42px]">
                             <button
                                 onClick={() => navigate(-1)}
-                                className="absolute left-4 w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-700 flex-shrink-0 z-10"
+                                className="absolute left-4 w-10 h-10 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-700 flex-shrink-0 z-10"
                             >
-                                <ArrowLeft size={22} />
+                                <ArrowLeft size={20} />
                             </button>
                             <div className="flex flex-col items-center text-center px-12 min-w-0">
                                 <h1 className="text-gray-900 dark:text-white text-[18px] font-bold tracking-tight truncate w-full">{store?.name}</h1>
@@ -287,6 +289,17 @@ const StoreProducts = () => {
                                     </div>
                                 )}
                             </div>
+                            <Link 
+                                to="/cart"
+                                className="absolute right-4 w-10 h-10 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-700 flex-shrink-0 z-10"
+                            >
+                                <ShoppingCart size={20} className="text-[#2E5A2E] dark:text-[#7CA90E]" />
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center border border-white dark:border-gray-800">
+                                        {cartCount}
+                                    </span>
+                                )}
+                            </Link>
                         </div>
                     </div>
                 </div>
