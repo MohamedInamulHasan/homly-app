@@ -1,5 +1,5 @@
 import { API_BASE_URL } from '../../utils/api';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
     Wrench,
@@ -162,46 +162,16 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
     }, [serviceItems]);
 
     // Form States
-    const [serviceForm, setServiceForm] = useState({
-        name: '',
-        category: '',
-        description: '',
-        image: '',
-        address: '',
-        mobile: '',
-    });
-
-    const [itemForm, setItemForm] = useState({
-        name: '',
-        image: ''
-    });
+    // Form States removed from parent to prevent re-renders on every keystroke
+    // They are now handled locally in ServiceForm and ItemForm components below
 
     // --- Handlers ---
 
-    const handleImageUpload = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            try {
-                const imageUrl = await uploadImage(file);
-                setServiceForm(prev => ({ ...prev, image: imageUrl }));
-            } catch (error) {
-                console.error('Image upload failed:', error);
-                alert(t('Failed to upload image. Please try again.'));
-            }
-        }
-    };
+    // Image upload handler removed from parent, now handled locally in form components
 
     // Service Handlers
     const handleEditService = (service) => {
         setEditingService(service);
-        setServiceForm({
-            name: service.name,
-            category: service.category,
-            description: service.description,
-            image: service.image,
-            address: service.address,
-            mobile: service.mobile,
-        });
         setView('form');
     };
 
@@ -216,17 +186,15 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
         }
     };
 
-    const handleServiceSubmit = async (e) => {
-        e.preventDefault();
+    const handleServiceSubmit = async (formData) => {
         try {
             if (editingService) {
-                await updateService({ id: editingService._id || editingService.id, data: serviceForm });
+                await updateService({ id: editingService._id || editingService.id, data: formData });
                 alert(t('Service updated successfully!'));
             } else {
-                await addService(serviceForm);
+                await addService(formData);
                 alert(t('Service added successfully!'));
             }
-            setServiceForm({ name: '', category: '', description: '', image: '', address: '', mobile: '' });
             // If service admin edited their service, return to items view; otherwise back to list
             if (serviceAdminMode && editingService) {
                 setView('serviceItems');
@@ -247,20 +215,12 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
 
     // Item Handlers
     const handleAddItem = () => {
-        setItemForm({ name: '', image: '', isAvailable: true });
         setEditingItem(null);
         setView('itemForm');
     };
 
     const handleEditItem = (item) => {
         setEditingItem(item);
-        setItemForm({
-            name: item.name,
-            image: item.image,
-            isAvailable: item.isAvailable !== false,
-            description: item.description || '',
-            price: item.price || ''
-        });
         setView('itemForm');
     };
 
@@ -275,14 +235,13 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
         }
     };
 
-    const handleItemSubmit = async (e) => {
-        e.preventDefault();
+    const handleItemSubmit = async (formData) => {
         try {
             if (editingItem) {
-                await updateItem({ itemId: editingItem._id || editingItem.id, data: itemForm });
+                await updateItem({ itemId: editingItem._id || editingItem.id, data: formData });
                 alert(t('Item updated successfully!'));
             } else {
-                await addItem({ serviceId: selectedService._id || selectedService.id, data: itemForm });
+                await addItem({ serviceId: selectedService._id || selectedService.id, data: formData });
                 alert(t('Item added successfully!'));
             }
             setView('serviceItems');
@@ -297,10 +256,12 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
     // dragging filtered list is tricky because index changes.
     // If search is active, we should probably disable DnD or filter from 'items'.
     // Use 'items' for display.
-    const displayedServices = Array.isArray(items) ? items.filter(s =>
-        s?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s?.category?.toLowerCase().includes(searchQuery.toLowerCase())
-    ) : [];
+    const displayedServices = useMemo(() => {
+        return Array.isArray(items) ? items.filter(s =>
+            s?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            s?.category?.toLowerCase().includes(searchQuery.toLowerCase())
+        ) : [];
+    }, [items, searchQuery]);
 
     const handleDuplicateItem = async (item) => {
         if (!window.confirm(t('Duplicate this item?'))) return;
@@ -351,7 +312,6 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                         <button
                             onClick={() => {
                                 setEditingService(null);
-                                setServiceForm({ name: '', category: '', description: '', image: '', address: '', mobile: '' });
                                 setView('form');
                             }}
                             className="flex items-center gap-2 px-4 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors font-normal"
@@ -419,91 +379,15 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
 
             {/* View: Service Form */}
             {view === 'form' && (
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-                    <form onSubmit={handleServiceSubmit} className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Service Name')}</label>
-                                <input
-                                    type="text"
-                                    value={serviceForm.name}
-                                    onChange={(e) => setServiceForm({ ...serviceForm, name: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all font-normal"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Category')}</label>
-                                <input
-                                    type="text"
-                                    value={serviceForm.category}
-                                    onChange={(e) => setServiceForm({ ...serviceForm, category: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all"
-                                    placeholder="e.g., Home, Vehicle"
-                                    required
-                                />
-                            </div>
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Description')}</label>
-                                <textarea
-                                    value={serviceForm.description}
-                                    onChange={(e) => setServiceForm({ ...serviceForm, description: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none h-24"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Address')}</label>
-                                <input
-                                    type="text"
-                                    value={serviceForm.address}
-                                    onChange={(e) => setServiceForm({ ...serviceForm, address: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Mobile')}</label>
-                                <input
-                                    type="text"
-                                    value={serviceForm.mobile}
-                                    onChange={(e) => setServiceForm({ ...serviceForm, mobile: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all"
-                                    required
-                                />
-                            </div>
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Service Image')}</label>
-                                <div className="flex items-center gap-4">
-                                    {(serviceForm.image) && (
-                                        <img
-                                            src={serviceForm.image}
-                                            alt="Preview"
-                                            className="w-16 h-16 rounded-lg object-cover bg-white"
-                                        />
-                                    )}
-                                    <label className="flex-1 cursor-pointer">
-                                        <div className="w-full px-4 py-2 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2">
-                                            <Upload size={20} />
-                                            <span>{uploadingImage ? t('Uploading...') : t('Upload Image')}</span>
-                                        </div>
-                                        <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex justify-end">
-                            <button
-                                type="submit"
-                                disabled={uploadingImage}
-                                className="px-6 py-3 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 font-normal"
-                            >
-                                <Save size={20} />
-                                {editingService ? t('Update Service') : t('Add Service')}
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                <ServiceForm 
+                    initialData={editingService}
+                    onSubmit={handleServiceSubmit}
+                    onCancel={() => setView('list')}
+                    uploadImage={uploadImage}
+                    uploadingImage={uploadingImage}
+                    t={t}
+                    serviceAdminMode={serviceAdminMode}
+                />
             )}
 
             {/* View: Service Items List */}
@@ -629,76 +513,228 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
 
             {/* View: Item Form */}
             {view === 'itemForm' && (
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-                    <form onSubmit={handleItemSubmit} className="space-y-6">
-                        <div className="grid grid-cols-1 gap-6">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Item Name')}</label>
-                                <input
-                                    type="text"
-                                    value={itemForm.name}
-                                    onChange={(e) => setItemForm({ ...itemForm, name: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all"
-                                    placeholder="e.g., General Service"
-                                    required
-                                />
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <input
-                                    type="checkbox"
-                                    id="isAvailable"
-                                    checked={itemForm.isAvailable !== false}
-                                    onChange={(e) => setItemForm({ ...itemForm, isAvailable: e.target.checked })}
-                                    className="w-4 h-4 text-[#2E5A2E] border-gray-300 rounded focus:ring-[#2E5A2E]"
-                                />
-                                <label htmlFor="isAvailable" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    {t('Available')}
-                                </label>
-                            </div>
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Item Image')}</label>
-                                <div className="flex items-center gap-4">
-                                    {(itemForm.image) && (
-                                        <img
-                                            src={itemForm.image}
-                                            alt="Preview"
-                                            className="w-16 h-16 rounded-lg object-cover bg-white"
-                                        />
-                                    )}
-                                    <label className="flex-1 cursor-pointer">
-                                        <div className="w-full px-4 py-2 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2">
-                                            <Upload size={20} />
-                                            <span>{uploadingImage ? t('Uploading...') : t('Upload Image')}</span>
-                                        </div>
-                                        <input type="file" accept="image/*" onChange={(e) => {
-                                            const file = e.target.files[0];
-                                            if (file) {
-                                                uploadImage(file).then(url => {
-                                                    setItemForm(prev => ({ ...prev, image: url }));
-                                                }).catch(() => alert(t('Failed to upload image')));
-                                            }
-                                        }} className="hidden" />
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex justify-end">
-                            <button
-                                type="submit"
-                                className="px-6 py-3 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 font-bold shadow-sm"
-                            >
-                                <Save size={20} />
-                                {editingItem ? t('Update Item') : t('Add Item')}
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                <ItemForm 
+                    initialData={editingItem}
+                    onSubmit={handleItemSubmit}
+                    onCancel={() => setView('serviceItems')}
+                    uploadImage={uploadImage}
+                    uploadingImage={uploadingImage}
+                    t={t}
+                />
             )}
         </div>
     );
 };
 
+import React from 'react';
 
+const ServiceForm = React.memo(({ initialData, onSubmit, onCancel, uploadImage, uploadingImage, t, serviceAdminMode }) => {
+    const [formData, setFormData] = useState({
+        name: initialData?.name || '',
+        category: initialData?.category || '',
+        description: initialData?.description || '',
+        image: initialData?.image || '',
+        address: initialData?.address || '',
+        mobile: initialData?.mobile || '',
+    });
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            try {
+                const imageUrl = await uploadImage(file);
+                setFormData(prev => ({ ...prev, image: imageUrl }));
+            } catch (error) {
+                console.error('Image upload failed:', error);
+                alert(t('Failed to upload image. Please try again.'));
+            }
+        }
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(formData);
+    };
+
+    return (
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Service Name')}</label>
+                        <input
+                            type="text"
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all font-normal"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Category')}</label>
+                        <input
+                            type="text"
+                            value={formData.category}
+                            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                            className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all"
+                            placeholder="e.g., Home, Vehicle"
+                            required
+                        />
+                    </div>
+                    <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Description')}</label>
+                        <textarea
+                            value={formData.description}
+                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                            className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none h-24"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Address')}</label>
+                        <input
+                            type="text"
+                            value={formData.address}
+                            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                            className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Mobile')}</label>
+                        <input
+                            type="text"
+                            value={formData.mobile}
+                            onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+                            className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all"
+                            required
+                        />
+                    </div>
+                    <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Service Image')}</label>
+                        <div className="flex items-center gap-4">
+                            {formData.image && (
+                                <img
+                                    src={formData.image}
+                                    alt="Preview"
+                                    className="w-16 h-16 rounded-lg object-cover bg-white"
+                                />
+                            )}
+                            <label className="flex-1 cursor-pointer">
+                                <div className="w-full px-4 py-2 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2">
+                                    <Upload size={20} />
+                                    <span>{uploadingImage ? t('Uploading...') : t('Upload Image')}</span>
+                                </div>
+                                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div className="flex justify-end gap-3">
+                    <button
+                        type="button"
+                        onClick={onCancel}
+                        className="px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                    >
+                        {t('Cancel')}
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={uploadingImage}
+                        className="px-6 py-3 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 font-normal"
+                    >
+                        <Save size={20} />
+                        {initialData ? t('Update Service') : t('Add Service')}
+                    </button>
+                </div>
+            </form>
+        </div>
+    );
+});
+
+const ItemForm = React.memo(({ initialData, onSubmit, onCancel, uploadImage, uploadingImage, t }) => {
+    const [formData, setFormData] = useState({
+        name: initialData?.name || '',
+        image: initialData?.image || '',
+        isAvailable: initialData?.isAvailable !== false,
+        description: initialData?.description || '',
+        price: initialData?.price || ''
+    });
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            try {
+                const url = await uploadImage(file);
+                setFormData(prev => ({ ...prev, image: url }));
+            } catch (error) {
+                console.error('Image upload failed:', error);
+                alert(t('Failed to upload image'));
+            }
+        }
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(formData);
+    };
+
+    return (
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 gap-6">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Item Name')}</label>
+                        <input
+                            type="text"
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            className="w-full px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all"
+                            placeholder="e.g., General Service"
+                            required
+                        />
+                    </div>
+
+                    <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Item Image')}</label>
+                        <div className="flex items-center gap-4">
+                            {formData.image && (
+                                <img
+                                    src={formData.image}
+                                    alt="Preview"
+                                    className="w-16 h-16 rounded-lg object-cover bg-white"
+                                />
+                            )}
+                            <label className="flex-1 cursor-pointer">
+                                <div className="w-full px-4 py-2 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2">
+                                    <Upload size={20} />
+                                    <span>{uploadingImage ? t('Uploading...') : t('Upload Image')}</span>
+                                </div>
+                                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div className="flex justify-end gap-3">
+                    <button
+                        type="button"
+                        onClick={onCancel}
+                        className="px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                    >
+                        {t('Cancel')}
+                    </button>
+                    <button
+                        type="submit"
+                        className="px-6 py-3 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 font-bold shadow-sm"
+                    >
+                        <Save size={20} />
+                        {initialData ? t('Update Item') : t('Add Item')}
+                    </button>
+                </div>
+            </form>
+        </div>
+    );
+});
 
 const SortableServiceCard = ({ service, handleManageItems, handleEditService, handleDeleteService, t, serviceAdminMode }) => {
     const {

@@ -1765,7 +1765,7 @@ const NewsManagement = () => {
                         </div>
 
                         <div className="flex justify-end">
-                            <button type="submit" className="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors flex items-center gap-2">
+                            <button type="submit" className="px-6 py-3 bg-[#2E5A2E] text-white rounded-xl font-medium hover:bg-[#1a3d1a] transition-colors flex items-center gap-2">
                                 {editingNews ? <Save size={20} /> : <Newspaper size={20} />}
                                 {editingNews ? t('Update Post') : t('Publish')}
                             </button>
