@@ -117,6 +117,9 @@ export const updateStore = async (req, res, next) => {
             delete updateData.image;
         }
 
+        // Explicitly handle fields if needed, but findByIdAndUpdate is generally fine
+        // for fields that exist in the schema.
+
         const store = await Store.findByIdAndUpdate(
             req.params.id,
             updateData,

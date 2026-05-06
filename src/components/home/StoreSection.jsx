@@ -50,7 +50,7 @@ const StoreSection = ({ section, products: rawProducts = [], singleStore = false
 
     const navigateTo = section.type === 'store' 
         ? `/store/${section.id}` 
-        : `/store?category=${encodeURIComponent(section.name)}`;
+        : `/category/${encodeURIComponent(section.name)}`;
 
     const isOpen = section.type === 'store' ? isStoreOpen(section.data) : true;
 
@@ -95,7 +95,7 @@ const StoreSection = ({ section, products: rawProducts = [], singleStore = false
     }, [products, singleStore, contextStores, section.type, section.id]);
 
     return (
-        <section className={`px-4 py-8 dark:bg-gray-900 border-b border-gray-50 dark:border-gray-800 last:border-b-0 transition-opacity duration-300 ${!isOpen ? 'opacity-80' : ''}`}>
+        <section className={`px-4 py-8 dark:bg-gray-900 transition-opacity duration-300 ${!isOpen ? 'opacity-80' : ''}`}>
             {/* Header */}
             <div className="flex justify-between items-end mb-6 px-1">
                 <div className="flex flex-col min-w-0 flex-1">

@@ -170,7 +170,7 @@ const Cart = () => {
                                    <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹ {deliveryCharge.toFixed(0)}</span>
                                )}
                           </div>
-                          <div className="flex justify-between items-center pt-2 border-t border-gray-50 dark:border-gray-700/50">
+                          <div className="flex justify-between items-center pt-2">
                                <span className="text-[15px] text-gray-500 font-medium">{t('Total')}</span>
                                <span className="text-[16px] font-bold text-gray-900 dark:text-white">₹ {finalTotal.toFixed(0)}</span>
                           </div>

@@ -23,13 +23,16 @@ import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import MyService from './pages/MyService';
+import Categories from './pages/Categories';
 import EditAddress from './pages/EditAddress';
 
 import MobileFooter from './components/MobileFooter';
 import InstallPrompt from './components/InstallPrompt';
 import IntroAnimation from './components/IntroAnimation';
+import NotificationOverlay from './components/NotificationOverlay';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
+import { SocketProvider, useSocket } from './context/SocketContext';
 import { useData } from './context/DataContext';
 import { useAuth } from './context/AuthContext';
 import MaintenanceScreen from './components/MaintenanceScreen';
@@ -90,8 +93,8 @@ const Layout = ({ children, onRefresh }) => {
     const { settings, isFooterHidden } = useData();
     const { user } = useAuth();
 
-    // Maintenance Mode Logic
-    const isMaintenanceMode = settings?.maintenanceMode === true;
+    const { isMaintenance: isLiveMaintenance } = useSocket();
+    const isMaintenanceMode = settings?.maintenanceMode === true || isLiveMaintenance;
     const isAdmin = Array.isArray(user?.role) ? user?.role.includes('admin') : user?.role === 'admin'; // Specific check for 'admin' role
 
     const isExemptRoute =
@@ -107,7 +110,7 @@ const Layout = ({ children, onRefresh }) => {
     }
 
     // Footer Visibility: Only show on top-level navigation pages
-    const allowedFooterRoutes = ['/', '/store', '/orders', '/profile'];
+    const allowedFooterRoutes = ['/', '/store', '/orders', '/profile', '/categories'];
     const showMobileFooter = allowedFooterRoutes.includes(location.pathname) && !isFooterHidden;
 
     return (
@@ -152,130 +155,134 @@ function App() {
 
     return (
         <AuthProvider>
-            <Router>
-                <DeepLinkHandler />
+            <SocketProvider>
+                <Router>
+                    <DeepLinkHandler />
+                    <NotificationOverlay />
 
-                
-                {/* Show offline screen first if no internet */}
-                {isOffline && <OfflineScreen />}
+                    
+                    {/* Show offline screen first if no internet */}
+                    {isOffline && <OfflineScreen />}
 
-                {/* Show intro animation during initial load if online */}
-                {!isOffline && initialLoading && <IntroAnimation />}
+                    {/* Show intro animation during initial load if online */}
+                    {!isOffline && initialLoading && <IntroAnimation />}
 
-                {/* Main app content - hidden during intro or offline */}
-                <div style={{ display: (initialLoading || isOffline) ? 'none' : 'block' }}>
-                    <CartProvider>
-                        <Layout onRefresh={handleRefresh}>
-                            <Routes>
-                                <Route path="/" element={<Home />} />
-                                <Route path="/store" element={<Shop />} />
-                                <Route path="/shop" element={<Navigate to="/store" replace />} />
-                                <Route path="/store/:id" element={<StoreProducts />} />
-                                <Route path="/product/:id" element={<ProductDetails />} />
-                                <Route path="/news" element={<News />} />
-                                <Route path="/services" element={<Services />} />
-                                <Route path="/login" element={<Login />} />
-                                <Route path="/signup" element={<Signup />} />
-                                <Route path="/forgot-password" element={<ForgotPassword />} />
-                                <Route path="/reset-password/:token" element={<ResetPassword />} />
+                    {/* Main app content - hidden during intro or offline */}
+                    <div style={{ display: (initialLoading || isOffline) ? 'none' : 'block' }}>
+                        <CartProvider>
+                            <Layout onRefresh={handleRefresh}>
+                                <Routes>
+                                    <Route path="/" element={<Home />} />
+                                    <Route path="/store" element={<Shop />} />
+                                    <Route path="/shop" element={<Navigate to="/store" replace />} />
+                                    <Route path="/store/:id" element={<StoreProducts />} />
+                                    <Route path="/product/:id" element={<ProductDetails />} />
+                                    <Route path="/news" element={<News />} />
+                                    <Route path="/services" element={<Services />} />
+                                    <Route path="/login" element={<Login />} />
+                                    <Route path="/signup" element={<Signup />} />
+                                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                                    <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-                                {/* Protected Routes */}
-                                <Route
-                                    path="/profile"
-                                    element={
-                                        <PrivateRoute>
-                                            <Profile />
-                                        </PrivateRoute>
-                                    }
-                                />
-                                <Route
-                                    path="/edit-address"
-                                    element={
-                                        <PrivateRoute>
-                                            <EditAddress />
-                                        </PrivateRoute>
-                                    }
-                                />
-                                <Route
-                                    path="/cart"
-                                    element={
-                                        <PrivateRoute>
-                                            <Cart />
-                                        </PrivateRoute>
-                                    }
-                                />
-                                <Route
-                                    path="/checkout"
-                                    element={
-                                        <PrivateRoute>
-                                            <Checkout />
-                                        </PrivateRoute>
-                                    }
-                                />
-                                <Route
-                                    path="/orders"
-                                    element={
-                                        <PrivateRoute>
-                                            <Orders />
-                                        </PrivateRoute>
-                                    }
-                                />
-                                <Route
-                                    path="/orders/:id"
-                                    element={
-                                        <PrivateRoute>
-                                            <OrderDetails />
-                                        </PrivateRoute>
-                                    }
-                                />
-                                <Route
-                                    path="/order-confirmation"
-                                    element={
-                                        <PrivateRoute>
-                                            <OrderConfirmation />
-                                        </PrivateRoute>
-                                    }
-                                />
-                                <Route
-                                    path="/saved-products"
-                                    element={
-                                        <PrivateRoute>
-                                            <SavedProducts />
-                                        </PrivateRoute>
-                                    }
-                                />
-                                <Route
-                                    path="/my-store"
-                                    element={
-                                        <PrivateRoute>
-                                            <MyStore />
-                                        </PrivateRoute>
-                                    }
-                                />
-                                <Route
-                                    path="/my-service"
-                                    element={
-                                        <PrivateRoute>
-                                            <MyService />
-                                        </PrivateRoute>
-                                    }
-                                />
-                                <Route path="/category/:categoryName" element={<CategoryProducts />} />
-                                <Route path="/product-group/:productName" element={<ProductGroupProducts />} />
-                                <Route
-                                    path="/admin"
-                                    element={
-                                        <PrivateRoute adminOnly={true}>
-                                            <AdminDashboard />
-                                        </PrivateRoute>
-                                    }
-                                />
-                                <Route path="*" element={<Navigate to="/" replace />} />
-                            </Routes>
-                        </Layout>
-                    </CartProvider>
-                </div>
-            </Router>
+                                    {/* Protected Routes */}
+                                    <Route
+                                        path="/profile"
+                                        element={
+                                            <PrivateRoute>
+                                                <Profile />
+                                            </PrivateRoute>
+                                        }
+                                    />
+                                    <Route
+                                        path="/edit-address"
+                                        element={
+                                            <PrivateRoute>
+                                                <EditAddress />
+                                            </PrivateRoute>
+                                        }
+                                    />
+                                    <Route
+                                        path="/cart"
+                                        element={
+                                            <PrivateRoute>
+                                                <Cart />
+                                            </PrivateRoute>
+                                        }
+                                    />
+                                    <Route
+                                        path="/checkout"
+                                        element={
+                                            <PrivateRoute>
+                                                <Checkout />
+                                            </PrivateRoute>
+                                        }
+                                    />
+                                    <Route
+                                        path="/orders"
+                                        element={
+                                            <PrivateRoute>
+                                                <Orders />
+                                            </PrivateRoute>
+                                        }
+                                    />
+                                    <Route
+                                        path="/orders/:id"
+                                        element={
+                                            <PrivateRoute>
+                                                <OrderDetails />
+                                            </PrivateRoute>
+                                        }
+                                    />
+                                    <Route
+                                        path="/order-confirmation"
+                                        element={
+                                            <PrivateRoute>
+                                                <OrderConfirmation />
+                                            </PrivateRoute>
+                                        }
+                                    />
+                                    <Route
+                                        path="/saved-products"
+                                        element={
+                                            <PrivateRoute>
+                                                <SavedProducts />
+                                            </PrivateRoute>
+                                        }
+                                    />
+                                    <Route
+                                        path="/my-store"
+                                        element={
+                                            <PrivateRoute>
+                                                <MyStore />
+                                            </PrivateRoute>
+                                        }
+                                    />
+                                    <Route
+                                        path="/my-service"
+                                        element={
+                                            <PrivateRoute>
+                                                <MyService />
+                                            </PrivateRoute>
+                                        }
+                                    />
+                                    <Route path="/categories" element={<Categories />} />
+                                    <Route path="/category/:categoryName" element={<CategoryProducts />} />
+                                    <Route path="/product-group/:productName" element={<ProductGroupProducts />} />
+                                    <Route
+                                        path="/admin"
+                                        element={
+                                            <PrivateRoute adminOnly={true}>
+                                                <AdminDashboard />
+                                            </PrivateRoute>
+                                        }
+                                    />
+                                    <Route path="*" element={<Navigate to="/" replace />} />
+                                </Routes>
+                            </Layout>
+                        </CartProvider>
+                    </div>
+                </Router>
+            </SocketProvider>
         </AuthProvider>
     );
 }

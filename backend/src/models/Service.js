@@ -31,6 +31,23 @@ const serviceSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+    isManuallyClosed: {
+        type: Boolean,
+        default: false
+    },
+    timingType: {
+        type: String,
+        enum: ['daily', 'permanent'],
+        default: 'daily'
+    },
+    openingTime: {
+        type: String,
+        default: '09:00'
+    },
+    closingTime: {
+        type: String,
+        default: '21:00'
+    },
     order: {
         type: Number,
         default: 0

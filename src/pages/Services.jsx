@@ -1,12 +1,13 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Wrench, ShieldCheck, MapPin, CheckCircle, Phone, Send, Check, Search } from 'lucide-react';
+import { ArrowLeft, Wrench, ShieldCheck, MapPin, CheckCircle, Phone, Send, Check, Search, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext'; // Import useAuth
 import PullToRefreshLayout from '../components/PullToRefreshLayout';
 import { useServices, useServiceItems } from '../hooks/queries/useServices';
 import { API_BASE_URL } from '../utils/api';
+import { isStoreOpen as isServiceOpen } from '../utils/storeHelpers';
 
 const Services = () => {
     const navigate = useNavigate();
@@ -45,13 +46,20 @@ const Services = () => {
         if (serviceIdFromQuery && services.length > 0) {
             const foundService = services.find(s => (s._id || s.id) === serviceIdFromQuery);
             if (foundService) {
-                setActiveService(foundService);
-                setViewMode('details');
+                // Check if open before deep linking
+                if (isServiceOpen(foundService)) {
+                    setActiveService(foundService);
+                    setViewMode('details');
+                }
             }
         }
     }, [serviceIdFromQuery, services]);
 
     const handleViewServices = (service) => {
+        if (!isServiceOpen(service)) {
+            alert(t('This service is currently closed. Please check back later.'));
+            return;
+        }
         setActiveService(service);
         setSelectedItem(null); // Reset selection
         setViewMode('details');
@@ -171,9 +179,9 @@ const Services = () => {
                                 {searchQuery && (
                                     <button
                                         onClick={() => setSearchQuery('')}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-[#2E5A2E] dark:hover:text-[#CBF9B2] transition-colors"
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-red-500 transition-colors"
                                     >
-                                        <Check className="rotate-45 scale-125" size={16} /> 
+                                        <X size={18} /> 
                                     </button>
                                 )}
                             </div>
@@ -281,63 +289,75 @@ const Services = () => {
                                     );
                                 }
 
-                                return filteredServices.map((service, index) => (
-                                    <div 
-                                        key={service._id || index} 
-                                        onClick={() => handleViewServices(service)}
-                                        className="group relative bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden transition-all duration-300 aspect-[16/9] md:aspect-[3/2] lg:aspect-[4/3] w-full cursor-pointer shadow-sm hover:shadow-md"
-                                    >
-                                        {/* Full Background Image */}
-                                        <div className="absolute inset-0 z-0">
-                                            <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700" />
-                                            <img
-                                                src={service.image || `${API_BASE_URL}/services/${service._id || service.id}/image`}
-                                                alt={service.name}
-                                                className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110 z-10"
-                                                loading="lazy"
-                                                onError={(e) => {
-                                                    e.target.onerror = null;
-                                                    e.target.src = "https://placehold.co/800x450?text=Service";
-                                                }}
-                                            />
-                                            
-                                            {/* Dark Gradient Overlay */}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
-                                        </div>
+                                return filteredServices.map((service, index) => {
+                                    const isOpen = isServiceOpen(service);
+                                    const isClosed = !isOpen;
+                                    return (
+                                        <div 
+                                            key={service._id || index} 
+                                            onClick={() => handleViewServices(service)}
+                                            className={`group relative bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden transition-all duration-300 aspect-[16/9] md:aspect-[3/2] lg:aspect-[4/3] w-full cursor-pointer shadow-sm hover:shadow-md ${!isOpen ? 'cursor-not-allowed' : ''}`}
+                                        >
+                                            {/* Full Background Image */}
+                                            <div className={`absolute inset-0 z-0 ${!isOpen ? 'opacity-60' : ''}`}>
+                                                <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700" />
+                                                <img
+                                                    src={service.image || `${API_BASE_URL}/services/${service._id || service.id}/image`}
+                                                    alt={service.name}
+                                                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110 z-10 ${!isOpen ? '' : ''}`}
+                                                    loading="lazy"
+                                                    onError={(e) => {
+                                                        e.target.onerror = null;
+                                                        e.target.src = "https://placehold.co/800x450?text=Service";
+                                                    }}
+                                                />
+                                                
+                                                {/* Dark Gradient Overlay */}
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
+                                            </div>
 
-                                        {/* Content Section - White Banner at Bottom */}
-                                        <div className="absolute bottom-0 left-0 right-0 py-2.5 px-4 z-20 overflow-hidden">
-                                            {/* Solid White Banner Strip */}
-                                            <div className="absolute inset-0 bg-white dark:bg-gray-800 border-t border-gray-50 dark:border-gray-700" />
-                                            
-                                            <div className="relative z-10">
-                                                <h3 className="text-gray-900 dark:text-white text-[15px] font-semibold tracking-tight leading-tight mb-0.5 truncate pr-8">
-                                                    {service.name}
-                                                </h3>
-                                                <div className="flex items-center gap-1.5 opacity-90">
-                                                    <MapPin size={10} className="text-[#2E5A2E] dark:text-[#CBF9B2] flex-shrink-0" />
-                                                    <p className="text-gray-500 dark:text-gray-400 text-[11px] font-normal truncate">
-                                                        {service.address || t('Available Locally')}
-                                                    </p>
+                                            {/* Content Section - White Banner at Bottom */}
+                                            <div className="absolute bottom-0 left-0 right-0 py-2.5 px-4 z-20 overflow-hidden">
+                                                {/* Solid White Banner Strip */}
+                                                <div className="absolute inset-0 bg-white dark:bg-gray-800 border-t border-gray-50 dark:border-gray-700" />
+                                                
+                                                <div className="relative z-10">
+                                                    <h3 className={`text-gray-900 dark:text-white text-[15px] font-semibold tracking-tight leading-tight mb-0.5 truncate pr-8 ${!isOpen ? 'opacity-60' : ''}`}>
+                                                        {service.name}
+                                                    </h3>
+                                                    <div className="flex items-center gap-1.5 opacity-90">
+                                                        <MapPin size={10} className="text-[#2E5A2E] dark:text-[#CBF9B2] flex-shrink-0" />
+                                                        <p className="text-gray-500 dark:text-gray-400 text-[11px] font-normal truncate">
+                                                            {service.address || t('Available Locally')}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        {/* Right Action Arrow */}
-                                        <div className="absolute bottom-4 right-4 z-30 transition-all duration-300">
-                                            <div className="w-8 h-8 rounded-full bg-[#2E5A2E] text-white flex items-center justify-center scale-90 group-hover:scale-105 active:scale-90 transition-all shadow-sm">
-                                                <ArrowLeft size={16} className="rotate-180" />
+                                            {/* Right Action Arrow - Hide or dim if closed */}
+                                            <div className={`absolute bottom-4 right-4 z-30 transition-all duration-300 ${!isOpen ? 'opacity-0 scale-50' : ''}`}>
+                                                <div className="w-8 h-8 rounded-full bg-[#2E5A2E] text-white flex items-center justify-center scale-90 group-hover:scale-105 active:scale-90 transition-all shadow-sm">
+                                                    <ArrowLeft size={16} className="rotate-180" />
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        {/* Category Tag Overlay (Top Left) */}
-                                        <div className="absolute top-4 left-4 z-20">
-                                            <span className="px-3 py-1 bg-[#CBF9B2] text-[#2E5A2E] text-[10px] font-bold rounded-full uppercase tracking-widest shadow-sm">
-                                                {service.category || t('Service')}
-                                            </span>
+                                            {/* Category Tag Overlay (Top Left) */}
+                                            <div className="absolute top-4 left-4 z-20">
+                                                <span className="px-3 py-1 bg-[#CBF9B2] text-[#2E5A2E] text-[10px] font-bold rounded-full uppercase tracking-widest shadow-sm">
+                                                    {service.category || t('Service')}
+                                                </span>
+                                            </div>
+
+                                            {isClosed && (
+                                                <div className="absolute inset-0 z-30 bg-black/10 flex items-center justify-center backdrop-blur-[1px]">
+                                                    <span className="bg-gray-800 text-white px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg animate-in fade-in zoom-in-95 duration-500">
+                                                        {t('Closed')}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
-                                    </div>
-                                ));
+                                    );
+                                });
                             })()}
                         </div>
                     ) : (
@@ -501,6 +521,7 @@ const Services = () => {
                                     onClick={() => {
                                         setRequestSuccess(false);
                                         setSelectedItem(null);
+                                        handleBackToList();
                                     }}
                                     className="w-full bg-black text-white py-4 px-6 rounded-full font-normal shadow-lg shadow-gray-200 dark:shadow-gray-900/20 active:scale-[0.98] transition-transform text-[15px]"
                                 >

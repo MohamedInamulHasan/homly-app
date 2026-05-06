@@ -124,7 +124,7 @@ const MobileFooter = () => {
         { path: user ? '/profile' : '/login', icon: ProfileIcon, label: user ? t('profile') : t('login') },
     ];
 
-    const allowedFooterRoutes = ['/', '/store', '/orders', '/profile'];
+    const allowedFooterRoutes = ['/', '/store', '/orders', '/profile', '/categories'];
     if (!allowedFooterRoutes.includes(location.pathname) || isKeyboardOpen) {
         return null;
     }

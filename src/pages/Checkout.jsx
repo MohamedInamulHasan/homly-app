@@ -451,7 +451,7 @@ const Checkout = () => {
 
                         {/* Order Summary (Items List) */}
                         <div className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm">
-                            <div className="p-5 border-b border-gray-50 dark:border-gray-700 flex items-center gap-3">
+                            <div className="p-5 flex items-center gap-3">
                                 <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#2E5A2E] dark:text-[#8bc910]">
                                     <Package size={18} />
                                 </div>
@@ -459,7 +459,7 @@ const Checkout = () => {
                             </div>
 
                             <div className="p-4 sm:p-6">
-                                <div className="divide-y divide-gray-50 dark:divide-gray-700">
+                                <div className="space-y-4">
                                     {displayItems.map((item, index) => (
                                         <div key={item.id || index} className="py-4 flex gap-4 first:pt-0">
                                             <div className="h-16 w-16 bg-gray-50 rounded-2xl overflow-hidden flex-shrink-0 relative">
@@ -595,7 +595,7 @@ const Checkout = () => {
                                         <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹{deliveryCharge.toFixed(0)}</span>
                                     )}
                                 </div>
-                                <div className="flex justify-between items-center pt-2 border-t border-gray-50 dark:border-gray-700/50">
+                                <div className="flex justify-between items-center pt-2">
                                     <span className="text-[15px] text-gray-500 font-medium">{t('Total')}</span>
                                     <span className="text-[17px] font-bold text-gray-900 dark:text-white">₹{finalTotal.toFixed(0)}</span>
                                 </div>

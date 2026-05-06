@@ -50,7 +50,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
     const featuredVariant = isGroup ? variants[currentVariantIndex] : product;
 
     return (
-        <div className={`relative flex flex-col h-full bg-white dark:bg-gray-800 rounded-3xl overflow-hidden group transition-all duration-300 ${!isOpen || !isAvailable ? 'opacity-80' : ''}`}>
+        <div className={`relative flex flex-col h-full bg-white dark:bg-gray-800 rounded-3xl overflow-hidden group transition-all duration-300`}>
             
             <Link 
                 to={(!isOpen || !isAvailable) ? '#' : (product.isGroup ? `/product-group/${encodeURIComponent(product.title)}` : `/product/${productId}`)} 
@@ -95,7 +95,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                 )}
 
                 {/* Image Container (Full Bleed) */}
-                <div className="aspect-square bg-[#F9FAFB] m-1 rounded-2xl overflow-hidden flex items-center justify-center relative">
+                <div className={`aspect-square bg-[#F9FAFB] m-1 rounded-2xl overflow-hidden flex items-center justify-center relative ${!isOpen || !isAvailable ? 'opacity-60' : ''}`}>
                     {showHeart && (
                         <button
                             onClick={(e) => {

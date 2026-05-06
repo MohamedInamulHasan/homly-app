@@ -379,20 +379,19 @@ const StoreManagement = () => {
     };
 
     const handleToggleStatus = async (store) => {
-        const isCurrentlyClosedBySchedule = !isStoreOpen({ ...store, isManuallyClosed: false });
         const newManualStatus = !store.isManuallyClosed;
-
-        // If trying to open (isManuallyClosed: false) but it's closed by schedule
-        if (!newManualStatus && isCurrentlyClosedBySchedule && store.timingType === 'daily') {
-            alert(t('Cannot open: Store is currently outside its daily operating hours'));
-            return;
-        }
+        const isCurrentlyClosedBySchedule = !isStoreOpen({ ...store, isManuallyClosed: false });
 
         try {
             await updateStore({
                 id: store.id || store._id,
                 data: { isManuallyClosed: newManualStatus }
             });
+
+            // If we just manually opened it but it's still closed by time
+            if (!newManualStatus && isCurrentlyClosedBySchedule) {
+                alert(t('Manual status set to Open, but store remains closed due to daily schedule.'));
+            }
         } catch (error) {
             console.error('Error toggling store status:', error);
             alert(t('Failed to update store status.'));
@@ -558,133 +557,105 @@ const StoreManagement = () => {
 
                                     return (
                                         <SortableStoreCard key={store.id || store._id} store={store}>
-                                            <div className={`group relative bg-white dark:bg-gray-800 rounded-[2.5rem] transition-all duration-500 overflow-hidden border border-gray-100 dark:border-gray-700 flex flex-col h-full ${isClosed ? 'grayscale opacity-80' : ''}`}>
-                                                <div className="relative h-52 overflow-hidden">
-                                                    <DragHandle className="absolute top-4 left-4 z-30 p-2.5 bg-black/50 hover:bg-black/70 text-white rounded-2xl backdrop-blur-md transition-all cursor-grab active:cursor-grabbing border border-white/10 shadow-lg">
-                                                        <GripVertical size={20} />
+                                            <div className={`group relative bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm flex flex-col h-full transition-all duration-300 ${isClosed ? '' : ''}`}>
+                                                <div className={`relative h-44 overflow-hidden ${isClosed ? 'opacity-60' : ''}`}>
+                                                    <DragHandle className="absolute top-3 left-3 z-30 p-2 bg-black/50 hover:bg-black/70 text-white rounded-xl backdrop-blur-md transition-all border border-white/10 shadow-lg">
+                                                        <GripVertical size={18} />
                                                     </DragHandle>
 
                                                     <img
                                                         src={store.image || `${API_BASE_URL}/stores/${store.id || store._id}/image`}
                                                         onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/400x300?text=No+Image'; }}
                                                         alt={store.name}
-                                                        className={`w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${isClosed ? 'grayscale opacity-60' : ''}`}
+                                                        className={`w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${isClosed ? '' : ''}`}
                                                     />
 
-                                                    {/* Advanced Gradient Overlay */}
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
-
-                                                    {/* Status Overlay on Image */}
-                                                    {isClosed && (
-                                                        <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/5 backdrop-blur-[1px]">
-                                                            <div className="px-6 py-2 bg-gray-600/90 backdrop-blur-md rounded-full border-2 border-white transform -rotate-12">
-                                                                <span className="text-sm font-normal text-white tracking-widest uppercase">{t('CLOSED')}</span>
-                                                            </div>
-                                                        </div>
-                                                    )}
-
                                                     {/* Status Badge - Floating Glassmorphism */}
-                                                    <div className="absolute top-4 right-4 z-20">
-                                                        <div className={`backdrop-blur-md px-4 py-2 rounded-2xl border border-white/20 flex items-center gap-2 ${store.isManuallyClosed
+                                                    <div className="absolute top-3 right-3 z-20">
+                                                        <div className={`backdrop-blur-md px-3 py-1 rounded-full border border-white/20 flex items-center gap-1.5 ${store.isManuallyClosed
                                                             ? 'bg-gray-500/80 text-white'
                                                             : !isOpen
                                                                 ? 'bg-gray-600/80 text-white'
                                                                 : 'bg-emerald-500/80 text-white'
                                                             }`}>
-                                                            <div className={`w-2 h-2 rounded-full animate-pulse ${isOpen ? 'bg-white' : 'bg-white/80'}`} />
-                                                            <span className="text-[10px] font-normal uppercase tracking-widest whitespace-nowrap">
-                                                                {store.isManuallyClosed
-                                                                    ? t('Manually Closed')
-                                                                    : !isOpen
-                                                                        ? t('Closed Now')
-                                                                        : t('Open Now')}
+                                                            <div className={`w-1.5 h-1.5 rounded-full ${isOpen ? 'bg-white animate-pulse' : 'bg-white/50'}`} />
+                                                            <span className="text-[9px] font-bold uppercase tracking-wider whitespace-nowrap">
+                                                                {!isOpen && !store.isManuallyClosed ? t('Closed') : store.isManuallyClosed ? t('Closed') : t('Open')}
                                                             </span>
                                                         </div>
                                                     </div>
+
+                                                    {/* Large Closed Overlay */}
+                                                    {isClosed && (
+                                                        <div className="absolute inset-0 z-20 bg-black/10 flex items-center justify-center backdrop-blur-[1px]">
+                                                            <span className="bg-gray-800 text-white px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg animate-in fade-in zoom-in-95 duration-500">
+                                                                {t('Closed')}
+                                                            </span>
+                                                        </div>
+                                                    )}
                                                 </div>
 
-                                                <div className="p-4 flex flex-col flex-grow gap-3">
-                                                    <div className="space-y-0.5">
-                                                        <h3 className="text-2xl font-normal text-gray-900 dark:text-white leading-tight line-clamp-1 group-hover:text-[#2E5A2E] dark:group-hover:text-[#8bc910] transition-colors duration-300">
+                                                <div className="p-4 flex flex-col flex-grow">
+                                                    <div className="mb-3">
+                                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white leading-tight line-clamp-1 group-hover:text-[#2E5A2E] dark:group-hover:text-[#8bc910] transition-colors duration-300">
                                                             {store.name}
                                                         </h3>
-
-                                                        {/* Categories - Simplified Pills */}
-                                                        <div className="flex flex-wrap gap-1.5 pt-1">
+                                                        <div className="flex flex-wrap gap-1 mt-1">
                                                             {(Array.isArray(store.type) ? store.type : (store.type ? [store.type] : []))
-                                                                .filter(cat => categories.some(c => c.name === cat))
-                                                                .slice(0, 3)
+                                                                .slice(0, 1)
                                                                 .map((cat, idx) => (
-                                                                    <span key={idx} className="px-2.5 py-1 bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-[9px] uppercase tracking-widest font-normal rounded-lg border border-gray-100 dark:border-gray-600">
+                                                                    <span key={idx} className="text-[10px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] uppercase tracking-widest opacity-60">
                                                                         {t(cat)}
                                                                     </span>
                                                                 ))}
                                                         </div>
                                                     </div>
 
-                                                    {/* Info Pill */}
-                                                    <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-3 space-y-2 border border-gray-100 dark:border-gray-800/50">
-                                                        <div className="flex items-center gap-3 truncate">
-                                                            <div className="p-2 bg-[#2E5A2E]/10 rounded-xl">
-                                                                <MapPin size={16} className="text-[#2E5A2E] dark:text-[#7CA90E]" />
-                                                            </div>
-                                                            <span className="text-xs font-normal text-gray-600 dark:text-gray-400 truncate opacity-80" title={store.address}>
-                                                                {store.address || t('No address')}
-                                                            </span>
+                                                    {/* Quick Info */}
+                                                    <div className="space-y-1.5 mb-4">
+                                                        <div className="flex items-start gap-2 text-gray-500 dark:text-gray-400">
+                                                            <MapPin size={14} className="mt-0.5 flex-shrink-0 text-[#2E5A2E] dark:text-[#7CA90E]" />
+                                                            <span className="text-[11px] leading-tight line-clamp-1">{store.address || t('No address')}</span>
                                                         </div>
-                                                        <div className="flex items-center gap-3">
-                                                            <div className="p-2 bg-orange-500/10 rounded-xl">
-                                                                <Clock size={16} className="text-orange-600 dark:text-orange-400" />
-                                                            </div>
-                                                            <span className="text-xs font-normal text-gray-700 dark:text-gray-200">
-                                                                {store.timingType === 'permanent' ? t('Always Open') : `${formatTime12h(store.openingTime)} - ${formatTime12h(store.closingTime)}`}
-                                                            </span>
+                                                        <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                                                            <Clock size={14} className="flex-shrink-0 text-orange-500" />
+                                                            <span className="text-[11px]">{store.timingType === 'permanent' ? t('Always Open') : `${formatTime12h(store.openingTime)} - ${formatTime12h(store.closingTime)}`}</span>
                                                         </div>
                                                     </div>
 
                                                     {/* Admin Actions */}
-                                                    <div className="grid grid-cols-2 gap-2 mt-auto">
+                                                    <div className="mt-auto grid grid-cols-2 gap-2 pt-4 border-t border-gray-50 dark:border-gray-700/50">
                                                         <button
                                                             onClick={(e) => { e.stopPropagation(); proceedToManageProducts(store); }}
-                                                            className="col-span-1 py-3 px-4 bg-[#2E5A2E] text-white rounded-[1.25rem] hover:bg-[#1a3d1a] transition-all duration-300 flex items-center justify-center gap-2 group/btn"
+                                                            className="flex items-center justify-center gap-2 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-all text-[10px] font-bold uppercase tracking-wider"
                                                         >
-                                                            <Package size={18} className="transition-transform group-hover/btn:rotate-12" />
-                                                            <span className="text-xs font-normal uppercase tracking-wider">{t('Products')}</span>
+                                                            <Package size={16} />
+                                                            {t('Products')}
                                                         </button>
 
-                                                        {isTimeOpen ? (
+                                                        <div className="flex justify-end items-center gap-1">
                                                             <button
                                                                 onClick={(e) => { e.stopPropagation(); handleToggleStatus(store); }}
-                                                                className={`col-span-1 py-3 px-4 rounded-[1.25rem] transition-all duration-300 flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 group/btn ${store.isManuallyClosed
-                                                                    ? 'bg-emerald-600 text-white'
-                                                                    : 'bg-gray-500 text-white'
-                                                                    }`}
+                                                                disabled={!isOpen && !store.isManuallyClosed}
+                                                                title={!isOpen && !store.isManuallyClosed ? t('Already closed by schedule') : store.isManuallyClosed ? t('Open Store') : t('Close Store')}
+                                                                className={`p-2 rounded-xl transition-all active:scale-90 ${store.isManuallyClosed 
+                                                                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-400' 
+                                                                    : !isOpen ? 'bg-gray-50 dark:bg-gray-800 text-gray-300 cursor-not-allowed' : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600'}`}
                                                             >
-                                                                <Power size={18} className="transition-transform group-hover/btn:scale-110" />
-                                                                <span className="text-xs font-normal uppercase tracking-wider">{store.isManuallyClosed ? t('Open') : t('Close')}</span>
+                                                                <Power size={18} />
                                                             </button>
-                                                        ) : (
-                                                            <div className="col-span-1 py-3 px-4 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 rounded-[1.25rem] border border-gray-200 dark:border-gray-700 flex items-center justify-center gap-2 cursor-not-allowed opacity-60">
-                                                                <Clock size={16} />
-                                                                <span className="text-xs font-normal uppercase tracking-wider">{t('Closed')}</span>
-                                                            </div>
-                                                        )}
-
-                                                        <div className="col-span-2 flex items-center justify-center gap-4 mt-1 pt-3 border-t border-gray-100 dark:border-gray-700/50">
                                                             <button
                                                                 onClick={(e) => { e.stopPropagation(); handleEditStore(store); }}
-                                                                className="flex items-center gap-2 text-[10px] font-normal uppercase tracking-widest text-[#2E5A2E] dark:text-[#7CA90E] hover:text-[#1a3d1a] dark:hover:text-[#CBF9B2] transition-colors px-3 py-1.5 hover:bg-[#E8F5E9] dark:hover:bg-[#2E5A2E]/20 rounded-xl"
+                                                                className="p-2 text-[#2E5A2E] hover:bg-green-50 dark:hover:bg-green-900/20 rounded-xl transition-colors"
                                                             >
-                                                                <Edit2 size={14} />
-                                                                {t('Edit')}
+                                                                <Edit2 size={18} />
                                                             </button>
                                                             {!isStoreAdmin && (
                                                                 <button
                                                                     onClick={(e) => { e.stopPropagation(); handleDeleteStore(store.id || store._id); }}
-                                                                    className="flex items-center gap-2 text-[10px] font-normal uppercase tracking-widest text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors px-3 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl"
+                                                                    className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors"
                                                                 >
-                                                                    <Trash2 size={14} />
-                                                                    {t('Delete')}
+                                                                    <Trash2 size={18} />
                                                                 </button>
                                                             )}
                                                         </div>
@@ -776,6 +747,28 @@ const StoreManagement = () => {
                                         <span className="text-[10px] opacity-70">{t('Always Open/Closed until changed')}</span>
                                     </button>
                                 </div>
+                            </div>
+
+                            <div className="col-span-full">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Manual Status')}</label>
+                                <button
+                                    type="button"
+                                    onClick={() => setStoreForm(prev => ({ ...prev, isManuallyClosed: !prev.isManuallyClosed }))}
+                                    className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all ${storeForm.isManuallyClosed 
+                                        ? 'border-red-200 bg-red-50 text-red-600' 
+                                        : 'border-emerald-200 bg-emerald-50 text-emerald-600'}`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <Power size={20} />
+                                        <div className="text-left">
+                                            <p className="font-bold text-sm">{storeForm.isManuallyClosed ? t('Manually Closed') : t('Operational')}</p>
+                                            <p className="text-[10px] opacity-70">{storeForm.isManuallyClosed ? t('Store is forced closed') : t('Following schedule/mode')}</p>
+                                        </div>
+                                    </div>
+                                    <div className={`w-10 h-5 rounded-full relative transition-colors ${storeForm.isManuallyClosed ? 'bg-red-500' : 'bg-emerald-500'}`}>
+                                        <div className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all ${storeForm.isManuallyClosed ? 'right-1' : 'left-1'}`} />
+                                    </div>
+                                </button>
                             </div>
 
                             {storeForm.timingType === 'daily' && (

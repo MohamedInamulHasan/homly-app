@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { MapPin, Search, Star, Clock, Phone, Store, Wrench, ArrowRight } from 'lucide-react';
+import { MapPin, Search, Star, Clock, Phone, Store, Wrench, ArrowRight, X } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useLanguage } from '../context/LanguageContext';
 import { isStoreOpen, formatTime12h } from '../utils/storeHelpers';
@@ -54,7 +54,7 @@ const Shop = () => {
                 count = counts[name.toLowerCase()] || 0;
             }
             return { name, count };
-        });
+        }).filter(cat => cat.count > 0);
     }, [safeStores, dbCategories]);
 
     const filteredStores = safeStores.filter(store => {
@@ -114,6 +114,14 @@ const Shop = () => {
                                 className="w-full pl-12 pr-6 py-4 rounded-full border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none transition-all duration-300 shadow-sm"
                             />
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2E5A2E] transition-colors" size={20} />
+                            {searchQuery && (
+                                <button
+                                    onClick={() => setSearchQuery('')}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-red-500 transition-colors"
+                                >
+                                    <X size={18} />
+                                </button>
+                            )}
 
                             {/* Search Results Dropdown (Wider/Full-container width) */}
                             {searchQuery.trim() && viewType === 'store' && (
@@ -164,7 +172,10 @@ const Shop = () => {
                                                 <div
                                                     key={storeId}
                                                     onClick={() => {
-                                                        if (isClosed) return;
+                                                        if (isClosed) {
+                                                            alert(t('This store is currently closed. Please check back later.'));
+                                                            return;
+                                                        }
                                                         navigate(`/store/${storeId}`);
                                                         setSearchQuery('');
                                                     }}
@@ -233,19 +244,25 @@ const Shop = () => {
 
                                         return results.map((service) => {
                                             const serviceId = service._id || service.id;
+                                            const isOpen = isServiceOpen(service);
+                                            const isClosed = !isOpen;
                                             const name = t(service, 'name');
 
                                             return (
                                                 <div
                                                     key={serviceId}
                                                     onClick={() => {
+                                                        if (isClosed) {
+                                                            alert(t('This service is currently closed. Please check back later.'));
+                                                            return;
+                                                        }
                                                         navigate(`/services?id=${serviceId}`);
                                                         setSearchQuery('');
                                                     }}
-                                                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50/80 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-50 dark:border-gray-700 last:border-b-0 text-left cursor-pointer"
+                                                    className={`flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50/80 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-50 dark:border-gray-700 last:border-b-0 text-left ${isClosed ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'}`}
                                                 >
                                                     <div className="relative flex-shrink-0">
-                                                        <div className="w-12 h-12 rounded-[1rem] bg-gray-50 dark:bg-gray-700 p-1 flex items-center justify-center overflow-hidden border border-gray-100 dark:border-gray-600">
+                                                        <div className={`w-12 h-12 rounded-[1rem] bg-gray-50 dark:bg-gray-700 p-1 flex items-center justify-center overflow-hidden border border-gray-100 dark:border-gray-600 ${isClosed ? 'blur-[1px] grayscale' : ''}`}>
                                                             <img
                                                                 src={service.image || `${API_BASE_URL}/services/${serviceId}/image`}
                                                                 onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100?text=Service'; }}
@@ -253,9 +270,16 @@ const Shop = () => {
                                                                 className="w-full h-full object-cover"
                                                             />
                                                         </div>
+                                                        {isClosed && (
+                                                            <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-[1rem]">
+                                                                <span className="bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-tighter">
+                                                                    {t('Closed')}
+                                                                </span>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <div className="font-normal text-gray-800 dark:text-gray-200 truncate text-[13px] tracking-tight leading-tight">
+                                                        <div className={`font-normal text-gray-800 dark:text-gray-200 truncate text-[13px] tracking-tight leading-tight ${isClosed ? 'opacity-60' : ''}`}>
                                                             {name}
                                                         </div>
                                                         <p className="text-[10px] text-gray-400 dark:text-gray-500 truncate mt-0.5 font-normal">
@@ -435,49 +459,66 @@ const Shop = () => {
  
                                     return (
                                         <div className="grid grid-cols-1 gap-4">
-                                            {filteredServices.map((service, index) => (
-                                                <div
-                                                    key={service._id || index}
-                                                    onClick={() => navigate(`/services?id=${service._id || service.id}`)}
-                                                    className="group flex items-center gap-4 bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 dark:border-gray-700/50 cursor-pointer"
-                                                >
-                                                    {/* Left Side: Square Image */}
-                                                    <div className="w-20 h-20 flex-shrink-0 relative">
-                                                        <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 rounded-xl" />
-                                                        <img
-                                                            src={service.image || `${API_BASE_URL}/services/${service._id || service.id}/image`}
-                                                            alt={service.name}
-                                                            className="absolute inset-0 w-full h-full object-cover rounded-xl z-10"
-                                                            onError={(e) => { e.target.src = 'https://placehold.co/200x200?text=Service'; }}
-                                                        />
-                                                    </div>
+                                            {filteredServices.map((service, index) => {
+                                                const isOpen = isServiceOpen(service);
+                                                const isClosed = !isOpen;
+                                                return (
+                                                    <div
+                                                        key={service._id || index}
+                                                        onClick={() => {
+                                                            if (isClosed) {
+                                                                alert(t('This service is currently closed. Please check back later.'));
+                                                                return;
+                                                            }
+                                                            navigate(`/services?id=${service._id || service.id}`);
+                                                        }}
+                                                        className={`group flex items-center gap-4 bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 dark:border-gray-700/50 ${isClosed ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                                    >
+                                                        {/* Left Side: Square Image */}
+                                                        <div className={`w-20 h-20 flex-shrink-0 relative ${isClosed ? 'opacity-60' : ''}`}>
+                                                            <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 rounded-xl" />
+                                                            <img
+                                                                src={service.image || `${API_BASE_URL}/services/${service._id || service.id}/image`}
+                                                                alt={service.name}
+                                                                className={`absolute inset-0 w-full h-full object-cover rounded-xl z-10 ${isClosed ? '' : ''}`}
+                                                                onError={(e) => { e.target.src = 'https://placehold.co/200x200?text=Service'; }}
+                                                            />
+                                                            {isClosed && (
+                                                                <div className="absolute inset-0 z-20 bg-black/10 flex items-center justify-center rounded-xl backdrop-blur-[1px]">
+                                                                    <span className="bg-gray-800 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg animate-in fade-in zoom-in-95 duration-500">
+                                                                        {t('Closed')}
+                                                                    </span>
+                                                                </div>
+                                                            )}
+                                                        </div>
 
-                                                    {/* Middle: Details */}
-                                                    <div className="flex-1 min-w-0">
-                                                        <div className="flex items-center gap-1.5 mb-1">
-                                                            <span className="px-1.5 py-0.5 bg-[#CBF9B2]/20 rounded text-[9px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] uppercase tracking-wider">
-                                                                {service.category || t('Service')}
-                                                            </span>
+                                                        {/* Middle: Details */}
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex items-center gap-1.5 mb-1">
+                                                                <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${isClosed ? 'bg-gray-100 text-gray-400' : 'bg-[#CBF9B2]/20 text-[#2E5A2E] dark:text-[#CBF9B2]'}`}>
+                                                                    {service.category || t('Service')}
+                                                                </span>
+                                                            </div>
+                                                            <h3 className={`text-gray-900 dark:text-white text-[15px] font-semibold truncate mb-1 ${isClosed ? 'opacity-60' : ''}`}>
+                                                                {service.name}
+                                                            </h3>
+                                                            <div className="flex items-center gap-1 opacity-60">
+                                                                <MapPin size={12} className="text-[#2E5A2E] dark:text-[#CBF9B2]" />
+                                                                <p className="text-gray-600 dark:text-gray-400 text-[11px] truncate">
+                                                                    {service.address || t('Available Locally')}
+                                                                </p>
+                                                            </div>
                                                         </div>
-                                                        <h3 className="text-gray-900 dark:text-white text-[15px] font-semibold truncate mb-1">
-                                                            {service.name}
-                                                        </h3>
-                                                        <div className="flex items-center gap-1 opacity-60">
-                                                            <MapPin size={12} className="text-[#2E5A2E] dark:text-[#CBF9B2]" />
-                                                            <p className="text-gray-600 dark:text-gray-400 text-[11px] truncate">
-                                                                {service.address || t('Available Locally')}
-                                                            </p>
-                                                        </div>
-                                                    </div>
 
-                                                    {/* Right Side: Simple Arrow Icon */}
-                                                    <div className="flex-shrink-0 pr-1">
-                                                        <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-[#2E5A2E] dark:group-hover:text-[#CBF9B2] transition-colors">
-                                                            <ArrowRight size={16} />
+                                                        {/* Right Side: Simple Arrow Icon */}
+                                                        <div className={`flex-shrink-0 pr-1 ${isClosed ? 'opacity-0' : ''}`}>
+                                                            <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-[#2E5A2E] dark:group-hover:text-[#CBF9B2] transition-colors">
+                                                                <ArrowRight size={16} />
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     );
                                 })()}

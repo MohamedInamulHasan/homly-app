@@ -6,7 +6,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { API_BASE_URL } from '../utils/api';
 import { isStoreOpen } from '../utils/storeHelpers';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSave = false }) => {
     const { t } = useLanguage();
@@ -126,14 +126,14 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
         return (
             <Link
                 to={(!product.anyStoreOpen || !isStoreOpenCheck) ? '#' : `/product-group/${encodeURIComponent(product.title)}?${isFastPurchase ? 'fast=true&' : ''}${product.storeId ? `storeId=${product.storeId._id || product.storeId}` : ''}`}
-                className={`rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 ${(product.anyStoreOpen && isStoreOpenCheck) ? 'hover:scale-[1.01]' : 'opacity-75 grayscale-[0.5] cursor-default'}`}
+                className={`rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 ${(product.anyStoreOpen && isStoreOpenCheck) ? 'hover:scale-[1.01]' : 'cursor-default'}`}
                 onClick={(e) => {
                     if (!product.anyStoreOpen || !isStoreOpenCheck) {
                         e.preventDefault();
                     }
                 }}
             >
-            <div className={`relative pb-[100%] m-1 rounded-2xl overflow-hidden bg-[#F9FAFB]`}>
+            <div className={`relative pb-[100%] m-1 rounded-2xl overflow-hidden bg-[#F9FAFB] ${(!product.anyStoreOpen || !isStoreOpenCheck) ? 'opacity-60 grayscale-[0.5]' : ''}`}>
                     
                     {/* Delivery Tag */}
                     <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-[25] pointer-events-none">
@@ -277,10 +277,10 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                 }
                 handleClick(e);
             }}
-            className={`rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 ${isStoreOpenCheck && isAvailable ? 'hover:scale-[1.01]' : 'opacity-75 grayscale-[0.5] cursor-default'
+            className={`rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 ${isStoreOpenCheck && isAvailable ? 'hover:scale-[1.01]' : 'cursor-default'
                 }`}
         >
-            <div className={`relative pb-[100%] m-1 rounded-2xl overflow-hidden bg-[#F9FAFB]`}>
+            <div className={`relative pb-[100%] m-1 rounded-2xl overflow-hidden bg-[#F9FAFB] ${(!isStoreOpenCheck || !isAvailable) ? 'opacity-60 grayscale-[0.5]' : ''}`}>
                     <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-[25] pointer-events-none">
                         {product.isGold && (
                             <span className="bg-[#16A34A] text-white text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-br-lg shadow-sm">
@@ -340,7 +340,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                     </div>
                 )}
             </div>
-            <div className="p-3 flex flex-col flex-1 border-t border-gray-100 dark:border-gray-700">
+            <div className="p-3 flex flex-col flex-1">
                 <div className="w-full">
                     {(() => {
                         const fullTitle = t(featuredVariant, 'title');
@@ -375,7 +375,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                         </div>
                     )}
                 </div>
-                <div className="flex items-center justify-between mt-2 w-full pt-2 border-t border-gray-50 dark:border-gray-700/50">
+                <div className="flex items-center justify-between mt-2 w-full pt-2">
                     <span className={`text-base font-bold ${!isStoreOpenCheck || !isAvailable ? 'text-gray-400' : 'text-[#2E5A2E]'}`}>
                         ₹{Number(product.price || 0).toFixed(0)}
                     </span>

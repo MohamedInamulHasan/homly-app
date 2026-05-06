@@ -9,6 +9,8 @@ import cookieParser from 'cookie-parser';
 import errorHandler from './middleware/errorHandler.js';
 import connectDB from './config/database.js';
 import axios from 'axios'; // For Keep-Warm mechanism
+import http from 'http';
+import { init as initSocket } from './socket.js';
 
 // Import routes
 import productRoutes from './routes/products.js';
@@ -172,10 +174,16 @@ app.get('/api/debug-email', async (req, res) => {
     }
 });
 
+// Create HTTP server
+const server = http.createServer(app);
+
+// Initialize Socket.io
+initSocket(server);
+
 // Start server
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, '0.0.0.0', () => {
+server.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
     console.log(`Resource: http://0.0.0.0:${PORT}`);
 

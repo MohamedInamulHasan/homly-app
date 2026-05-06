@@ -3,6 +3,7 @@ import User from '../models/User.js';
 import { sendOrderNotificationEmail, sendCustomerOrderConfirmationEmail } from '../services/emailService.js';
 import { sendOrderTelegramNotification } from '../services/telegramService.js';
 import { sendOrderVoiceAlert } from '../services/voiceService.js';
+import { getIO } from '../socket.js';
 
 
 
@@ -169,6 +170,9 @@ export const createOrder = async (req, res, next) => {
             .then(result => console.log('📞 Voice alert service result:', result))
             .catch(err => console.error('❌ Failed to send Voice alert:', err));
 
+
+        // Emit real-time event for admin
+        getIO().emit('order:created', order);
 
         res.status(201).json({
             success: true,
@@ -361,6 +365,9 @@ export const updateOrderStatus = async (req, res, next) => {
         }
 
         const updatedOrder = await order.save();
+
+        // Emit real-time event for user
+        getIO().emit('order:updated', updatedOrder);
 
         res.status(200).json({
             success: true,

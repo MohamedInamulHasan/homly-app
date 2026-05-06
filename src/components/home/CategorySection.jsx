@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../../utils/api';
 import { useLanguage } from '../../context/LanguageContext';
 
 const CategorySection = ({ categories = [], isLoading = false, selectedCategory = 'All', onSelectCategory }) => {
     const { t, language } = useLanguage();
-    const [isExpanded, setIsExpanded] = useState(false);
+    const navigate = useNavigate();
     const allCategoryImage = localStorage.getItem('allCategoryImage') || '';
 
     if (isLoading) {
@@ -35,24 +35,19 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                 <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                     {t('Shop By Categories')}
                 </h2>
-                <button 
-                    onClick={() => setIsExpanded(!isExpanded)}
+                <Link 
+                    to="/categories"
                     className="text-sm font-semibold text-[#2E5A2E] dark:text-green-400 hover:opacity-80 transition-all"
                 >
-                    {isExpanded ? t('Show Less') : t('See All')}
-                </button>
+                    {t('See All')}
+                </Link>
             </div>
             
-            <div className={isExpanded 
-                ? "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-x-2 gap-y-6 p-2 px-4"
-                : "flex gap-4 overflow-x-auto scrollbar-hide py-2 px-4"
-            }>
+            <div className="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-4">
                 {/* All Categories Option */}
                 <div
                     onClick={() => onSelectCategory('All')}
-                    className={`${
-                        isExpanded ? 'w-full' : 'min-w-[72px] md:min-w-[85px] lg:min-w-[110px]'
-                    } flex flex-col items-center gap-2 md:gap-3 group cursor-pointer`}
+                    className="min-w-[72px] md:min-w-[85px] lg:min-w-[110px] flex flex-col items-center gap-2 md:gap-3 group cursor-pointer"
                 >
                     <div className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 border-2 bg-[#CBF9B2] dark:bg-[#2E5A2E] ${selectedCategory === 'All' ? 'border-[#2E5A2E] dark:border-[#CBF9B2]' : 'border-transparent'}`}>
                         <div className="flex items-center justify-center w-full h-full p-4">
@@ -75,9 +70,7 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                         <div
                             key={category._id || category.id}
                             onClick={() => onSelectCategory(category.name)}
-                            className={`${
-                                isExpanded ? 'w-full' : 'min-w-[72px] md:min-w-[85px] lg:min-w-[110px]'
-                            } flex flex-col items-center gap-2 md:gap-3 group cursor-pointer`}
+                    className="min-w-[72px] md:min-w-[85px] lg:min-w-[110px] flex flex-col items-center gap-2 md:gap-3 group cursor-pointer"
                         >
                             <div className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 shadow-sm border-2 bg-[#CBF9B2] dark:bg-[#2E5A2E] ${isSelected ? 'border-[#2E5A2E] dark:border-[#CBF9B2]' : 'border-transparent'}`}>
                                 <img

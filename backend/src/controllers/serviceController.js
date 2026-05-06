@@ -34,14 +34,18 @@ export const getService = async (req, res) => {
 // @access  Private/Admin
 export const createService = async (req, res) => {
     try {
-        const { name, description, image, address, mobile, category } = req.body;
+        const { name, description, image, address, mobile, category, timingType, openingTime, closingTime, isManuallyClosed } = req.body;
         const service = await Service.create({
             name,
             description,
             image,
             address,
             mobile,
-            category
+            category,
+            timingType,
+            openingTime,
+            closingTime,
+            isManuallyClosed
         });
         res.status(201).json(service);
     } catch (error) {
@@ -68,6 +72,12 @@ export const updateService = async (req, res) => {
             service.address = req.body.address || service.address;
             service.mobile = req.body.mobile || service.mobile;
             service.category = req.body.category || service.category;
+            
+            // New fields
+            if (req.body.timingType !== undefined) service.timingType = req.body.timingType;
+            if (req.body.openingTime !== undefined) service.openingTime = req.body.openingTime;
+            if (req.body.closingTime !== undefined) service.closingTime = req.body.closingTime;
+            if (req.body.isManuallyClosed !== undefined) service.isManuallyClosed = req.body.isManuallyClosed;
 
             const updatedService = await service.save();
             res.json(updatedService);

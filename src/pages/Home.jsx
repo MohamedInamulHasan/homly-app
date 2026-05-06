@@ -1,11 +1,13 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Search, ListFilter } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useProducts } from '../hooks/queries/useProducts';
-import { useAds } from '../hooks/queries/useAds';
+import { useAds, adKeys } from '../hooks/queries/useAds';
 import { useCategories } from '../hooks/queries/useCategories';
 import { useStores } from '../hooks/queries/useStores';
 import { useLanguage } from '../context/LanguageContext';
+import { useSocket } from '../context/SocketContext';
 import { useData } from '../context/DataContext';
 import { isStoreOpen, isProductScheduled } from '../utils/storeHelpers';
 import HomeHeader from '../components/home/HomeHeader';
@@ -21,6 +23,24 @@ const Home = () => {
     const { globalSortOrder, setGlobalSortOrder } = useData();
     const navigate = useNavigate();
     const { t } = useLanguage();
+    const { socket } = useSocket();
+    const queryClient = useQueryClient();
+
+    // Real-time Ad Updates
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleAdsUpdated = () => {
+            console.log('⚡ Real-time ads update received!');
+            queryClient.invalidateQueries({ queryKey: adKeys.all });
+        };
+
+        socket.on('ads:updated', handleAdsUpdated);
+
+        return () => {
+            socket.off('ads:updated', handleAdsUpdated);
+        };
+    }, [socket, queryClient]);
 
     // Data Fetching
     const { data: rawProducts = [], isLoading: loadingProducts } = useProducts();
@@ -44,8 +64,17 @@ const Home = () => {
     // Filter categories
     const featuredCategories = useMemo(() => {
         const raw = Array.isArray(rawCategories) ? rawCategories : (rawCategories?.data || []);
-        return raw.filter(cat => !cat.isHidden);
-    }, [rawCategories]);
+        const allProducts = Array.isArray(rawProducts) ? rawProducts : (rawProducts?.data || []);
+        
+        // Get a Set of categories that have at least one product
+        const productCategories = new Set(allProducts.map(p => p.category?.toLowerCase()));
+        
+        return raw.filter(cat => {
+            if (cat.isHidden) return false;
+            // Only show category if it has products
+            return productCategories.has(cat.name?.toLowerCase());
+        });
+    }, [rawCategories, rawProducts]);
 
     // Grouping Logic (Only available products for main categories/sections)
     const groupedByStore = useMemo(() => {
@@ -274,7 +303,7 @@ const Home = () => {
                                                     }
                                                     setSearchQuery('');
                                                 }}
-                                                className={`flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50/80 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-50 dark:border-gray-700 last:border-b-0 ${isClosed ? 'cursor-not-allowed opacity-80' : ''}`}
+                                                className={`flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50/80 dark:hover:bg-gray-700/50 transition-colors ${isClosed ? 'cursor-not-allowed opacity-80' : ''}`}
                                             >
                                                 <div className="relative flex-shrink-0">
                                                     <div className={`w-12 h-12 rounded-[1rem] bg-gray-50 dark:bg-gray-700 p-1 flex items-center justify-center overflow-hidden border border-gray-100 dark:border-gray-600 ${isClosed ? 'blur-[1px] grayscale' : ''}`}>

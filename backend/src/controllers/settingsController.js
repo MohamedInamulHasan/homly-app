@@ -1,4 +1,5 @@
 import Settings from '../models/Settings.js';
+import { getIO } from '../socket.js';
 
 // Get all settings or a specific setting by key
 export const getSettings = async (req, res) => {
@@ -83,6 +84,14 @@ export const updateSettings = async (req, res) => {
             },
             { new: true, upsert: true, setDefaultsOnInsert: true }
         );
+
+        // Emit real-time event
+        getIO().emit('settings:updated', setting);
+        
+        // Specifically for maintenance mode
+        if (key === 'maintenance_mode') {
+            getIO().emit('system:maintenance', value);
+        }
 
         res.json({ success: true, data: setting });
     } catch (error) {

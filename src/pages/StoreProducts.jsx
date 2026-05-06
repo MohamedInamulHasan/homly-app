@@ -514,7 +514,7 @@ const StoreProducts = () => {
                         {sections.map(([groupName, groupProducts]) => (
                             <div key={groupName}>
                                 {groupName !== '_all_' && !selectedSubcategory && (
-                                    <div className="flex justify-between items-center mb-6 bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm -mx-4 px-4 py-2.5 border-y border-gray-200 dark:border-gray-700/50">
+                                    <div className="flex justify-between items-center mb-6 bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm -mx-4 px-4 py-2.5">
                                         <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
                                             <div className="w-1.5 h-6 bg-[#2E5A2E] dark:bg-[#8bc910] rounded-full"></div>
                                             {(() => {

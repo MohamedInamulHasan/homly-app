@@ -1,4 +1,5 @@
 import Ad from '../models/Ad.js';
+import { getIO } from '../socket.js';
 
 // @desc    Get all ads
 // @route   GET /api/ads
@@ -49,6 +50,8 @@ export const createAd = async (req, res, next) => {
         const ad = await Ad.create(req.body);
         console.log('✅ Ad created successfully:', ad);
 
+        getIO().emit('ads:updated');
+
         res.status(201).json({
             success: true,
             data: ad
@@ -78,6 +81,8 @@ export const updateAd = async (req, res, next) => {
             throw new Error('Ad not found');
         }
 
+        getIO().emit('ads:updated');
+
         res.status(200).json({
             success: true,
             data: ad
@@ -98,6 +103,8 @@ export const deleteAd = async (req, res, next) => {
             res.status(404);
             throw new Error('Ad not found');
         }
+
+        getIO().emit('ads:updated');
 
         res.status(200).json({
             success: true,
@@ -159,6 +166,8 @@ export const updateAdsOrder = async (req, res, next) => {
         }));
 
         await Ad.bulkWrite(bulkOps);
+
+        getIO().emit('ads:updated');
 
         res.status(200).json({
             success: true,

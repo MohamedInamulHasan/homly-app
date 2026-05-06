@@ -18,15 +18,15 @@ const StoreCard = ({ store }) => {
     return (
         <div
             onClick={handleVisit}
-            className={`group relative bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden transition-all duration-300 aspect-[16/9] md:aspect-[3/2] lg:aspect-[4/3] w-full cursor-pointer ${!isOpen ? 'opacity-90' : ''}`}
+            className={`group relative bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden transition-all duration-300 aspect-[16/9] md:aspect-[3/2] lg:aspect-[4/3] w-full cursor-pointer`}
         >
             {/* Full Background Image */}
-            <div className="absolute inset-0 z-0">
+            <div className={`absolute inset-0 z-0 ${!isOpen ? 'opacity-60' : ''}`}>
                 <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700" />
                 <img
                     src={store.image || `${API_BASE_URL}/stores/${store._id || store.id}/image`}
                     alt={store.name}
-                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110 z-10 ${!isOpen ? 'blur-[2px]' : ''}`}
+                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110 z-10 ${!isOpen ? '' : ''}`}
                     loading="lazy"
                     onError={(e) => {
                         e.target.onerror = null;
@@ -38,10 +38,10 @@ const StoreCard = ({ store }) => {
                 <div className={`absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent transition-opacity duration-300 ${!isOpen ? 'opacity-100 bg-black/20' : 'opacity-90 group-hover:opacity-100'}`} />
             </div>
 
-            {/* Status Overlays (Centered for Premium Feel) */}
+            {/* Status Overlays (Centered - Product Card Style) */}
             {!isOpen && (
-                <div className="absolute inset-0 z-20 bg-black/5 flex items-center justify-center backdrop-blur-[1px]">
-                    <span className="px-6 py-2 bg-black/60 backdrop-blur-md rounded-full text-[12px] font-bold text-white uppercase tracking-widest shadow-2xl border border-white/10 animate-in fade-in zoom-in-95 duration-500">
+                <div className="absolute inset-0 z-20 bg-black/10 flex items-center justify-center backdrop-blur-[1px]">
+                    <span className="bg-gray-800 text-white px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg animate-in fade-in zoom-in-95 duration-500">
                         {t('Closed')}
                     </span>
                 </div>
