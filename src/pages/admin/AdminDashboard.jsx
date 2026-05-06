@@ -53,6 +53,7 @@ import SettingsManagement from './SettingsManagement';
 import ServiceManagement from './ServiceManagement';
 import useCloudinaryUpload from '../../hooks/useCloudinaryUpload';
 import { isProductScheduled } from '../../utils/storeHelpers';
+import { openExternalLink } from '../../utils/linkHelper';
 
 // New Query Hooks
 import { useProducts, useCreateProduct, useUpdateProduct, useDeleteProduct, useUpdateProductOrder } from '../../hooks/queries/useProducts';
@@ -61,7 +62,7 @@ import { useNews, useCreateNews, useUpdateNews, useDeleteNews } from '../../hook
 import { useUsers, useDeleteUser, useUpdateUser } from '../../hooks/queries/useUsers';
 import { useCategories, useCreateCategory, useDeleteCategory, useUpdateCategory, useUpdateCategoryOrder } from '../../hooks/queries/useCategories';
 import { useAds, useCreateAd, useDeleteAd, useUpdateAd, useUpdateAdOrder } from '../../hooks/queries/useAds';
-import { useServices, useCreateService, useDeleteService, useUpdateService } from '../../hooks/queries/useServices';
+import { useServices, useCreateService, useUpdateService } from '../../hooks/queries/useServices';
 import { useServiceRequests, useUpdateServiceRequestStatus, useDeleteServiceRequest } from '../../hooks/queries/useServiceRequests';
 import { useOrders, useUpdateOrderStatus, useDeleteOrder } from '../../hooks/queries/useOrders';
 import { motion } from 'framer-motion';
@@ -1942,16 +1943,14 @@ const OrderManagement = () => {
                                                         {order.shippingAddress ? `${order.shippingAddress.street}, ${order.shippingAddress.city}` : 'N/A'}
                                                     </span>
                                                     {order.shippingAddress?.location ? (
-                                                        <a
-                                                            href={order.shippingAddress.location || '#'}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
+                                                        <button
+                                                            onClick={() => openExternalLink(order.shippingAddress.location)}
                                                             className="flex items-center gap-1 text-[#2E5A2E] dark:text-[#7CA90E] hover:underline mt-1 text-xs font-bold"
                                                             title={t('View location on Google Maps')}
                                                         >
                                                             <MapPin size={12} />
                                                             View Map
-                                                        </a>
+                                                        </button>
                                                     ) : null}
                                                 </>
                                             )}
@@ -2864,15 +2863,13 @@ const UserManagement = () => {
                                                 }
 
                                                 return (
-                                                    <a
-                                                        href={mapLink}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
+                                                    <button
+                                                        onClick={() => openExternalLink(mapLink)}
                                                         className="flex items-center gap-1 text-[#2E5A2E] dark:text-[#CBF9B2] hover:underline"
                                                     >
                                                         <MapPin size={14} />
                                                         {t('View Map')}
-                                                    </a>
+                                                    </button>
                                                 );
                                             })()}
                                         </td>
@@ -3786,19 +3783,13 @@ const ServiceRequestManagement = () => {
                                                     </div>
                                                     {/* Map Link */}
                                                     {(request.address?.location || request.user?.location) && (
-                                                        <a
-                                                            href={(() => {
-                                                                const loc = request.address?.location || request.user?.location;
-                                                                if (loc && loc.startsWith('http')) return loc;
-                                                                return `https://www.google.com/maps/search/?api=1&query=${loc}`;
-                                                            })()}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
+                                                        <button
+                                                            onClick={() => openExternalLink(request.address?.location || request.user?.location)}
                                                             className="inline-flex items-center gap-1 text-xs text-[#2E5A2E] dark:text-[#CBF9B2] hover:underline mt-1 font-normal"
                                                         >
                                                             <MapPin size={12} />
                                                             {t('View Map')}
-                                                        </a>
+                                                        </button>
                                                     )}
                                                 </td>
                                                 <td className="p-4 text-gray-500 dark:text-gray-400 text-sm">

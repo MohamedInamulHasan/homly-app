@@ -8,6 +8,7 @@ import { apiService, API_BASE_URL } from '../utils/api';
 import { getStoreName } from '../utils/storeHelpers';
 import LoadingSpinner from '../components/LoadingSpinner';
 import CancelOrderModal from '../components/CancelOrderModal';
+import { openExternalLink } from '../utils/linkHelper';
 
 const OrderDetails = () => {
     const { id } = useParams();
@@ -384,15 +385,13 @@ const OrderDetails = () => {
                             {order.shippingAddress?.street}, {order.shippingAddress?.city} - {order.shippingAddress?.zip}
                         </p>
                         {order.shippingAddress?.location && (
-                            <a
-                                href={order.shippingAddress.location?.replace('maps?q=', 'maps/search/?api=1&query=') || '#'}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                            <button
+                                onClick={() => openExternalLink(order.shippingAddress.location)}
                                 className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-green-50 dark:bg-green-900/30 text-[#2E5A2E] dark:text-[#8bc910] rounded-xl text-xs font-bold hover:bg-green-100 dark:hover:bg-green-900/50 transition-all border border-green-100/50 dark:border-green-800"
                             >
                                 <MapPin size={14} />
                                 {t('View on Map')}
-                            </a>
+                            </button>
                         )}
                     </address>
                 </div>
