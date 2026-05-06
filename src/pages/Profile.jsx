@@ -338,6 +338,8 @@ const Profile = () => {
                               title={t('Help Center')} 
                           />
                           <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
+                          <MenuLink to="/privacy-policy" icon={<Shield size={18} strokeWidth={2} />} title={t('Privacy Policy')} />
+                          <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
                           <MenuLink 
                               onClick={handleLogout} 
                               icon={<LogOut size={18} strokeWidth={2} />} 

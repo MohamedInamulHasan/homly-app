@@ -46,8 +46,10 @@ const PrivacyPolicy = () => {
                             <li><strong>Identity Data:</strong> Includes first name, last name, and username.</li>
                             <li><strong>Contact Data:</strong> Includes email address and telephone numbers.</li>
                             <li><strong>Location Data:</strong> Includes your delivery address and GPS location to provide local services.</li>
-                            <li><strong>Transaction Data:</strong> Includes details about payments to and from you and other details of products and services you have purchased from us.</li>
                         </ul>
+                        <p className="mt-4 italic text-sm text-[#2E5A2E] bg-[#E8F5E9] p-3 rounded-xl">
+                            <strong>Note:</strong> Homly exclusively uses <strong>Cash on Delivery (COD)</strong>. We do not collect or store credit card details or any other online payment information.
+                        </p>
                     </section>
 
                     <section>
