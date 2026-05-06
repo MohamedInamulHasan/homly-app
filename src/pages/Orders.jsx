@@ -362,7 +362,7 @@ const Orders = () => {
                                 <p className="text-gray-500 dark:text-gray-400 mb-6">{t('Try adjusting your search or filter to find what you\'re looking for.')}</p>
                                 <Link
                                     to="/"
-                                    className="inline-flex items-center px-4 py-2 bg-[#2E5A2E] hover:bg-[#6a900c] text-white rounded-xl transition-colors font-bold"
+                                    className="inline-flex items-center px-6 py-3 bg-[#2E5A2E] hover:bg-[#1E3A1E] text-white rounded-xl transition-all duration-300 font-bold active:scale-95 shadow-lg shadow-[#2E5A2E]/20"
                                 >
                                     {t('Start Shopping')}
                                 </Link>
