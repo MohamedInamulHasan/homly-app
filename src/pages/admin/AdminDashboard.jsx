@@ -94,7 +94,7 @@ const AdminDashboard = () => {
         if (isAdmin) return; // Global admins have access to all tabs
 
         const isTabAllowed = 
-            (isStoreAdmin && ['stores', 'products', 'orders'].includes(activeTab)) ||
+            (isStoreAdmin && ['stores', 'products'].includes(activeTab)) ||
             (isServiceAdmin && ['services'].includes(activeTab)) ||
             (isDeliveryBoy && ['orders'].includes(activeTab));
         
@@ -433,13 +433,15 @@ const AdminDashboard = () => {
                             onClick={setActiveTab}
                         />
                     )}
-                    <SidebarItem
-                        icon={<ShoppingBag size={20} />}
-                        label={t('Orders')}
-                        id="orders"
-                        active={activeTab === 'orders'}
-                        onClick={setActiveTab}
-                    />
+                    {(isAdmin || isDeliveryBoy) && (
+                        <SidebarItem
+                            icon={<ShoppingBag size={20} />}
+                            label={t('Orders')}
+                            id="orders"
+                            active={activeTab === 'orders'}
+                            onClick={setActiveTab}
+                        />
+                    )}
 
                     {/* Admin Only Sections */}
                     {isAdmin && (
