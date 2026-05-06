@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Package, Search, Truck, CheckCircle, Clock, RotateCcw, ShoppingCart, Trash2, AlertTriangle, X, Store, ArrowLeft, MoreHorizontal, ShoppingBag } from 'lucide-react';
 import { useOrders, useDeleteOrder } from '../hooks/queries/useOrders';
 import { useStores } from '../hooks/queries/useStores';
-// import { useData } from '../context/DataContext'; // Removed dependency
+import { useData } from '../context/DataContext';
 import { getStoreName } from '../utils/storeHelpers';
 import { useLanguage } from '../context/LanguageContext';
 import { formatOrderDateTime, formatDeliveryTime } from '../utils/dateUtils';
@@ -21,6 +21,7 @@ const Orders = () => {
 
     // const { orders, deleteOrder, stores } = useData(); // Refactored
     const { t, language } = useLanguage();
+    const { setIsFooterHidden } = useData();
     const [activeTab, setActiveTab] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -30,7 +31,13 @@ const Orders = () => {
             activeTabElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
         }
     }, [activeTab]);
+
     const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, orderId: null });
+
+    useEffect(() => {
+        setIsFooterHidden(deleteConfirmation.isOpen);
+        return () => setIsFooterHidden(false);
+    }, [deleteConfirmation.isOpen, setIsFooterHidden]);
 
 
 
