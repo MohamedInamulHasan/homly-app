@@ -25,6 +25,7 @@ import ResetPassword from './pages/ResetPassword';
 import MyService from './pages/MyService';
 import Categories from './pages/Categories';
 import EditAddress from './pages/EditAddress';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 import MobileFooter from './components/MobileFooter';
 import InstallPrompt from './components/InstallPrompt';
@@ -265,6 +266,7 @@ function App() {
                                             </PrivateRoute>
                                         }
                                     />
+                                    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                                     <Route path="/categories" element={<Categories />} />
                                     <Route path="/category/:categoryName" element={<CategoryProducts />} />
                                     <Route path="/product-group/:productName" element={<ProductGroupProducts />} />
