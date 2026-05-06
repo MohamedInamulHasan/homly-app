@@ -104,7 +104,7 @@ const Profile = () => {
     }, { delivered: 0, cancelled: 0, outForDelivery: 0, processing: 0 });
 
     const roles = user ? (Array.isArray(user.role) ? user.role : [user.role || 'customer']) : [];
-    const isAdminView = roles.some(role => ['admin', 'store_admin', 'delivery_boy'].includes(role));
+    const isAdminView = roles.some(role => ['admin'].includes(role));
 
     useEffect(() => {
         setIsFooterHidden(showLogoutModal);
