@@ -80,7 +80,7 @@ const Cart = () => {
                                       )}
                                       {item.isFromAd && (
                                           <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm">
-                                              {t('Offer')}
+                                              {t('Special Offer')}
                                           </span>
                                       )}
                                   </div>
@@ -128,9 +128,11 @@ const Cart = () => {
                                                  </span>
 
                                             </div>
-                                            <span className="text-[10px] text-gray-400 font-medium mt-1">
-                                                {item.unit || "1 Unit"}
-                                            </span>
+                                            {item.unit && (
+                                                <span className="text-[10px] text-gray-400 font-medium mt-1">
+                                                    {item.unit}
+                                                </span>
+                                            )}
                                        </div>
 
                                        <div className="flex items-center gap-3">

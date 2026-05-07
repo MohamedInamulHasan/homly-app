@@ -219,7 +219,10 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                         <span className={`text-base font-bold ${!product.anyStoreOpen ? 'text-gray-400' : 'text-[#2E5A2E]'}`}>
                             {(() => {
                                 // Robust Price Logic
-                                if (product.minPrice !== undefined && product.maxPrice !== undefined && product.minPrice !== product.maxPrice) {
+                                if (product.minPrice !== undefined && product.maxPrice !== undefined) {
+                                    if (Number(product.minPrice) === Number(product.maxPrice)) {
+                                        return `₹${Number(product.minPrice).toFixed(0)}`;
+                                    }
                                     return `₹${Number(product.minPrice).toFixed(0)} - ₹${Number(product.maxPrice).toFixed(0)}`;
                                 }
                                 // Fallback: Check variants if available locally

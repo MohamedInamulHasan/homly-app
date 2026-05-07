@@ -221,11 +221,7 @@ const Orders = () => {
                                     onClick={() => navigate(`/orders/${order._id || order.id}`)}
                                     className="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-300 cursor-pointer group relative"
                                 >
-                                    {order.status === 'Processing' && (
-                                        <div className="absolute top-0 left-0 w-full h-[4px] bg-amber-50 dark:bg-amber-900/20 overflow-hidden z-10">
-                                            <div className="h-full bg-amber-400 dark:bg-amber-500 w-1/3 animate-loading-bar rounded-full" />
-                                        </div>
-                                    )}
+
                                     <div className="p-6">
                                         <div className="flex justify-between items-start gap-2 mb-4">
                                             <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -287,7 +283,7 @@ const Orders = () => {
                                                             )}
                                                             {item.isFromAd && !item.isGold && !(item.product && item.product.isGold) && (
                                                                 <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg">
-                                                                    Offer
+                                                                    {t('Special Offer')}
                                                                 </span>
                                                             )}
                                                         </div>
@@ -362,7 +358,7 @@ const Orders = () => {
                                 <p className="text-gray-500 dark:text-gray-400 mb-6">{t('Try adjusting your search or filter to find what you\'re looking for.')}</p>
                                 <Link
                                     to="/"
-                                    className="inline-flex items-center px-6 py-3 bg-[#2E5A2E] hover:bg-[#1E3A1E] text-white rounded-xl transition-all duration-300 font-bold active:scale-95"
+                                    className="inline-flex items-center px-4 py-2 bg-[#2E5A2E] hover:bg-[#1E3A1E] text-white rounded-xl transition-all duration-300 text-sm font-bold active:scale-95"
                                 >
                                     {t('Start Shopping')}
                                 </Link>
@@ -408,7 +404,7 @@ const Orders = () => {
                                             setDeleteConfirmation({ isOpen: false, orderId: null });
                                         }
                                     }}
-                                    className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-xl font-medium shadow-lg shadow-red-200 dark:shadow-red-900/20 transition-colors"
+                                    className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-xl font-medium transition-colors"
                                 >
                                     {t('Delete')}
                                 </button>

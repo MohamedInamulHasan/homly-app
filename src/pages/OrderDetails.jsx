@@ -161,6 +161,8 @@ const OrderDetails = () => {
                 // Refresh user to update coin balance
                 refreshUser();
                 setCancelConfirmation(false);
+                // Redirect to orders page as requested
+                navigate('/orders');
             }
         } catch (error) {
             console.error('Failed to cancel order:', error);
@@ -315,7 +317,7 @@ const OrderDetails = () => {
                                         )}
                                         {item.isFromAd && !item.isGold && !(item.product && item.product.isGold) && (
                                             <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm">
-                                                {t('Offer')}
+                                                {t('Special Offer')}
                                             </span>
                                         )}
                                     </div>

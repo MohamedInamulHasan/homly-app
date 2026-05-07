@@ -280,9 +280,11 @@ const ProductDetails = () => {
                                 return fullTitle;
                             })()}
                         </h1>
-                        <p className="text-base text-gray-400 dark:text-gray-500 font-medium uppercase tracking-wide">
-                            {product.unit || t('Standard Unit')}
-                        </p>
+                        {product.unit && (
+                            <p className="text-base text-gray-400 dark:text-gray-500 font-medium uppercase tracking-wide">
+                                {product.unit}
+                            </p>
+                        )}
                     </div>
 
                     {/* Price & Quantity Selector */}

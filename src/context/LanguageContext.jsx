@@ -243,6 +243,7 @@ export const LanguageProvider = ({ children }) => {
         'Ad Title': { en: 'Ad Title', ta: 'விளம்பர தலைப்பு' },
         'Add': { en: 'Add', ta: 'சேர்க்கவும்' },
         'Offer': { en: 'Offer', ta: 'சலுகை' },
+        'Special Offer': { en: 'Special Offer', ta: 'சிறப்பு சலுகை' },
         'News': { en: 'News', ta: 'செய்தி' },
         'Deal': { en: 'Deal', ta: 'டீல்' },
         'All': { en: 'All', ta: 'All' },

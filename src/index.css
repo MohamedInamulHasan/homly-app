@@ -84,7 +84,7 @@ input[type="password"]::-ms-clear {
     }
 
     .animate-text-shine {
-        background: linear-gradient(
+        background-image: linear-gradient(
             to right,
             #2E5A2E 0%,
             #2E5A2E 35%,
@@ -100,7 +100,7 @@ input[type="password"]::-ms-clear {
     }
 
     .dark .animate-text-shine {
-        background: linear-gradient(
+        background-image: linear-gradient(
             to right,
             #CBF9B2 0%,
             #CBF9B2 35%,

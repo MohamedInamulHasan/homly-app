@@ -184,7 +184,10 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                             <div className="flex items-center gap-1.5">
                                 {product.isGroup ? (
                                     <span className="text-base font-bold text-gray-900 dark:text-white">
-                                        ₹{Number(product.minPrice).toFixed(0)} - ₹{Number(product.maxPrice).toFixed(0)}
+                                        {Number(product.minPrice) === Number(product.maxPrice)
+                                            ? `₹${Number(product.minPrice).toFixed(0)}`
+                                            : `₹${Number(product.minPrice).toFixed(0)} - ₹${Number(product.maxPrice).toFixed(0)}`
+                                        }
                                     </span>
                                 ) : (
                                     <>
@@ -194,9 +197,11 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                                     </>
                                 )}
                             </div>
-                            <span className="text-[10px] text-gray-400 font-medium">
-                                {product.isGroup ? `${product.variantExtraCount + 1} ${t('options')}` : (product.unit || "Unit")}
-                            </span>
+                            {(product.isGroup || product.unit) && (
+                                <span className="text-[10px] text-gray-400 font-medium">
+                                    {product.isGroup ? `${product.variantExtraCount + 1} ${t('options')}` : product.unit}
+                                </span>
+                            )}
                         </div>
 
                         {showCartControls && !product.isGroup && (

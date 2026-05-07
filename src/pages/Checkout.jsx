@@ -478,7 +478,7 @@ const Checkout = () => {
                                                     )}
                                                     {item.isFromAd && (
                                                         <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm">
-                                                            Offer
+                                                            {t('Special Offer')}
                                                         </span>
                                                     )}
                                                 </div>

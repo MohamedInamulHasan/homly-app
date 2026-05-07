@@ -104,7 +104,7 @@ const Profile = () => {
     }, { delivered: 0, cancelled: 0, outForDelivery: 0, processing: 0 });
 
     const roles = user ? (Array.isArray(user.role) ? user.role : [user.role || 'customer']) : [];
-    const isAdminView = roles.some(role => ['admin'].includes(role));
+    const isAdminView = roles.some(role => ['admin', 'delivery_boy', 'store_admin', 'service_admin'].includes(role));
 
     useEffect(() => {
         setIsFooterHidden(showLogoutModal);
@@ -313,10 +313,14 @@ const Profile = () => {
                                 <MenuLink to="/my-store" icon={<Store size={18} strokeWidth={2} />} title={t('My Store')} />
                               </>
                           )}
-                          {roles.includes('admin') && (
+                          {(roles.includes('admin') || roles.includes('delivery_boy')) && (
                               <>
                                 <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
-                                <MenuLink to="/admin" icon={<Shield size={18} strokeWidth={2} />} title={t('Admin Dashboard')} />
+                                <MenuLink 
+                                    to="/admin" 
+                                    icon={roles.includes('delivery_boy') ? <Truck size={18} strokeWidth={2} /> : <Shield size={18} strokeWidth={2} />} 
+                                    title={roles.includes('delivery_boy') ? t('Manage Deliveries') : t('Admin Dashboard')} 
+                                />
                               </>
                           )}
                           {roles.includes('service_admin') && (
