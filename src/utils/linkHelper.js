@@ -11,9 +11,18 @@ export const openExternalLink = async (url) => {
     let finalUrl = url;
     
     // Handle Android Intent URLs (often cause ERR_UNKNOWN_URL_SCHEME in WebViews)
-    if (url.startsWith('intent://')) {
-        // Extract the web URL from the intent if possible, or just convert to https
-        finalUrl = url.replace('intent://', 'https://').split('#')[0];
+    if (url.toLowerCase().startsWith('intent:')) {
+        if (url.includes('scheme=https')) {
+            // Extract the actual URL if it's embedded in the intent string
+            const match = url.match(/intent:\/\/([^#?]+)/);
+            if (match) {
+                finalUrl = 'https://' + match[1];
+            } else {
+                finalUrl = url.replace(/intent:?\/\//i, 'https://').split('#')[0];
+            }
+        } else {
+            finalUrl = url.replace(/intent:?\/\//i, 'https://').split('#')[0];
+        }
     }
     // If it's not a URL, assume it's a map query
     else if (!url.startsWith('http') && !url.startsWith('geo:')) {
