@@ -79,8 +79,16 @@ const DeepLinkHandler = () => {
 const HomeWithRedirect = () => {
     const { user, loading } = useAuth();
     if (loading) return null;
+    
     const roles = Array.isArray(user?.role) ? user.role : [user?.role || 'customer'];
-    if (roles.includes('delivery_boy')) return <Navigate to="/admin" replace />;
+    const isDeliveryBoy = roles.some(r => {
+        const normalized = String(r || '').toLowerCase().trim();
+        return normalized === 'delivery_boy' || normalized === 'deliveryboy';
+    });
+
+    if (isDeliveryBoy) {
+        return <Navigate to="/admin" replace />;
+    }
     return <Home />;
 };
 
@@ -95,8 +103,11 @@ const RoleRedirectHandler = () => {
         if (!user) return;
 
         const roles = Array.isArray(user.role) ? user.role : [user.role || 'customer'];
-        const isDeliveryBoy = roles.includes('delivery_boy');
-        const isAdmin = roles.includes('admin');
+        const isDeliveryBoy = roles.some(r => {
+            const normalized = String(r || '').toLowerCase().trim();
+            return normalized === 'delivery_boy' || normalized === 'deliveryboy';
+        });
+        const isAdmin = roles.some(r => String(r || '').toLowerCase().trim() === 'admin');
         
         console.log('RoleRedirectHandler: Checking role', { roles, pathname: location.pathname });
 
