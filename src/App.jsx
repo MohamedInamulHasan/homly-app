@@ -74,6 +74,7 @@ const DeepLinkHandler = () => {
             listenerHandle?.remove?.();
         };
     }, [navigate]);
+};
 
 const HomeWithRedirect = () => {
     const { user, loading } = useAuth();
