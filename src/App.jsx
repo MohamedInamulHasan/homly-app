@@ -74,6 +74,14 @@ const DeepLinkHandler = () => {
         };
     }, [navigate]);
 
+const HomeWithRedirect = () => {
+    const { user, loading } = useAuth();
+    if (loading) return null;
+    const roles = Array.isArray(user?.role) ? user.role : [user?.role || 'customer'];
+    if (roles.includes('delivery_boy')) return <Navigate to="/admin" replace />;
+    return <Home />;
+};
+
 const RoleRedirectHandler = () => {
     const { user, loading } = useAuth();
     const navigate = useNavigate();
@@ -202,7 +210,9 @@ function App() {
                         <CartProvider>
                             <Layout onRefresh={handleRefresh}>
                                 <Routes>
-                                    <Route path="/" element={<Home />} />
+                                    <Route path="/" element={
+                                        <HomeWithRedirect />
+                                    } />
                                     <Route path="/store" element={<Shop />} />
                                     <Route path="/shop" element={<Navigate to="/store" replace />} />
                                     <Route path="/store/:id" element={<StoreProducts />} />
