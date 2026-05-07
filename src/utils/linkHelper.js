@@ -12,19 +12,32 @@ export const openExternalLink = async (url) => {
     
     // Handle Android Intent URLs (often cause ERR_UNKNOWN_URL_SCHEME in WebViews)
     if (url.toLowerCase().startsWith('intent:')) {
-        if (url.includes('scheme=https')) {
-            // Extract the actual URL if it's embedded in the intent string
-            const match = url.match(/intent:\/\/([^#?]+)/);
-            if (match) {
-                finalUrl = 'https://' + match[1];
-            } else {
-                finalUrl = url.replace(/intent:?\/\//i, 'https://').split('#')[0];
-            }
+        // Try to extract coordinates from the intent URL for a cleaner geo: link
+        const coordMatch = url.match(/place\/([0-9.]+)\+([0-9.]+)/);
+        if (coordMatch) {
+            const lat = coordMatch[1];
+            const lng = coordMatch[2];
+            finalUrl = `geo:${lat},${lng}?q=${lat},${lng}`;
         } else {
+            // Fallback: convert to standard https and strip the intent garbage
             finalUrl = url.replace(/intent:?\/\//i, 'https://').split('#')[0];
         }
     }
-    // If it's not a URL, assume it's a map query
+    // If it's a standard google maps link, try to convert to geo: for Android
+    else if (url.includes('google.com/maps') || url.includes('maps.google.com')) {
+        const coordMatch = url.match(/query=([0-9.-]+),([0-9.-]+)/) || url.match(/place\/([0-9.]+)\+([0-9.]+)/);
+        if (coordMatch) {
+            const lat = coordMatch[1];
+            const lng = coordMatch[2];
+            // On Android native, geo: is the gold standard
+            if (window.Capacitor && window.Capacitor.getPlatform() === 'android') {
+                finalUrl = `geo:${lat},${lng}?q=${lat},${lng}`;
+            } else {
+                finalUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+            }
+        }
+    }
+    // If it's not a URL at all, assume it's a map query
     else if (!url.startsWith('http') && !url.startsWith('geo:')) {
         finalUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(url)}`;
     }
