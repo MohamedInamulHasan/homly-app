@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
+import PullToRefresh from 'react-simple-pull-to-refresh';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
@@ -165,7 +166,7 @@ const Layout = ({ children, onRefresh }) => {
     );
 };
 
-import PullToRefresh from 'react-simple-pull-to-refresh';
+
 
 function App() {
     const { initialLoading, refreshData } = useData();
