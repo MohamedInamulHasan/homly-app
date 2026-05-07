@@ -74,6 +74,34 @@ const DeepLinkHandler = () => {
         };
     }, [navigate]);
 
+const RoleRedirectHandler = () => {
+    const { user, loading } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        // Wait for auth to finish loading
+        if (loading) return;
+        if (!user) return;
+
+        const roles = Array.isArray(user.role) ? user.role : [user.role || 'customer'];
+        const isDeliveryBoy = roles.includes('delivery_boy');
+        const isAdmin = roles.includes('admin');
+        
+        console.log('RoleRedirectHandler: Checking role', { roles, pathname: location.pathname });
+
+        // Force delivery_boy to /admin
+        if (isDeliveryBoy && !location.pathname.startsWith('/admin')) {
+            console.log('RoleRedirectHandler: Redirecting delivery_boy to /admin');
+            navigate('/admin', { replace: true });
+        }
+        // Force admin to /admin if they are on the home page (optional, but requested for "only show panel")
+        else if (isAdmin && location.pathname === '/') {
+            console.log('RoleRedirectHandler: Redirecting admin to /admin');
+            navigate('/admin', { replace: true });
+        }
+    }, [user, loading, location.pathname, navigate]);
+
     return null;
 };
 
@@ -159,6 +187,7 @@ function App() {
             <SocketProvider>
                 <Router>
                     <DeepLinkHandler />
+                    <RoleRedirectHandler />
                     <NotificationOverlay />
 
                     
