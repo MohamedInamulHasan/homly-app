@@ -16,6 +16,7 @@ import News from './pages/News';
 import Services from './pages/Services';
 import SavedProducts from './pages/SavedProducts';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import DeliveryDashboard from './pages/admin/DeliveryDashboard';
 import CategoryProducts from './pages/CategoryProducts';
 import ProductGroupProducts from './pages/ProductGroupProducts';
 import MyStore from './pages/MyStore';
@@ -81,6 +82,7 @@ const HomeWithRedirect = () => {
     if (loading) return null;
     
     const roles = Array.isArray(user?.role) ? user.role : [user?.role || 'customer'];
+    const isAdmin = roles.some(r => String(r || '').toLowerCase().trim() === 'admin');
     const isDeliveryBoy = roles.some(r => {
         const normalized = String(r || '').toLowerCase().trim();
         return normalized === 'delivery_boy' || normalized === 'deliveryboy';
@@ -90,6 +92,22 @@ const HomeWithRedirect = () => {
         return <Navigate to="/admin" replace />;
     }
     return <Home />;
+};
+
+const AdminOrDeliveryDashboard = () => {
+    const { user, loading } = useAuth();
+    if (loading) return null;
+
+    const roles = Array.isArray(user?.role) ? user.role : [user?.role || 'customer'];
+    const isDeliveryBoy = roles.some(r => {
+        const normalized = String(r || '').toLowerCase().trim();
+        return normalized === 'delivery_boy' || normalized === 'deliveryboy';
+    });
+
+    if (isDeliveryBoy) {
+        return <DeliveryDashboard />;
+    }
+    return <AdminDashboard />;
 };
 
 const RoleRedirectHandler = () => {
@@ -111,16 +129,13 @@ const RoleRedirectHandler = () => {
         
         console.log('RoleRedirectHandler: Checking role', { roles, pathname: location.pathname });
 
-        // Force delivery_boy to /admin
-        if (isDeliveryBoy && !location.pathname.startsWith('/admin')) {
+        // Force delivery_boy to /admin, but allow them to see specific order details
+        const isAllowedPath = location.pathname.startsWith('/admin') || location.pathname.startsWith('/orders/');
+        if (isDeliveryBoy && !isAllowedPath) {
             console.log('RoleRedirectHandler: Redirecting delivery_boy to /admin');
             navigate('/admin', { replace: true });
         }
-        // Force admin to /admin if they are on the home page (optional, but requested for "only show panel")
-        else if (isAdmin && location.pathname === '/') {
-            console.log('RoleRedirectHandler: Redirecting admin to /admin');
-            navigate('/admin', { replace: true });
-        }
+        // No longer forcing admin to /admin automatically here, so they can "see all pages"
     }, [user, loading, location.pathname, navigate]);
 
     return null;
@@ -326,7 +341,7 @@ function App() {
                                         path="/admin"
                                         element={
                                             <PrivateRoute adminOnly={true}>
-                                                <AdminDashboard />
+                                                <AdminOrDeliveryDashboard />
                                             </PrivateRoute>
                                         }
                                     />

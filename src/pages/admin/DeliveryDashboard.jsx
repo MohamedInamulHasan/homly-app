@@ -125,11 +125,6 @@ const DeliveryDashboard = () => {
                 
                 <div className="relative z-10">
                     <div className="w-full px-4 relative flex items-center justify-center min-h-[42px]">
-                        <div className="absolute left-2 top-1/2 -translate-y-1/2">
-                            <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-700">
-                                <ArrowLeft size={22} />
-                            </button>
-                        </div>
                         <div className="flex flex-col text-center">
                             <h1 className="text-[18px] font-bold text-gray-900 dark:text-white tracking-tight leading-tight">{t('Delivery Panel')}</h1>
                             <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400 mt-0.5">{t('Manage Orders')}</p>
@@ -207,13 +202,16 @@ const DeliveryDashboard = () => {
                                     >
                                         <div className="p-6">
                                             {/* Order ID & Date Header */}
-                                            <div className="flex justify-between items-start gap-2 mb-4">
+                                            <div 
+                                                className="flex justify-between items-start gap-2 mb-4 cursor-pointer group/header"
+                                                onClick={() => navigate(`/orders/${order._id || order.id}`)}
+                                            >
                                                 <div className="flex items-center gap-2 flex-1 min-w-0">
-                                                    <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#2E5A2E] dark:text-[#8bc910] flex-shrink-0">
+                                                    <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#2E5A2E] dark:text-[#8bc910] flex-shrink-0 group-hover/header:scale-110 transition-transform">
                                                         <Package size={18} />
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <p className="text-xs md:text-sm font-bold text-gray-900 dark:text-white truncate">
+                                                        <p className="text-xs md:text-sm font-bold text-gray-900 dark:text-white truncate group-hover/header:text-[#2E5A2E] transition-colors">
                                                             #{String(order._id || order.id).slice(-6).toUpperCase()}
                                                         </p>
                                                         <p className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 truncate">
@@ -222,8 +220,8 @@ const DeliveryDashboard = () => {
                                                     </div>
                                                 </div>
                                                 
-                                                {/* EDITABLE STATUS TAG - ALWAYS EDITABLE FOR ACTIVE ORDERS */}
-                                                <div className="flex-shrink-0 min-w-[130px] flex justify-end">
+                                                {/* Status Tag (prevents event bubbling if needed, but here we just stop propagation on the select) */}
+                                                <div className="flex-shrink-0 min-w-[130px] flex justify-end" onClick={(e) => e.stopPropagation()}>
                                                     {['Delivered', 'Cancelled'].includes(order.status) ? (
                                                         <div className={`inline-flex items-center justify-center w-full px-3 py-1.5 rounded-full text-[10px] md:text-xs font-bold border transition-all shadow-sm ${getStatusColor(order.status)}`}>
                                                             {getStatusIcon(order.status)}
@@ -288,7 +286,7 @@ const DeliveryDashboard = () => {
                                                 onClick={() => navigate(`/orders/${order._id || order.id}`)}
                                                 className="w-full py-3.5 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl text-[13px] font-bold text-[#2E5A2E] dark:text-[#7CA90E] flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-sm"
                                             >
-                                                {t('View Items & Full Details')}
+                                                {t('View Details')}
                                                 <ChevronRight size={16} />
                                             </button>
                                         </div>

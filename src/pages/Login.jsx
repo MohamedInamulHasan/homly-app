@@ -31,10 +31,16 @@ const Login = () => {
             } else {
                 // Only force delivery boys directly to the admin dashboard. 
                 // Global admins, store admins, etc. may want to see the storefront first.
-                if (Array.isArray(user.role) ? user.role.includes('delivery_boy') : user.role === 'delivery_boy') {
+                const roles = Array.isArray(user.role) ? user.role : [user.role || 'customer'];
+                const isDeliveryBoy = roles.some(r => {
+                    const normalized = String(r || '').toLowerCase().trim();
+                    return normalized === 'delivery_boy' || normalized === 'deliveryboy';
+                });
+
+                if (isDeliveryBoy) {
                     navigate('/admin');
                 } else {
-                    // Always go to home page after login for regular users and other admins
+                    // Always go to home page after login for regular users, admins, store admins, and service admins
                     navigate('/');
                 }
             }
