@@ -191,21 +191,25 @@ const DeliveryDashboard = () => {
             <PullToRefreshLayout>
                 <div className="pt-[95px]">
                 <div className="px-5 mt-2 max-w-3xl mx-auto">
-                    {/* Mode Switcher */}
-                    <div className="flex p-1 bg-white/50 dark:bg-gray-800/50 backdrop-blur-md rounded-2xl mb-6 shadow-sm border border-white/20">
+                    {/* Mode Switcher - Simplified */}
+                    <div className="flex items-center gap-8 mb-8 border-b border-gray-200 dark:border-gray-700/50 px-2">
                         <button 
                             onClick={() => { setDashboardType('Orders'); setActiveTab('Active'); }}
-                            className={`flex-1 py-3 rounded-xl font-bold text-[13px] transition-all duration-300 flex items-center justify-center gap-2 ${dashboardType === 'Orders' ? 'bg-[#2E5A2E] text-white shadow-md' : 'text-gray-500'}`}
+                            className={`pb-3 text-[15px] font-bold transition-all relative ${dashboardType === 'Orders' ? 'text-[#2E5A2E] dark:text-[#8bc910]' : 'text-gray-400'}`}
                         >
-                            <ShoppingBag size={18} />
                             {t('Orders')}
+                            {dashboardType === 'Orders' && (
+                                <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#2E5A2E] dark:bg-[#8bc910] rounded-full" />
+                            )}
                         </button>
                         <button 
                             onClick={() => { setDashboardType('Services'); setActiveTab('Active'); }}
-                            className={`flex-1 py-3 rounded-xl font-bold text-[13px] transition-all duration-300 flex items-center justify-center gap-2 ${dashboardType === 'Services' ? 'bg-[#2E5A2E] text-white shadow-md' : 'text-gray-500'}`}
+                            className={`pb-3 text-[15px] font-bold transition-all relative ${dashboardType === 'Services' ? 'text-[#2E5A2E] dark:text-[#8bc910]' : 'text-gray-400'}`}
                         >
-                            <Wrench size={18} />
                             {t('Services')}
+                            {dashboardType === 'Services' && (
+                                <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#2E5A2E] dark:bg-[#8bc910] rounded-full" />
+                            )}
                         </button>
                     </div>
 
