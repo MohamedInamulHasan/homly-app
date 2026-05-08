@@ -197,14 +197,7 @@ const OrderDetails = () => {
                 {/* Header matching Profile & Cart */}
                 <div className="flex items-center justify-between mb-8 mt-2">
                      <button 
-                         onClick={() => {
-                             const roles = Array.isArray(user?.role) ? user.role : [user?.role || 'customer'];
-                             if (roles.includes('delivery_boy')) {
-                                 navigate('/admin');
-                             } else {
-                                 navigate('/orders');
-                             }
-                         }}
+                         onClick={() => navigate(-1)}
                          className="w-[46px] h-[46px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-700/50"
                      >
                          <ArrowLeft size={22} />

@@ -188,24 +188,19 @@ export const createOrder = async (req, res, next) => {
 // @access  Private
 export const getOrders = async (req, res, next) => {
     try {
-        // If user is admin, return all orders
-        // If user is customer, return only their orders
-        let query = {};
-
         const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role || 'customer'];
         const isAdmin = roles.includes('admin');
-        const isDeliveryBoy = roles.includes('delivery_boy');
-        const isStoreAdmin = roles.includes('store_admin');
+        let query = {};
 
+        // STRICT RBAC: Filter orders based on user role
         if (isAdmin) {
-            query = {}; // Admin sees all orders
-        } else if (isDeliveryBoy) {
-            // Delivery boy sees all orders, exactly like the admin panel
+            // Global Admin: Sees all orders
             query = {};
-        } else if (isStoreAdmin && req.user?.storeId) {
-            // Store Admin sees:
-            // 1. Orders containing items from their store (Sales)
-            // 2. Orders they placed themselves (Purchases)
+        } else if (roles.includes('delivery_boy')) {
+            // Delivery boys need full access to manage pickups, deliveries, and fulfillment history
+            query = {};
+        } else if (roles.includes('store_admin') && req.user?.storeId) {
+            // Store Admin: Sees orders with their products OR their own purchases
             query = {
                 $or: [
                     { 'items.storeId': req.user.storeId },
@@ -213,8 +208,12 @@ export const getOrders = async (req, res, next) => {
                 ]
             };
         } else {
-            // Customer sees only their orders
-            query = { user: req.user?._id };
+            // Customers / Service Admins: ONLY see their own orders
+            if (!req.user?._id) {
+                res.status(401);
+                throw new Error('User not authenticated');
+            }
+            query = { user: req.user._id };
         }
 
         const orders = await Order.find(query)
@@ -289,7 +288,22 @@ export const getOrder = async (req, res, next) => {
             );
         }
 
-        if (!isAdmin && !isOwner && !isStoreAdmin && !isDeliveryBoy) {
+        // Strict single order access control
+        let isAuthorized = isAdmin || isOwner;
+        
+        if (!isAuthorized && roles.includes('delivery_boy')) {
+            // Delivery boys can view if they are assigned OR if it's available for pickup
+            const isAssigned = order.deliveredBy && order.deliveredBy.toString() === req.user._id.toString();
+            const isAvailable = order.status === 'Processing';
+            isAuthorized = isAssigned || isAvailable;
+        }
+
+        if (!isAuthorized && isStoreAdmin) {
+            // Store admins already checked in the loop above
+            isAuthorized = true;
+        }
+
+        if (!isAuthorized) {
             res.status(403);
             throw new Error('Not authorized to view this order');
         }

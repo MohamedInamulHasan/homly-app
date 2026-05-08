@@ -37,7 +37,13 @@ const DeliveryDashboard = () => {
     const { data: stores = [] } = useStores();
     const { mutateAsync: updateOrderStatus } = useUpdateOrderStatus();
     
-    const [activeTab, setActiveTab] = useState('Active');
+    const [activeTab, setActiveTab] = useState(() => {
+        return localStorage.getItem('delivery_dashboard_tab') || 'Processing';
+    });
+
+    useEffect(() => {
+        localStorage.setItem('delivery_dashboard_tab', activeTab);
+    }, [activeTab]);
     const [searchQuery, setSearchQuery] = useState('');
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
@@ -147,17 +153,20 @@ const DeliveryDashboard = () => {
                     {/* Dashboard Stats - Clickable Filters */}
                     <div className="flex flex-wrap gap-3 mb-6">
                         {[
-                            { id: 'Processing', label: 'Processing', count: orders.filter(o => o.status === 'Processing').length, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/20' },
-                            { id: 'Out for Delivery', label: 'Out for Delivery', count: orders.filter(o => o.status === 'Out for Delivery').length, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20' },
-                            { id: 'Delivered', label: 'Delivered', count: orders.filter(o => o.status === 'Delivered').length, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/20' },
-                            { id: 'Cancelled', label: 'Cancelled', count: orders.filter(o => o.status === 'Cancelled').length, color: 'text-red-600', bg: 'bg-red-50 dark:bg-red-900/20' }
+                            { id: 'Processing', label: 'Processing', count: orders.filter(o => o.status === 'Processing').length, color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-950/20' },
+                            { id: 'Out for Delivery', label: 'Out for Delivery', count: orders.filter(o => o.status === 'Out for Delivery').length, color: 'text-sky-500', bg: 'bg-sky-50 dark:bg-sky-950/20' },
+                            { id: 'Delivered', label: 'Delivered', count: orders.filter(o => o.status === 'Delivered').length, color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-950/20' },
+                            { id: 'Cancelled', label: 'Cancelled', count: orders.filter(o => o.status === 'Cancelled').length, color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' }
                         ].map((stat) => (
                             <button 
                                 key={stat.id} 
                                 onClick={() => setActiveTab(stat.id)}
-                                className={`flex-1 min-w-[140px] ${stat.bg} p-4 rounded-3xl border-2 transition-all active:scale-95 ${activeTab === stat.id ? 'border-current' : 'border-transparent shadow-sm'}`}
+                                className={`flex-1 min-w-[140px] ${stat.bg} p-5 rounded-2xl transition-all duration-300 active:scale-95 flex flex-col items-center justify-center border-[3px]
+                                    ${String(activeTab).toLowerCase() === String(stat.id).toLowerCase()
+                                        ? `bg-white dark:bg-gray-800 ${stat.color.replace('text', 'border')}` 
+                                        : 'border-transparent opacity-40'}`}
                             >
-                                <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">{t(stat.label)}</p>
+                                <p className={`text-[10px] font-bold uppercase tracking-wider mb-1 ${String(activeTab).toLowerCase() === String(stat.id).toLowerCase() ? stat.color : 'text-gray-400'}`}>{t(stat.label)}</p>
                                 <p className={`text-2xl font-black ${stat.color}`}>{stat.count}</p>
                             </button>
                         ))}
