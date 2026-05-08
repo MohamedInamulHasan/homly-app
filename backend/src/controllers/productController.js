@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Product from '../models/Product.js';
+import { getIO } from '../socket.js';
 
 // @desc    Get all products
 // @route   GET /api/products
@@ -141,6 +142,9 @@ export const createProduct = async (req, res, next) => {
             success: true,
             data: product
         });
+
+        // Real-time update
+        getIO().emit('product:updated', product);
     } catch (error) {
         next(error);
     }
@@ -190,12 +194,13 @@ export const updateProduct = async (req, res, next) => {
             }
         );
 
-
-
         res.status(200).json({
             success: true,
             data: product
         });
+
+        // Real-time update
+        getIO().emit('product:updated', product);
     } catch (error) {
         next(error);
     }
@@ -273,6 +278,9 @@ export const deleteProduct = async (req, res, next) => {
             success: true,
             data: {}
         });
+
+        // Real-time update
+        getIO().emit('product:updated');
     } catch (error) {
         next(error);
     }
@@ -317,6 +325,9 @@ export const updateProductsOrder = async (req, res, next) => {
             success: true,
             message: 'Products reordered successfully'
         });
+
+        // Real-time update
+        getIO().emit('product:updated');
     } catch (error) {
         next(error);
     }

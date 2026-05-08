@@ -1,5 +1,6 @@
 import Service from '../models/Service.js';
 import ServiceItem from '../models/ServiceItem.js';
+import { getIO } from '../socket.js';
 
 // @desc    Get all services
 // @route   GET /api/services
@@ -48,6 +49,7 @@ export const createService = async (req, res) => {
             isManuallyClosed
         });
         res.status(201).json(service);
+        getIO().emit('service:updated', service);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -81,6 +83,7 @@ export const updateService = async (req, res) => {
 
             const updatedService = await service.save();
             res.json(updatedService);
+            getIO().emit('service:updated', updatedService);
         } else {
             res.status(404).json({ message: 'Service not found' });
         }
@@ -107,6 +110,7 @@ export const updateServicesOrder = async (req, res) => {
         await Promise.all(updates);
 
         res.json({ message: 'Services reordered successfully' });
+        getIO().emit('service:updated');
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -123,6 +127,7 @@ export const deleteService = async (req, res) => {
             // Also delete associated items
             await ServiceItem.deleteMany({ serviceId: service._id });
             res.json({ message: 'Service removed' });
+            getIO().emit('service:updated');
         } else {
             res.status(404).json({ message: 'Service not found' });
         }
@@ -166,6 +171,7 @@ export const createServiceItem = async (req, res) => {
             isAvailable: isAvailable !== undefined ? isAvailable : true
         });
         res.status(201).json(item);
+        getIO().emit('service:updated'); // Items belong to services, invalidate service items
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -192,6 +198,7 @@ export const updateServiceItem = async (req, res) => {
 
             const updatedItem = await item.save();
             res.json(updatedItem);
+            getIO().emit('service:updated');
         } else {
             res.status(404).json({ message: 'Service Item not found' });
         }
@@ -224,6 +231,7 @@ export const updateServiceItemsOrder = async (req, res) => {
         await Promise.all(updates);
 
         res.json({ message: 'Service items reordered successfully' });
+        getIO().emit('service:updated');
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -244,6 +252,7 @@ export const deleteServiceItem = async (req, res) => {
 
             await item.deleteOne();
             res.json({ message: 'Service Item removed' });
+            getIO().emit('service:updated');
         } else {
             res.status(404).json({ message: 'Service Item not found' });
         }

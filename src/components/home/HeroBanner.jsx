@@ -45,8 +45,17 @@ const HeroBanner = ({ slides = [], isLoading = false }) => {
     };
 
     const handleBuy = (e, slide) => {
-        e.stopPropagation(); // Don't navigate to store/link
+        if (e) e.stopPropagation(); // Don't navigate to store/link
         
+        // If no price, fallback to normal link behavior if available
+        if (!slide.price || slide.price <= 0) {
+            if (slide.link) {
+                if (slide.link.startsWith('/')) navigate(slide.link);
+                else window.open(slide.link, '_blank');
+            }
+            return;
+        }
+
         // Transform ad to item for direct purchase
         const adItem = {
             id: slide._id || slide.id,
@@ -99,12 +108,7 @@ const HeroBanner = ({ slides = [], isLoading = false }) => {
                     {slides.map((slide, index) => (
                         <div
                             key={slide._id || slide.id || index}
-                            onClick={() => {
-                                if (slide.link) {
-                                    if (slide.link.startsWith('/')) navigate(slide.link);
-                                    else window.open(slide.link, '_blank');
-                                }
-                            }}
+                            onClick={() => handleBuy(null, slide)}
                             className="w-full h-full flex-shrink-0 snap-center cursor-pointer relative group"
                         >
                             <img
@@ -114,18 +118,6 @@ const HeroBanner = ({ slides = [], isLoading = false }) => {
                                 onError={(e) => { e.target.onerror = null; e.target.src = 'https://atlas-content-cdn.pixelbin.io/ast/feed_v2/static_assets/common/vegetable_basket.png'; }}
                             />
 
-                            {/* Buy Option Overlay */}
-                            {slide.price > 0 && (
-                                <div className="absolute bottom-4 right-4 z-20 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                                    <button
-                                        onClick={(e) => handleBuy(e, slide)}
-                                        className="bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-[#2E5A2E] px-4 py-2.5 rounded-2xl flex items-center gap-2 active:scale-95 transition-all font-black text-sm"
-                                    >
-                                        <ShoppingBag size={18} />
-                                        <span>₹{slide.price}</span>
-                                    </button>
-                                </div>
-                            )}
 
                             {/* Store Name Badge - Now Very Small */}
                             {slide.storeName && (

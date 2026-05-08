@@ -1008,8 +1008,8 @@ const ProductManagement = () => {
     return (
         <div className="max-w-6xl">
             <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-normal text-gray-900 dark:text-white flex items-center gap-2">
-                    {view === 'list' && <ShoppingBag className="text-[#2E5A2E] dark:text-[#7CA90E]" size={24} />}
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    {view === 'list' && <ShoppingBag className="text-[#2E5A2E] dark:text-[#7CA90E]" size={20} />}
                     {view === 'list' ? t('Product Inventory') : editingProduct ? t('Edit Product') : t('Add New Product')}
                 </h2>
                 <button
@@ -1022,9 +1022,9 @@ const ProductManagement = () => {
                             setView('list');
                         }
                     }}
-                    className="px-4 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 font-normal"
+                    className="px-4 py-2 bg-[#2E5A2E] text-white rounded-xl hover:bg-[#1a3d1a] transition-colors flex items-center gap-2 text-sm font-bold whitespace-nowrap shadow-sm"
                 >
-                    {view === 'list' ? <Plus size={20} /> : <List size={20} />}
+                    {view === 'list' ? <Plus size={18} /> : <List size={18} />}
                     {view === 'list' ? t('Add Product') : t('View List')}
                 </button>
             </div>

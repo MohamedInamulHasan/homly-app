@@ -6,6 +6,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { ArrowLeft, MapPin, Check, Navigation, AlertCircle } from 'lucide-react';
 import { API_BASE_URL } from '../utils/api';
+import { getCurrentLocation } from '../utils/locationHelpers';
 
 const EditAddress = () => {
     const navigate = useNavigate();
@@ -71,30 +72,17 @@ const EditAddress = () => {
         setIsDetecting(true);
         setMessage({ type: '', text: '' });
 
-        if (!navigator.geolocation) {
-            setMessage({ type: 'error', text: t('Geolocation not supported') });
-            setIsDetecting(false);
-            return;
-        }
+        const result = await getCurrentLocation();
 
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const { latitude, longitude } = position.coords;
-                const mapsLink = `https://www.google.com/maps/place/${latitude}+${longitude}/@${latitude},${longitude},17z`;
-                setFormData(prev => ({ ...prev, location: mapsLink }));
-                setIsDetecting(false);
-                setMessage({ type: 'success', text: t('GPS coordinates saved!') });
-                setTimeout(() => setMessage({ type: '', text: '' }), 3000);
-            },
-            (error) => {
-                console.error('GPS Error:', error);
-                let errText = t('Unable to get location');
-                if (error.code === 1) errText = t('Please turn on the location');
-                setMessage({ type: 'error', text: errText });
-                setIsDetecting(false);
-            },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-        );
+        if (result.success) {
+            setFormData(prev => ({ ...prev, location: result.mapsLink }));
+            setMessage({ type: 'success', text: t('GPS coordinates saved!') });
+            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+        } else {
+            setMessage({ type: 'error', text: t(result.message) });
+        }
+        
+        setIsDetecting(false);
     };
 
     const handleSubmit = async (e) => {
@@ -296,7 +284,7 @@ const EditAddress = () => {
                             </div>
                         </div>
 
-                        <div className="pt-4">
+                    <div className="pt-4">
                             <button
                                 type="submit"
                                 disabled={isSaving}

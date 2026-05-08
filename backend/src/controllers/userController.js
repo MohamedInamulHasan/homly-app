@@ -6,6 +6,7 @@ import crypto from 'crypto';
 import axios from 'axios';
 import { sendPasswordResetEmail } from '../services/emailService.js';
 import { OAuth2Client } from 'google-auth-library';
+import { getIO } from '../socket.js';
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -296,6 +297,9 @@ export const updateUserProfile = async (req, res, next) => {
 
             const updatedUser = await user.save();
             sendTokenResponse(updatedUser, 200, res);
+
+            // Real-time update to the user
+            getIO().to(`user:${updatedUser._id}`).emit('user:updated', updatedUser);
         } else {
             res.status(404);
             throw new Error('User not found');
@@ -410,6 +414,9 @@ export const updateUserByAdmin = async (req, res, next) => {
                 deliverySettings: updatedUser.deliverySettings
             }
         });
+
+        // Real-time update to the specific user (role/coins changed by admin)
+        getIO().to(`user:${updatedUser._id}`).emit('user:updated', updatedUser);
     } catch (error) {
         next(error);
     }

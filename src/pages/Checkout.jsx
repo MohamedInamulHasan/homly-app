@@ -7,7 +7,7 @@ import { useData } from '../context/DataContext';
 import { useUserProfile } from '../hooks/queries/useUsers';
 import { getStoreName, calculateDeliveryCharge } from '../utils/storeHelpers';
 import { ArrowLeft, MapPin, CreditCard, ShoppingBag, Truck, AlertCircle, X, Navigation, ShieldCheck, Trash2, Store, Pencil, Package, MoreHorizontal, CheckCircle } from 'lucide-react';
-import { checkLocationPermission, requestLocationPermission } from '../utils/locationHelpers';
+import { checkLocationPermission, requestLocationPermission, getCurrentLocation } from '../utils/locationHelpers';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { API_BASE_URL } from '../utils/api';
@@ -353,25 +353,15 @@ const Checkout = () => {
                                             type="button"
                                             onClick={async () => {
                                                 setIsLocationSearching(true);
-                                                try {
-                                                    const position = await new Promise((resolve, reject) => {
-                                                        const timeoutId = setTimeout(() => reject({ code: 3, message: 'Timeout' }), 10000);
-                                                        navigator.geolocation.getCurrentPosition(
-                                                            (pos) => { clearTimeout(timeoutId); resolve(pos); },
-                                                            (err) => { clearTimeout(timeoutId); reject(err); },
-                                                            { enableHighAccuracy: true, timeout: 8000 }
-                                                        );
-                                                    });
-                                                    const { latitude, longitude } = position.coords;
-                                                    setFormData(prev => ({ ...prev, location: `https://www.google.com/maps/place/${latitude}+${longitude}` }));
+                                                const result = await getCurrentLocation();
+                                                
+                                                if (result.success) {
+                                                    setFormData(prev => ({ ...prev, location: result.mapsLink }));
                                                     setIsLocationSearching(false);
                                                     setLocationMessage({ show: true, type: 'success', text: t('Location Accessed Successfully') });
-                                                } catch (err) {
+                                                } else {
                                                     setIsLocationSearching(false);
-                                                    let errorMsg = t('Unable to get location');
-                                                    if (err.code === 1) errorMsg = t('Please turn on the location');
-                                                    if (err.code === 3) errorMsg = t('Location Request Timed Out');
-                                                    setLocationMessage({ show: true, type: 'error', text: errorMsg });
+                                                    setLocationMessage({ show: true, type: 'error', text: t(result.message) });
                                                 }
                                             }}
                                             className="flex items-center gap-2 text-xs font-bold text-[#2E5A2E] bg-green-50 dark:bg-green-900/20 px-3 py-1.5 rounded-full active:scale-95 transition-transform"

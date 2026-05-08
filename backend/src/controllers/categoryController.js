@@ -1,4 +1,5 @@
 import Category from '../models/Category.js';
+import { getIO } from '../socket.js';
 
 // @desc    Get all categories
 // @route   GET /api/categories
@@ -76,6 +77,9 @@ export const createCategory = async (req, res, next) => {
             success: true,
             data: category
         });
+
+        // Real-time update
+        getIO().emit('category:updated', category);
     } catch (error) {
         next(error);
     }
@@ -106,6 +110,9 @@ export const updateCategory = async (req, res, next) => {
             success: true,
             data: category
         });
+
+        // Real-time update
+        getIO().emit('category:updated', category);
     } catch (error) {
         next(error);
     }
@@ -133,6 +140,9 @@ export const updateCategoriesOrder = async (req, res, next) => {
             success: true,
             message: 'Categories reordered successfully'
         });
+
+        // Real-time update
+        getIO().emit('category:updated');
     } catch (error) {
         next(error);
     }
@@ -156,6 +166,9 @@ export const deleteCategory = async (req, res, next) => {
             success: true,
             data: {}
         });
+
+        // Real-time update
+        getIO().emit('category:updated');
     } catch (error) {
         next(error);
     }
