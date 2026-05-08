@@ -1,5 +1,5 @@
 import { API_BASE_URL } from '../../utils/api';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Wrench, Plus, Upload, Search, Edit2, Trash2, 
