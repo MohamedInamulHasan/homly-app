@@ -86,7 +86,18 @@ export const createServiceRequest = async (req, res) => {
 // @access  Private/Admin
 export const getServiceRequests = async (req, res) => {
     try {
-        const requests = await ServiceRequest.find({})
+        let query = {};
+
+        // If user is service_admin, filter by their serviceId
+        const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role];
+        const isAdmin = roles.includes('admin');
+        const isServiceAdmin = roles.includes('service_admin');
+
+        if (isServiceAdmin && !isAdmin && req.user.serviceId) {
+            query.service = req.user.serviceId;
+        }
+
+        const requests = await ServiceRequest.find(query)
             .populate('user', 'name email mobile')
             .populate('service', 'name image mobile')
             .sort({ createdAt: -1 });
@@ -106,6 +117,15 @@ export const updateServiceRequestStatus = async (req, res) => {
         const request = await ServiceRequest.findById(req.params.id);
 
         if (request) {
+            // Ownership check for service_admin
+            const roles = Array.isArray(req.user?.role) ? req.user.role : [req.user?.role];
+            const isAdmin = roles.includes('admin');
+            const isServiceAdmin = roles.includes('service_admin');
+
+            if (isServiceAdmin && !isAdmin && String(request.service) !== String(req.user.serviceId)) {
+                return res.status(403).json({ message: 'Not authorized to manage this request' });
+            }
+
             request.status = status;
             const updatedRequest = await request.save();
             await updatedRequest.populate('user', 'name email mobile');

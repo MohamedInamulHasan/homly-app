@@ -6,14 +6,14 @@ import {
     updateServiceRequestStatus,
     deleteServiceRequest
 } from '../controllers/serviceRequestController.js';
-import { protect, adminOnly } from '../middleware/authMiddleware.js';
+import { protect, adminOrServiceAdmin, anyAdmin } from '../middleware/authMiddleware.js';
 
 router.route('/')
     .post(protect, createServiceRequest)
-    .get(protect, adminOnly, getServiceRequests);
+    .get(protect, anyAdmin, getServiceRequests);
 
 router.route('/:id')
-    .put(protect, adminOnly, updateServiceRequestStatus)
-    .delete(protect, adminOnly, deleteServiceRequest);
+    .put(protect, adminOrServiceAdmin, updateServiceRequestStatus)
+    .delete(protect, adminOrServiceAdmin, deleteServiceRequest);
 
 export default router;
