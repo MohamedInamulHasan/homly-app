@@ -219,8 +219,8 @@ const DeliveryDashboard = () => {
                             { id: 'Delivered', label: 'Delivered', count: orders.filter(o => o.status === 'Delivered').length, color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-950/20' },
                             { id: 'Cancelled', label: 'Cancelled', count: orders.filter(o => o.status === 'Cancelled').length, color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' }
                         ] : [
-                            { id: 'Pending', label: 'Pending', count: serviceRequests.filter(s => s.status === 'Pending').length, color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-950/20' },
-                            { id: 'In Progress', label: 'In Progress', count: serviceRequests.filter(s => s.status === 'In Progress').length, color: 'text-sky-500', bg: 'bg-sky-50 dark:bg-sky-950/20' },
+                            { id: 'Pending', label: 'Requested', count: serviceRequests.filter(s => s.status === 'Pending').length, color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-950/20' },
+                            { id: 'In Progress', label: 'Accepted', count: serviceRequests.filter(s => s.status === 'In Progress').length, color: 'text-sky-500', bg: 'bg-sky-50 dark:bg-sky-950/20' },
                             { id: 'Completed', label: 'Completed', count: serviceRequests.filter(s => s.status === 'Completed').length, color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-950/20' },
                             { id: 'Cancelled', label: 'Cancelled', count: serviceRequests.filter(s => s.status === 'Cancelled').length, color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' }
                         ]).map((stat) => (
@@ -366,7 +366,7 @@ const DeliveryDashboard = () => {
                                             <div className="p-6">
                                                 <div className="flex justify-between items-start gap-2 mb-4">
                                                     <div className="flex items-center gap-2 flex-1 min-w-0">
-                                                        <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400 flex-shrink-0 transition-transform">
+                                                        <div className="p-2 bg-[#2E5A2E]/10 dark:bg-[#2E5A2E]/20 rounded-lg text-[#2E5A2E] dark:text-[#8bc910] flex-shrink-0 transition-transform">
                                                             <Wrench size={18} />
                                                         </div>
                                                         <div className="flex-1 min-w-0">
@@ -383,7 +383,11 @@ const DeliveryDashboard = () => {
                                                         {['Completed', 'Cancelled'].includes(request.status) ? (
                                                             <div className={`inline-flex items-center justify-center w-full px-3 py-1.5 rounded-full text-[10px] md:text-xs font-bold border transition-all shadow-sm ${getStatusColor(request.status)}`}>
                                                                 {getStatusIcon(request.status)}
-                                                                <span className="uppercase tracking-wider">{t(request.status)}</span>
+                                                                <span className="uppercase tracking-wider">
+                                                                    {request.status === 'Pending' ? t('Requested') : 
+                                                                     request.status === 'In Progress' ? t('Accepted') : 
+                                                                     t(request.status)}
+                                                                </span>
                                                             </div>
                                                         ) : (
                                                             <div className="relative w-full">
@@ -392,8 +396,8 @@ const DeliveryDashboard = () => {
                                                                     onChange={(e) => handleUpdateServiceStatus(request._id || request.id, e.target.value)}
                                                                     className={`w-full px-3 py-1.5 pr-8 rounded-full border text-[10px] md:text-xs font-bold transition-all outline-none shadow-sm cursor-pointer text-center appearance-none ${getStatusColor(request.status)}`}
                                                                 >
-                                                                    <option value="Pending">{t('Pending')}</option>
-                                                                    <option value="In Progress">{t('In Progress')}</option>
+                                                                    <option value="Pending" disabled={request.status === 'In Progress'}>{t('Requested')}</option>
+                                                                    <option value="In Progress">{t('Accepted')}</option>
                                                                     <option value="Completed">{t('Completed')}</option>
                                                                     <option value="Cancelled">{t('Cancelled')}</option>
                                                                 </select>
