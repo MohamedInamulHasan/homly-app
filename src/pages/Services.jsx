@@ -343,7 +343,7 @@ const Services = () => {
 
                                             {/* Category Tag Overlay (Top Left) */}
                                             <div className="absolute top-4 left-4 z-20">
-                                                <span className="px-3 py-1 bg-[#CBF9B2] text-[#2E5A2E] text-[10px] font-bold rounded-full uppercase tracking-widest shadow-sm">
+                                                <span className="px-3 py-1.5 bg-white/20 backdrop-blur-md border border-white/30 text-white text-[10px] font-bold rounded-full uppercase tracking-[0.15em] shadow-lg">
                                                     {service.category || t('Service')}
                                                 </span>
                                             </div>

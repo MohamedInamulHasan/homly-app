@@ -243,8 +243,8 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
                                                 alt={service.name} 
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                             />
-                                            <div className="absolute top-3 left-3 px-3 py-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full border border-white/20 shadow-sm">
-                                                <span className="text-[10px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] uppercase tracking-wider">{service.category}</span>
+                                            <div className="absolute top-3 left-3 px-3 py-1.5 bg-white/20 backdrop-blur-md rounded-full border border-white/30 shadow-lg">
+                                                <span className="text-[10px] font-bold text-white uppercase tracking-[0.15em]">{service.category}</span>
                                             </div>
 
                                             {/* Status Badge */}
