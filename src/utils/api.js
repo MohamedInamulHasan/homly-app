@@ -170,7 +170,7 @@ export const apiService = {
     },
 
     serviceItems: {
-        getAll: (serviceId) => api.get(`/services/${serviceId}/items`),
+        getAll: (serviceId, params = {}) => api.get(`/services/${serviceId}/items`, { params }),
         create: (serviceId, data) => api.post(`/services/${serviceId}/items`, data),
         update: (itemId, data) => api.put(`/services/items/${itemId}`, data),
         delete: (itemId) => api.delete(`/services/items/${itemId}`),

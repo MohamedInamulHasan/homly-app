@@ -559,7 +559,7 @@ const ServiceItemToggle = ({ item, updateStatus }) => {
 };
 
 const ItemsList = ({ service, onEdit, onDelete, updateStatus, t }) => {
-    const { data: items = [], isLoading } = useServiceItems(service?._id || service?.id);
+    const { data: items = [], isLoading } = useServiceItems(service?._id || service?.id, { all: true });
 
     if (isLoading) return <div className="py-12 flex justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2E5A2E]"></div></div>;
 

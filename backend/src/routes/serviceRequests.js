@@ -13,7 +13,7 @@ router.route('/')
     .get(protect, anyAdmin, getServiceRequests);
 
 router.route('/:id')
-    .put(protect, adminOrServiceAdmin, updateServiceRequestStatus)
+    .put(protect, anyAdmin, updateServiceRequestStatus)
     .delete(protect, adminOrServiceAdmin, deleteServiceRequest);
 
 export default router;

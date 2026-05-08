@@ -83,11 +83,11 @@ export const useUpdateServiceOrder = () => {
 
 // --- Service Items Hooks ---
 
-export const useServiceItems = (serviceId) => {
+export const useServiceItems = (serviceId, params = {}) => {
     return useQuery({
-        queryKey: serviceKeys.items(serviceId),
+        queryKey: [...serviceKeys.items(serviceId), params],
         queryFn: async () => {
-            const response = await apiService.serviceItems.getAll(serviceId);
+            const response = await apiService.serviceItems.getAll(serviceId, params);
             return response;
         },
         enabled: !!serviceId,

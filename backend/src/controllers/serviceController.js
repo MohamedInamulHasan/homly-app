@@ -143,7 +143,15 @@ export const deleteService = async (req, res) => {
 // @access  Public
 export const getServiceItems = async (req, res) => {
     try {
-        const items = await ServiceItem.find({ serviceId: req.params.id, isActive: true }).sort({ order: 1, name: 1 });
+        const { all } = req.query;
+        let query = { serviceId: req.params.id, isActive: true };
+
+        // If not requesting 'all' (admin view), filter by availability
+        if (all !== 'true') {
+            query.isAvailable = { $ne: false };
+        }
+
+        const items = await ServiceItem.find(query).sort({ order: 1, name: 1 });
         res.json(items);
     } catch (error) {
         res.status(500).json({ message: error.message });
