@@ -759,12 +759,13 @@ export const DataProvider = ({ children }) => {
     };
 
     // Service Request Actions
-    const requestService = async (serviceId, locationData = {}) => {
+    const requestService = async (serviceId, locationData = {}, items = []) => {
         try {
             const response = await apiService.serviceRequests.create({
                 serviceId,
                 location: locationData.location,
-                coordinates: locationData.coordinates
+                coordinates: locationData.coordinates,
+                items
             });
             return response.data || response;
         } catch (err) {

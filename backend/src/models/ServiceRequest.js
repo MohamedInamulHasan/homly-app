@@ -19,6 +19,11 @@ const serviceRequestSchema = new mongoose.Schema({
         type: String, // GPS "lat,long"
         default: ''
     },
+    items: [{
+        name: String,
+        price: Number,
+        quantity: { type: Number, default: 1 }
+    }],
     status: {
         type: String,
         enum: ['Pending', 'In Progress', 'Completed', 'Cancelled'],

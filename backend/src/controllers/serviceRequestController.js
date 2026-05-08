@@ -11,7 +11,7 @@ import { sendServiceRequestVoiceAlert } from '../services/voiceService.js';
 export const createServiceRequest = async (req, res) => {
     try {
         console.log('Received service request payload:', req.body);
-        const { serviceId, location, coordinates } = req.body;
+        const { serviceId, location, coordinates, items } = req.body;
 
 
         if (!serviceId) {
@@ -35,6 +35,7 @@ export const createServiceRequest = async (req, res) => {
             service: serviceId,
             location: location || '',
             coordinates: coordinates || '',
+            items: items || [],
             status: 'Pending' // Explicitly set default
         });
 
@@ -98,7 +99,7 @@ export const getServiceRequests = async (req, res) => {
         }
 
         const requests = await ServiceRequest.find(query)
-            .populate('user', 'name email mobile')
+            .populate('user', 'name email mobile address location')
             .populate('service', 'name image mobile')
             .sort({ createdAt: -1 });
 

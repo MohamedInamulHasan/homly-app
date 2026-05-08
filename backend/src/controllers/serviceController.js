@@ -144,10 +144,11 @@ export const deleteService = async (req, res) => {
 export const getServiceItems = async (req, res) => {
     try {
         const { all } = req.query;
-        let query = { serviceId: req.params.id, isActive: true };
+        let query = { serviceId: req.params.id };
 
-        // If not requesting 'all' (admin view), filter by availability
+        // If not requesting 'all' (admin view), filter by active and available status
         if (all !== 'true') {
+            query.isActive = true;
             query.isAvailable = { $ne: false };
         }
 

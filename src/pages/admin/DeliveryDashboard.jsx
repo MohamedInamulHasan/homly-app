@@ -193,24 +193,38 @@ const DeliveryDashboard = () => {
             <PullToRefreshLayout>
                 <div className="pt-[95px]">
                 <div className="px-5 mt-2 max-w-3xl mx-auto">
-                    {/* Mode Switcher - Simplified */}
-                    <div className="flex items-center gap-8 mb-8 border-b border-gray-200 dark:border-gray-700/50 px-2">
+                    {/* Mode Switcher - Full Width Big */}
+                    <div className="flex items-center mb-8 border-b-2 border-gray-100 dark:border-gray-700/50">
                         <button 
                             onClick={() => { setDashboardType('Orders'); setActiveTab('Active'); }}
-                            className={`pb-3 text-[15px] font-bold transition-all relative ${dashboardType === 'Orders' ? 'text-[#2E5A2E] dark:text-[#8bc910]' : 'text-gray-400'}`}
+                            className={`flex-1 pb-4 text-[18px] font-black transition-all relative ${dashboardType === 'Orders' ? 'text-gray-900 dark:text-white' : 'text-gray-400 opacity-60'}`}
                         >
-                            {t('Orders')}
+                            <span className="flex items-center justify-center gap-2">
+                                {t('Orders')}
+                                {orders.filter(o => o.status === 'Processing').length > 0 && (
+                                    <span className="flex items-center justify-center min-w-[20px] h-[20px] px-1 text-[11px] bg-rose-500 text-white rounded-full font-black">
+                                        {orders.filter(o => o.status === 'Processing').length}
+                                    </span>
+                                )}
+                            </span>
                             {dashboardType === 'Orders' && (
-                                <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#2E5A2E] dark:bg-[#8bc910] rounded-full" />
+                                <div className="absolute bottom-[-2px] left-0 right-0 h-[4px] bg-[#2E5A2E] dark:bg-[#8bc910] rounded-full" />
                             )}
                         </button>
                         <button 
                             onClick={() => { setDashboardType('Services'); setActiveTab('Active'); }}
-                            className={`pb-3 text-[15px] font-bold transition-all relative ${dashboardType === 'Services' ? 'text-[#2E5A2E] dark:text-[#8bc910]' : 'text-gray-400'}`}
+                            className={`flex-1 pb-4 text-[18px] font-black transition-all relative ${dashboardType === 'Services' ? 'text-gray-900 dark:text-white' : 'text-gray-400 opacity-60'}`}
                         >
-                            {t('Services')}
+                            <span className="flex items-center justify-center gap-2">
+                                {t('Services')}
+                                {serviceRequests.filter(s => s.status === 'Pending').length > 0 && (
+                                    <span className="flex items-center justify-center min-w-[20px] h-[20px] px-1 text-[11px] bg-rose-500 text-white rounded-full font-black">
+                                        {serviceRequests.filter(s => s.status === 'Pending').length}
+                                    </span>
+                                )}
+                            </span>
                             {dashboardType === 'Services' && (
-                                <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#2E5A2E] dark:bg-[#8bc910] rounded-full" />
+                                <div className="absolute bottom-[-2px] left-0 right-0 h-[4px] bg-[#2E5A2E] dark:bg-[#8bc910] rounded-full" />
                             )}
                         </button>
                     </div>
@@ -224,9 +238,7 @@ const DeliveryDashboard = () => {
                             { id: 'Cancelled', label: 'Cancelled', count: orders.filter(o => o.status === 'Cancelled').length, color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' }
                         ] : [
                             { id: 'Pending', label: 'Requested', count: serviceRequests.filter(s => s.status === 'Pending').length, color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-950/20' },
-                            { id: 'In Progress', label: 'Accepted', count: serviceRequests.filter(s => s.status === 'In Progress').length, color: 'text-sky-500', bg: 'bg-sky-50 dark:bg-sky-950/20' },
-                            { id: 'Completed', label: 'Completed', count: serviceRequests.filter(s => s.status === 'Completed').length, color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-950/20' },
-                            { id: 'Cancelled', label: 'Cancelled', count: serviceRequests.filter(s => s.status === 'Cancelled').length, color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' }
+                            { id: 'In Progress', label: 'Accepted', count: serviceRequests.filter(s => s.status === 'In Progress').length, color: 'text-sky-500', bg: 'bg-sky-50 dark:bg-sky-950/20' }
                         ]).map((stat) => (
                             <button 
                                 key={stat.id} 
@@ -375,7 +387,9 @@ const DeliveryDashboard = () => {
                                                         </div>
                                                         <div className="flex-1 min-w-0">
                                                             <p className="text-xs md:text-sm font-bold text-gray-900 dark:text-white truncate">
-                                                                {request.service?.name || t('Service')}
+                                                                {request.items?.length === 1 
+                                                                    ? request.items[0].name 
+                                                                    : request.service?.name || t('Service')}
                                                             </p>
                                                             <p className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 truncate">
                                                                 {formatOrderDateTime(request.createdAt)}
@@ -402,8 +416,6 @@ const DeliveryDashboard = () => {
                                                                 >
                                                                     <option value="Pending" disabled={request.status === 'In Progress'}>{t('Requested')}</option>
                                                                     <option value="In Progress">{t('Accepted')}</option>
-                                                                    <option value="Completed">{t('Completed')}</option>
-                                                                    <option value="Cancelled">{t('Cancelled')}</option>
                                                                 </select>
                                                                 <div className={`absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none ${getStatusColor(request.status).split(' ')[0]}`}>
                                                                     <ChevronDown size={12} />
@@ -423,27 +435,43 @@ const DeliveryDashboard = () => {
                                                 </div>
 
                                                 <div className="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-4 mb-4">
-                                                    <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-2">
-                                                        {request.address ? `${request.address.street}, ${request.address.city}` : t('No address provided')}
+                                                    <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">{t('Address')}</p>
+                                                    <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-2 font-medium">
+                                                        {request.user?.address?.street 
+                                                            ? `${request.user.address.street}, ${request.user.address.city}` 
+                                                            : request.location || t('No address provided')}
                                                     </p>
-                                                    {request.address?.location && (
+                                                    {(request.coordinates || request.user?.location) && (
                                                         <button
-                                                            onClick={() => openExternalLink(request.address.location)}
+                                                            onClick={() => openExternalLink(request.coordinates || request.user?.location)}
                                                             className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#2E5A2E] dark:text-[#7CA90E] hover:underline"
                                                         >
                                                             <MapPin size={12} />
                                                             {t('View Map')}
                                                         </button>
                                                     )}
+
+                                                    {/* Service Type - Centered below map */}
+                                                    <div className="mt-4 pt-4 border-t border-gray-200/50 dark:border-gray-600/50 text-center">
+                                                        <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">{t('Work Type')}</p>
+                                                        <p className="text-[15px] font-black text-[#2E5A2E] dark:text-[#8bc910] uppercase tracking-wide">
+                                                            {request.items?.length === 1 
+                                                                ? `${request.items[0].name}${request.items[0].quantity > 1 ? ` x${request.items[0].quantity}` : ''}`
+                                                                : `${!request.items?.length ? t('General') : t('Specific Tasks')}`}
+                                                        </p>
+                                                    </div>
                                                 </div>
 
                                                 {request.items && request.items.length > 0 && (
-                                                    <div className="flex flex-wrap gap-2 mt-4">
-                                                        {request.items.map((item, idx) => (
-                                                            <span key={idx} className="px-2 py-1 bg-white/50 dark:bg-gray-700 rounded-lg text-[10px] font-medium border border-black/5 dark:border-white/5">
-                                                                {item.name}
-                                                            </span>
-                                                        ))}
+                                                    <div className="mt-4">
+                                                        <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">{t('Items Requested')}</p>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {request.items.map((item, idx) => (
+                                                                <span key={idx} className="px-2.5 py-1 bg-[#2E5A2E]/5 dark:bg-[#2E5A2E]/20 text-[#2E5A2E] dark:text-[#8bc910] rounded-lg text-[10px] font-bold border border-[#2E5A2E]/10">
+                                                                    {item.name} {item.quantity > 1 ? `x${item.quantity}` : ''}
+                                                                </span>
+                                                            ))}
+                                                        </div>
                                                     </div>
                                                 )}
                                             </div>

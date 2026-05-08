@@ -109,10 +109,18 @@ const Services = () => {
 
             // 2. Send Request
             // valid 'coordinates' field to backend is now the stored Maps Link or empty string
+            const items = [{
+                name: selectedService.name.includes(' - ') 
+                    ? selectedService.name.split(' - ')[1] 
+                    : selectedService.name,
+                price: parseFloat(String(selectedService.price).replace(/[^0-9.]/g, '')) || 0,
+                quantity: 1
+            }];
+
             await requestService(selectedService.originalId, {
                 location: locationText,
                 coordinates: storedLocation
-            });
+            }, items);
 
             // 3. No need to update profile as we are reading FROM it.
 
