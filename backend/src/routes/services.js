@@ -16,6 +16,11 @@ import { protect, adminOnly, adminOrServiceAdmin } from '../middleware/authMiddl
 
 const router = express.Router();
 
+// Service Item Direct Routes (defined FIRST to avoid conflict with /:id/items)
+router.route('/items/:itemId')
+    .put(protect, adminOrServiceAdmin, updateServiceItem)
+    .delete(protect, adminOrServiceAdmin, deleteServiceItem);
+
 // Service Routes
 router.route('/')
     .get(getServices)
@@ -28,24 +33,11 @@ router.route('/:id')
     .put(protect, adminOrServiceAdmin, updateService)
     .delete(protect, adminOnly, deleteService);
 
-// Service Item Routes
+// Service Item Routes (Nested)
 router.route('/:id/items')
     .get(getServiceItems)
     .post(protect, adminOrServiceAdmin, createServiceItem);
 
 router.put('/:id/items/reorder', protect, adminOrServiceAdmin, updateServiceItemsOrder);
-
-// Note: Item updates/deletes should probably be under a dedicated items route or nested.
-// For simplicity, defining them here but typical REST might be /items/:itemId. 
-// However, since the controller methods for update/delete item depend on ':itemId', we need to route accordingly.
-// Let's create a separate set of routes for items if they are not nested for UPDATE/DELETE, 
-// OR we can just use the nested structure if we pass the ID.
-// Actually, I'll use a direct path for item operations to avoid deep nesting issues if not needed.
-// But wait, the previous plan implied `/api/services/:id/items`.
-// Let's add specific routes for item manipulation.
-
-router.route('/items/:itemId')
-    .put(protect, adminOrServiceAdmin, updateServiceItem)
-    .delete(protect, adminOrServiceAdmin, deleteServiceItem);
 
 export default router;

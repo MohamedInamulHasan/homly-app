@@ -550,7 +550,14 @@ const ItemsList = ({ service, onEdit, onDelete, updateStatus, t }) => {
                                 </td>
                                 <td className="px-6 py-4">
                                     <button 
-                                        onClick={() => updateStatus({ itemId: item._id || item.id, data: { isAvailable: item.isAvailable === false ? true : false }})}
+                                        onClick={async () => {
+                                            try {
+                                                await updateStatus({ itemId: item._id || item.id, data: { isAvailable: item.isAvailable === false ? true : false }});
+                                            } catch (err) {
+                                                console.error("Toggle Error:", err);
+                                                alert(err.message || 'Failed to update status');
+                                            }
+                                        }}
                                         className={`relative inline-flex h-5 w-10 items-center rounded-full transition-colors ${item.isAvailable !== false ? 'bg-[#2E5A2E]' : 'bg-gray-200 dark:bg-gray-700'}`}
                                     >
                                         <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${item.isAvailable !== false ? 'translate-x-5.5' : 'translate-x-1'}`} />
