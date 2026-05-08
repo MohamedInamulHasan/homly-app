@@ -518,6 +518,46 @@ const ServiceManagement = ({ serviceAdminMode = false, myServiceId = null }) => 
     );
 };
 
+const ServiceItemToggle = ({ item, updateStatus }) => {
+    const [localIsAvailable, setLocalIsAvailable] = useState(item.isAvailable !== false);
+    const [isUpdating, setIsUpdating] = useState(false);
+
+    useEffect(() => {
+        setLocalIsAvailable(item.isAvailable !== false);
+    }, [item.isAvailable]);
+
+    const handleToggle = async (e) => {
+        e.stopPropagation();
+        if (isUpdating) return;
+        
+        const nextValue = !localIsAvailable;
+        setLocalIsAvailable(nextValue);
+        setIsUpdating(true);
+        
+        try {
+            await updateStatus({ itemId: item._id || item.id, data: { isAvailable: nextValue } });
+        } catch (err) {
+            console.error("Toggle Error:", err);
+            setLocalIsAvailable(!nextValue); // Rollback
+            alert(err.message || "Failed to update status");
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    return (
+        <button 
+            onClick={handleToggle}
+            disabled={isUpdating}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-300 focus:outline-none ${localIsAvailable ? 'bg-[#2E5A2E]' : 'bg-gray-300 dark:bg-gray-600'} ${isUpdating ? 'opacity-70 cursor-not-allowed' : ''}`}
+        >
+            <span 
+                className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-300 ease-in-out ${localIsAvailable ? 'translate-x-6' : 'translate-x-1'}`} 
+            />
+        </button>
+    );
+};
+
 const ItemsList = ({ service, onEdit, onDelete, updateStatus, t }) => {
     const { data: items = [], isLoading } = useServiceItems(service?._id || service?.id);
 
@@ -549,19 +589,7 @@ const ItemsList = ({ service, onEdit, onDelete, updateStatus, t }) => {
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <button 
-                                        onClick={async () => {
-                                            try {
-                                                await updateStatus({ itemId: item._id || item.id, data: { isAvailable: item.isAvailable === false ? true : false }});
-                                            } catch (err) {
-                                                console.error("Toggle Error:", err);
-                                                alert(err.message || 'Failed to update status');
-                                            }
-                                        }}
-                                        className={`relative inline-flex h-5 w-10 items-center rounded-full transition-colors ${item.isAvailable !== false ? 'bg-[#2E5A2E]' : 'bg-gray-200 dark:bg-gray-700'}`}
-                                    >
-                                        <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${item.isAvailable !== false ? 'translate-x-5.5' : 'translate-x-1'}`} />
-                                    </button>
+                                    <ServiceItemToggle item={item} updateStatus={updateStatus} />
                                 </td>
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex justify-end gap-1">
