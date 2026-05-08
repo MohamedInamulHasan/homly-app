@@ -54,14 +54,15 @@ const DeliveryDashboard = () => {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
 
-    const tabs = ['All', 'Active', 'Cancelled'];
+    const tabs = ['All', 'Active', 'Completed', 'Cancelled'];
 
     const filteredOrders = orders.filter(order => {
         const matchesTab =
             activeTab === 'All' ? true :
                 activeTab === 'Active' ? ['Processing', 'Shipped', 'Out for Delivery'].includes(order.status) :
-                    activeTab === 'Cancelled' ? order.status === 'Cancelled' : 
-                        order.status === activeTab;
+                    activeTab === 'Completed' ? order.status === 'Delivered' :
+                        activeTab === 'Cancelled' ? order.status === 'Cancelled' : 
+                            order.status === activeTab;
 
         if (!matchesTab) return false;
 
@@ -80,8 +81,9 @@ const DeliveryDashboard = () => {
         const matchesTab = 
             activeTab === 'All' ? true :
                 activeTab === 'Active' ? ['Pending', 'In Progress'].includes(request.status) :
-                    activeTab === 'Cancelled' ? request.status === 'Cancelled' :
-                        request.status === activeTab;
+                    activeTab === 'Completed' ? request.status === 'Completed' :
+                        activeTab === 'Cancelled' ? request.status === 'Cancelled' :
+                            request.status === activeTab;
 
         if (!matchesTab) return false;
 
@@ -218,10 +220,12 @@ const DeliveryDashboard = () => {
                         {(dashboardType === 'Orders' ? [
                             { id: 'Processing', label: 'Processing', count: orders.filter(o => o.status === 'Processing').length, color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-950/20' },
                             { id: 'Out for Delivery', label: 'Out for Delivery', count: orders.filter(o => o.status === 'Out for Delivery').length, color: 'text-sky-500', bg: 'bg-sky-50 dark:bg-sky-950/20' },
+                            { id: 'Delivered', label: 'Delivered', count: orders.filter(o => o.status === 'Delivered').length, color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-950/20' },
                             { id: 'Cancelled', label: 'Cancelled', count: orders.filter(o => o.status === 'Cancelled').length, color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' }
                         ] : [
                             { id: 'Pending', label: 'Requested', count: serviceRequests.filter(s => s.status === 'Pending').length, color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-950/20' },
                             { id: 'In Progress', label: 'Accepted', count: serviceRequests.filter(s => s.status === 'In Progress').length, color: 'text-sky-500', bg: 'bg-sky-50 dark:bg-sky-950/20' },
+                            { id: 'Completed', label: 'Completed', count: serviceRequests.filter(s => s.status === 'Completed').length, color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-950/20' },
                             { id: 'Cancelled', label: 'Cancelled', count: serviceRequests.filter(s => s.status === 'Cancelled').length, color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' }
                         ]).map((stat) => (
                             <button 
@@ -311,6 +315,7 @@ const DeliveryDashboard = () => {
                                                                 >
                                                                     <option value="Processing" disabled={order.status === 'Out for Delivery'}>{t('Processing')}</option>
                                                                     <option value="Out for Delivery">{t('Out for Delivery')}</option>
+                                                                    <option value="Delivered">{t('Delivered')}</option>
                                                                     <option value="Cancelled" disabled={order.status !== 'Processing'}>{t('Cancelled')}</option>
                                                                 </select>
                                                                 <div className={`absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none ${getStatusColor(order.status).split(' ')[0]}`}>
@@ -397,6 +402,7 @@ const DeliveryDashboard = () => {
                                                                 >
                                                                     <option value="Pending" disabled={request.status === 'In Progress'}>{t('Requested')}</option>
                                                                     <option value="In Progress">{t('Accepted')}</option>
+                                                                    <option value="Completed">{t('Completed')}</option>
                                                                     <option value="Cancelled">{t('Cancelled')}</option>
                                                                 </select>
                                                                 <div className={`absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none ${getStatusColor(request.status).split(' ')[0]}`}>
