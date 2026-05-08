@@ -62,16 +62,6 @@ const ForgotPassword = () => {
                                 {t('We have sent a secure link to')} <span className="font-bold text-[#2E5A2E]">{email}</span>. 
                                 {t('Please click the link in that email to reset your password.')}
                             </p>
-
-                            <div className="pt-4">
-                                <a 
-                                    href="mailto:"
-                                    className="inline-flex items-center justify-center w-full py-4 px-6 rounded-full border-2 border-[#2E5A2E] text-[#2E5A2E] font-bold text-sm hover:bg-[#CBF9B2]/10 dark:hover:bg-[#2E5A2E]/20 transition-all transform active:scale-95 shadow-sm"
-                                >
-                                    <Navigation className="h-4 w-4 mr-2 transform rotate-45" />
-                                    {t('Open Email App')}
-                                </a>
-                            </div>
                             
                             <div className="pt-6">
                                 <Link 
