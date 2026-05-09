@@ -194,11 +194,7 @@ export const apiService = {
     settings: {
         get: (key) => api.get(`/settings${key ? `/${key}` : ''}`),
         update: (key, value) => api.put(`/settings/${key}`, { value })
-    },
-
-    // Games
-    getGameStatus: () => api.get('/games/status'),
-    submitGameScore: (score) => api.post('/games/score', { score })
+    }
 };
 
 export default api;
