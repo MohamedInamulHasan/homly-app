@@ -4,7 +4,7 @@ import {
     Shield, Wrench, Store, ArrowLeft, MoreHorizontal, 
     MapPin, Lock, HelpCircle, Pencil, Languages, Heart,
     ChevronDown, ShoppingCart, Newspaper, Coins,
-    Truck, CheckCircle2, XCircle, Clock, Camera, Plus
+    Truck, CheckCircle2, XCircle, Clock, Camera, Plus, Gamepad2
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
