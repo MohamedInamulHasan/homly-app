@@ -23,6 +23,7 @@ import categoryRoutes from './routes/categories.js';
 import serviceRoutes from './routes/services.js';
 import serviceRequestRoutes from './routes/serviceRequests.js';
 import settingsRoutes from './routes/settingsRoutes.js';
+import gameRoutes from './routes/gameRoutes.js';
 
 // Load environment variables (Moved to top)
 // dotenv.config();
@@ -103,6 +104,7 @@ app.use('/api/service-requests', serviceRequestRoutes);
 import adminRoutes from './routes/admin.js';
 
 app.use('/api/settings', settingsRoutes);
+app.use('/api/games', gameRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Upload Route (Cloudinary)

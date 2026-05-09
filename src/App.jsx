@@ -27,6 +27,7 @@ import ResetPassword from './pages/ResetPassword';
 import MyService from './pages/MyService';
 import Categories from './pages/Categories';
 import EditAddress from './pages/EditAddress';
+import Games from './pages/Games';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 
 import MobileFooter from './components/MobileFooter';
@@ -247,6 +248,7 @@ function App() {
                                     <Route path="/product/:id" element={<ProductDetails />} />
                                     <Route path="/news" element={<News />} />
                                     <Route path="/services" element={<Services />} />
+                                    <Route path="/games" element={<Games />} />
                                     <Route path="/login" element={<Login />} />
                                     <Route path="/signup" element={<Signup />} />
                                     <Route path="/forgot-password" element={<ForgotPassword />} />

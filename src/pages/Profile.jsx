@@ -263,6 +263,9 @@ const Profile = () => {
                           <MenuLink to="/news" icon={<Newspaper size={18} strokeWidth={2} />} title={t('News')} />
                           <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
 
+                          <MenuLink to="/games" icon={<Gamepad2 size={18} strokeWidth={2} />} title={t('Games')} />
+                          <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
+
                           {/* Settings Dropdown/Accordion */}
                           <button 
                               onClick={() => setIsSettingsOpen(!isSettingsOpen)}
