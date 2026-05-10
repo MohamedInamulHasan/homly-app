@@ -57,21 +57,7 @@ const Profile = () => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [showAvatarModal, setShowAvatarModal] = useState(false);
     const { mutate: updateProfile } = useUpdateProfile();
-    const [bestScore, setBestScore] = useState(0);
 
-    useEffect(() => {
-        const fetchScore = async () => {
-            try {
-                const res = await api.get('/games/my-score/memory');
-                if (res.success) {
-                    setBestScore(res.score || 0);
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchScore();
-    }, []);
 
     const fruitAvatars = [
         { id: 'strawberry', url: '/avatars/strawberry.png', name: 'Strawberry' },
