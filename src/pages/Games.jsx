@@ -68,11 +68,12 @@ const Games = () => {
         setLoadingLeaderboard(true);
         try {
             const res = await api.get('/games/leaderboard/memory');
+            console.log('Leaderboard response:', res.data);
             if (res.data.success) {
-                setLeaderboard(res.data.data);
+                setLeaderboard(res.data.data || []);
             }
         } catch (error) {
-            console.error('Failed to fetch leaderboard', error);
+            console.error('Failed to fetch leaderboard:', error.message, error.response?.data);
         } finally {
             setLoadingLeaderboard(false);
         }
