@@ -56,8 +56,8 @@ const Games = () => {
     const fetchMyBestScore = async () => {
         try {
             const res = await api.get('/games/my-score/memory');
-            if (res.data.success) {
-                setMyBestScore(res.data.score);
+            if (res.success) {
+                setMyBestScore(res.score || 0);
             }
         } catch (error) {
             console.error('Failed to fetch best score', error);
@@ -68,9 +68,9 @@ const Games = () => {
         setLoadingLeaderboard(true);
         try {
             const res = await api.get('/games/leaderboard/memory');
-            console.log('Leaderboard response:', res.data);
-            if (res.data.success) {
-                setLeaderboard(res.data.data || []);
+            console.log('Leaderboard response:', res);
+            if (res.success) {
+                setLeaderboard(res.data || []);
             }
         } catch (error) {
             console.error('Failed to fetch leaderboard:', error.message, error.response?.data);
@@ -192,9 +192,9 @@ const Games = () => {
         setClaiming(true);
         try {
             const res = await api.post('/games/claim-reward', { mode: 'memory' });
-            if (res.data.success) {
+            if (res.success) {
                 alert('1 Coin Rewarded!');
-                setUser({ ...user, coins: res.data.coins });
+                setUser({ ...user, coins: res.coins });
             }
         } catch (error) {
             alert(error.response?.data?.message || 'Failed to claim reward');

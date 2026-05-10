@@ -63,8 +63,8 @@ const Profile = () => {
         const fetchScore = async () => {
             try {
                 const res = await api.get('/games/my-score/memory');
-                if (res.data.success) {
-                    setBestScore(res.data.score);
+                if (res.success) {
+                    setBestScore(res.score || 0);
                 }
             } catch (error) {
                 console.error(error);
