@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Trophy, Crown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import api, { API_BASE_URL } from '../utils/api';
 
 const IMAGES = [
     '/game-icons/game_burger_1778395243224.png',
@@ -57,11 +55,7 @@ const Games = () => {
 
     const fetchMyBestScore = async () => {
         try {
-            const token = localStorage.getItem('authToken');
-            if (!token) return;
-            const res = await axios.get(`${API_URL}/games/my-score/memory`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await api.get('/games/my-score/memory');
             if (res.data.success) {
                 setMyBestScore(res.data.score);
             }
@@ -73,7 +67,7 @@ const Games = () => {
     const fetchLeaderboard = async () => {
         setLoadingLeaderboard(true);
         try {
-            const res = await axios.get(`${API_URL}/games/leaderboard/memory`);
+            const res = await api.get('/games/leaderboard/memory');
             if (res.data.success) {
                 setLeaderboard(res.data.data);
             }
@@ -172,16 +166,8 @@ const Games = () => {
     const handleGameOver = async (finalScore = score) => {
         setGameState('gameover');
         try {
-            const token = localStorage.getItem('authToken');
-            if (!token || token === 'undefined' || token === 'null') {
-                console.log("Guest player. Score not submitted.");
-                return; // Do nothing if not logged in
-            }
-
             if (finalScore >= 0) {
-                const response = await axios.post(`${API_URL}/games/score`, { score: finalScore, mode: 'memory' }, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                await api.post('/games/score', { score: finalScore, mode: 'memory' });
                 
                 if (finalScore > myBestScore) {
                     setMyBestScore(finalScore);
@@ -193,10 +179,10 @@ const Games = () => {
         } catch (error) {
             console.error('Failed to submit score', error);
             if (error.response?.status === 401) {
-                alert('Your session expired. Redirecting to login so your score can be saved next time!');
+                alert('Your session expired. Please log in again to save your score!');
                 navigate('/login');
             } else {
-                alert('Error saving score: ' + (error.response?.data?.message || error.message));
+                console.error('Score save error:', error.response?.data?.message || error.message);
             }
         }
     };
@@ -204,10 +190,7 @@ const Games = () => {
     const claimReward = async () => {
         setClaiming(true);
         try {
-            const token = localStorage.getItem('authToken');
-            const res = await axios.post(`${API_URL}/games/claim-reward`, { mode: 'memory' }, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await api.post('/games/claim-reward', { mode: 'memory' });
             if (res.data.success) {
                 alert('1 Coin Rewarded!');
                 setUser({ ...user, coins: res.data.coins });

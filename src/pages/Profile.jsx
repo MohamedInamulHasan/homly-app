@@ -15,7 +15,7 @@ import { useUserProfile, useUpdateProfile } from '../hooks/queries/useUsers';
 import { useData } from '../context/DataContext';
 import { useOrders } from '../hooks/queries/useOrders';
 import LogoutModal from '../components/LogoutModal';
-import axios from 'axios';
+import api from '../utils/api';
 
 const MenuLink = ({ icon, title, to, onClick, isRed = false }) => {
     const Wrapper = to ? Link : 'button';
@@ -62,12 +62,7 @@ const Profile = () => {
     useEffect(() => {
         const fetchScore = async () => {
             try {
-                const token = localStorage.getItem('authToken');
-                if (!token) return;
-                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-                const res = await axios.get(`${API_URL}/games/my-score/memory`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const res = await api.get('/games/my-score/memory');
                 if (res.data.success) {
                     setBestScore(res.data.score);
                 }
