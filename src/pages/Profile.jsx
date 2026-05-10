@@ -197,25 +197,17 @@ const Profile = () => {
                                    <Camera size={14} />
                                </button>
 
-                                 {/* Flat Coin Badge & Best Score */}
-                                 <div className="absolute -top-2 -right-2 flex flex-col gap-1.5 items-end z-10">
-                                     {Number(user?.coins || 0) > 0 && (
-                                         <div className="bg-[#FFCE31] rounded-full px-1.5 py-0.5 flex items-center gap-0.5 border-2 border-white dark:border-gray-800 shadow-sm">
-                                             <Coins size={8} className="text-[#2E5A2E]" />
-                                             <span className="text-[9px] font-black text-[#2E5A2E] leading-none">
-                                                 {user?.coins}
-                                             </span>
-                                         </div>
-                                     )}
-                                     {bestScore > 0 && (
-                                         <div className="bg-[#2E5A2E] rounded-full px-1.5 py-0.5 flex items-center gap-0.5 border-2 border-white dark:border-gray-800 shadow-sm">
-                                             <Gamepad2 size={8} className="text-[#CBF9B2]" />
-                                             <span className="text-[9px] font-black text-[#CBF9B2] leading-none">
-                                                 {bestScore}
-                                             </span>
-                                         </div>
-                                     )}
-                                 </div>
+                               {/* Flat Coin Badge */}
+                               <div className="absolute -top-2 -right-2 z-10">
+                                   {Number(user?.coins || 0) > 0 && (
+                                       <div className="bg-[#FFCE31] rounded-full px-1.5 py-0.5 flex items-center gap-0.5 border-2 border-white dark:border-gray-800 shadow-sm">
+                                           <Coins size={8} className="text-[#2E5A2E]" />
+                                           <span className="text-[9px] font-black text-[#2E5A2E] leading-none">
+                                               {user?.coins}
+                                           </span>
+                                       </div>
+                                   )}
+                               </div>
                           </div>
                           <div className="flex-1 min-w-0">
                                <h2 className="text-[17px] font-bold text-gray-900 dark:text-white leading-tight tracking-tight truncate">
