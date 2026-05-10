@@ -28,6 +28,7 @@ import MyService from './pages/MyService';
 import Categories from './pages/Categories';
 import EditAddress from './pages/EditAddress';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import Games from './pages/Games'; // Added for Mind Match
 
 import MobileFooter from './components/MobileFooter';
 import InstallPrompt from './components/InstallPrompt';
@@ -330,6 +331,14 @@ function App() {
                                         element={
                                             <PrivateRoute>
                                                 <MyService />
+                                            </PrivateRoute>
+                                        }
+                                    />
+                                    <Route
+                                        path="/games"
+                                        element={
+                                            <PrivateRoute>
+                                                <Games />
                                             </PrivateRoute>
                                         }
                                     />

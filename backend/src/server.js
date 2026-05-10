@@ -11,6 +11,7 @@ import connectDB from './config/database.js';
 import axios from 'axios'; // For Keep-Warm mechanism
 import http from 'http';
 import { init as initSocket } from './socket.js';
+import { initCronJobs } from './cron/dailyRewards.js';
 
 // Import routes
 import productRoutes from './routes/products.js';
@@ -23,13 +24,17 @@ import categoryRoutes from './routes/categories.js';
 import serviceRoutes from './routes/services.js';
 import serviceRequestRoutes from './routes/serviceRequests.js';
 import settingsRoutes from './routes/settingsRoutes.js';
+import gameRoutes from './routes/games.js';
 
 // Load environment variables (Moved to top)
 // dotenv.config();
 
 // Connect to database
 console.log('🚀 Initializing server...');
-connectDB().then(() => console.log('✅ ConnectDB promise resolved')).catch(e => console.error('❌ ConnectDB promise rejected', e));
+connectDB().then(() => {
+    console.log('✅ ConnectDB promise resolved');
+    initCronJobs();
+}).catch(e => console.error('❌ ConnectDB promise rejected', e));
 
 
 // Initialize Express app
@@ -104,6 +109,7 @@ import adminRoutes from './routes/admin.js';
 
 app.use('/api/settings', settingsRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/games', gameRoutes);
 
 // Upload Route (Cloudinary)
 import { getUploadSignature, uploadImage } from './controllers/uploadController.js';

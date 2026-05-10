@@ -4,7 +4,7 @@ import {
     Shield, Wrench, Store, ArrowLeft, MoreHorizontal, 
     MapPin, Lock, HelpCircle, Pencil, Languages, Heart,
     ChevronDown, ShoppingCart, Newspaper, Coins,
-    Truck, CheckCircle2, XCircle, Clock, Camera, Plus
+    Truck, CheckCircle2, XCircle, Clock, Camera, Plus, Gamepad2
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
@@ -15,6 +15,7 @@ import { useUserProfile, useUpdateProfile } from '../hooks/queries/useUsers';
 import { useData } from '../context/DataContext';
 import { useOrders } from '../hooks/queries/useOrders';
 import LogoutModal from '../components/LogoutModal';
+import axios from 'axios';
 
 const MenuLink = ({ icon, title, to, onClick, isRed = false }) => {
     const Wrapper = to ? Link : 'button';
@@ -56,6 +57,26 @@ const Profile = () => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [showAvatarModal, setShowAvatarModal] = useState(false);
     const { mutate: updateProfile } = useUpdateProfile();
+    const [bestScore, setBestScore] = useState(0);
+
+    useEffect(() => {
+        const fetchScore = async () => {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) return;
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                const res = await axios.get(`${API_URL}/games/my-score/memory`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (res.data.success) {
+                    setBestScore(res.data.score);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchScore();
+    }, []);
 
     const fruitAvatars = [
         { id: 'strawberry', url: '/avatars/strawberry.png', name: 'Strawberry' },
@@ -181,15 +202,25 @@ const Profile = () => {
                                    <Camera size={14} />
                                </button>
 
-                                 {/* Flat Coin Badge - Shadow Free - Only show if > 0 */}
-                                 {Number(user?.coins || 0) > 0 && (
-                                     <div className="absolute -top-1 -right-1 bg-[#FFCE31] rounded-full px-1.5 py-0.5 flex items-center gap-0.5 border-2 border-white dark:border-gray-800 z-10 shadow-sm">
-                                         <Coins size={8} className="text-[#2E5A2E]" />
-                                         <span className="text-[9px] font-black text-[#2E5A2E] leading-none">
-                                             {user?.coins}
-                                         </span>
-                                     </div>
-                                 )}
+                                 {/* Flat Coin Badge & Best Score */}
+                                 <div className="absolute -top-2 -right-2 flex flex-col gap-1.5 items-end z-10">
+                                     {Number(user?.coins || 0) > 0 && (
+                                         <div className="bg-[#FFCE31] rounded-full px-1.5 py-0.5 flex items-center gap-0.5 border-2 border-white dark:border-gray-800 shadow-sm">
+                                             <Coins size={8} className="text-[#2E5A2E]" />
+                                             <span className="text-[9px] font-black text-[#2E5A2E] leading-none">
+                                                 {user?.coins}
+                                             </span>
+                                         </div>
+                                     )}
+                                     {bestScore > 0 && (
+                                         <div className="bg-[#2E5A2E] rounded-full px-1.5 py-0.5 flex items-center gap-0.5 border-2 border-white dark:border-gray-800 shadow-sm">
+                                             <Gamepad2 size={8} className="text-[#CBF9B2]" />
+                                             <span className="text-[9px] font-black text-[#CBF9B2] leading-none">
+                                                 {bestScore}
+                                             </span>
+                                         </div>
+                                     )}
+                                 </div>
                           </div>
                           <div className="flex-1 min-w-0">
                                <h2 className="text-[17px] font-bold text-gray-900 dark:text-white leading-tight tracking-tight truncate">
@@ -261,6 +292,9 @@ const Profile = () => {
                           <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
 
                           <MenuLink to="/news" icon={<Newspaper size={18} strokeWidth={2} />} title={t('News')} />
+                          <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
+
+                          <MenuLink to="/games" icon={<Gamepad2 size={18} strokeWidth={2} />} title={t('Games')} />
                           <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
 
                           {/* Settings Dropdown/Accordion */}
