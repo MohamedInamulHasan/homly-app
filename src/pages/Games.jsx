@@ -394,12 +394,12 @@ const Games = () => {
                                     <p className="text-gray-400 text-sm">Be the first to set a record!</p>
                                 </div>
                             ) : (
-                                <div className="overflow-hidden bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100/80 dark:border-gray-700/50 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
-                                    <table className="w-full text-left border-collapse">
+                                <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100/80 dark:border-gray-700/50 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
+                                    <table className="w-full text-left border-collapse min-w-[320px]">
                                         <thead>
                                             <tr className="bg-gray-50/50 dark:bg-gray-700/30">
                                                 <th className="py-4 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest border-b border-gray-100 dark:border-gray-700/50">Rank</th>
-                                                <th className="py-4 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest border-b border-gray-100 dark:border-gray-700/50">Player</th>
+                                                <th className="py-4 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest border-b border-gray-100 dark:border-gray-700/50 text-center">Player</th>
                                                 <th className="py-4 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest border-b border-gray-100 dark:border-gray-700/50 text-right">Score</th>
                                             </tr>
                                         </thead>
@@ -429,7 +429,7 @@ const Games = () => {
                                                                         </div>
                                                                     )}
                                                                 </div>
-                                                                <div className="flex flex-col min-w-0">
+                                                                <div className="flex flex-col min-w-0 pr-8">
                                                                     <span className="font-semibold text-base text-gray-900 dark:text-white leading-tight whitespace-nowrap">
                                                                         {entry.user?.name || 'Anonymous'}
                                                                     </span>
