@@ -183,14 +183,13 @@ const Profile = () => {
                                    <Camera size={14} />
                                </button>
 
-                               {/* Flat Coin Badge */}
-                               <div className="absolute -top-2 -right-2 z-10">
+                               {/* Literal Gold Coin Design - Smaller */}
+                               <div className="absolute -top-1 -right-1 z-10">
                                    {Number(user?.coins || 0) > 0 && (
-                                       <div className="bg-[#FFCE31] rounded-full px-1.5 py-0.5 flex items-center gap-0.5 border-2 border-white dark:border-gray-800 shadow-sm">
-                                           <Coins size={8} className="text-[#2E5A2E]" />
-                                           <span className="text-[9px] font-black text-[#2E5A2E] leading-none">
-                                               {user?.coins}
-                                           </span>
+                                       <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-[#BF953F] via-[#FCF6BA] to-[#B38728] border border-[#AA8A2E] shadow-[0_2px_6px_rgba(0,0,0,0.15)] flex items-center justify-center transition-transform hover:rotate-12">
+                                            <span className="text-[10px] font-black text-[#5C4033] leading-none drop-shadow-sm">
+                                                {user?.coins}
+                                            </span>
                                        </div>
                                    )}
                                </div>
