@@ -64,37 +64,7 @@ export const getLeaderboard = async (req, res) => {
     }
 };
 
-// @desc    Claim reward for being #1
-// @route   POST /api/games/claim-reward
-// @access  Private
-export const claimReward = async (req, res) => {
-    try {
-        const { mode = 'memory' } = req.body;
 
-        const topScore = await GameScore.findOne({ mode }).sort({ score: -1 });
-
-        if (!topScore) {
-            return res.status(400).json({ success: false, message: 'No scores available' });
-        }
-
-        if (topScore.user.toString() !== req.user._id.toString()) {
-            return res.status(403).json({ success: false, message: 'You must be #1 on the leaderboard to claim this reward.' });
-        }
-
-        const user = await User.findById(req.user._id);
-        user.coins = (user.coins || 0) + 1;
-        await user.save();
-
-        res.status(200).json({
-            success: true,
-            message: '1 Coin rewarded successfully!',
-            coins: user.coins
-        });
-    } catch (error) {
-        console.error('Claim Reward Error:', error);
-        res.status(500).json({ success: false, message: 'Server Error' });
-    }
-};
 
 // @desc    Get my score
 // @route   GET /api/games/my-score/:mode

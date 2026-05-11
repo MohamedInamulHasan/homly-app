@@ -40,8 +40,6 @@ const Games = () => {
     const [leaderboard, setLeaderboard] = useState([]);
     const [loadingLeaderboard, setLoadingLeaderboard] = useState(false);
     
-    // Reward
-    const [claiming, setClaiming] = useState(false);
     const [myBestScore, setMyBestScore] = useState(0);
 
     useEffect(() => {
@@ -188,22 +186,9 @@ const Games = () => {
         }
     };
 
-    const claimReward = async () => {
-        setClaiming(true);
-        try {
-            const res = await api.post('/games/claim-reward', { mode: 'memory' });
-            if (res.success) {
-                alert('1 Coin Rewarded!');
-                setUser({ ...user, coins: res.coins });
-            }
-        } catch (error) {
-            alert(error.response?.data?.message || 'Failed to claim reward');
-        } finally {
-            setClaiming(false);
-        }
-    };
 
-    const isTopPlayer = leaderboard.length > 0 && leaderboard[0].user?._id === user?._id;
+
+
 
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-20">
@@ -272,12 +257,15 @@ const Games = () => {
                                     Start Playing
                                 </button>
 
-                                <div className="mt-5 flex flex-col items-center gap-1">
+                                <div className="mt-5 flex flex-col items-center gap-1.5">
                                     <div className="flex items-center gap-1.5">
                                         <span className="w-1.5 h-1.5 rounded-full bg-[#2E5A2E] dark:bg-[#CBF9B2] animate-pulse"></span>
-                                        <span className="text-[11px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] uppercase tracking-wider">Top score wins 1 Coin daily</span>
+                                        <span className="text-[11px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] uppercase tracking-wider">Top players win 1 Coin daily</span>
                                     </div>
-                                    <span className="text-[10px] text-gray-400 uppercase tracking-widest">Competition resets at 5:00 PM IST</span>
+                                    <div className="flex flex-col items-center">
+                                        <span className="text-[10px] text-gray-400 uppercase tracking-widest">Reward given at 5:00 PM IST daily</span>
+                                        <span className="text-[9px] text-gray-400 uppercase tracking-[0.15em] mt-0.5">Tied for #1? Everyone gets 1 Coin!</span>
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -327,16 +315,15 @@ const Games = () => {
                                                     className={`w-full h-full transition-transform duration-500 transform-style-3d relative ${isFlipped ? 'rotate-y-180' : 'group-active:scale-95 transition-transform'}`}
                                                 >
                                                     {/* Front (Face Down) */}
-                                                    <div className="absolute w-full h-full rounded-2xl backface-hidden flex items-center justify-center bg-white dark:bg-gray-800 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all group-hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)]">
-                                                        <span className="text-3xl font-black text-gray-300 dark:text-gray-700">?</span>
+                                                    <div className="absolute w-full h-full rounded-2xl backface-hidden flex items-center justify-center bg-gray-200 dark:bg-gray-700 shadow-md transition-all group-hover:bg-gray-300 dark:group-hover:bg-gray-600">
                                                     </div>
                                                     
                                                     {/* Back (Face Up) */}
-                                                    <div className={`absolute w-full h-full rounded-2xl backface-hidden rotate-y-180 flex items-center justify-center border-2 border-black overflow-hidden transition-all duration-300 ${isMatched ? 'bg-gray-100 dark:bg-gray-800 opacity-50 scale-95 shadow-none' : 'bg-white dark:bg-gray-800 shadow-[4px_4px_0_0_rgba(0,0,0,1)]'}`}>
+                                                    <div className={`absolute w-full h-full rounded-2xl backface-hidden rotate-y-180 flex items-center justify-center overflow-hidden transition-all duration-300 bg-white dark:bg-gray-800 shadow-md`}>
                                                         <img 
                                                             src={card.Icon} 
                                                             alt="card"
-                                                            className={`w-full h-full object-cover transition-all duration-500 ${isMatched ? 'grayscale opacity-50' : 'drop-shadow-[2px_2px_0_rgba(0,0,0,0.5)]'}`} 
+                                                            className={`w-full h-full object-cover transition-all duration-500`} 
                                                         />
                                                     </div>
                                                 </div>
@@ -377,26 +364,20 @@ const Games = () => {
 
                 {activeTab === 'leaderboard' && (
                     <div className="animate-in fade-in duration-300">
-                        {isTopPlayer && (
-                            <div className="bg-gradient-to-r from-[#FFCE31]/20 to-[#FFCE31]/10 border border-[#FFCE31] rounded-2xl p-4 mb-6 flex items-center justify-between shadow-sm">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-[#FFCE31] rounded-full flex items-center justify-center shadow-md">
-                                        <Trophy className="text-[#2E5A2E]" size={20} />
-                                    </div>
-                                    <div>
-                                        <p className="font-bold text-gray-900 dark:text-white text-sm">You are #1!</p>
-                                        <p className="text-xs text-gray-600 dark:text-gray-400">Claim your daily coin reward.</p>
-                                    </div>
+                        {/* Reward Info Box */}
+                        <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border border-white/40 dark:border-gray-700/40 rounded-2xl p-4 mb-6 shadow-sm">
+                            <div className="flex items-start gap-3">
+                                <div className="w-8 h-8 bg-[#CBF9B2]/40 dark:bg-[#CBF9B2]/20 rounded-full flex items-center justify-center shrink-0">
+                                    <Trophy size={16} className="text-[#2E5A2E] dark:text-[#CBF9B2]" />
                                 </div>
-                                <button 
-                                    onClick={claimReward}
-                                    disabled={claiming}
-                                    className="px-4 py-2 bg-[#FFCE31] text-[#2E5A2E] font-bold text-xs rounded-full shadow-sm hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
-                                >
-                                    {claiming ? 'Claiming...' : 'Claim 1 Coin'}
-                                </button>
+                                <div className="flex flex-col">
+                                    <p className="text-sm font-bold text-gray-900 dark:text-white leading-tight">Daily Competition</p>
+                                    <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+                                        Be #1 at <span className="font-bold text-[#2E5A2E] dark:text-[#CBF9B2]">5:00 PM IST</span> to win 1 Coin. If players have the same score, each will receive a reward!
+                                    </p>
+                                </div>
                             </div>
-                        )}
+                        </div>
 
                         <div className="space-y-3">
                             {loadingLeaderboard ? (
@@ -413,43 +394,62 @@ const Games = () => {
                                     <p className="text-gray-400 text-sm">Be the first to set a record!</p>
                                 </div>
                             ) : (
-                                leaderboard.map((entry, index) => {
-                                    const isFirst = index === 0;
-                                    
-                                    return (
-                                        <div key={entry._id} className="group flex items-center justify-between p-4 mb-3 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100/80 dark:border-gray-700/50 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-all">
-                                            <div className="flex items-center gap-5">
-                                                <div className="w-8 flex items-center justify-center">
-                                                    <span className={`font-bold text-lg ${isFirst ? 'text-[#2E5A2E] dark:text-[#CBF9B2]' : 'text-gray-400 dark:text-gray-500'}`}>
-                                                        {index + 1}
-                                                    </span>
-                                                </div>
-                                                <div className="relative">
-                                                    <img 
-                                                        src={entry.user?.avatar || '/avatars/strawberry.png'} 
-                                                        alt="" 
-                                                        className="w-12 h-12 rounded-full object-cover bg-gray-50 dark:bg-gray-900"
-                                                    />
-                                                    {isFirst && (
-                                                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#2E5A2E] dark:bg-[#CBF9B2] rounded-full flex items-center justify-center border-2 border-white dark:border-gray-800">
-                                                            <Crown size={10} className="text-white dark:text-[#2E5A2E]" fill="currentColor" />
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div className="flex flex-col">
-                                                    <span className="font-semibold text-base text-gray-900 dark:text-white leading-tight">
-                                                        {entry.user?.name || 'Anonymous'}
-                                                    </span>
-                                                    {isFirst && <span className="text-[11px] font-medium text-gray-500 dark:text-gray-400 mt-0.5">Top Score</span>}
-                                                </div>
-                                            </div>
-                                            <div className="font-bold text-gray-900 dark:text-white text-xl tracking-tight">
-                                                {entry.score}
-                                            </div>
-                                        </div>
-                                    );
-                                })
+                                <div className="overflow-hidden bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100/80 dark:border-gray-700/50 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
+                                    <table className="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr className="bg-gray-50/50 dark:bg-gray-700/30">
+                                                <th className="py-4 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest border-b border-gray-100 dark:border-gray-700/50">Rank</th>
+                                                <th className="py-4 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest border-b border-gray-100 dark:border-gray-700/50">Player</th>
+                                                <th className="py-4 px-6 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest border-b border-gray-100 dark:border-gray-700/50 text-right">Score</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-50 dark:divide-gray-700/30">
+                                            {leaderboard.map((entry, index) => {
+                                                const isFirst = entry.score === leaderboard[0].score;
+                                                const displayRank = leaderboard.findIndex(e => e.score === entry.score) + 1;
+                                                
+                                                return (
+                                                    <tr key={entry._id} className="group hover:bg-gray-50/30 dark:hover:bg-gray-700/10 transition-colors">
+                                                        <td className="py-5 px-6">
+                                                            <span className={`font-bold text-lg ${isFirst ? 'text-[#2E5A2E] dark:text-[#CBF9B2]' : 'text-gray-400 dark:text-gray-500'}`}>
+                                                                #{displayRank}
+                                                            </span>
+                                                        </td>
+                                                        <td className="py-5 px-6">
+                                                            <div className="flex items-center gap-4">
+                                                                <div className="relative shrink-0">
+                                                                    <img 
+                                                                        src={entry.user?.avatar || '/avatars/strawberry.png'} 
+                                                                        alt="" 
+                                                                        className="w-11 h-11 rounded-full object-cover bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700"
+                                                                    />
+                                                                    {isFirst && (
+                                                                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#2E5A2E] dark:bg-[#CBF9B2] rounded-full flex items-center justify-center border-2 border-white dark:border-gray-800 shadow-sm">
+                                                                            <Crown size={10} className="text-white dark:text-[#2E5A2E]" fill="currentColor" />
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                                <div className="flex flex-col">
+                                                                    <span className="font-semibold text-base text-gray-900 dark:text-white leading-tight">
+                                                                        {entry.user?.name || 'Anonymous'}
+                                                                    </span>
+                                                                    {isFirst && <span className="text-[10px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] uppercase tracking-wider mt-0.5">Top Score</span>}
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="py-5 px-6 text-right">
+                                                            <span className="font-bold text-gray-900 dark:text-white text-xl tracking-tight">
+                                                                {entry.score}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
                             )}
+
                         </div>
                     </div>
                 )}
