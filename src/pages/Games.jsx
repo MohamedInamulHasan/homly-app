@@ -429,11 +429,11 @@ const Games = () => {
                                                                         </div>
                                                                     )}
                                                                 </div>
-                                                                <div className="flex flex-col">
-                                                                    <span className="font-semibold text-base text-gray-900 dark:text-white leading-tight">
+                                                                <div className="flex flex-col min-w-0">
+                                                                    <span className="font-semibold text-base text-gray-900 dark:text-white leading-tight whitespace-nowrap">
                                                                         {entry.user?.name || 'Anonymous'}
                                                                     </span>
-                                                                    {isFirst && <span className="text-[10px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] uppercase tracking-wider mt-0.5">Top Score</span>}
+                                                                    {isFirst && <span className="text-[10px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] uppercase tracking-wider mt-0.5 whitespace-nowrap">Top Score</span>}
                                                                 </div>
                                                             </div>
                                                         </td>
