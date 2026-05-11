@@ -114,7 +114,7 @@ const Login = () => {
                                     autoComplete="email"
                                     required
                                     className="appearance-none relative block w-full pl-11 pr-4 py-3.5 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:border-[#2E5A2E] focus:ring-0 shadow-none focus:z-10 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 [ -webkit-tap-highlight-color:transparent]"
-                                    placeholder="you@example.com"
+                                    placeholder="Enter your email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
@@ -135,7 +135,7 @@ const Login = () => {
                                     autoComplete="current-password"
                                     required
                                     className="appearance-none relative block w-full pl-11 pr-12 py-3.5 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:border-[#2E5A2E] focus:ring-0 shadow-none focus:z-10 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 [ -webkit-tap-highlight-color:transparent]"
-                                    placeholder="••••••••"
+                                    placeholder="Enter your password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
