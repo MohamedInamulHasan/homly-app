@@ -172,7 +172,12 @@ export const getCurrentLocation = async () => {
         for (const url of ipProviders) {
             try {
                 console.log(`📡 Attempting IP-based fallback: ${url}`);
-                const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const response = await fetch(url, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                
                 const data = await response.json();
                 
                 // Both providers use lat/latitude and lon/longitude
