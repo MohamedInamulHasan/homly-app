@@ -161,6 +161,29 @@ export const getCurrentLocation = async () => {
         }
     } catch (error) {
         console.error('📍 Location Error:', error);
+        
+        // --- FINAL FALLBACK: IP-based Geolocation ---
+        // If native methods fail (especially on Desktops without GPS), try IP geolocation
+        try {
+            console.log('📡 Attempting IP-based geolocation fallback...');
+            const response = await fetch('https://ipapi.co/json/');
+            const data = await response.json();
+            
+            if (data.latitude && data.longitude) {
+                console.log('✅ IP-based geolocation successful');
+                const { latitude, longitude } = data;
+                return {
+                    latitude,
+                    longitude,
+                    mapsLink: `https://www.google.com/maps/place/${latitude}+${longitude}/@${latitude},${longitude},17z`,
+                    success: true,
+                    isIPFallback: true // Flag to indicate this is approximate
+                };
+            }
+        } catch (ipError) {
+            console.error('❌ IP Fallback failed:', ipError);
+        }
+
         let message = 'Unable to get location';
         let code = 'UNKNOWN';
         
