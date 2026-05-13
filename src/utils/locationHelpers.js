@@ -163,51 +163,66 @@ export const getCurrentLocation = async () => {
         console.error('📍 Location Error:', error);
         
         // --- FINAL FALLBACK: IP-based Geolocation ---
-        // If native methods fail (especially on Desktops without GPS), try IP geolocation
-        try {
-            console.log('📡 Attempting IP-based geolocation fallback...');
-            const response = await fetch('https://ipapi.co/json/');
-            const data = await response.json();
-            
-            if (data.latitude && data.longitude) {
-                console.log('✅ IP-based geolocation successful');
-                const { latitude, longitude } = data;
-                return {
-                    latitude,
-                    longitude,
-                    mapsLink: `https://www.google.com/maps/place/${latitude}+${longitude}/@${latitude},${longitude},17z`,
-                    success: true,
-                    isIPFallback: true // Flag to indicate this is approximate
-                };
+        // Attempting multiple providers for better reliability
+        const ipProviders = [
+            'https://ipapi.co/json/',
+            'https://ip-api.com/json'
+        ];
+
+        for (const url of ipProviders) {
+            try {
+                console.log(`📡 Attempting IP-based fallback: ${url}`);
+                const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
+                const data = await response.json();
+                
+                // Both providers use lat/latitude and lon/longitude
+                const lat = data.latitude || data.lat;
+                const lon = data.longitude || data.lon;
+
+                if (lat && lon) {
+                    console.log('✅ IP-based geolocation successful');
+                    return {
+                        latitude: lat,
+                        longitude: lon,
+                        mapsLink: `https://www.google.com/maps/place/${lat}+${lon}/@${lat},${lon},17z`,
+                        success: true,
+                        isIPFallback: true
+                    };
+                }
+            } catch (ipError) {
+                console.warn(`❌ IP Fallback failed for ${url}:`, ipError.message);
             }
-        } catch (ipError) {
-            console.error('❌ IP Fallback failed:', ipError);
         }
 
         let message = 'Unable to get location';
         let code = 'UNKNOWN';
+        const rawError = error.message || 'No specific error message';
         
-        // Check for specific browser error messages that indicate OS-level blocking
-        const isOSBlocked = error.message?.toLowerCase().includes('denied by the system') || 
-                           error.message?.toLowerCase().includes('origin does not have permission');
+        // Check for OS-level blocking
+        const isOSBlocked = rawError.toLowerCase().includes('denied by the system') || 
+                           rawError.toLowerCase().includes('origin does not have permission');
 
-        // Handle standard Geolocation error codes
         if (error.message === 'PERMISSION_DENIED' || error.code === 1) {
             message = isOSBlocked 
-                ? 'Location is blocked by Windows. Please enable "Location Services" in Windows Settings.' 
+                ? 'Location is blocked by phone settings. Please enable location for this app.' 
                 : 'Please allow location permission in your browser settings.';
             code = 'PERMISSION_DENIED';
-        } else if (error.code === 2 || error.message?.toLowerCase().includes('not detected') || error.message?.toLowerCase().includes('unavailable')) {
+        } else if (error.code === 2 || rawError.toLowerCase().includes('not detected') || rawError.toLowerCase().includes('unavailable')) {
             message = 'Location not detected. Please ensure your GPS/Wi-Fi is on and try again.';
             code = 'POSITION_UNAVAILABLE';
-        } else if (error.code === 3 || error.message?.toLowerCase().includes('timeout')) {
-            message = 'Location request timed out. Please try again in an open area or turn on Wi-Fi.';
+        } else if (error.code === 3 || rawError.toLowerCase().includes('timeout')) {
+            message = 'Location request timed out. Please try again in an open area.';
             code = 'TIMEOUT';
         } else if (error.message === 'UNSUPPORTED') {
             message = 'Geolocation is not supported by your browser';
             code = 'UNSUPPORTED';
         }
         
-        return { success: false, message, code, error: error.message };
+        // Append diagnostic info if it's still "Unable to get location"
+        const finalMessage = message === 'Unable to get location' 
+            ? `Unable to get location (System Error: ${rawError})` 
+            : message;
+
+        return { success: false, message: finalMessage, code, error: rawError };
     }
 };
