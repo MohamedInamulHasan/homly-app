@@ -95,20 +95,39 @@ export const getCurrentLocation = async () => {
                 }
             }
             
-            // 3. Get position with high accuracy and longer timeout
-            const position = await Geolocation.getCurrentPosition({
-                enableHighAccuracy: true,
-                timeout: 20000, // 20 seconds
-                maximumAge: 0
-            });
-            
-            const { latitude, longitude } = position.coords;
-            return {
-                latitude,
-                longitude,
-                mapsLink: `https://www.google.com/maps/place/${latitude}+${longitude}/@${latitude},${longitude},17z`,
-                success: true
-            };
+            // 3. Try getting position with high accuracy first
+            try {
+                const position = await Geolocation.getCurrentPosition({
+                    enableHighAccuracy: true,
+                    timeout: 10000, // 10 seconds for first attempt
+                    maximumAge: 0
+                });
+                
+                const { latitude, longitude } = position.coords;
+                return {
+                    latitude,
+                    longitude,
+                    mapsLink: `https://www.google.com/maps/place/${latitude}+${longitude}/@${latitude},${longitude},17z`,
+                    success: true
+                };
+            } catch (highAccuracyError) {
+                console.warn('📍 High accuracy location failed, trying low accuracy...', highAccuracyError);
+                
+                // Fallback to low accuracy which is faster and works better indoors
+                const position = await Geolocation.getCurrentPosition({
+                    enableHighAccuracy: false,
+                    timeout: 15000, 
+                    maximumAge: 30000 // Allow 30 seconds old location for fallback
+                });
+                
+                const { latitude, longitude } = position.coords;
+                return {
+                    latitude,
+                    longitude,
+                    mapsLink: `https://www.google.com/maps/place/${latitude}+${longitude}/@${latitude},${longitude},17z`,
+                    success: true
+                };
+            }
         } else {
             // Browser Fallback
             if (!navigator.geolocation) {
@@ -116,9 +135,18 @@ export const getCurrentLocation = async () => {
             }
             
             const position = await new Promise((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(resolve, reject, {
+                // Try high accuracy first
+                navigator.geolocation.getCurrentPosition(resolve, (err) => {
+                    console.warn('📍 Browser high accuracy failed, trying low accuracy...', err);
+                    // Fallback to low accuracy
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: false,
+                        timeout: 15000,
+                        maximumAge: 30000
+                    });
+                }, {
                     enableHighAccuracy: true,
-                    timeout: 15000,
+                    timeout: 8000,
                     maximumAge: 0
                 });
             });
@@ -136,17 +164,27 @@ export const getCurrentLocation = async () => {
         let message = 'Unable to get location';
         let code = 'UNKNOWN';
         
+        // Check for specific browser error messages that indicate OS-level blocking
+        const isOSBlocked = error.message?.toLowerCase().includes('denied by the system') || 
+                           error.message?.toLowerCase().includes('origin does not have permission');
+
+        // Handle standard Geolocation error codes
         if (error.message === 'PERMISSION_DENIED' || error.code === 1) {
-            message = 'Please allow location permission in settings';
+            message = isOSBlocked 
+                ? 'Location is blocked by Windows. Please enable "Location Services" in Windows Settings.' 
+                : 'Please allow location permission in your browser settings.';
             code = 'PERMISSION_DENIED';
-        } else if (error.code === 3 || error.message?.includes('timeout')) {
-            message = 'Location request timed out. Please try again in an open area.';
+        } else if (error.code === 2 || error.message?.toLowerCase().includes('not detected') || error.message?.toLowerCase().includes('unavailable')) {
+            message = 'Location not detected. Please ensure your GPS/Wi-Fi is on and try again.';
+            code = 'POSITION_UNAVAILABLE';
+        } else if (error.code === 3 || error.message?.toLowerCase().includes('timeout')) {
+            message = 'Location request timed out. Please try again in an open area or turn on Wi-Fi.';
             code = 'TIMEOUT';
         } else if (error.message === 'UNSUPPORTED') {
             message = 'Geolocation is not supported by your browser';
             code = 'UNSUPPORTED';
         }
         
-        return { success: false, message, code, error };
+        return { success: false, message, code, error: error.message };
     }
 };
