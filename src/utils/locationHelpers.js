@@ -84,14 +84,22 @@ export const getCurrentLocation = async () => {
         if (isNative) {
             const { Geolocation } = await import('@capacitor/geolocation');
             
-            // 1. Check permissions
-            let check = await Geolocation.checkPermissions();
+            // 1. Check permissions (with resilience for manifest sync issues)
+            let check;
+            try {
+                check = await Geolocation.checkPermissions();
+            } catch (pError) {
+                console.warn('📍 Permission check failed (likely manifest sync), proceeding anyway...', pError);
+                check = { location: 'prompt' }; // Fallback to prompt
+            }
             
             if (check.location !== 'granted') {
                 // 2. Request if not granted
-                check = await Geolocation.requestPermissions();
-                if (check.location !== 'granted') {
-                    throw new Error('PERMISSION_DENIED');
+                try {
+                    check = await Geolocation.requestPermissions();
+                } catch (rError) {
+                    console.warn('📍 Permission request failed, attempting direct access...', rError);
+                    // If request fails, we still try to get position (OS might prompt)
                 }
             }
             
