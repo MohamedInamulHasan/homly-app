@@ -293,6 +293,8 @@ export const LanguageProvider = ({ children }) => {
         'Location Saved': { en: 'Location Saved', ta: 'இருப்பிடம் சேமிக்கப்பட்டது' },
         'GPS coordinates saved!': { en: 'GPS coordinates saved!', ta: 'ஜிபிஎஸ் ஒருங்கிணைப்புகள் சேமிக்கப்பட்டன!' },
         'Pin exact GPS': { en: 'Pin exact GPS', ta: 'துல்லியமான ஜிபிஎஸ்' },
+        'Location Attached': { en: 'Location Attached', ta: 'இருப்பிடம் இணைக்கப்பட்டது' },
+        'Fast delivery with precise coordinates': { en: 'Fast delivery with precise coordinates', ta: 'துல்லியமான ஒருங்கிணைப்புகளுடன் விரைவான டெலிவரி' },
         'Tap to use current location': { en: 'Tap to use current location', ta: 'தற்போதைய இடத்தைப் பயன்படுத்த தட்டவும்' },
         'Please wait while we sync labels...': { en: 'Please wait while we sync labels...', ta: 'தயவுசெய்து காத்திருங்கள்...' },
         'Please allow location permission in your browser settings.': { en: 'Please allow location permission in your browser settings.', ta: 'உங்கள் உலாவி அமைப்புகளில் இருப்பிட அனுமதியை அனுமதிக்கவும்.' },

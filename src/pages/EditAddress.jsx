@@ -69,20 +69,31 @@ const EditAddress = () => {
     };
 
     const handleDetectLocation = async () => {
+        if (isDetecting) return;
+        
         setIsDetecting(true);
         setMessage({ type: '', text: '' });
+        console.log('📍 EditAddress: Starting location detection...');
 
-        const result = await getCurrentLocation();
+        try {
+            const result = await getCurrentLocation();
+            console.log('📍 EditAddress: Detection result:', result);
 
-        if (result.success) {
-            setFormData(prev => ({ ...prev, location: result.mapsLink }));
-            setMessage({ type: 'success', text: t('GPS coordinates saved!') });
-            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
-        } else {
-            setMessage({ type: 'error', text: t(result.message) });
+            if (result.success) {
+                setFormData(prev => ({ ...prev, location: result.mapsLink }));
+                setMessage({ type: 'success', text: t('GPS coordinates saved!') });
+                // Auto-clear success message after 3 seconds
+                setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+            } else {
+                console.error('📍 EditAddress: Detection failed:', result.message);
+                setMessage({ type: 'error', text: t(result.message) });
+            }
+        } catch (err) {
+            console.error('📍 EditAddress: Fatal detection error:', err);
+            setMessage({ type: 'error', text: t('Unable to get location') });
+        } finally {
+            setIsDetecting(false);
         }
-        
-        setIsDetecting(false);
     };
 
     const handleSubmit = async (e) => {
