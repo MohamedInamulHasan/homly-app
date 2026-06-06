@@ -504,7 +504,7 @@ const StoreProducts = () => {
             <div className="max-w-7xl mx-auto px-4 pt-1 pb-4">
                 {/* Loading State Skeleton */}
                 {loading.products ? (
-                    <div className={`grid gap-4 sm:gap-6 ${fastMode ? 'grid-cols-2 md:grid-cols-4 lg:grid-cols-6' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'}`}>
+                    <div className={`grid gap-3 sm:gap-4 ${fastMode ? 'grid-cols-2 md:grid-cols-4 lg:grid-cols-6' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'}`}>
                         {[...Array(10)].map((_, i) => (
                             <ProductSkeleton key={i} fastMode={fastMode} />
                         ))}
@@ -537,7 +537,7 @@ const StoreProducts = () => {
                                         </h2>
                                     </div>
                                 )}
-                                <div className={`grid gap-4 sm:gap-6 ${fastMode ? 'grid-cols-2 md:grid-cols-4 lg:grid-cols-6' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'}`}>
+                                <div className={`grid gap-3 sm:gap-4 ${fastMode ? 'grid-cols-2 md:grid-cols-4 lg:grid-cols-6' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'}`}>
                                     {groupProducts.map((product) => (
                                         (fastMode) ? (
                                             <SimpleProductCard key={product._id || product.id} product={product} isFastPurchase={fastMode} />

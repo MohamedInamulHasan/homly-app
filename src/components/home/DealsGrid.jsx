@@ -39,7 +39,7 @@ const DealsGrid = ({ products = [], isLoading = false }) => {
                 </Link>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 md:gap-4">
                 {products.map((product) => {
                     const productId = product._id || product.id;
                     const isSaved = savedProducts?.some(p => (p._id || p.id || p) === productId);

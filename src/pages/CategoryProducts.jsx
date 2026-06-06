@@ -210,7 +210,7 @@ const CategoryProducts = () => {
 
                         {/* Product Grid */}
                         {isLoading ? (
-                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
                                 {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
                                     <div key={i} className="aspect-[3/4] bg-white dark:bg-gray-800/50 rounded-2xl animate-pulse shadow-sm" />
                                 ))}
@@ -219,7 +219,7 @@ const CategoryProducts = () => {
                             <div className="space-y-12">
                                 {sections.map((section) => (
                                     <div key={section.id} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
                                             {section.products.map((product) => (
                                                 <ProductCard 
                                                     key={product._id || product.id} 

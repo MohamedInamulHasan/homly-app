@@ -105,13 +105,15 @@ export const getCurrentLocation = async () => {
             
             // 3. Try getting position with high accuracy first
             try {
+                console.log('📍 Native: Attempting high accuracy getCurrentPosition...');
                 const position = await Geolocation.getCurrentPosition({
                     enableHighAccuracy: true,
-                    timeout: 10000, // 10 seconds for first attempt
+                    timeout: 8000, // 8 seconds timeout
                     maximumAge: 0
                 });
                 
                 const { latitude, longitude } = position.coords;
+                console.log('✅ Native: High accuracy location obtained:', latitude, longitude);
                 return {
                     latitude,
                     longitude,
@@ -119,22 +121,47 @@ export const getCurrentLocation = async () => {
                     success: true
                 };
             } catch (highAccuracyError) {
-                console.warn('📍 High accuracy location failed, trying low accuracy...', highAccuracyError);
+                console.warn('📍 Native: High accuracy failed, trying last known position...', highAccuracyError);
                 
-                // Fallback to low accuracy which is faster and works better indoors
-                const position = await Geolocation.getCurrentPosition({
-                    enableHighAccuracy: false,
-                    timeout: 15000, 
-                    maximumAge: 30000 // Allow 30 seconds old location for fallback
-                });
-                
-                const { latitude, longitude } = position.coords;
-                return {
-                    latitude,
-                    longitude,
-                    mapsLink: `https://www.google.com/maps/place/${latitude}+${longitude}/@${latitude},${longitude},17z`,
-                    success: true
-                };
+                // Fallback A: Get last known cached position (instant and highly reliable on mobile)
+                try {
+                    const lastKnown = await Geolocation.getLastKnownPosition();
+                    if (lastKnown && lastKnown.coords) {
+                        const { latitude, longitude } = lastKnown.coords;
+                        console.log('✅ Native: Last known location obtained:', latitude, longitude);
+                        return {
+                            latitude,
+                            longitude,
+                            mapsLink: `https://www.google.com/maps/place/${latitude}+${longitude}/@${latitude},${longitude},17z`,
+                            success: true,
+                            isLastKnown: true
+                        };
+                    }
+                } catch (lkError) {
+                    console.warn('📍 Native: Last known location retrieval failed:', lkError);
+                }
+
+                // Fallback B: Try low accuracy location (uses network/cell tower instead of GPS hardware)
+                try {
+                    console.log('📍 Native: Attempting low accuracy getCurrentPosition...');
+                    const position = await Geolocation.getCurrentPosition({
+                        enableHighAccuracy: false,
+                        timeout: 10000, 
+                        maximumAge: 30000 // Allow 30 seconds old location
+                    });
+                    
+                    const { latitude, longitude } = position.coords;
+                    console.log('✅ Native: Low accuracy location obtained:', latitude, longitude);
+                    return {
+                        latitude,
+                        longitude,
+                        mapsLink: `https://www.google.com/maps/place/${latitude}+${longitude}/@${latitude},${longitude},17z`,
+                        success: true
+                    };
+                } catch (lowAccuracyError) {
+                    console.error('📍 Native: Low accuracy failed as well:', lowAccuracyError);
+                    throw lowAccuracyError; // Escalate to IP fallback
+                }
             }
         } else {
             // Browser Fallback
@@ -144,22 +171,24 @@ export const getCurrentLocation = async () => {
             
             const position = await new Promise((resolve, reject) => {
                 // Try high accuracy first
+                console.log('📡 Browser: Attempting high accuracy...');
                 navigator.geolocation.getCurrentPosition(resolve, (err) => {
-                    console.warn('📍 Browser high accuracy failed, trying low accuracy...', err);
+                    console.warn('📡 Browser: High accuracy failed, trying low accuracy...', err);
                     // Fallback to low accuracy
                     navigator.geolocation.getCurrentPosition(resolve, reject, {
                         enableHighAccuracy: false,
-                        timeout: 15000,
+                        timeout: 10000,
                         maximumAge: 30000
                     });
                 }, {
                     enableHighAccuracy: true,
-                    timeout: 8000,
+                    timeout: 6000,
                     maximumAge: 0
                 });
             });
             
             const { latitude, longitude } = position.coords;
+            console.log('✅ Browser: Geolocation obtained:', latitude, longitude);
             return {
                 latitude,
                 longitude,
@@ -171,29 +200,29 @@ export const getCurrentLocation = async () => {
         console.error('📍 Location Error:', error);
         
         // --- FINAL FALLBACK: IP-based Geolocation ---
-        // Attempting multiple providers for better reliability
+        // Try multiple reliable providers that support HTTPS for free
         const ipProviders = [
-            'https://ipapi.co/json/',
-            'https://ip-api.com/json'
+            { url: 'https://ipwho.is', latKey: 'latitude', lonKey: 'longitude' },
+            { url: 'https://freeipapi.com/api/json', latKey: 'latitude', lonKey: 'longitude' },
+            { url: 'https://ipapi.co/json/', latKey: 'latitude', lonKey: 'longitude' },
+            { url: 'http://ip-api.com/json', latKey: 'lat', lonKey: 'lon' } // HTTP only fallback
         ];
-
-        for (const url of ipProviders) {
+ 
+        for (const provider of ipProviders) {
             try {
-                console.log(`📡 Attempting IP-based fallback: ${url}`);
+                console.log(`📡 Attempting IP-based fallback: ${provider.url}`);
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                const timeoutId = setTimeout(() => controller.abort(), 4000);
                 
-                const response = await fetch(url, { signal: controller.signal });
+                const response = await fetch(provider.url, { signal: controller.signal });
                 clearTimeout(timeoutId);
                 
                 const data = await response.json();
-                
-                // Both providers use lat/latitude and lon/longitude
-                const lat = data.latitude || data.lat;
-                const lon = data.longitude || data.lon;
-
+                const lat = data[provider.latKey];
+                const lon = data[provider.lonKey];
+ 
                 if (lat && lon) {
-                    console.log('✅ IP-based geolocation successful');
+                    console.log(`✅ IP-based geolocation successful using ${provider.url}:`, lat, lon);
                     return {
                         latitude: lat,
                         longitude: lon,
@@ -203,10 +232,10 @@ export const getCurrentLocation = async () => {
                     };
                 }
             } catch (ipError) {
-                console.warn(`❌ IP Fallback failed for ${url}:`, ipError.message);
+                console.warn(`❌ IP Fallback failed for ${provider.url}:`, ipError.message);
             }
         }
-
+ 
         let message = 'Unable to get location';
         let code = 'UNKNOWN';
         const rawError = error.message || 'No specific error message';
@@ -214,7 +243,7 @@ export const getCurrentLocation = async () => {
         // Check for OS-level blocking
         const isOSBlocked = rawError.toLowerCase().includes('denied by the system') || 
                            rawError.toLowerCase().includes('origin does not have permission');
-
+ 
         if (error.message === 'PERMISSION_DENIED' || error.code === 1) {
             message = isOSBlocked 
                 ? 'Location is blocked by phone settings. Please enable location for this app.' 
@@ -235,7 +264,7 @@ export const getCurrentLocation = async () => {
         const finalMessage = message === 'Unable to get location' 
             ? `Unable to get location (System Error: ${rawError})` 
             : message;
-
+ 
         return { success: false, message: finalMessage, code, error: rawError };
     }
 };

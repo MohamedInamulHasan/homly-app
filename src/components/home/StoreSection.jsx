@@ -95,7 +95,7 @@ const StoreSection = ({ section, products: rawProducts = [], singleStore = false
     }, [products, singleStore, contextStores, section.type, section.id]);
 
     return (
-        <section className={`px-4 py-8 dark:bg-gray-900 transition-opacity duration-300 ${!isOpen ? 'opacity-80' : ''}`}>
+        <section className={`px-4 py-3 md:py-6 dark:bg-gray-900 transition-opacity duration-300 ${!isOpen ? 'opacity-80' : ''}`}>
             {/* Header */}
             <div className="flex justify-between items-end mb-6 px-1">
                 <div className="flex flex-col min-w-0 flex-1">
@@ -129,7 +129,7 @@ const StoreSection = ({ section, products: rawProducts = [], singleStore = false
             </div>
 
             {singleStore ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 px-1">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4 px-1">
                     {singleStoreProducts.map((product, idx) => (
                         <div
                             key={`${product._id || product.id}-${idx}`}
@@ -143,8 +143,8 @@ const StoreSection = ({ section, products: rawProducts = [], singleStore = false
                     ))}
                 </div>
             ) : (
-                <div className="flex overflow-x-auto scrollbar-hide gap-4 pb-2 px-1">
-                    <div className="flex gap-4">
+                <div className="flex overflow-x-auto scrollbar-hide gap-3 md:gap-4 pb-2 px-1">
+                    <div className="flex gap-3 md:gap-4">
                         {displayProducts.map((product, idx) => (
                             <div 
                                 key={`${product._id || product.id}-${idx}-${cycleIndex}`} 

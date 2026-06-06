@@ -134,7 +134,7 @@ const EditAddress = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-12 transition-colors duration-200">
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-24 transition-colors duration-200">
             {/* Premium Header */}
             <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-5 py-4 shadow-sm">
                 <div className="max-w-xl mx-auto flex items-center justify-between">

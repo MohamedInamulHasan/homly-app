@@ -370,7 +370,7 @@ const Home = () => {
                         </div>
                     </section>
                 ) : displaySections.length > 0 ? (
-                    <div className="space-y-4">
+                    <div className="space-y-2 md:space-y-4">
                         {displaySections.map((section) => (
                             <StoreSection 
                                 key={section.id} 
