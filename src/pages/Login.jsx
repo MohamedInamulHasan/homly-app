@@ -69,8 +69,8 @@ const Login = () => {
         <div className="min-h-screen flex items-center justify-center bg-[#CBF9B2] dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
             <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-[3rem] border border-gray-100 dark:border-gray-700">
                 <div className="text-center">
-                    <div className="mx-auto h-12 w-12 bg-[#2E5A2E] rounded-xl flex items-center justify-center mb-6 transform rotate-3">
-                        <Lock className="h-6 w-6 text-white" />
+                    <div className="mx-auto h-12 w-12 bg-[#2E5A2E] dark:bg-[#CBF9B2] rounded-xl flex items-center justify-center mb-6 transform rotate-3">
+                        <Lock className="h-6 w-6 text-white dark:text-gray-900" />
                     </div>
                     <h2 className="mt-2 text-3xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
                         Welcome Back
@@ -113,7 +113,7 @@ const Login = () => {
                                     type="email"
                                     autoComplete="email"
                                     required
-                                    className="appearance-none relative block w-full pl-11 pr-4 py-3.5 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:border-[#2E5A2E] focus:ring-0 shadow-none focus:z-10 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 [ -webkit-tap-highlight-color:transparent]"
+                                    className="appearance-none relative block w-full pl-11 pr-4 py-3.5 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:border-[#2E5A2E] dark:focus:border-[#CBF9B2] focus:ring-0 shadow-none focus:z-10 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 [ -webkit-tap-highlight-color:transparent]"
                                     placeholder="Enter your email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -134,7 +134,7 @@ const Login = () => {
                                     type={showPassword ? "text" : "password"}
                                     autoComplete="current-password"
                                     required
-                                    className="appearance-none relative block w-full pl-11 pr-12 py-3.5 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:border-[#2E5A2E] focus:ring-0 shadow-none focus:z-10 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 [ -webkit-tap-highlight-color:transparent]"
+                                    className="appearance-none relative block w-full pl-11 pr-12 py-3.5 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:border-[#2E5A2E] dark:focus:border-[#CBF9B2] focus:ring-0 shadow-none focus:z-10 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 [ -webkit-tap-highlight-color:transparent]"
                                     placeholder="Enter your password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
@@ -174,7 +174,7 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-bold rounded-full text-white bg-[#2E5A2E] hover:bg-[#1E3A1E] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2E5A2E] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-bold rounded-full text-white dark:text-gray-900 bg-[#2E5A2E] dark:bg-[#CBF9B2] hover:bg-[#1E3A1E] dark:hover:bg-[#a6d98e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2E5A2E] dark:focus:ring-[#CBF9B2] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
                             {isSubmitting ? (
                                 <Loader className="animate-spin h-5 w-5" />

@@ -94,7 +94,7 @@ const Shop = () => {
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-24 transition-colors duration-200">
             {/* Premium Light Green Header Card / Dark Mode Adjusted */}
             <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] dark:bg-[#1a381a] rounded-b-[2.5rem] px-2 pt-2 pb-3 shadow-sm overflow-hidden">
-                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#2E5A2E]/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#CBF9B2]/20 rounded-full blur-3xl pointer-events-none"></div>
                 <div className="relative z-10">
                     <HomeHeader />
                 </div>
@@ -113,7 +113,7 @@ const Shop = () => {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full pl-12 pr-6 py-4 rounded-full border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none transition-all duration-300 shadow-sm"
                             />
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2E5A2E] transition-colors" size={20} />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2E5A2E] dark:group-focus-within:text-[#CBF9B2] transition-colors" size={20} />
                             {searchQuery && (
                                 <button
                                     onClick={() => setSearchQuery('')}
@@ -322,7 +322,7 @@ const Shop = () => {
                                                             inline: 'center'
                                                         });
                                                     }}
-                                                    className={`pb-3 text-sm font-bold transition-all relative whitespace-nowrap uppercase tracking-wide ${isActive
+                                                    className={`pb-3 text-sm font-medium transition-all relative whitespace-nowrap ${isActive
                                                         ? 'text-black dark:text-white'
                                                         : 'text-gray-400 hover:text-black dark:hover:text-white'
                                                         }`}
@@ -409,7 +409,7 @@ const Shop = () => {
                                         {(searchQuery.trim() || categoryFilter !== 'All') && (
                                             <button
                                                 onClick={() => { setSearchQuery(''); setSearchParams({ category: 'All' }); }}
-                                                className="px-6 py-2 bg-[#2E5A2E] text-white rounded-xl font-bold text-sm active:scale-95 transition-all shadow-sm"
+                                                className="px-6 py-2 bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-gray-900 rounded-xl font-bold text-sm active:scale-95 transition-all shadow-sm"
                                             >
                                                 {t('Clear All')}
                                             </button>
@@ -448,7 +448,7 @@ const Shop = () => {
                                                 {(searchQuery.trim() || categoryFilter !== 'All') && (
                                                     <button
                                                         onClick={() => { setSearchQuery(''); setSearchParams({ category: 'All' }); }}
-                                                        className="px-6 py-2 bg-[#2E5A2E] text-white rounded-xl font-bold text-sm active:scale-95 transition-all shadow-sm"
+                                                        className="px-6 py-2 bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-gray-900 rounded-xl font-bold text-sm active:scale-95 transition-all shadow-sm"
                                                     >
                                                         {t('Clear All')}
                                                     </button>

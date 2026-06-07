@@ -128,7 +128,7 @@ const Profile = () => {
 
             {/* Premium Light Green Header Card / Dark Mode Adjusted */}
             <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] dark:bg-[#1a381a] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm overflow-hidden">
-                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#2E5A2E]/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#CBF9B2]/20 rounded-full blur-3xl pointer-events-none"></div>
                 
                 <div className="relative z-10">
                     <div className="w-full px-4 relative flex items-center justify-center min-h-[42px]">
@@ -169,7 +169,7 @@ const Profile = () => {
                                     {user?.avatar ? (
                                          <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
                                     ) : (
-                                         <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#CBF9B2] to-[#2E5A2E]/10 text-[#2E5A2E]">
+                                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#CBF9B2] to-[#2E5A2E]/10 dark:to-[#CBF9B2]/10 text-[#2E5A2E] dark:text-gray-900">
                                             <User size={32} strokeWidth={1.5} />
                                         </div>
                                     )}
@@ -219,7 +219,7 @@ const Profile = () => {
 
                         {/* Out for Delivery */}
                         <div className="bg-white dark:bg-gray-800/50 p-2.5 rounded-2xl border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center">
-                            <div className="w-8 h-8 rounded-full bg-[#FFCE31]/10 flex items-center justify-center text-[#2E5A2E] mb-2">
+                            <div className="w-8 h-8 rounded-full bg-[#FFCE31]/10 flex items-center justify-center text-[#2E5A2E] dark:text-[#CBF9B2] mb-2">
                                 <Truck size={16} />
                             </div>
                             <span className="text-[15px] font-black text-gray-900 dark:text-white leading-none mb-1">{statusCounts.outForDelivery}</span>
@@ -292,8 +292,8 @@ const Profile = () => {
                                       className="w-full flex items-center justify-between py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-[#2E5A2E] dark:hover:text-[#CBF9B2] transition-colors"
                                   >
                                       <span>{theme === 'dark' ? t('Light Mode') : t('Dark Mode')}</span>
-                                      <div className={`w-8 h-4 rounded-full relative transition-colors ${theme === 'dark' ? 'bg-[#7CA90E]' : 'bg-gray-300'}`}>
-                                          <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-transform ${theme === 'dark' ? 'translate-x-4.5' : 'translate-x-0.5'}`} />
+                                      <div className={`w-9 h-5 rounded-full relative transition-colors duration-300 ${theme === 'light' ? 'bg-[#7CA90E]' : 'bg-gray-300 dark:bg-gray-600'}`}>
+                                          <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-300 ${theme === 'light' ? 'translate-x-[18px]' : 'translate-x-0.5'}`} />
                                       </div>
                                   </button>
                                   <button 

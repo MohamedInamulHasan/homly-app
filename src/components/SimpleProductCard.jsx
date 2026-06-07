@@ -158,7 +158,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                                 e.stopPropagation();
                                 toggleSaveProduct(product);
                             }}
-                            className="absolute top-2 right-2 z-[30] p-1.5 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-sm text-[#2E5A2E] transition-all active:scale-90"
+                            className="absolute top-2 right-2 z-[30] p-1.5 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-sm text-[#2E5A2E] dark:text-[#CBF9B2] transition-all active:scale-90"
                         >
                             <Bookmark 
                                 size={14} 
@@ -216,7 +216,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                     </div>
 
                     <div className="flex items-center justify-between mt-2 w-full pt-2 border-t border-gray-50 dark:border-gray-700/50">
-                        <span className={`text-base font-bold ${!product.anyStoreOpen ? 'text-gray-400' : 'text-[#2E5A2E]'}`}>
+                        <span className={`text-base font-bold ${!product.anyStoreOpen ? 'text-gray-400' : 'text-[#2E5A2E] dark:text-[#CBF9B2]'}`}>
                             {(() => {
                                 // Robust Price Logic
                                 if (product.minPrice !== undefined && product.maxPrice !== undefined) {
@@ -253,7 +253,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                                 </div>
                             ) : (
                                 <div
-                                    className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors cursor-pointer bg-[#2E5A2E] text-white active:scale-90`}
+                                    className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors cursor-pointer bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-gray-900 active:scale-90`}
                                 >
                                     <ShoppingCart size={16} />
                                 </div>
@@ -305,7 +305,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                             e.stopPropagation();
                             toggleSaveProduct(product);
                         }}
-                        className="absolute top-2 right-2 z-[30] p-1.5 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-sm text-[#2E5A2E] transition-all active:scale-90"
+                        className="absolute top-2 right-2 z-[30] p-1.5 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-sm text-[#2E5A2E] dark:text-[#CBF9B2] transition-all active:scale-90"
                     >
                         <Bookmark 
                             size={14} 
@@ -336,8 +336,8 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
 
                 {/* Unit Tag */}
                 {product.unit && (
-                    <div className="absolute bottom-2 right-2 bg-[#2E5A2E] px-2.5 py-1 rounded-full z-10 pointer-events-none border border-white/20">
-                        <span className="text-[11px] font-semibold text-white leading-none block">
+                    <div className="absolute bottom-2 right-2 bg-[#2E5A2E] dark:bg-[#CBF9B2] px-2.5 py-1 rounded-full z-10 pointer-events-none border border-white/20">
+                        <span className="text-[11px] font-semibold text-white dark:text-gray-900 leading-none block">
                             {product.unit}
                         </span>
                     </div>
@@ -379,7 +379,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                     )}
                 </div>
                 <div className="flex items-center justify-between mt-2 w-full pt-2">
-                    <span className={`text-base font-bold ${!isStoreOpenCheck || !isAvailable ? 'text-gray-400' : 'text-[#2E5A2E]'}`}>
+                    <span className={`text-base font-bold ${!isStoreOpenCheck || !isAvailable ? 'text-gray-400' : 'text-[#2E5A2E] dark:text-[#CBF9B2]'}`}>
                         ₹{Number(product.price || 0).toFixed(0)}
                     </span>
 
@@ -408,7 +408,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                             ) : (
                                 <button
                                     onClick={handleFastPurchaseClick}
-                                    className="w-10 h-10 flex items-center justify-center rounded-full bg-[#2E5A2E] text-white active:scale-95 transition-transform"
+                                    className="w-10 h-10 flex items-center justify-center rounded-full bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-gray-900 active:scale-95 transition-transform"
                                 >
                                     <ShoppingCart size={16} />
                                 </button>

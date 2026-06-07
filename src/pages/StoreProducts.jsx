@@ -270,7 +270,7 @@ const StoreProducts = () => {
             <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-20 transition-colors duration-200">
                 {/* Premium Store Header Card / Dark Mode Adjusted */}
                 <div className="w-full bg-[#CBF9B2] dark:bg-[#1a381a] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm relative overflow-hidden mb-8">
-                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#2E5A2E]/20 rounded-full blur-3xl pointer-events-none"></div>
+                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#CBF9B2]/20 rounded-full blur-3xl pointer-events-none"></div>
                     
                     <div className="relative z-10">
                         <div className="max-w-2xl mx-auto px-2 relative flex items-center justify-center min-h-[42px]">
@@ -316,7 +316,7 @@ const StoreProducts = () => {
                                 placeholder={`${t('Search in')} ${store?.name}...`}
                                 className="w-full pl-12 pr-6 py-4 rounded-full border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none transition-all duration-300 shadow-sm"
                             />
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2E5A2E] transition-colors" size={20} />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2E5A2E] dark:group-focus-within:text-[#CBF9B2] transition-colors" size={20} />
                         </form>
                     </div>
                     
@@ -429,7 +429,7 @@ const StoreProducts = () => {
                     <div className="flex items-center gap-6 overflow-x-auto scrollbar-hide border-b border-gray-100/50">
                         <button
                             onClick={() => setSelectedSubcategory(null)}
-                            className={`pb-3 text-sm font-bold transition-all relative whitespace-nowrap ${
+                            className={`pb-3 text-sm font-medium transition-all relative whitespace-nowrap ${
                                 !selectedSubcategory 
                                 ? 'text-black dark:text-white' 
                                 : 'text-gray-400 hover:text-black dark:hover:text-white'
@@ -445,7 +445,7 @@ const StoreProducts = () => {
                             <button
                                 key={name}
                                 onClick={() => setSelectedSubcategory(name)}
-                                className={`pb-3 text-sm font-bold transition-all relative whitespace-nowrap uppercase tracking-wide ${
+                                className={`pb-3 text-sm font-medium transition-all relative whitespace-nowrap ${
                                     selectedSubcategory === name 
                                     ? 'text-black dark:text-white' 
                                     : 'text-gray-400 hover:text-black dark:hover:text-white'
@@ -565,7 +565,7 @@ const StoreProducts = () => {
                         {(searchQuery.trim() || selectedSubcategory) && (
                             <button
                                 onClick={() => { setSearchQuery(''); setSelectedSubcategory(null); }}
-                                className="px-6 py-2 bg-[#2E5A2E] text-white rounded-xl font-bold text-sm active:scale-95 transition-all shadow-sm"
+                                className="px-6 py-2 bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-gray-900 rounded-xl font-bold text-sm active:scale-95 transition-all shadow-sm"
                             >
                                 {t('Clear All')}
                             </button>

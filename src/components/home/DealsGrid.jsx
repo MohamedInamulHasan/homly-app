@@ -34,7 +34,7 @@ const DealsGrid = ({ products = [], isLoading = false }) => {
                 <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                     {t("Today's Deals")}
                 </h2>
-                <Link to="/store" className="text-sm font-semibold text-[#2E5A2E] dark:text-green-400 hover:opacity-80 transition-all">
+                <Link to="/store" className="text-sm font-semibold text-[#2E5A2E] dark:text-[#CBF9B2] hover:opacity-80 transition-all">
                     {t('See All')}
                 </Link>
             </div>

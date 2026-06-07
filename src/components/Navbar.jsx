@@ -26,7 +26,7 @@ const Navbar = () => {
                         className="flex items-center gap-2 group active:scale-95 transition-transform duration-200"
                     >
                         <img src="/logo-new.png" alt="Ily Mart Logo" className="w-8 h-8 md:w-9 md:h-9 object-contain bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900 dark:to-green-950 rounded-xl shadow-[0_2px_10px_rgba(124,169,14,0.2)] ring-1 ring-green-300/30 dark:ring-green-700/30 transition-all duration-300" />
-                        <span className="text-xl md:text-2xl font-black tracking-tight flex items-center bg-gradient-to-r from-[#2E5A2E] to-[#5A7C0A] bg-clip-text text-transparent dark:from-blue-400 dark:to-blue-600">
+                        <span className="text-xl md:text-2xl font-black tracking-tight flex items-center bg-gradient-to-r from-[#2E5A2E] to-[#5A7C0A] bg-clip-text text-transparent dark:from-[#CBF9B2] dark:to-[#8bc910]">
                             ILY mart
                         </span>
                     </Link>
@@ -54,22 +54,22 @@ const Navbar = () => {
                                 <button
                                     onClick={toggleFastMode}
                                     className={`relative p-2.5 rounded-full transition-all duration-300 group ${fastMode
-                                        ? 'bg-gradient-to-r from-[#2E5A2E] to-[#5A7C0A] text-white shadow-md hover:shadow-lg'
+                                        ? 'bg-gradient-to-r from-[#2E5A2E] to-[#5A7C0A] dark:from-[#CBF9B2] dark:to-[#8bc910] text-white dark:text-gray-900 shadow-md hover:shadow-lg'
                                         : 'bg-gradient-to-br from-green-50 to-green-100 dark:from-blue-900/20 dark:to-indigo-900/20 text-[#2E5A2E] dark:text-[#8bc910] hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/30 dark:hover:to-indigo-900/30 shadow-sm hover:shadow-md hover:scale-110'
                                         }`}
                                     title={fastMode ? t('Fast Mode ON') : t('Fast Mode')}
                                 >
-                                    <Rocket size={20} className={`${fastMode ? 'fill-white' : ''} transition-all duration-300`} />
+                                    <Rocket size={20} className={`${fastMode ? 'fill-white dark:fill-gray-900' : ''} transition-all duration-300`} />
                                 </button>
 
 
                                 <Link to="/cart" className="group transition-transform active:scale-95 hover:scale-105 duration-200">
                                     {user && cartCount > 0 ? (
-                                        <div className="flex items-center gap-2 bg-gradient-to-r from-[#2E5A2E] to-[#5A7C0A] pl-3 pr-2 py-1.5 rounded-full shadow-md hover:shadow-lg transition-all">
-                                            <span className="text-white font-bold text-sm">₹{cartTotal.toFixed(0)}</span>
-                                            <div className="bg-white/20 p-1.5 rounded-full backdrop-blur-sm relative">
-                                                <ShoppingCart size={16} className="text-white" />
-                                                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center border-2 border-[#2E5A2E]">
+                                        <div className="flex items-center gap-2 bg-gradient-to-r from-[#2E5A2E] to-[#5A7C0A] dark:from-[#CBF9B2] dark:to-[#8bc910] pl-3 pr-2 py-1.5 rounded-full shadow-md hover:shadow-lg transition-all">
+                                            <span className="text-white dark:text-gray-900 font-bold text-sm">₹{cartTotal.toFixed(0)}</span>
+                                            <div className="bg-white/20 dark:bg-black/10 p-1.5 rounded-full backdrop-blur-sm relative">
+                                                <ShoppingCart size={16} className="text-white dark:text-gray-900" />
+                                                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center border-2 border-[#2E5A2E] dark:border-[#CBF9B2]">
                                                     {cartCount}
                                                 </span>
                                             </div>
@@ -92,21 +92,21 @@ const Navbar = () => {
                                 <button
                                     onClick={toggleFastMode}
                                     className={`relative p-2 rounded-full transition-all duration-300 ${fastMode
-                                        ? 'bg-gradient-to-r from-[#2E5A2E] to-[#5A7C0A] text-white shadow-md'
+                                        ? 'bg-gradient-to-r from-[#2E5A2E] to-[#5A7C0A] dark:from-[#CBF9B2] dark:to-[#8bc910] text-white dark:text-gray-900 shadow-md'
                                         : 'bg-gradient-to-br from-green-50 to-green-100 dark:from-blue-900/20 dark:to-indigo-900/20 text-[#2E5A2E] dark:text-[#8bc910] shadow-sm'
                                         }`}
                                 >
-                                    <Rocket size={20} className={fastMode ? 'fill-white' : ''} />
+                                    <Rocket size={20} className={fastMode ? 'fill-white dark:fill-gray-900' : ''} />
                                 </button>
 
 
                                 <Link to="/cart" className="group transition-transform active:scale-95 duration-200">
                                     {user && cartCount > 0 ? (
-                                        <div className="flex items-center gap-2 bg-gradient-to-r from-[#2E5A2E] to-[#5A7C0A] pl-3 pr-2 py-1.5 rounded-full shadow-md hover:shadow-lg transition-all">
-                                            <span className="text-white font-bold text-sm">₹{cartTotal.toFixed(0)}</span>
-                                            <div className="bg-white/20 p-1.5 rounded-full backdrop-blur-sm relative">
-                                                <ShoppingCart size={16} className="text-white" />
-                                                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center border-2 border-[#2E5A2E]">
+                                        <div className="flex items-center gap-2 bg-gradient-to-r from-[#2E5A2E] to-[#5A7C0A] dark:from-[#CBF9B2] dark:to-[#8bc910] pl-3 pr-2 py-1.5 rounded-full shadow-md hover:shadow-lg transition-all">
+                                            <span className="text-white dark:text-gray-900 font-bold text-sm">₹{cartTotal.toFixed(0)}</span>
+                                            <div className="bg-white/20 dark:bg-black/10 p-1.5 rounded-full backdrop-blur-sm relative">
+                                                <ShoppingCart size={16} className="text-white dark:text-gray-900" />
+                                                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center border-2 border-[#2E5A2E] dark:border-[#CBF9B2]">
                                                     {cartCount}
                                                 </span>
                                             </div>

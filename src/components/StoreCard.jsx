@@ -69,7 +69,7 @@ const StoreCard = ({ store }) => {
             <div className={`absolute bottom-4 right-4 z-20 transition-all duration-300 ${!isOpen ? 'blur-[1.5px] opacity-40 scale-75' : ''}`}>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
                     isOpen 
-                    ? 'bg-[#2E5A2E] text-white scale-90 group-hover:scale-105 active:scale-90' 
+                    ? 'bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-gray-900 scale-90 group-hover:scale-105 active:scale-90' 
                     : 'bg-black/20 text-gray-400'
                 }`}>
                     <ArrowRight size={16} />

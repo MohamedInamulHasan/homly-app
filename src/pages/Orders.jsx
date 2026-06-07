@@ -116,7 +116,7 @@ const Orders = () => {
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 w-full relative pb-48">
             {/* Premium Light Green Header Card / Dark Mode Adjusted */}
             <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] dark:bg-[#1a381a] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm overflow-hidden">
-                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#2E5A2E]/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#CBF9B2]/20 rounded-full blur-3xl pointer-events-none"></div>
                 
                 <div className="relative z-10">
                     <div className="w-full px-4 relative flex items-center justify-center min-h-[42px]">
@@ -178,7 +178,7 @@ const Orders = () => {
                                 onClick={() => setActiveTab(tab)}
                                 className={`px-5 py-2.5 rounded-full text-[13px] font-bold whitespace-nowrap transition-colors duration-300 ${
                                     activeTab === tab
-                                    ? 'bg-[#2E5A2E] text-white'
+                                    ? 'bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-gray-900'
                                     : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-transparent'
                                 }`}
                             >
@@ -341,7 +341,7 @@ const Orders = () => {
                                                 <p className="text-[12px] text-gray-500 dark:text-gray-400 font-medium mb-0.5">{t('Total Amount')}</p>
                                                 <p className="font-bold text-[16px] text-gray-900 dark:text-white leading-none">₹{order.total.toFixed(0)}</p>
                                             </div>
-                                            <div className="text-[#2E5A2E] text-[13px] font-bold underline decoration-[#2E5A2E] decoration-2 underline-offset-2 hover:opacity-80 transition-opacity">
+                                            <div className="text-[#2E5A2E] dark:text-[#CBF9B2] text-[13px] font-bold underline decoration-[#2E5A2E] dark:decoration-[#CBF9B2] decoration-2 underline-offset-2 hover:opacity-80 transition-opacity">
                                                 {t('Details')}
                                             </div>
                                         </div>
@@ -358,7 +358,7 @@ const Orders = () => {
                                 <p className="text-gray-500 dark:text-gray-400 mb-6">{t('Try adjusting your search or filter to find what you\'re looking for.')}</p>
                                 <Link
                                     to="/"
-                                    className="inline-flex items-center px-4 py-2 bg-[#2E5A2E] hover:bg-[#1E3A1E] text-white rounded-xl transition-all duration-300 text-sm font-bold active:scale-95"
+                                    className="inline-flex items-center px-4 py-2 bg-[#2E5A2E] dark:bg-[#CBF9B2] hover:bg-[#1E3A1E] dark:hover:bg-[#a6d98e] text-white dark:text-gray-900 rounded-xl transition-all duration-300 text-sm font-bold active:scale-95"
                                 >
                                     {t('Start Shopping')}
                                 </Link>

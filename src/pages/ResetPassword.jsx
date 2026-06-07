@@ -50,8 +50,8 @@ const ResetPassword = () => {
         <div className="min-h-screen flex items-center justify-center bg-[#CBF9B2] dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
             <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-[3rem] border border-gray-100 dark:border-gray-700">
                 <div className="text-center">
-                    <div className="mx-auto h-12 w-12 bg-[#2E5A2E] rounded-xl flex items-center justify-center mb-6 transform rotate-3">
-                        <Lock className="h-6 w-6 text-white" />
+                    <div className="mx-auto h-12 w-12 bg-[#2E5A2E] dark:bg-[#CBF9B2] rounded-xl flex items-center justify-center mb-6 transform rotate-3">
+                        <Lock className="h-6 w-6 text-white dark:text-gray-900" />
                     </div>
                     <h2 className="mt-2 text-3xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
                         {isSuccess ? t('Success!') : t('New Password')}
@@ -75,7 +75,7 @@ const ResetPassword = () => {
                     <div className="text-center space-y-8 py-4">
                         <div className="relative flex justify-center">
                             <div className="absolute inset-0 bg-[#CBF9B2]/30 rounded-full blur-xl scale-150 animate-pulse" />
-                            <CheckCircle className="h-20 w-20 text-[#2E5A2E] relative z-10" />
+                            <CheckCircle className="h-20 w-20 text-[#2E5A2E] dark:text-[#CBF9B2] relative z-10" />
                         </div>
                         
                         <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
@@ -86,7 +86,7 @@ const ResetPassword = () => {
                         <div className="pt-4">
                             <Link 
                                 to="/login" 
-                                className="inline-flex items-center justify-center w-full py-4 px-6 rounded-full bg-[#2E5A2E] text-white font-bold text-sm hover:bg-[#1E3A1E] transition-all transform active:scale-95"
+                                className="inline-flex items-center justify-center w-full py-4 px-6 rounded-full bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-gray-900 font-bold text-sm hover:bg-[#1E3A1E] dark:hover:bg-[#a6d98e] transition-all transform active:scale-95"
                             >
                                 {t('Login Now')}
                                 <ArrowLeft className="h-4 w-4 ml-2 rotate-180" />
@@ -102,14 +102,14 @@ const ResetPassword = () => {
                                 </label>
                                 <div className="relative group">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-[#2E5A2E] transition-colors" />
+                                        <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-[#2E5A2E] dark:group-focus-within:text-[#CBF9B2] transition-colors" />
                                     </div>
                                     <input
                                         id="password"
                                         name="password"
                                         type={showPassword ? "text" : "password"}
                                         required
-                                        className="appearance-none relative block w-full pl-11 pr-12 py-4 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:border-[#2E5A2E] focus:ring-0 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 transition-all"
+                                        className="appearance-none relative block w-full pl-11 pr-12 py-4 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:border-[#2E5A2E] dark:focus:border-[#CBF9B2] focus:ring-0 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 transition-all"
                                         placeholder={t('Min 6 characters')}
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
@@ -131,14 +131,14 @@ const ResetPassword = () => {
                                 </label>
                                 <div className="relative group">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-[#2E5A2E] transition-colors" />
+                                        <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-[#2E5A2E] dark:group-focus-within:text-[#CBF9B2] transition-colors" />
                                     </div>
                                     <input
                                         id="confirmPassword"
                                         name="confirmPassword"
                                         type={showPassword ? "text" : "password"}
                                         required
-                                        className="appearance-none relative block w-full pl-11 pr-12 py-4 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:border-[#2E5A2E] focus:ring-0 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 transition-all"
+                                        className="appearance-none relative block w-full pl-11 pr-12 py-4 border border-gray-200 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-2xl focus:outline-none focus:border-[#2E5A2E] dark:focus:border-[#CBF9B2] focus:ring-0 sm:text-sm bg-gray-50/50 dark:bg-gray-700/50 transition-all"
                                         placeholder={t('Repeat password')}
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
@@ -151,7 +151,7 @@ const ResetPassword = () => {
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-bold rounded-full text-white bg-[#2E5A2E] hover:bg-[#1E3A1E] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2E5A2E] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+                                className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-bold rounded-full text-white dark:text-gray-900 bg-[#2E5A2E] dark:bg-[#CBF9B2] hover:bg-[#1E3A1E] dark:hover:bg-[#a6d98e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2E5A2E] dark:focus:ring-[#CBF9B2] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                             >
                                 {isSubmitting ? (
                                     <Loader className="animate-spin h-5 w-5" />

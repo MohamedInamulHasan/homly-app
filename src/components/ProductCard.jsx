@@ -103,7 +103,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                                 e.stopPropagation();
                                 toggleSaveProduct(product);
                             }}
-                            className="absolute top-2 right-2 z-[25] p-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-sm text-[#2E5A2E] transition-all active:scale-90"
+                             className="absolute top-2 right-2 z-[25] p-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-sm text-[#2E5A2E] dark:text-[#CBF9B2] transition-all active:scale-90"
                         >
                             <Bookmark 
                                 size={18} 
@@ -249,7 +249,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                                         if (!user) { navigate('/login'); return; }
                                         addToCart(product);
                                     }}
-                                    className="w-10 h-10 bg-[#2E5A2E] hover:opacity-90 text-white rounded-full flex items-center justify-center transition-all active:scale-90 select-none"
+                                     className="w-10 h-10 bg-[#2E5A2E] dark:bg-[#CBF9B2] hover:opacity-90 text-white dark:text-gray-900 rounded-full flex items-center justify-center transition-all active:scale-90 select-none"
                                     disabled={!isAvailable || !isOpen}
                                 >
                                     <ShoppingCart size={18} />

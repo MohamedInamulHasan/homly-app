@@ -146,7 +146,7 @@ const Services = () => {
             <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200">
                 {/* Premium Light Green Header Card / Dark Mode Adjusted */}
                 <div className="w-full bg-[#CBF9B2] dark:bg-[#1a381a] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm relative overflow-hidden mb-8">
-                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#2E5A2E]/20 rounded-full blur-3xl pointer-events-none"></div>
+                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#CBF9B2]/20 rounded-full blur-3xl pointer-events-none"></div>
                     
                     <div className="relative z-10">
                         <div className="max-w-7xl mx-auto px-2 relative">
@@ -344,7 +344,7 @@ const Services = () => {
 
                                             {/* Right Action Arrow - Hide or dim if closed */}
                                             <div className={`absolute bottom-4 right-4 z-30 transition-all duration-300 ${!isOpen ? 'opacity-0 scale-50' : ''}`}>
-                                                <div className="w-8 h-8 rounded-full bg-[#2E5A2E] text-white flex items-center justify-center scale-90 group-hover:scale-105 active:scale-90 transition-all shadow-sm">
+                                                <div className="w-8 h-8 rounded-full bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-gray-900 flex items-center justify-center scale-90 group-hover:scale-105 active:scale-90 transition-all shadow-sm">
                                                     <ArrowLeft size={16} className="rotate-180" />
                                                 </div>
                                             </div>
@@ -391,7 +391,7 @@ const Services = () => {
                                     <div
                                         key={sub._id || idx}
                                         onClick={() => handleSelectSubService(sub)}
-                                         className={`group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md transition-all duration-300 aspect-square w-full cursor-pointer border-2 ${selectedItem?._id === sub._id ? 'border-[#2E5A2E] ring-4 ring-[#2E5A2E]/20 scale-95' : 'border-transparent hover:shadow-xl'}`}
+                                         className={`group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md transition-all duration-300 aspect-square w-full cursor-pointer border-2 ${selectedItem?._id === sub._id ? 'border-[#2E5A2E] dark:border-[#CBF9B2] ring-4 ring-[#2E5A2E]/20 dark:ring-[#CBF9B2]/20 scale-95' : 'border-transparent hover:shadow-xl'}`}
                                     >
                                         {/* Full Background Image */}
                                         <div className="absolute inset-0">
@@ -403,11 +403,11 @@ const Services = () => {
                                                 onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/300x400?text=No+Image'; }}
                                             />
                                             {/* Gradient Overlay */}
-                                            <div className={`absolute inset-0 transition-opacity ${selectedItem?._id === sub._id ? 'bg-[#2E5A2E]/40' : 'bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-80'}`} />
+                                            <div className={`absolute inset-0 transition-opacity ${selectedItem?._id === sub._id ? 'bg-[#2E5A2E]/40 dark:bg-[#CBF9B2]/40' : 'bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-80'}`} />
 
                                              {/* Selection Indicator - Now Forest Green */}
                                              {selectedItem?._id === sub._id && (
-                                                 <div className="absolute top-3 right-3 bg-[#2E5A2E] text-white p-1.5 rounded-full shadow-lg animate-in fade-in zoom-in duration-200">
+                                                 <div className="absolute top-3 right-3 bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-gray-900 p-1.5 rounded-full shadow-lg animate-in fade-in zoom-in duration-200">
                                                      <Check size={16} strokeWidth={3} />
                                                  </div>
                                              )}
@@ -432,7 +432,7 @@ const Services = () => {
                                     <p className="text-gray-500 dark:text-gray-400">{t('No specific sub-services listed.')}</p>
                                      <button
                                          onClick={() => handleRequestSubService({ name: 'General Service', price: 'TBD', description: 'Standard service request' })}
-                                         className="mt-4 px-6 py-3 bg-[#2E5A2E] text-white rounded-xl font-bold"
+                                         className="mt-4 px-6 py-3 bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-gray-900 rounded-xl font-bold"
                                      >
                                          {t('Request General Service')}
                                      </button>
@@ -456,15 +456,15 @@ const Services = () => {
                             className="bg-white dark:bg-gray-800 backdrop-blur-xl text-gray-900 dark:text-white px-8 py-4 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex items-center gap-4 group hover:scale-105 transition-all duration-300 border border-gray-100 dark:border-gray-700"
                         >
                             <div className="flex flex-col items-start mr-2 text-left">
-                                <span className="text-[10px] uppercase tracking-wider font-bold text-[#2E5A2E] opacity-70 leading-none mb-1">
+                                <span className="text-[10px] uppercase tracking-wider font-bold text-[#2E5A2E] dark:text-[#CBF9B2] opacity-70 leading-none mb-1">
                                     {t('Request Now')}
                                 </span>
                                 <span className="text-[15px] font-bold leading-none tracking-tight">
                                     {selectedItem ? selectedItem.name : t('Service')}
                                 </span>
                             </div>
-                             <div className="w-10 h-10 bg-[#2E5A2E] rounded-full flex items-center justify-center group-hover:bg-[#1a381a] transition-colors shadow-sm">
-                                 <Send size={18} className="ml-0.5 text-white" />
+                             <div className="w-10 h-10 bg-[#2E5A2E] dark:bg-[#CBF9B2] rounded-full flex items-center justify-center group-hover:bg-[#1a381a] dark:group-hover:bg-[#CBF9B2]/80 transition-colors shadow-sm">
+                                 <Send size={18} className="ml-0.5 text-white dark:text-gray-900" />
                              </div>
                         </button>
                     </div>
@@ -476,8 +476,8 @@ const Services = () => {
                         <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] max-w-sm w-full p-8 transform transition-all border border-gray-100 dark:border-gray-700 shadow-2xl">
                             <div className="text-center">
                                 <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-gray-50 dark:bg-gray-700 mb-6 shadow-inner relative">
-                                    <div className="absolute inset-0 rounded-full bg-[#2E5A2E] opacity-5 animate-ping"></div>
-                                    <Wrench className="h-10 w-10 text-[#2E5A2E] relative z-10" />
+                                    <div className="absolute inset-0 rounded-full bg-[#2E5A2E] dark:bg-[#CBF9B2] opacity-5 animate-ping"></div>
+                                    <Wrench className="h-10 w-10 text-[#2E5A2E] dark:text-[#CBF9B2] relative z-10" />
                                 </div>
                                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 tracking-tight">
                                     {t('Confirm Request')}
@@ -511,11 +511,11 @@ const Services = () => {
 
                 {/* Success Modal - Matches Order Confirmation Design */}
                 {requestSuccess && selectedService && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#2E5A2E]/20 backdrop-blur-md">
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#2E5A2E]/20 dark:bg-[#CBF9B2]/20 backdrop-blur-md">
                         <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl max-w-sm w-full p-8 transform transition-all scale-100">
                             <div className="text-center">
                                 <div className="w-24 h-24 bg-green-50 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-                                    <CheckCircle className="h-12 w-12 text-[#2E5A2E] dark:text-[#8bc910]" />
+                                    <CheckCircle className="h-12 w-12 text-[#2E5A2E] dark:text-[#CBF9B2]" />
                                 </div>
                                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight">
                                     {t('Request Sent!')}

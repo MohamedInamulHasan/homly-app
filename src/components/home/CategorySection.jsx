@@ -37,7 +37,7 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                 </h2>
                 <button 
                     onClick={() => setIsExpanded(!isExpanded)}
-                    className="text-sm font-semibold text-[#2E5A2E] dark:text-green-400 hover:opacity-80 transition-all"
+                    className="text-sm font-semibold text-[#2E5A2E] dark:text-[#CBF9B2] hover:opacity-80 transition-all"
                 >
                     {isExpanded ? t('Show Less') : t('See All')}
                 </button>
@@ -52,7 +52,7 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                     onClick={() => onSelectCategory('All')}
                     className={`${isExpanded ? 'w-full' : 'min-w-[72px] md:min-w-[85px] lg:min-w-[110px]'} flex flex-col items-center gap-2 md:gap-3 group cursor-pointer`}
                 >
-                    <div className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 border-2 bg-[#CBF9B2] dark:bg-[#2E5A2E] ${selectedCategory === 'All' ? 'border-[#2E5A2E] dark:border-[#CBF9B2]' : 'border-transparent'}`}>
+                    <div className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 border-2 bg-[#CBF9B2] dark:bg-[#1a381a] ${selectedCategory === 'All' ? 'border-[#2E5A2E] dark:border-[#CBF9B2]' : 'border-transparent'}`}>
                         <div className="flex items-center justify-center w-full h-full p-4">
                             <div className="grid grid-cols-2 gap-1.5 md:gap-2 transform rotate-45">
                                 <div className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-300 ${selectedCategory === 'All' ? 'bg-[#2E5A2E] dark:bg-[#CBF9B2]' : 'bg-[#2E5A2E]/60 dark:bg-[#CBF9B2]/60'}`} />
@@ -62,7 +62,7 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                             </div>
                         </div>
                     </div>
-                    <span className={`text-[11px] md:text-xs lg:text-sm font-bold transition-colors truncate ${selectedCategory === 'All' ? 'text-[#2E5A2E]' : 'text-gray-400'}`}>
+                    <span className={`text-[11px] md:text-xs lg:text-sm font-bold transition-colors truncate ${selectedCategory === 'All' ? 'text-[#2E5A2E] dark:text-[#CBF9B2]' : 'text-gray-400'}`}>
                         {t('All')}
                     </span>
                 </div>
@@ -75,7 +75,7 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                             onClick={() => onSelectCategory(category.name)}
                             className={`${isExpanded ? 'w-full' : 'min-w-[72px] md:min-w-[85px] lg:min-w-[110px]'} flex flex-col items-center gap-2 md:gap-3 group cursor-pointer`}
                         >
-                            <div className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 shadow-sm border-2 bg-[#CBF9B2] dark:bg-[#2E5A2E] ${isSelected ? 'border-[#2E5A2E] dark:border-[#CBF9B2]' : 'border-transparent'}`}>
+                            <div className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 shadow-sm border-2 bg-[#CBF9B2] dark:bg-[#1a381a] ${isSelected ? 'border-[#2E5A2E] dark:border-[#CBF9B2]' : 'border-transparent'}`}>
                                 <img
                                     src={category.image || `${API_BASE_URL}/categories/${category._id || category.id}/image`}
                                     alt={category.name}
@@ -84,7 +84,7 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                                     onError={(e) => { e.target.onerror = null; e.target.src = 'https://cdn-icons-png.flaticon.com/512/3014/3014470.png'; }}
                                 />
                             </div>
-                            <div className={`flex flex-col items-center justify-center text-center w-full max-w-[80px] md:max-w-[110px] transition-colors ${isSelected ? 'text-[#2E5A2E]' : 'text-gray-600 dark:text-gray-400'}`}>
+                            <div className={`flex flex-col items-center justify-center text-center w-full max-w-[80px] md:max-w-[110px] transition-colors ${isSelected ? 'text-[#2E5A2E] dark:text-[#CBF9B2]' : 'text-gray-600 dark:text-gray-400'}`}>
                                 {(() => {
                                    const fullTitle = t(category.name);
                                    let mainPart = fullTitle;

@@ -45,7 +45,7 @@ const SavedProducts = () => {
 
                 {savedProducts.length === 0 ? (
                     <div className="text-center py-24 flex flex-col items-center">
-                        <div className="w-32 h-32 bg-[#2E5A2E]/10 dark:bg-[#2E5A2E]/20 rounded-full flex items-center justify-center mb-8 shadow-sm">
+                        <div className="w-32 h-32 bg-[#2E5A2E]/10 dark:bg-[#CBF9B2]/20 rounded-full flex items-center justify-center mb-8 shadow-sm">
                             <Bookmark className="text-[#2E5A2E] dark:text-[#CBF9B2]" size={56} />
                         </div>
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
@@ -56,7 +56,7 @@ const SavedProducts = () => {
                         </p>
                         <Link
                             to="/store"
-                            className="inline-flex items-center justify-center px-10 py-4 border border-transparent text-base font-bold rounded-full text-white bg-[#2E5A2E] shadow-lg hover:shadow-xl transition-all active:scale-95"
+                            className="inline-flex items-center justify-center px-10 py-4 border border-transparent text-base font-bold rounded-full text-white dark:text-gray-900 bg-[#2E5A2E] dark:bg-[#CBF9B2] shadow-lg hover:shadow-xl transition-all active:scale-95"
                         >
                             {t('Browse Products')}
                         </Link>

@@ -89,7 +89,7 @@ const IntroAnimation = () => {
             {isVisible && (
                 <motion.div
                     // Background: Clean Gradient
-                    className="fixed inset-0 z-[100] flex items-center justify-center bg-[#2E5A2E] overflow-hidden"
+                    className="fixed inset-0 z-[100] flex items-center justify-center bg-[#2E5A2E] dark:bg-[#1a381a] overflow-hidden"
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.5 }}
                 >

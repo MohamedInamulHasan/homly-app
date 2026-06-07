@@ -97,7 +97,7 @@ const NotificationOverlay = () => {
                         >
                             <X size={16} />
                         </button>
-                        <div className="absolute bottom-0 left-0 h-1 bg-[#2E5A2E] animate-progress" style={{ animationDuration: '5000ms' }} />
+                        <div className="absolute bottom-0 left-0 h-1 bg-[#2E5A2E] dark:bg-[#CBF9B2] animate-progress" style={{ animationDuration: '5000ms' }} />
                     </motion.div>
                 ))}
             </AnimatePresence>

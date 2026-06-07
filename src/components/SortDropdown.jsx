@@ -31,7 +31,7 @@ const SortDropdown = ({ currentSort, onSortChange }) => {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={`w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-full border transition-all duration-300 active:scale-95 ${isOpen
-                    ? 'border-[#2E5A2E] bg-[#2E5A2E]/5 dark:bg-[#CBF9B2]/10'
+                    ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-[#2E5A2E]/5 dark:bg-[#CBF9B2]/10'
                     : 'border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800'
                     }`}
                 title={t(selectedOption.label)}
@@ -59,11 +59,11 @@ const SortDropdown = ({ currentSort, onSortChange }) => {
                                         setIsOpen(false);
                                     }}
                                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-normal transition-all duration-200 ${currentSort === option.id
-                                        ? 'bg-[#2E5A2E] text-white'
+                                        ? 'bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-gray-900'
                                         : 'text-gray-600 dark:text-gray-300 hover:bg-[#2E5A2E]/5 dark:hover:bg-white/5 hover:text-[#2E5A2E] dark:hover:text-[#CBF9B2]'
                                         }`}
                                 >
-                                    <span className={`${currentSort === option.id ? 'text-white' : 'text-gray-400'}`}>
+                                    <span className={`${currentSort === option.id ? 'text-white dark:text-gray-900' : 'text-gray-400'}`}>
                                         {option.icon}
                                     </span>
                                     {t(option.label)}

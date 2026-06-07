@@ -59,7 +59,7 @@ const HomeHeader = () => {
                     to="/cart"
                     className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center border border-black/5 dark:border-gray-700 relative hover:bg-gray-50 dark:hover:bg-gray-700 transition-all active:scale-95"
                 >
-                    <ShoppingCart size={20} className="text-[#2E5A2E] dark:text-[#7CA90E]" />
+                    <ShoppingCart size={20} className="text-[#2E5A2E] dark:text-[#CBF9B2]" />
                     {cartCount > 0 && (
                         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center border border-white dark:border-gray-800">
                             {cartCount}

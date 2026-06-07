@@ -122,7 +122,7 @@ const StoreSection = ({ section, products: rawProducts = [], singleStore = false
                     )}
                 </div>
                 {section.type !== 'special' && (
-                    <Link to={navigateTo} className="text-[13px] font-bold text-[#2E5A2E] dark:text-green-400 hover:opacity-70 transition-all underline decoration-[2.5px] underline-offset-[6px]">
+                    <Link to={navigateTo} className="text-[13px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] hover:opacity-70 transition-all underline decoration-[2.5px] underline-offset-[6px]">
                         {t('See All')}
                     </Link>
                 )}
