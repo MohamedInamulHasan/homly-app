@@ -110,19 +110,19 @@ const CategoryProducts = () => {
         <PullToRefreshLayout>
             <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-20 transition-colors duration-200">
                 {/* Premium Header Card */}
-                <div className="w-full bg-[#CBF9B2] dark:bg-[#1a381a] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm relative overflow-hidden mb-8">
+                <div className="w-full bg-[#CBF9B2] dark:bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm relative overflow-hidden mb-8">
                     <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#2E5A2E]/20 rounded-full blur-3xl pointer-events-none"></div>
                     
                     <div className="relative z-10">
                         <div className="max-w-2xl mx-auto px-2 relative flex items-center justify-center min-h-[42px]">
                             <button
                                 onClick={() => navigate(-1)}
-                                className="absolute left-4 w-10 h-10 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-700 flex-shrink-0 z-10"
+                                className="absolute left-4 w-10 h-10 flex items-center justify-center bg-white dark:bg-white/80 rounded-full text-gray-900 dark:text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-200/50 flex-shrink-0 z-10"
                             >
                                 <ArrowLeft size={20} />
                             </button>
                             <div className="flex flex-col items-center text-center px-16 min-w-0">
-                                <h1 className="text-gray-900 dark:text-white text-[18px] font-bold tracking-tight truncate w-full">
+                                <h1 className="text-gray-900 dark:text-gray-900 text-[18px] font-bold tracking-tight truncate w-full">
                                     {(() => {
                                         const fullName = t(categoryName);
                                         const bracketIndex = fullName.indexOf('(');
@@ -134,13 +134,13 @@ const CategoryProducts = () => {
                                         return fullName;
                                     })()}
                                 </h1>
-                                <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium truncate w-full uppercase tracking-wider">{displayProducts.length} {t('Products Available')}</p>
+                                <p className="text-[10px] text-gray-500 dark:text-gray-600 font-medium truncate w-full uppercase tracking-wider">{displayProducts.length} {t('Products Available')}</p>
                             </div>
                             <Link 
                                 to="/cart"
-                                className="absolute right-4 w-10 h-10 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-700 flex-shrink-0 z-10"
+                                className="absolute right-4 w-10 h-10 flex items-center justify-center bg-white dark:bg-white/80 rounded-full text-gray-900 dark:text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-200/50 flex-shrink-0 z-10"
                             >
-                                <ShoppingCart size={20} className="text-[#2E5A2E] dark:text-[#7CA90E]" />
+                                <ShoppingCart size={20} className="text-[#2E5A2E] dark:text-[#2E5A2E]" />
                                 {cartCount > 0 && (
                                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center border border-white dark:border-gray-800">
                                         {cartCount}

@@ -307,7 +307,7 @@ const Checkout = () => {
                         {/* Shipping Address */}
                         <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="w-9 h-9 rounded-xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-[#2E5A2E]">
+                                <div className="w-9 h-9 rounded-xl bg-green-50 dark:bg-[#CBF9B2]/10 flex items-center justify-center text-[#2E5A2E] dark:text-[#CBF9B2]">
                                     <MapPin size={18} />
                                 </div>
                                 <h2 className="text-[17px] font-bold text-gray-900 dark:text-white">{t('Shipping details')}</h2>
@@ -322,7 +322,7 @@ const Checkout = () => {
                                     <button 
                                         type="button"
                                         onClick={() => setIsEditingAddress(true)}
-                                        className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[#2E5A2E] transition-colors"
+                                        className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[#2E5A2E] dark:hover:text-[#CBF9B2] transition-colors"
                                     >
                                         <Pencil size={16} />
                                     </button>
@@ -338,8 +338,8 @@ const Checkout = () => {
                                         
                                         {formData.location && (
                                             <div className="pt-1">
-                                                <div className="flex items-center gap-1.5 text-[#2E5A2E] text-[10px] font-bold bg-[#E8F5E9] dark:bg-green-900/20 px-2.5 py-1 rounded-full w-fit border border-[#2E5A2E]/10">
-                                                    <CheckCircle size={11} className="text-[#2E5A2E]" />
+                                                <div className="flex items-center gap-1.5 text-[#2E5A2E] dark:text-[#CBF9B2] text-[10px] font-bold bg-[#E8F5E9] dark:bg-[#CBF9B2]/10 px-2.5 py-1 rounded-full w-fit border border-[#2E5A2E]/10 dark:border-[#CBF9B2]/10">
+                                                    <CheckCircle size={11} className="text-[#2E5A2E] dark:text-[#CBF9B2]" />
                                                     <span>{t('Location Saved')}</span>
                                                 </div>
                                             </div>
@@ -364,7 +364,7 @@ const Checkout = () => {
                                                     setLocationMessage({ show: true, type: 'error', text: t(result.message) });
                                                 }
                                             }}
-                                            className="flex items-center gap-2 text-xs font-bold text-[#2E5A2E] bg-green-50 dark:bg-green-900/20 px-3 py-1.5 rounded-full active:scale-95 transition-transform"
+                                            className="flex items-center gap-2 text-xs font-bold text-[#2E5A2E] dark:text-[#CBF9B2] bg-green-50 dark:bg-[#CBF9B2]/10 px-3 py-1.5 rounded-full active:scale-95 transition-transform"
                                         >
                                             <Navigation size={14} className={isLocationSearching ? 'animate-pulse' : ''} />
                                             {isLocationSearching ? t('Locating...') : t('Use My Current Location')}
@@ -442,7 +442,7 @@ const Checkout = () => {
                         {/* Order Summary (Items List) */}
                         <div className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm">
                             <div className="p-5 flex items-center gap-3">
-                                <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#2E5A2E] dark:text-[#8bc910]">
+                                <div className="p-2 bg-green-50 dark:bg-[#CBF9B2]/20 rounded-lg text-[#2E5A2E] dark:text-[#2E5A2E]">
                                     <Package size={18} />
                                 </div>
                                 <h3 className="font-medium text-gray-900 dark:text-white text-base">{t('Total Summary')}</h3>
@@ -543,9 +543,9 @@ const Checkout = () => {
                             </div>
 
                             <div className="space-y-4">
-                                <label className={`flex items-center p-4 rounded-3xl border-2 cursor-pointer transition-all ${formData.paymentMethod === 'cod' ? 'border-[#2E5A2E] bg-[#2E5A2E]/5 dark:bg-[#2E5A2E]/10' : 'border-gray-100 dark:border-gray-700 hover:border-gray-200'}`}>
+                                <label className={`flex items-center p-4 rounded-3xl border-2 cursor-pointer transition-all ${formData.paymentMethod === 'cod' ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-[#2E5A2E]/5 dark:bg-[#CBF9B2]/5' : 'border-gray-100 dark:border-gray-700 hover:border-gray-200'}`}>
                                     <div className="w-6 h-6 rounded-full border-2 border-gray-200 dark:border-gray-600 flex items-center justify-center mr-4">
-                                        {formData.paymentMethod === 'cod' && <div className="w-3 h-3 rounded-full bg-[#2E5A2E]" />}
+                                        {formData.paymentMethod === 'cod' && <div className="w-3 h-3 rounded-full bg-[#2E5A2E] dark:bg-[#CBF9B2]" />}
                                     </div>
                                     <input
                                         type="radio"
@@ -580,7 +580,7 @@ const Checkout = () => {
                                 <div className="flex justify-between items-center">
                                     <span className="text-[14px] text-gray-400 font-medium">{t('Delivery')}</span>
                                     {deliveryCharge === 0 ? (
-                                        <span className="text-[15px] font-bold text-[#2E5A2E]">FREE</span>
+                                        <span className="text-[15px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2]">FREE</span>
                                     ) : (
                                         <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹{deliveryCharge.toFixed(0)}</span>
                                     )}

@@ -118,7 +118,7 @@ const OrderDetails = () => {
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('Order not found')}</h2>
                 <button
                     onClick={() => navigate('/orders')}
-                    className="text-[#2E5A2E] dark:text-[#8bc910] font-bold flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow-sm"
+                    className="text-[#2E5A2E] dark:text-[#CBF9B2] font-bold flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow-sm"
                 >
                     <ArrowLeft size={20} />
                     {t('Back to Orders')}
@@ -129,7 +129,7 @@ const OrderDetails = () => {
 
     const getStatusColor = (status) => {
         switch (status) {
-            case 'Delivered': return 'text-[#2E5A2E] dark:text-[#8bc910] bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800';
+            case 'Delivered': return 'text-[#2E5A2E] dark:text-[#CBF9B2] bg-green-50 dark:bg-[#CBF9B2]/10 border-green-100 dark:border-[#CBF9B2]/20';
             case 'Shipped':
             case 'Out for Delivery': return 'text-[#0284c7] dark:text-[#38bdf8] bg-[#f0f9ff] dark:bg-blue-900/20 border-[#bae6fd] dark:border-blue-800';
             case 'Processing': return 'text-[#b45309] dark:text-[#fbbf24] bg-[#fffbeb] dark:bg-amber-900/20 border-[#fde68a] dark:border-amber-800';
@@ -213,7 +213,7 @@ const OrderDetails = () => {
                     {/* Status Banner */}
                     <div className={`p-6 ${
                         order.status === 'Cancelled' ? 'bg-[#fef2f2] dark:bg-red-900/10' :
-                        order.status === 'Delivered' ? 'bg-[#f0fdf4] dark:bg-green-900/10' :
+                        order.status === 'Delivered' ? 'bg-[#f0fdf4] dark:bg-[#CBF9B2]/5' :
                         order.status === 'Processing' ? 'bg-[#fffbeb] dark:bg-amber-900/10' :
                         'bg-[#f0f9ff] dark:bg-blue-900/10'
                         } flex items-center justify-between`}>
@@ -223,7 +223,7 @@ const OrderDetails = () => {
                             </p>
                             <h2 className={`text-2xl font-black ${
                                 order.status === 'Cancelled' ? 'text-[#dc2626] dark:text-[#f87171]' :
-                                order.status === 'Delivered' ? 'text-[#2E5A2E] dark:text-[#8bc910]' :
+                                order.status === 'Delivered' ? 'text-[#2E5A2E] dark:text-[#CBF9B2]' :
                                 order.status === 'Processing' ? 'text-[#b45309] dark:text-[#fbbf24]' :
                                 'text-[#0284c7] dark:text-[#38bdf8]'
                                 }`}>
@@ -235,7 +235,7 @@ const OrderDetails = () => {
                         </div>
                         <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
                             order.status === 'Cancelled' ? 'bg-[#fecaca] text-[#dc2626] dark:bg-red-900/30' :
-                            order.status === 'Delivered' ? 'bg-green-100 text-[#2E5A2E] dark:bg-green-900/30' :
+                            order.status === 'Delivered' ? 'bg-green-100 text-[#2E5A2E] dark:bg-[#CBF9B2]/20' :
                             order.status === 'Processing' ? 'bg-[#fde68a] text-[#b45309] dark:bg-amber-900/30' :
                             'bg-[#bae6fd] text-[#0284c7] dark:bg-blue-900/30'
                             }`}>
@@ -249,7 +249,7 @@ const OrderDetails = () => {
                             {/* Connecting Line */}
                             <div className="absolute top-[42px] left-6 right-6 h-1 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                                 <div
-                                    className="h-full bg-[#2E5A2E] transition-all duration-1000 ease-out"
+                                    className="h-full bg-[#2E5A2E] dark:bg-[#CBF9B2] transition-all duration-1000 ease-out"
                                     style={{
                                         width: `${timelineSteps.filter(s => s.completed).length === 1 ? '0%' :
                                             timelineSteps.filter(s => s.completed).length === 2 ? '50%' : '100%'}`
@@ -261,7 +261,7 @@ const OrderDetails = () => {
                                 {timelineSteps.map((step, idx) => (
                                     <div key={idx} className="flex flex-col items-center z-10">
                                         <div className={`w-9 h-9 rounded-full flex items-center justify-center border-4 transition-all duration-300 ${step.completed
-                                            ? 'bg-[#2E5A2E] border-white dark:border-gray-800 text-white'
+                                            ? 'bg-[#2E5A2E] dark:bg-[#CBF9B2] border-white dark:border-gray-800 text-white dark:text-gray-900'
                                             : 'bg-white dark:bg-gray-700 border-gray-100 dark:border-gray-600 text-gray-300'
                                             }`}>
                                             <step.icon size={14} strokeWidth={3} />
@@ -282,7 +282,7 @@ const OrderDetails = () => {
                 {/* Items Card */}
                 <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                     <div className="p-4 border-b border-gray-50 dark:border-gray-700 flex items-center gap-2">
-                        <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#2E5A2E] dark:text-[#8bc910]">
+                        <div className="p-2 bg-green-50 dark:bg-[#CBF9B2]/10 rounded-lg text-[#2E5A2E] dark:text-[#CBF9B2]">
                             <Package size={18} />
                         </div>
                         <h3 className="font-bold text-gray-900 dark:text-white">{t('Items Ordered')}</h3>
@@ -364,7 +364,7 @@ const OrderDetails = () => {
                 {/* Address Card - Now Full Width */}
                 <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col justify-center">
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-full text-[#2E5A2E] dark:text-[#8bc910]">
+                        <div className="p-2 bg-green-50 dark:bg-[#CBF9B2]/10 rounded-full text-[#2E5A2E] dark:text-[#CBF9B2]">
                             <MapPin size={18} />
                         </div>
                         <h3 className="font-bold text-gray-900 dark:text-white">{t('Delivery To')}</h3>
@@ -382,7 +382,7 @@ const OrderDetails = () => {
                         {order.shippingAddress?.location && (
                             <button
                                 onClick={() => openExternalLink(order.shippingAddress.location)}
-                                className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-green-50 dark:bg-green-900/30 text-[#2E5A2E] dark:text-[#8bc910] rounded-xl text-xs font-bold hover:bg-green-100 dark:hover:bg-green-900/50 transition-all border border-green-100/50 dark:border-green-800"
+                                className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-green-50 dark:bg-[#CBF9B2]/10 text-[#2E5A2E] dark:text-[#CBF9B2] rounded-xl text-xs font-bold hover:bg-green-100 dark:hover:bg-[#CBF9B2]/20 transition-all border border-green-100/50 dark:border-[#CBF9B2]/20"
                             >
                                 <MapPin size={14} />
                                 {t('View on Map')}
@@ -407,11 +407,11 @@ const OrderDetails = () => {
                             {Number(order.shipping) === 0 ? (
                                 order?.items?.some(item => item.isGold || (item.product && item.product.isGold)) ? (
                                     <div className="text-right">
-                                        <span className="text-[#2E5A2E] font-bold">{t('FREE')}</span>
+                                        <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-bold">{t('FREE')}</span>
                                     </div>
                                 ) : (
                                     <div className="text-right">
-                                        <span className="text-[#2E5A2E] font-bold">{t('FREE')}</span>
+                                        <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-bold">{t('FREE')}</span>
                                         <p className="text-[10px] text-yellow-600 dark:text-yellow-500 font-medium flex items-center justify-end gap-1">
                                             <span>🪙</span> {t('Coin Applied')}
                                         </p>

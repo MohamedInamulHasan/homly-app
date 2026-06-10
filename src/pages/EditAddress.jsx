@@ -141,11 +141,11 @@ const EditAddress = () => {
                     <button onClick={() => navigate(-1)} className="w-11 h-11 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95">
                         <ArrowLeft size={22} />
                     </button>
-                    <div className="flex flex-col text-center">
-                        <h1 className="text-[18px] font-bold text-gray-900 dark:text-white tracking-tight leading-tight">{t('My Address')}</h1>
-                        <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400 mt-0.5">{t('Manage delivery locations & ensures reachability')}</p>
+                    <div className="flex flex-col text-center flex-1 min-w-0 mx-2">
+                        <h1 className="text-[18px] font-bold text-gray-900 tracking-tight leading-tight truncate">{t('My Address')}</h1>
+                        <p className="text-[10px] sm:text-[11px] font-semibold text-gray-700 mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">{t('Manage delivery locations & ensures reachability')}</p>
                     </div>
-                    <div className="w-11" />
+                    <div className="w-11 flex-shrink-0" />
                 </div>
             </div>
 
@@ -173,16 +173,16 @@ const EditAddress = () => {
                             type="button"
                             onClick={handleDetectLocation}
                             disabled={isDetecting}
-                            className={`w-full relative z-10 bg-white dark:bg-gray-800 border-2 border-dashed p-5 rounded-[2rem] flex items-center justify-between group transition-all duration-300 active:scale-[0.98] ${
-                                isDetecting ? 'border-[#2E5A2E] bg-green-50/30' : 
-                                formData.location ? 'border-[#2E5A2E] bg-green-50/30' : 'border-gray-200 dark:border-gray-700'
+                            className={`w-full relative z-10 bg-white dark:bg-gray-800 border-2 border-dashed p-5 rounded-[2rem] flex items-center justify-between gap-3 group transition-all duration-300 active:scale-[0.98] ${
+                                isDetecting ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-green-50/30 dark:bg-[#CBF9B2]/5' : 
+                                formData.location ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-green-50/30 dark:bg-[#CBF9B2]/5' : 'border-gray-200 dark:border-gray-700'
                             }`}
                         >
-                            <div className="flex items-center gap-4">
-                                <div className="relative">
+                            <div className="flex items-center gap-4 flex-1 min-w-0">
+                                <div className="relative flex-shrink-0">
                                     <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 ${
-                                        isDetecting ? 'bg-[#2E5A2E] text-white shadow-lg shadow-green-200 scale-110' :
-                                        formData.location ? 'bg-green-100 dark:bg-green-900/30 text-[#2E5A2E]' : 'bg-gray-50 dark:bg-gray-700 text-gray-400'
+                                        isDetecting ? 'bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-gray-900 shadow-lg shadow-green-200 scale-110' :
+                                        formData.location ? 'bg-green-100 dark:bg-[#CBF9B2]/20 text-[#2E5A2E] dark:text-[#CBF9B2]' : 'bg-gray-50 dark:bg-gray-700 text-gray-400'
                                     }`}>
                                         <AnimatePresence mode="wait">
                                             {isDetecting ? (
@@ -214,17 +214,17 @@ const EditAddress = () => {
                                         />
                                     )}
                                 </div>
-                                <div className="text-left">
-                                    <h3 className={`font-bold text-[15px] transition-colors duration-300 ${isDetecting || formData.location ? 'text-[#2E5A2E]' : 'text-gray-900 dark:text-white'}`}>
+                                <div className="text-left flex-1 min-w-0">
+                                    <h3 className={`font-bold text-[15px] transition-colors duration-300 truncate ${isDetecting || formData.location ? 'text-[#2E5A2E] dark:text-[#CBF9B2]' : 'text-gray-900 dark:text-white'}`}>
                                         {isDetecting ? t('Finding location...') : formData.location ? t('Location Attached') : t('Pin exact GPS')}
                                     </h3>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
                                         {isDetecting ? t('Please wait while we sync labels...') : formData.location ? t('Fast delivery with precise coordinates') : t('Tap to use current location')}
                                     </p>
                                 </div>
                             </div>
-                            <div className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${
-                                isDetecting || formData.location ? 'bg-white border-[#2E5A2E]/20 text-[#2E5A2E]' : 'border-gray-100 dark:border-gray-700 text-gray-400'
+                            <div className={`w-8 h-8 rounded-full border flex-shrink-0 flex items-center justify-center transition-colors ${
+                                isDetecting || formData.location ? 'bg-white dark:bg-gray-700 border-[#2E5A2E]/20 dark:border-[#CBF9B2]/20 text-[#2E5A2E] dark:text-[#CBF9B2]' : 'border-gray-100 dark:border-gray-700 text-gray-400'
                             }`}>
                                  <ArrowLeft size={16} className={`transition-transform duration-300 ${isDetecting ? 'rotate-90' : 'rotate-180'}`} />
                             </div>
@@ -234,63 +234,63 @@ const EditAddress = () => {
                     {/* Form Fields */}
                     <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] p-6 shadow-sm border border-gray-50 dark:border-gray-700 space-y-5">
                         <div>
-                            <label className="block text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">{t('Recipient Name')}</label>
+                            <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest mb-2 px-1">{t('Recipient Name')}</label>
                             <input
                                 type="text"
                                 name="fullName"
                                 value={formData.fullName}
                                 onChange={handleChange}
                                 placeholder="Enter full name"
-                                className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border-none rounded-2xl focus:ring-2 focus:ring-[#CBF9B2] transition-all text-sm font-medium"
+                                className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 text-gray-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#CBF9B2] transition-all text-sm font-medium"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">{t('Mobile Number')}</label>
+                            <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest mb-2 px-1">{t('Mobile Number')}</label>
                             <input
                                 type="tel"
                                 name="mobile"
                                 value={formData.mobile}
                                 onChange={handleChange}
                                 placeholder="10-digit mobile number"
-                                className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border-none rounded-2xl focus:ring-2 focus:ring-[#CBF9B2] transition-all text-sm font-medium"
+                                className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 text-gray-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#CBF9B2] transition-all text-sm font-medium"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">{t('Street / Area')}</label>
+                            <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest mb-2 px-1">{t('Street / Area')}</label>
                             <textarea
                                 name="street"
                                 rows="3"
                                 value={formData.street}
                                 onChange={handleChange}
                                 placeholder="House no, Street name, Landmark"
-                                className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border-none rounded-2xl focus:ring-2 focus:ring-[#CBF9B2] transition-all text-sm font-medium resize-none"
+                                className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 text-gray-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#CBF9B2] transition-all text-sm font-medium resize-none"
                             />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">{t('City')}</label>
+                                <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest mb-2 px-1">{t('City')}</label>
                                 <select
                                     name="city"
                                     value={formData.city}
                                     onChange={handleChange}
-                                    className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border-none rounded-2xl focus:ring-2 focus:ring-[#CBF9B2] transition-all text-sm font-medium appearance-none"
+                                    className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 text-gray-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#CBF9B2] transition-all text-sm font-medium appearance-none"
                                 >
                                     <option value="">{t('Select City')}</option>
                                     {cities.map((city, idx) => <option key={idx} value={city}>{city}</option>)}
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">{t('Pincode')}</label>
+                                <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest mb-2 px-1">{t('Pincode')}</label>
                                 <input
                                     type="text"
                                     name="zip"
                                     value={formData.zip}
                                     onChange={handleChange}
                                     placeholder="6XXXXX"
-                                    className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border-none rounded-2xl focus:ring-2 focus:ring-[#CBF9B2] transition-all text-sm font-medium"
+                                    className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 text-gray-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#CBF9B2] transition-all text-sm font-medium"
                                 />
                             </div>
                         </div>

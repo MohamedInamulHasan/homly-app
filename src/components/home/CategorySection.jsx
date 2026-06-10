@@ -52,13 +52,13 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                     onClick={() => onSelectCategory('All')}
                     className={`${isExpanded ? 'w-full' : 'min-w-[72px] md:min-w-[85px] lg:min-w-[110px]'} flex flex-col items-center gap-2 md:gap-3 group cursor-pointer`}
                 >
-                    <div className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 border-2 bg-[#CBF9B2] dark:bg-[#1a381a] ${selectedCategory === 'All' ? 'border-[#2E5A2E] dark:border-[#CBF9B2]' : 'border-transparent'}`}>
+                    <div className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 border-2 bg-[#CBF9B2] dark:bg-[#CBF9B2] ${selectedCategory === 'All' ? 'border-[#2E5A2E] dark:border-[#2E5A2E]' : 'border-transparent'}`}>
                         <div className="flex items-center justify-center w-full h-full p-4">
                             <div className="grid grid-cols-2 gap-1.5 md:gap-2 transform rotate-45">
-                                <div className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-300 ${selectedCategory === 'All' ? 'bg-[#2E5A2E] dark:bg-[#CBF9B2]' : 'bg-[#2E5A2E]/60 dark:bg-[#CBF9B2]/60'}`} />
-                                <div className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-300 ${selectedCategory === 'All' ? 'bg-[#2E5A2E] dark:bg-[#CBF9B2] opacity-60' : 'bg-[#2E5A2E]/40 dark:bg-[#CBF9B2]/40'}`} />
-                                <div className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-300 ${selectedCategory === 'All' ? 'bg-[#2E5A2E] dark:bg-[#CBF9B2] opacity-80' : 'bg-[#2E5A2E]/50 dark:bg-[#CBF9B2]/50'}`} />
-                                <div className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-300 ${selectedCategory === 'All' ? 'bg-[#2E5A2E] dark:bg-[#CBF9B2] opacity-40' : 'bg-[#2E5A2E]/30 dark:bg-[#CBF9B2]/30'}`} />
+                                <div className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-300 ${selectedCategory === 'All' ? 'bg-[#2E5A2E] dark:bg-[#2E5A2E]' : 'bg-[#2E5A2E]/60 dark:bg-[#2E5A2E]/60'}`} />
+                                <div className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-300 ${selectedCategory === 'All' ? 'bg-[#2E5A2E] dark:bg-[#2E5A2E] opacity-60' : 'bg-[#2E5A2E]/40 dark:bg-[#2E5A2E]/40'}`} />
+                                <div className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-300 ${selectedCategory === 'All' ? 'bg-[#2E5A2E] dark:bg-[#2E5A2E] opacity-80' : 'bg-[#2E5A2E]/50 dark:bg-[#2E5A2E]/50'}`} />
+                                <div className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-300 ${selectedCategory === 'All' ? 'bg-[#2E5A2E] dark:bg-[#2E5A2E] opacity-40' : 'bg-[#2E5A2E]/30 dark:bg-[#2E5A2E]/30'}`} />
                             </div>
                         </div>
                     </div>
@@ -75,7 +75,7 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                             onClick={() => onSelectCategory(category.name)}
                             className={`${isExpanded ? 'w-full' : 'min-w-[72px] md:min-w-[85px] lg:min-w-[110px]'} flex flex-col items-center gap-2 md:gap-3 group cursor-pointer`}
                         >
-                            <div className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 shadow-sm border-2 bg-[#CBF9B2] dark:bg-[#1a381a] ${isSelected ? 'border-[#2E5A2E] dark:border-[#CBF9B2]' : 'border-transparent'}`}>
+                            <div className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 shadow-sm border-2 bg-[#CBF9B2] dark:bg-[#CBF9B2] ${isSelected ? 'border-[#2E5A2E] dark:border-[#2E5A2E]' : 'border-transparent'}`}>
                                 <img
                                     src={category.image || `${API_BASE_URL}/categories/${category._id || category.id}/image`}
                                     alt={category.name}

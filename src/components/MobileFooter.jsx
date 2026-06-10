@@ -1,9 +1,9 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { ThemeContext } from '../context/ThemeContext';
+import { useTheme } from '../context/ThemeContext';
 
 const HomeIcon = ({ isActive, activeColor = 'white' }) => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -99,7 +99,7 @@ const ProfileIcon = ({ isActive, activeColor = 'white' }) => (
 const MobileFooter = () => {
     const location = useLocation();
     const { cartCount } = useCart();
-    const { theme } = useContext(ThemeContext);
+    const { theme } = useTheme();
     const isDark = theme === 'dark';
     const activeIconColor = isDark ? '#111827' : 'white';
     const { user } = useAuth();

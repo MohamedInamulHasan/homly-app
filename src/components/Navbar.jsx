@@ -76,7 +76,7 @@ const Navbar = () => {
                                         </div>
                                     ) : (
                                         <div className="relative p-2.5 bg-gradient-to-br from-green-50 to-green-100 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-full hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/30 dark:hover:to-indigo-900/30 transition-all duration-300 hover:scale-110 shadow-sm hover:shadow-md">
-                                            <ShoppingCart size={20} className="text-[#2E5A2E] dark:text-[#8bc910]" />
+                                            <ShoppingCart size={20} className="text-[#2E5A2E] dark:text-[#2E5A2E]" />
                                         </div>
                                     )}
                                 </Link>
@@ -113,7 +113,7 @@ const Navbar = () => {
                                         </div>
                                     ) : (
                                         <div className="relative p-2.5 bg-gradient-to-br from-green-50 to-green-100 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-full transition-all duration-300 shadow-sm">
-                                            <ShoppingCart size={20} className="text-[#2E5A2E] dark:text-[#8bc910]" />
+                                            <ShoppingCart size={20} className="text-[#2E5A2E] dark:text-[#2E5A2E]" />
                                         </div>
                                     )}
                                 </Link>

@@ -193,15 +193,15 @@ const Games = () => {
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-20">
             {/* Header */}
-            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] dark:bg-[#1a381a] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm">
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] dark:bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm">
                 <div className="relative z-10">
                     <div className="w-full px-4 relative flex items-center justify-center min-h-[42px]">
                         <div className="absolute left-2 top-1/2 -translate-y-1/2">
-                            <button onClick={() => navigate('/profile')} className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white shadow-sm border border-gray-100/50 dark:border-gray-700">
+                            <button onClick={() => navigate('/profile')} className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-white/80 rounded-full text-gray-900 dark:text-gray-900 shadow-sm border border-gray-100/50 dark:border-gray-200/50">
                                 <ArrowLeft size={22} />
                             </button>
                         </div>
-                        <h1 className="text-[18px] font-bold text-gray-900 dark:text-white tracking-tight">Mind Match</h1>
+                        <h1 className="text-[18px] font-bold text-gray-900 dark:text-gray-900 tracking-tight">Mind Match</h1>
                     </div>
                 </div>
             </div>

@@ -165,23 +165,23 @@ const DeliveryDashboard = () => {
             />
 
             {/* Header */}
-            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] dark:bg-[#1a381a] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm overflow-hidden">
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] dark:bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm overflow-hidden">
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#2E5A2E]/20 rounded-full blur-3xl pointer-events-none"></div>
                 
                 <div className="relative z-10">
                     <div className="w-full px-4 relative flex items-center justify-center min-h-[42px]">
                         <div className="flex flex-col text-center">
-                            <h1 className="text-[18px] font-bold text-gray-900 dark:text-white tracking-tight leading-tight">
+                            <h1 className="text-[18px] font-bold text-gray-900 dark:text-gray-900 tracking-tight leading-tight">
                                 {dashboardType === 'Orders' ? t('Delivery Panel') : t('Service Requests')}
                             </h1>
-                            <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400 mt-0.5">
+                            <p className="text-[11px] font-medium text-gray-500 dark:text-gray-600 mt-0.5">
                                 {dashboardType === 'Orders' ? t('Manage Deliveries') : t('Manage Service Bookings')}
                             </p>
                         </div>
                         <div className="absolute right-2 top-1/2 -translate-y-1/2">
                             <button 
                                 onClick={() => setShowLogoutModal(true)}
-                                className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-red-600 transition-transform active:scale-95 shadow-sm border border-black/5 dark:border-gray-700"
+                                className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-white/80 rounded-full text-red-600 transition-transform active:scale-95 shadow-sm border border-black/5 dark:border-gray-200/50"
                             >
                                 <LogOut size={20} />
                             </button>

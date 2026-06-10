@@ -234,7 +234,7 @@ const OrderConfirmation = () => {
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 space-y-6">
                 <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                     <div className="p-5 border-b border-gray-50 dark:border-gray-700 flex items-center gap-3">
-                        <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#2E5A2E] dark:text-[#8bc910]">
+                        <div className="p-2 bg-green-50 dark:bg-[#CBF9B2]/20 rounded-lg text-[#2E5A2E] dark:text-[#CBF9B2]">
                             <Package size={18} />
                         </div>
                         <h3 className="font-medium text-gray-900 dark:text-white text-base">{t('Total Summary')}</h3>
@@ -312,7 +312,7 @@ const OrderConfirmation = () => {
 
                 <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                     <div className="p-5 border-b border-gray-50 dark:border-gray-700 flex items-center gap-3">
-                        <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-[#2E5A2E] dark:text-[#8bc910]">
+                        <div className="p-2 bg-green-50 dark:bg-[#CBF9B2]/20 rounded-lg text-[#2E5A2E] dark:text-[#CBF9B2]">
                             <MapPin size={18} />
                         </div>
                         <h3 className="font-medium text-gray-900 dark:text-white text-base">{t('Shipping details')}</h3>
@@ -331,8 +331,8 @@ const OrderConfirmation = () => {
 
                         {formData.deliveryTime && (
                             <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                                <div className="flex items-center gap-3 text-[#2E5A2E] dark:text-[#8bc910]">
-                                    <div className="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
+                                <div className="flex items-center gap-3 text-[#2E5A2E] dark:text-[#CBF9B2]">
+                                    <div className="w-10 h-10 rounded-full bg-green-50 dark:bg-[#CBF9B2]/10 flex items-center justify-center">
                                         <Clock size={20} />
                                     </div>
                                     <div>
@@ -362,7 +362,7 @@ const OrderConfirmation = () => {
                             <div className="flex justify-between items-center">
                                 <span className="text-[14px] text-gray-400 font-medium">{t('Delivery Charge')}</span>
                                 {(deliveryCharge === 0 || deliveryCharge === null) ? (
-                                    <span className="text-[15px] font-bold text-[#2E5A2E] dark:text-[#8bc910]">FREE</span>
+                                    <span className="text-[15px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2]">FREE</span>
                                 ) : (
                                     <span className="text-[15px] font-bold text-gray-900 dark:text-white">₹{(deliveryCharge || 20).toFixed(0)}</span>
                                 )}
@@ -423,11 +423,11 @@ const OrderConfirmation = () => {
             )}
 
             {showSuccessModal && (
-                <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-[#2E5A2E]/20 backdrop-blur-md">
+                <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-[#2E5A2E]/20 dark:bg-black/60 backdrop-blur-md">
                     <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl max-w-sm w-full p-8 transform transition-all scale-100">
                         <div className="text-center">
-                            <div className="w-24 h-24 bg-green-50 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <CheckCircle className="h-12 w-12 text-[#2E5A2E] dark:text-[#8bc910]" />
+                            <div className="w-24 h-24 bg-green-50 dark:bg-[#CBF9B2]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <CheckCircle className="h-12 w-12 text-[#2E5A2E] dark:text-[#CBF9B2]" />
                             </div>
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                                 {t('Order Placed!')}

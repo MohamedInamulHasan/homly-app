@@ -201,13 +201,13 @@ const ProductDetails = () => {
                     <div className="absolute top-6 left-6 right-6 flex items-center justify-between z-30">
                         <button
                             onClick={() => navigate(-1)}
-                            className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-90"
+                            className="w-12 h-12 flex items-center justify-center bg-white/90 dark:bg-white/80 rounded-full shadow-sm text-gray-900 dark:text-gray-900 transition-transform active:scale-90"
                         >
                             <ArrowLeft size={24} />
                         </button>
                         <button
                             onClick={handleToggleSave}
-                            className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-90"
+                            className="w-12 h-12 flex items-center justify-center bg-white/90 dark:bg-white/80 rounded-full shadow-sm text-gray-900 dark:text-gray-900 transition-transform active:scale-90"
                         >
                             <Bookmark size={24} className={isSaved ? "fill-[#FF5C5C] text-[#FF5C5C]" : "text-gray-400"} />
                         </button>
@@ -242,7 +242,7 @@ const ProductDetails = () => {
                                         onClick={() => scrollToImage(index)}
                                         className={`w-2 h-2 rounded-full transition-all duration-300 ${
                                             currentImageIndex === index 
-                                                ? 'w-6 bg-[#2E5A2E]' 
+                                                ? 'w-6 bg-[#2E5A2E] dark:bg-[#CBF9B2]' 
                                                 : 'bg-gray-300 dark:bg-gray-600'
                                         }`}
                                     />
@@ -291,7 +291,7 @@ const ProductDetails = () => {
                     <div className="flex items-center justify-between mb-8 mt-6">
                         <div className="flex flex-col">
                             <div className="flex items-center gap-3">
-                                <p className="text-4xl font-semibold text-[#2E5A2E] dark:text-green-400">
+                                <p className="text-4xl font-semibold text-[#2E5A2E] dark:text-[#CBF9B2]">
                                     ₹{totalPrice}
                                 </p>
                             </div>
@@ -305,12 +305,12 @@ const ProductDetails = () => {
                             >
                                 <Minus size={18} />
                             </button>
-                            <span className="w-8 text-center text-lg font-bold text-[#2E5A2E] dark:text-green-400">
+                            <span className="w-8 text-center text-lg font-bold text-[#2E5A2E] dark:text-[#CBF9B2]">
                                 {quantity || 0}
                             </span>
                             <button
                                 onClick={handleAddToCart}
-                                className="w-10 h-10 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-[#2E5A2E] transition-colors"
+                                className="w-10 h-10 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-[#2E5A2E] dark:hover:text-[#CBF9B2] transition-colors"
                             >
                                 <Plus size={18} />
                             </button>

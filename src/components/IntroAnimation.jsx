@@ -36,13 +36,33 @@ const IntroAnimation = () => {
         }
     }, [isVisible, setInitialLoading]);
 
-    // Force exit backup
+    // Force exit backup (still waits for data, but shorter)
     useEffect(() => {
         const timer = setTimeout(() => {
             if (isDataReady) setIsVisible(false);
         }, 5000);
         return () => clearTimeout(timer);
     }, [isDataReady]);
+
+    // ABSOLUTE FAILSAFE: Exit unconditionally after 7s even if data never loads
+    useEffect(() => {
+        const absoluteTimer = setTimeout(() => {
+            console.warn('⚠️ IntroAnimation: Force-exiting after 7s timeout (data may not have loaded)');
+            setIsVisible(false);
+        }, 7000);
+        return () => clearTimeout(absoluteTimer);
+    }, []);
+
+    // FINAL FAILSAFE: Directly force initialLoading=false after 8s
+    useEffect(() => {
+        const finalTimer = setTimeout(() => {
+            if (setInitialLoading) {
+                console.warn('⚠️ IntroAnimation: Forcing initialLoading=false after 8s');
+                setInitialLoading(false);
+            }
+        }, 8000);
+        return () => clearTimeout(finalTimer);
+    }, [setInitialLoading]);
 
     // Animation Variants
     const letterVariants = {

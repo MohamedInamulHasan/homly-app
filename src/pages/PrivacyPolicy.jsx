@@ -12,12 +12,12 @@ const PrivacyPolicy = () => {
             {/* Header */}
             <div className="fixed top-0 left-0 right-0 z-50 bg-[#CBF9B2] rounded-b-[2.5rem] px-5 py-4 shadow-sm">
                 <div className="max-w-xl mx-auto flex items-center justify-between">
-                    <button onClick={() => navigate(-1)} className="w-11 h-11 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95">
+                    <button onClick={() => navigate(-1)} className="w-11 h-11 flex items-center justify-center bg-white dark:bg-white/80 rounded-full shadow-sm text-gray-900 dark:text-gray-900 transition-transform active:scale-95">
                         <ArrowLeft size={22} />
                     </button>
                     <div className="flex flex-col text-center">
-                        <h1 className="text-[18px] font-bold text-gray-900 dark:text-white tracking-tight">{t('Privacy Policy')}</h1>
-                        <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400 mt-0.5">{t('Last Updated: May 2026')}</p>
+                        <h1 className="text-[18px] font-bold text-gray-900 dark:text-gray-900 tracking-tight">{t('Privacy Policy')}</h1>
+                        <p className="text-[11px] font-medium text-gray-500 dark:text-gray-600 mt-0.5">{t('Last Updated: May 2026')}</p>
                     </div>
                     <div className="w-11" />
                 </div>

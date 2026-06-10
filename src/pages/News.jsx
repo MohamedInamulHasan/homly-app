@@ -32,7 +32,7 @@ const News = () => {
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200">
             {/* Premium Light Green Header Card / Dark Mode Adjusted */}
-            <div className="w-full bg-[#CBF9B2] dark:bg-[#1a381a] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm relative overflow-hidden mb-8">
+            <div className="w-full bg-[#CBF9B2] dark:bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm relative overflow-hidden mb-8">
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#2E5A2E]/20 rounded-full blur-3xl pointer-events-none"></div>
                 
                 <div className="relative z-10">
@@ -40,17 +40,17 @@ const News = () => {
                         <div className="absolute left-2 top-1/2 -translate-y-1/2">
                             <button 
                                 onClick={() => navigate(-1)} 
-                                className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-700"
+                                className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-white/80 rounded-full text-gray-900 dark:text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-200/50"
                             >
                                 <ArrowLeft size={22} />
                             </button>
                         </div>
                         
                         <div className="flex flex-col items-center text-center">
-                            <h1 className="text-[18px] font-bold text-gray-900 dark:text-white tracking-tight">
+                            <h1 className="text-[18px] font-bold text-gray-900 dark:text-gray-900 tracking-tight">
                                 {t('News & Updates')}
                             </h1>
-                            <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400 mt-0.5">{t('Stay informed with the latest')}</p>
+                            <p className="text-[11px] font-medium text-gray-500 dark:text-gray-600 mt-0.5">{t('Stay informed with the latest')}</p>
                         </div>
                     </div>
                 </div>
