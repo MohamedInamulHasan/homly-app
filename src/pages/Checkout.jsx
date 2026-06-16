@@ -175,6 +175,14 @@ const Checkout = () => {
             return;
         }
 
+        // Validate Location (Require GPS location)
+        if (!formData.location) {
+            setIsEditingAddress(true); // Open edit mode to show the location button
+            setLocationMessage({ show: true, type: 'error', text: t('Please share your current location for delivery') });
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll up to show the message and location button
+            return;
+        }
+
         // Validate Mobile Number (10 digits)
         if (!/^\d{10}$/.test(formData.mobile)) {
             alert(t('Please enter a valid 10-digit mobile number'));
