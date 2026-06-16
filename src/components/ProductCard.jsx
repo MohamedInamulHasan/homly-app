@@ -103,7 +103,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                                 e.stopPropagation();
                                 toggleSaveProduct(product);
                             }}
-                             className="absolute top-2 right-2 z-[25] p-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-sm text-[#2E5A2E] dark:text-[#CBF9B2] transition-all active:scale-90"
+                             className={`absolute top-2 right-2 z-[25] p-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-sm transition-all active:scale-90 ${isSaved ? 'text-[#FF5C5C]' : 'text-gray-400'}`}
                         >
                             <Bookmark 
                                 size={18} 

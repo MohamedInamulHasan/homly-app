@@ -263,11 +263,13 @@ const Profile = () => {
                           <MenuLink to="/services" icon={<Wrench size={18} strokeWidth={2} />} title={t('Services')} />
                           <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
 
+                          {/* Hide News and Games menu items for now
                           <MenuLink to="/news" icon={<Newspaper size={18} strokeWidth={2} />} title={t('News')} />
                           <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
 
                           <MenuLink to="/games" icon={<Gamepad2 size={18} strokeWidth={2} />} title={t('Games')} />
                           <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
+                          */}
 
                           {/* Settings Dropdown/Accordion */}
                           <button 
@@ -287,6 +289,7 @@ const Profile = () => {
 
                           {isSettingsOpen && (
                               <div className="w-full pl-12 pr-4 pb-2 space-y-1 animate-in slide-in-from-top-2 duration-200">
+                                  {/* Hide Dark Mode option for now
                                   <button 
                                       onClick={toggleTheme}
                                       className="w-full flex items-center justify-between py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-[#2E5A2E] dark:hover:text-[#CBF9B2] transition-colors"
@@ -296,6 +299,7 @@ const Profile = () => {
                                           <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-300 ${theme === 'light' ? 'translate-x-[18px]' : 'translate-x-0.5'}`} />
                                       </div>
                                   </button>
+                                  */}
                                   <button 
                                       onClick={() => {
                                           const newLang = language === 'en' ? 'ta' : 'en';

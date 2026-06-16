@@ -390,8 +390,7 @@ const Services = () => {
                                 serviceItems.map((sub, idx) => (
                                     <div
                                         key={sub._id || idx}
-                                        onClick={() => handleSelectSubService(sub)}
-                                         className={`group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md transition-all duration-300 aspect-square w-full cursor-pointer border-2 ${selectedItem?._id === sub._id ? 'border-[#2E5A2E] dark:border-[#CBF9B2] ring-4 ring-[#2E5A2E]/20 dark:ring-[#CBF9B2]/20 scale-95' : 'border-transparent hover:shadow-xl'}`}
+                                         className={`group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md transition-all duration-300 aspect-square w-full border-2 border-transparent hover:shadow-xl hover:border-gray-200 dark:hover:border-gray-700`}
                                     >
                                         {/* Full Background Image */}
                                         <div className="absolute inset-0">
@@ -403,14 +402,7 @@ const Services = () => {
                                                 onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/300x400?text=No+Image'; }}
                                             />
                                             {/* Gradient Overlay */}
-                                            <div className={`absolute inset-0 transition-opacity ${selectedItem?._id === sub._id ? 'bg-[#2E5A2E]/40 dark:bg-[#CBF9B2]/40' : 'bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-80'}`} />
-
-                                             {/* Selection Indicator - Now Forest Green */}
-                                             {selectedItem?._id === sub._id && (
-                                                 <div className="absolute top-3 right-3 bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-gray-900 p-1.5 rounded-full shadow-lg animate-in fade-in zoom-in duration-200">
-                                                     <Check size={16} strokeWidth={3} />
-                                                 </div>
-                                             )}
+                                            <div className={`absolute inset-0 transition-opacity bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-80`} />
                                         </div>
 
                                         {/* Content Overlay */}
@@ -443,16 +435,15 @@ const Services = () => {
 
                 </div>
 
-                {/* Floating Action Button for Service Request */}
                 <div
                     className={`fixed bottom-32 md:bottom-8 left-0 right-0 px-6 z-[60] flex justify-center pointer-events-none`}
                 >
-                    <div className={`transition-all duration-500 ease-in-out transform ${viewMode === 'details' && selectedItem && !showConfirmation && !requestSuccess
+                    <div className={`transition-all duration-500 ease-in-out transform ${viewMode === 'details' && !showConfirmation && !requestSuccess
                         ? 'translate-y-0 opacity-100 pointer-events-auto'
                         : 'translate-y-12 opacity-0 pointer-events-none'
                         }`}>
                         <button
-                            onClick={() => selectedItem && handleRequestSubService(selectedItem)}
+                            onClick={() => handleRequestSubService(selectedItem || { name: 'General Service', price: 'TBD', description: 'Standard service request' })}
                             className="bg-white dark:bg-gray-800 backdrop-blur-xl text-gray-900 dark:text-white px-8 py-4 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex items-center gap-4 group hover:scale-105 transition-all duration-300 border border-gray-100 dark:border-gray-700"
                         >
                             <div className="flex flex-col items-start mr-2 text-left">

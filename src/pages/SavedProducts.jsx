@@ -28,16 +28,23 @@ const SavedProducts = () => {
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200">
             {/* Premium Header (matching Address Page) */}
-            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-5 py-4 shadow-sm">
-                <div className="max-w-xl mx-auto flex items-center justify-between">
-                    <button onClick={() => navigate(-1)} className="w-11 h-11 flex items-center justify-center bg-white dark:bg-white/80 rounded-full shadow-sm text-gray-900 dark:text-gray-900 transition-transform active:scale-95">
-                        <ArrowLeft size={22} />
-                    </button>
-                    <div className="flex flex-col text-center">
-                        <h1 className="text-[18px] font-bold text-gray-900 dark:text-gray-900 tracking-tight leading-tight">{t('Saved Products')}</h1>
-                        <p className="text-[11px] font-medium text-gray-500 dark:text-gray-600 mt-0.5">{t('Your favorite items')}</p>
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm overflow-hidden">
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#CBF9B2]/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="relative z-10">
+                    <div className="max-w-7xl mx-auto px-2 relative min-h-[42px]">
+                        <div className="absolute left-2 top-1/2 -translate-y-1/2">
+                            <button 
+                                onClick={() => navigate(-1)} 
+                                className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-white/80 rounded-full text-gray-900 dark:text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-200/50"
+                            >
+                                <ArrowLeft size={22} />
+                            </button>
+                        </div>
+                        <div className="flex flex-col items-center text-center pt-1">
+                            <h1 className="text-[18px] font-bold text-gray-900 dark:text-gray-900 tracking-tight leading-tight">{t('Saved Products')}</h1>
+                            <p className="text-[11px] font-medium text-gray-500 dark:text-gray-600 mt-0.5">{t('Your favorite items')}</p>
+                        </div>
                     </div>
-                    <div className="w-11" />
                 </div>
             </div>
 
