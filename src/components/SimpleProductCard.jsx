@@ -148,7 +148,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                         src={featuredVariant.image || `${API_BASE_URL}/products/${productId}/image`}
                         alt={t(featuredVariant, 'title')}
                         loading="lazy"
-                        className={`absolute top-0 left-0 w-full h-full object-cover transition-all duration-700 animate-in fade-in zoom-in-95 ${(isStoreOpenCheck && product.anyStoreOpen) ? 'hover:scale-105' : 'grayscale'}`}
+                        className={`absolute top-0 left-0 w-full h-full object-cover transition-transform duration-300 ${(isStoreOpenCheck && product.anyStoreOpen) ? 'hover:scale-105' : 'grayscale'}`}
                         onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300?text=No+Image'; }}
                     />
                     {showSave && (

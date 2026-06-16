@@ -116,7 +116,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                         key={featuredVariant.image || currentVariantIndex} // Force new element per variant for animation
                         src={featuredVariant.image || `${API_BASE_URL}/products/${productId}/image`}
                         alt={t(featuredVariant, 'title')}
-                        className={`w-full h-full object-cover transition-all duration-700 animate-in fade-in zoom-in-95 ${isAvailable && isOpen ? 'group-hover:scale-110' : ''}`}
+                        className={`w-full h-full object-cover transition-transform duration-300 ${isAvailable && isOpen ? 'group-hover:scale-110' : ''}`}
                         loading="lazy"
                         onError={(e) => { e.target.onerror = null; e.target.src = 'https://atlas-content-cdn.pixelbin.io/ast/feed_v2/static_assets/common/vegetable_placeholder.png'; }}
                     />
