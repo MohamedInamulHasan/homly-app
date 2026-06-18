@@ -61,20 +61,21 @@ const Home = () => {
 
     const stores = Array.isArray(rawStores) ? rawStores : (rawStores?.data || []);
 
-    // Filter categories
+    // Filter categories — only show categories that have at least one product
     const featuredCategories = useMemo(() => {
         const raw = Array.isArray(rawCategories) ? rawCategories : (rawCategories?.data || []);
         const allProducts = Array.isArray(rawProducts) ? rawProducts : (rawProducts?.data || []);
-        
+
         // Get a Set of categories that have at least one product
         const productCategories = new Set(allProducts.map(p => p.category?.toLowerCase()));
-        
+
         return raw.filter(cat => {
             if (cat.isHidden) return false;
             // Only show category if it has products
             return productCategories.has(cat.name?.toLowerCase());
         });
     }, [rawCategories, rawProducts]);
+
 
     // Grouping Logic (Only available products for main categories/sections)
     const groupedByStore = useMemo(() => {

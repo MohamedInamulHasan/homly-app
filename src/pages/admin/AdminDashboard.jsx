@@ -2350,16 +2350,36 @@ const CategoryManagement = () => {
                                                     </DragHandle>
                                                 </td>
                                                 <td className="p-4">
-                                                    <div className="w-16 h-16 rounded-full overflow-hidden ring-2 ring-gray-200 dark:ring-gray-700">
-                                                        <img
-                                                            src={category.image || `${API_BASE_URL}/categories/${category._id || category.id}/image`}
-                                                            alt={category.name}
-                                                            className="w-full h-full object-cover"
-                                                            onError={(e) => {
-                                                                e.target.onerror = null;
-                                                                e.target.src = "https://via.placeholder.com/64?text=No+Image";
-                                                            }}
-                                                        />
+                                                    <div className="relative w-16 h-16 group/catimg">
+                                                        <div className="w-16 h-16 rounded-full overflow-hidden ring-2 ring-gray-200 dark:ring-gray-700">
+                                                            <img
+                                                                src={category.image || `${API_BASE_URL}/categories/${category._id || category.id}/image`}
+                                                                alt={category.name}
+                                                                className="w-full h-full object-cover"
+                                                                onError={(e) => {
+                                                                    e.target.onerror = null;
+                                                                    e.target.src = "https://via.placeholder.com/64?text=No+Image";
+                                                                }}
+                                                            />
+                                                        </div>
+                                                        <label className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover/catimg:opacity-100 transition-opacity cursor-pointer flex items-center justify-center">
+                                                            <Upload size={16} className="text-white" />
+                                                            <input
+                                                                type="file"
+                                                                accept="image/*"
+                                                                className="hidden"
+                                                                onChange={async (e) => {
+                                                                    const file = e.target.files[0];
+                                                                    if (!file) return;
+                                                                    try {
+                                                                        const url = await uploadImage(file);
+                                                                        await updateCategory({ id: category._id || category.id, data: { ...category, image: url } });
+                                                                    } catch {
+                                                                        alert(t('Failed to upload image'));
+                                                                    }
+                                                                }}
+                                                            />
+                                                        </label>
                                                     </div>
                                                 </td>
                                                 <td className="p-4 font-medium text-gray-900 dark:text-white">

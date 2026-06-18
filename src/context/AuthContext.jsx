@@ -180,6 +180,8 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         // Dispatch custom event to notify cart of user change
         window.dispatchEvent(new Event('userChanged'));
+        // Redirect to signup page after logout
+        window.location.href = '/signup';
     };
 
     const updateUserState = (updatedUser) => {

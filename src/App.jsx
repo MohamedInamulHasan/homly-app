@@ -81,9 +81,13 @@ const DeepLinkHandler = () => {
 const HomeWithRedirect = () => {
     const { user, loading } = useAuth();
     if (loading) return null;
-    
+
+    // Not logged in → show Sign Up page first
+    if (!user) {
+        return <Navigate to="/signup" replace />;
+    }
+
     const roles = Array.isArray(user?.role) ? user.role : [user?.role || 'customer'];
-    const isAdmin = roles.some(r => String(r || '').toLowerCase().trim() === 'admin');
     const isDeliveryBoy = roles.some(r => {
         const normalized = String(r || '').toLowerCase().trim();
         return normalized === 'delivery_boy' || normalized === 'deliveryboy';
