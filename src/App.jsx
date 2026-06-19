@@ -28,6 +28,7 @@ import MyService from './pages/MyService';
 import Categories from './pages/Categories';
 import EditAddress from './pages/EditAddress';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import DeleteAccount from './pages/DeleteAccount';
 import Games from './pages/Games'; // Added for Mind Match
 
 import MobileFooter from './components/MobileFooter';
@@ -60,7 +61,7 @@ const DeepLinkHandler = () => {
         const setupDeepLinks = async () => {
             try {
                 listenerHandle = await CapacitorApp.addListener('appUrlOpen', (data) => {
-                    const slug = data.url.split('antigravity-homly-app.vercel.app').pop();
+                    const slug = data.url.split('homly-app.vercel.app').pop();
                     if (slug) {
                         navigate(slug);
                     }
@@ -347,6 +348,7 @@ function App() {
                                         }
                                     />
                                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                                    <Route path="/delete-account" element={<DeleteAccount />} />
                                     <Route path="/categories" element={<Categories />} />
                                     <Route path="/category/:categoryName" element={<CategoryProducts />} />
                                     <Route path="/product-group/:productName" element={<ProductGroupProducts />} />
