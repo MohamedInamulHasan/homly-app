@@ -13,7 +13,8 @@ import {
     forgotPassword,
     logoutUser,
     testEmailController,
-    googleAuth
+    googleAuth,
+    requestAccountDeletion
 } from '../controllers/userController.js';
 
 import { protect, adminOnly } from '../middleware/authMiddleware.js';
@@ -26,6 +27,7 @@ router.post('/google', googleAuth);
 router.post('/forgotpassword', forgotPassword);
 router.put('/resetpassword/:resettoken', resetPassword);
 router.post('/logout', logoutUser);
+router.post('/delete-request', requestAccountDeletion);
 router.get('/test-email', testEmailController);
 
 router.route('/profile')

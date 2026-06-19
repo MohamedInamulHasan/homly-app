@@ -1,21 +1,28 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Trash2, Mail, AlertTriangle, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Trash2, Mail, AlertTriangle, CheckCircle, Loader2 } from 'lucide-react';
+import { apiService } from '../utils/api';
 
 const DeleteAccount = () => {
     const navigate = useNavigate();
     const [submitted, setSubmitted] = useState(false);
     const [email, setEmail] = useState('');
     const [reason, setReason] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const subject = encodeURIComponent('Delete My Account Request - ILY mart');
-        const body = encodeURIComponent(
-            `Hello ILY mart Support,\n\nI would like to request deletion of my account and all associated data.\n\nEmail: ${email}\nReason: ${reason || 'Not specified'}\n\nPlease confirm once my account and data have been deleted.\n\nThank you.`
-        );
-        window.location.href = `mailto:ilymart.28@gmail.com?subject=${subject}&body=${body}`;
-        setSubmitted(true);
+        setLoading(true);
+        setError('');
+        try {
+            await apiService.requestDeleteAccount({ email, reason });
+            setSubmitted(true);
+        } catch (err) {
+            setError(err.message || 'Failed to submit request. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -27,7 +34,7 @@ const DeleteAccount = () => {
                     <div className="max-w-7xl mx-auto px-2 relative min-h-[42px]">
                         <div className="absolute left-2 top-1/2 -translate-y-1/2">
                             <button
-                                onClick={() => navigate(-1)}
+                                onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/profile')}
                                 className="w-[42px] h-[42px] flex items-center justify-center bg-white rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50"
                             >
                                 <ArrowLeft size={22} />
@@ -44,6 +51,13 @@ const DeleteAccount = () => {
             <div className="pt-28 pb-12 max-w-2xl mx-auto px-6">
                 {!submitted ? (
                     <div className="bg-white dark:bg-gray-800 rounded-[2rem] p-8 shadow-sm border border-gray-100 dark:border-gray-700 space-y-6">
+
+                        {/* Error Alert */}
+                        {error && (
+                            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-4 text-red-700 dark:text-red-400 text-sm">
+                                {error}
+                            </div>
+                        )}
 
                         {/* Warning */}
                         <div className="flex items-start gap-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-4">
@@ -104,10 +118,20 @@ const DeleteAccount = () => {
                             </div>
                             <button
                                 type="submit"
-                                className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2"
+                                disabled={loading}
+                                className="w-full bg-red-500 hover:bg-red-600 disabled:bg-red-400 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2"
                             >
-                                <Trash2 size={18} />
-                                Submit Deletion Request
+                                {loading ? (
+                                    <>
+                                        <Loader2 className="animate-spin" size={18} />
+                                        Submitting Request...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Trash2 size={18} />
+                                        Submit Deletion Request
+                                    </>
+                                )}
                             </button>
                         </form>
 

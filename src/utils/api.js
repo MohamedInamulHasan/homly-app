@@ -141,6 +141,7 @@ export const apiService = {
     updateProfile: (data) => api.put('/users/profile', data),
     getSavedProducts: () => api.get('/users/profile/saved-products'),
     toggleSavedProduct: (productId) => api.post('/users/profile/saved-products', { productId }),
+    requestDeleteAccount: (data) => api.post('/users/delete-request', data),
 
     // Ads
     getAds: () => api.get('/ads'),

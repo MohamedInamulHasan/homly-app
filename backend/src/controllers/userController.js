@@ -4,7 +4,7 @@ import LoginLog from '../models/LoginLog.js';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import axios from 'axios';
-import { sendPasswordResetEmail } from '../services/emailService.js';
+import { sendPasswordResetEmail, sendDeleteAccountRequestEmail } from '../services/emailService.js';
 import { OAuth2Client } from 'google-auth-library';
 import { getIO } from '../socket.js';
 
@@ -632,5 +632,29 @@ export const testEmailController = async (req, res) => {
         });
     }
 };
+
+// @desc    Submit account deletion request
+// @route   POST /api/users/delete-request
+// @access  Public
+export const requestAccountDeletion = async (req, res, next) => {
+    try {
+        const { email, reason } = req.body;
+        if (!email) {
+            res.status(400);
+            throw new Error('Email is required');
+        }
+
+        // Send the email to the admin
+        await sendDeleteAccountRequestEmail(email, reason);
+
+        res.status(200).json({
+            success: true,
+            message: 'Account deletion request submitted successfully'
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 
 

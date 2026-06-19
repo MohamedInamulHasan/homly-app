@@ -456,3 +456,57 @@ export const sendCustomerOrderConfirmationEmail = async (order) => {
     }
 };
 
+
+// Send account deletion request email to admin
+export const sendDeleteAccountRequestEmail = async (email, reason) => {
+    try {
+        const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER;
+        console.log('📧 Preparing data deletion email to send to:', adminEmail);
+
+        if (!adminEmail) {
+            console.error('❌ No Admin Email defined!');
+            return { success: false, error: 'No Admin Email defined' };
+        }
+
+        const mailOptions = {
+            from: `"ILY mart Data Deletion" <${process.env.EMAIL_USER}>`,
+            to: adminEmail,
+            subject: '⚠️ New Account Deletion Request - ILY mart',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px; background-color: #fcfcfc;">
+                    <h2 style="color: #dc2626; margin-top: 0;">⚠️ New Account Deletion Request</h2>
+                    <p>A user has submitted a request to delete their account and all associated data from ILY mart.</p>
+                    
+                    <div style="background-color: #fee2e2; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #dc2626;">
+                        <p style="margin: 5px 0;"><strong>Request Type:</strong> Data Deletion Request</p>
+                        <p style="margin: 5px 0;"><strong>User Email:</strong> <a href="mailto:${email}">${email}</a></p>
+                        <p style="margin: 5px 0;"><strong>Reason:</strong> ${reason || 'Not specified'}</p>
+                        <p style="margin: 5px 0;"><strong>Submitted at:</strong> ${new Date().toLocaleString()}</p>
+                    </div>
+                    
+                    <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <h4 style="margin: 0 0 10px 0; color: #1f2937;">Next Steps for Admin:</h4>
+                        <ol style="margin: 0; padding-left: 20px; color: #4b5563; font-size: 14px;">
+                            <li>Verify the user exists in your database (email: ${email}).</li>
+                            <li>Export and delete the user's data from active databases and records.</li>
+                            <li>Send a confirmation email to <strong>${email}</strong> once completed.</li>
+                        </ol>
+                    </div>
+                    
+                    <p style="color: #9ca3af; font-size: 11px; margin-top: 30px; text-align: center;">
+                        This is an automated notification from your ILY mart server.
+                    </p>
+                </div>
+            `
+        };
+
+        const info = await getTransporter().sendMail(mailOptions);
+        console.log('✅ Account deletion request email sent successfully to', adminEmail);
+        return { success: true, messageId: info.messageId };
+    } catch (error) {
+        console.error('❌ Failed to send account deletion request email:', error);
+        throw error;
+    }
+};
+
+
