@@ -141,7 +141,7 @@ const DeleteAccount = () => {
                                 <Mail size={14} />
                                 <span>Or email us directly at: <strong className="text-[#2E5A2E]">ilymart.28@gmail.com</strong></span>
                             </div>
-                            <p className="text-xs text-gray-400 mt-2">We will process your request within 30 days.</p>
+                            <p className="text-xs text-gray-400 mt-2">We will process your request within 7 days.</p>
                         </div>
                     </div>
                 ) : (
@@ -149,7 +149,7 @@ const DeleteAccount = () => {
                         <CheckCircle className="mx-auto text-green-500" size={56} />
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Request Submitted</h2>
                         <p className="text-gray-600 dark:text-gray-300">
-                            Your account deletion request has been sent to our team. We will process it within <strong>30 days</strong> and send a confirmation to <strong>{email}</strong>.
+                            Your account deletion request has been sent to our team. We will process it within <strong>7 days</strong> and send a confirmation to <strong>{email}</strong>.
                         </p>
                         <button
                             onClick={() => navigate('/')}

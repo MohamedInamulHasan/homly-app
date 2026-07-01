@@ -380,7 +380,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                 </div>
                 <div className="flex items-center justify-between mt-2 w-full pt-2">
                     <span className={`text-base font-bold ${!isStoreOpenCheck || !isAvailable ? 'text-gray-400' : 'text-[#2E5A2E] dark:text-[#CBF9B2]'}`}>
-                        ₹{Number(product.price || 0).toFixed(0)}
+                        ₹{Number((product.price || 0) * (cartQuantity || 1)).toFixed(0)}
                     </span>
 
                     {isFastPurchase && isAvailable && (

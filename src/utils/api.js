@@ -7,22 +7,23 @@ import axios from 'axios';
 // 2. Localhost (desktop): http://127.0.0.1:5173 -> http://127.0.0.1:5000/api
 // 3. Mobile LAN (dynamic): http://192.168.x.x:5173 -> http://192.168.x.x:5000/api
 const hostname = window.location.hostname;
-const isProduction = hostname.includes('vercel.app') || hostname.includes('onrender.com') || (import.meta.env.MODE === 'production');
+const isProduction = import.meta.env.MODE === 'production';
 
-// Prioritize environment variable, then production fallback, then localhost
+// In production, always use the environment variable.
+// In development, fall back to localhost or LAN address.
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (
-    isProduction
-        ? 'https://homly-backend-aash.onrender.com/api' 
-        : (hostname === 'localhost' || hostname === '127.0.0.1'
-            ? 'http://127.0.0.1:5000/api'
-            : `http://${hostname}:5000/api`)
+    hostname === 'localhost' || hostname === '127.0.0.1'
+        ? 'http://127.0.0.1:5000/api'
+        : `http://${hostname}:5000/api`
 );
 
 // Log the API URL being used (helpful for debugging)
-console.log('%c🔗 API Configuration', 'color: #3b82f6; font-weight: bold; font-size: 14px;');
-console.log('📡 Base URL:', API_BASE_URL);
-console.log('🌍 Environment:', import.meta.env.MODE);
-console.log('---');
+if (import.meta.env.DEV) {
+    console.log('%c🔗 API Configuration', 'color: #3b82f6; font-weight: bold; font-size: 14px;');
+    console.log('📡 Base URL:', API_BASE_URL);
+    console.log('🌍 Environment:', import.meta.env.MODE);
+    console.log('---');
+}
 
 // Create axios instance with base configuration
 const api = axios.create({
@@ -134,6 +135,8 @@ export const apiService = {
     register: (data) => api.post('/users/register', data),
     googleAuth: (data) => api.post('/users/google', data),
     login: (data) => api.post('/users/login', data),
+    sendOtp: (data) => api.post('/users/send-otp', data),
+    verifyOtp: (data) => api.post('/users/verify-otp', data),
     logout: () => api.post('/users/logout'),
     forgotPassword: (email) => api.post('/users/forgotpassword', { email }),
     resetPassword: (token, password) => api.put(`/users/resetpassword/${token}`, { password }),

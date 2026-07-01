@@ -64,7 +64,8 @@ export const DataProvider = ({ children }) => {
         deliveryTimes: [],
         deliveryTimingType: 'permanent', // Default to permanent as requested
         maintenanceMode: false, // Default false
-        maintenanceMessage: '' // Custom message for maintenance
+        maintenanceMessage: '', // Custom message for maintenance
+        allCategoryImage: '' // Virtual "All" category image
     });
 
     // Global Fast Purchase Mode State (User-Specific)
@@ -904,7 +905,8 @@ export const DataProvider = ({ children }) => {
                 const settingsMap = {
                     deliveryTimes: [],
                     deliveryTimingType: 'permanent',
-                    maintenanceMode: false
+                    maintenanceMode: false,
+                    allCategoryImage: ''
                 };
 
                 if (Array.isArray(response.data)) {
@@ -913,6 +915,7 @@ export const DataProvider = ({ children }) => {
                         if (setting.key === 'delivery_timing_type') settingsMap.deliveryTimingType = setting.value;
                         if (setting.key === 'maintenance_mode') settingsMap.maintenanceMode = setting.value;
                         if (setting.key === 'maintenance_message') settingsMap.maintenanceMessage = setting.value;
+                        if (setting.key === 'all_category_image') settingsMap.allCategoryImage = setting.value;
                     });
                 }
 
@@ -979,6 +982,20 @@ export const DataProvider = ({ children }) => {
         }
     };
 
+    const updateAllCategoryImage = async (url) => {
+        try {
+            const response = await apiService.settings.update('all_category_image', url);
+            if (response.success && response.data) {
+                setSettings(prev => ({ ...prev, allCategoryImage: response.data.value }));
+                return true;
+            }
+            return false;
+        } catch (err) {
+            console.error('Failed to update all category image setting:', err);
+            throw err;
+        }
+    };
+
     const value = {
         products,
         stores,
@@ -1034,6 +1051,7 @@ export const DataProvider = ({ children }) => {
         updateDeliveryTimingType,
         updateMaintenanceMode,
         updateMaintenanceMessage,
+        updateAllCategoryImage,
         fetchSettings, // Export fetch function for refresh
         fastMode,
         toggleFastMode,

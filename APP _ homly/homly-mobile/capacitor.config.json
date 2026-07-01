@@ -1,10 +1,9 @@
 {
-  "appId": "com.homly.app",
+  "appId": "com.ilayangudimart.app",
   "appName": "ILY mart",
   "webDir": "public",
   "bundledWebRuntime": false,
   "server": {
-    "url": "https://homly-app.vercel.app/",
     "androidScheme": "https",
     "cleartext": true,
     "allowNavigation": [

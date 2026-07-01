@@ -2100,10 +2100,9 @@ const CategoryManagement = () => {
     });
     const [newSubcategory, setNewSubcategory] = useState(''); // For adding new subcategories
 
-    // "All" category image (stored in localStorage)
-    const [allCategoryImage, setAllCategoryImage] = useState(
-        () => localStorage.getItem('allCategoryImage') || ''
-    );
+    // "All" category image (stored in database settings)
+    const { settings, updateAllCategoryImage } = useData();
+    const allCategoryImage = settings?.allCategoryImage || '';
     const [editingAllImage, setEditingAllImage] = useState(false);
 
     // Local state for DnD
@@ -2125,8 +2124,7 @@ const CategoryManagement = () => {
         if (!file) return;
         try {
             const url = await uploadImage(file);
-            setAllCategoryImage(url);
-            localStorage.setItem('allCategoryImage', url);
+            await updateAllCategoryImage(url);
             setEditingAllImage(false);
         } catch (err) {
             alert(t('Failed to upload image'));

@@ -145,6 +145,43 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const sendOtp = async (emailOrMobile) => {
+        try {
+            setError(null);
+            await apiService.sendOtp({ emailOrMobile });
+            return true;
+        } catch (err) {
+            setError(
+                err.response && err.response.data.message
+                    ? err.response.data.message
+                    : err.message
+            );
+            return false;
+        }
+    };
+
+    const verifyOtp = async (emailOrMobile, otp) => {
+        try {
+            setError(null);
+            const data = await apiService.verifyOtp({ emailOrMobile, otp });
+
+            setUser(data.data);
+            localStorage.setItem('userInfo', JSON.stringify(data.data));
+            if (data.token) {
+                localStorage.setItem('authToken', data.token);
+            }
+            window.dispatchEvent(new Event('userChanged'));
+            return true;
+        } catch (err) {
+            setError(
+                err.response && err.response.data.message
+                    ? err.response.data.message
+                    : err.message
+            );
+            return false;
+        }
+    };
+
     const googleLogin = async (authData) => {
         try {
             setError(null);
@@ -203,7 +240,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, setUser: updateUserState, login, register, googleLogin, logout, loading, error, refreshUser }}>
+        <AuthContext.Provider value={{ user, setUser: updateUserState, login, register, sendOtp, verifyOtp, googleLogin, logout, loading, error, refreshUser }}>
             {children}
         </AuthContext.Provider>
     );

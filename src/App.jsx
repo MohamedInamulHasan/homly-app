@@ -48,36 +48,7 @@ import ConnectionStatus from './components/ConnectionStatus';
 import { useState } from 'react';
 
 import ScrollToTop from './components/ScrollToTop';
-import { App as CapacitorApp } from '@capacitor/app';
 
-const DeepLinkHandler = () => {
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        // Only register deep link listener when running inside Capacitor (native app)
-        if (!window.Capacitor?.isNativePlatform?.()) return;
-
-        let listenerHandle;
-        const setupDeepLinks = async () => {
-            try {
-                listenerHandle = await CapacitorApp.addListener('appUrlOpen', (data) => {
-                    const slug = data.url.split('homly-app.vercel.app').pop();
-                    if (slug) {
-                        navigate(slug);
-                    }
-                });
-            } catch (err) {
-                console.error('Deep link setup failed:', err);
-            }
-        };
-
-        setupDeepLinks();
-
-        return () => {
-            listenerHandle?.remove?.();
-        };
-    }, [navigate]);
-};
 
 const HomeWithRedirect = () => {
     const { user, loading } = useAuth();
@@ -228,7 +199,6 @@ function App() {
         <AuthProvider>
             <SocketProvider>
                 <Router>
-                    <DeepLinkHandler />
                     <RoleRedirectHandler />
                     <NotificationOverlay />
 

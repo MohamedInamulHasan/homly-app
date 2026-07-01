@@ -1,4 +1,4 @@
-package com.homly.app;
+package com.ilayangudimart.app;
 
 import android.Manifest;
 import android.content.pm.PackageManager;

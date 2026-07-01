@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ShieldCheck, Lock, Eye, FileText } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, Lock, Eye, FileText, Database, Trash2, Mail } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const PrivacyPolicy = () => {
@@ -39,54 +39,58 @@ const PrivacyPolicy = () => {
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('Introduction')}</h2>
                         </div>
                         <p className="leading-relaxed">
-                            Welcome to Homly. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you as to how we look after your personal data when you visit our application and tell you about your privacy rights.
+                            Welcome to <strong>ILY mart</strong>, a mobile application developed and operated by <strong>Ilayangudi Mart</strong> (Package ID: <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded text-sm">com.ilayangudimart.app</code>). This Privacy Policy explains how we collect, use, and protect your personal data when you use the ILY mart app.
                         </p>
                     </section>
 
                     <section>
                         <div className="flex items-center gap-3 mb-4">
                             <Eye className="text-[#2E5A2E]" size={24} />
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('Data We Collect')}</h2>
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('Data Collection')}</h2>
                         </div>
-                        <p className="mb-4">We may collect, use, store and transfer different kinds of personal data about you which we have grouped together as follows:</p>
-                        <ul className="list-disc pl-5 space-y-2">
-                            <li><strong>Identity Data:</strong> Includes first name, last name, and username.</li>
-                            <li><strong>Contact Data:</strong> Includes email address and telephone numbers.</li>
-                            <li><strong>Location Data:</strong> Includes your delivery address and GPS location to provide local services.</li>
+                        <p className="mb-2">We collect the following information to provide and improve our services:</p>
+                        <ul className="list-disc pl-5 space-y-1 mb-4">
+                            <li><strong>Personal Identification:</strong> Name, phone number, and delivery address.</li>
+                            <li><strong>Device Information:</strong> Device model, operating system version, and unique device identifiers.</li>
+                            <li><strong>Location Data:</strong> Precise location for accurate delivery services.</li>
                         </ul>
-                        <p className="mt-4 italic text-sm text-[#2E5A2E] bg-[#E8F5E9] p-3 rounded-xl">
-                            <strong>Note:</strong> Homly exclusively uses <strong>Cash on Delivery (COD)</strong>. We do not collect or store credit card details or any other online payment information.
+                        <p className="italic text-sm text-[#2E5A2E] bg-[#E8F5E9] p-3 rounded-xl">
+                            <strong>Note:</strong> We exclusively use Cash on Delivery (COD). We do not collect or store financial or payment card information.
                         </p>
+                    </section>
+
+                    <section>
+                        <div className="flex items-center gap-3 mb-4">
+                            <Database className="text-[#2E5A2E]" size={24} />
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('Data Usage & Sharing')}</h2>
+                        </div>
+                        <p>Your data is used solely to fulfill orders, communicate updates, and enhance app functionality. We do not sell your personal data to third parties. We may share data with service providers only as necessary to perform delivery services.</p>
+                    </section>
+
+                    <section>
+                        <div className="flex items-center gap-3 mb-4">
+                            <Trash2 className="text-[#2E5A2E]" size={24} />
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('Data Retention & Deletion')}</h2>
+                        </div>
+                        <p>We retain your information as long as your account is active. You have the right to request the deletion of your account and associated personal data at any time by contacting us via email.</p>
                     </section>
 
                     <section>
                         <div className="flex items-center gap-3 mb-4">
                             <Lock className="text-[#2E5A2E]" size={24} />
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('How We Use Your Data')}</h2>
-                        </div>
-                        <p className="mb-4">We will only use your personal data when the law allows us to. Most commonly, we will use your personal data in the following circumstances:</p>
-                        <ul className="list-disc pl-5 space-y-2">
-                            <li>To register you as a new customer.</li>
-                            <li>To process and deliver your orders.</li>
-                            <li>To manage our relationship with you (e.g. notifying you about changes to our terms or privacy policy).</li>
-                            <li>To improve our website, products/services, and user experience.</li>
-                        </ul>
-                    </section>
-
-                    <section>
-                        <div className="flex items-center gap-3 mb-4">
-                            <FileText className="text-[#2E5A2E]" size={24} />
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('Your Legal Rights')}</h2>
                         </div>
-                        <p className="leading-relaxed">
-                            Under certain circumstances, you have rights under data protection laws in relation to your personal data, including the right to request access, correction, erasure, restriction, transfer, or to object to processing.
-                        </p>
+                        <p>Under applicable data protection laws, you have the right to access, rectify, or erase your personal data. We are committed to ensuring your privacy and protecting your rights as a user of ILY mart.</p>
                     </section>
 
                     <section className="pt-6 border-t border-gray-100 dark:border-gray-700">
-                        <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{t('Contact Us')}</h2>
-                        <p>If you have any questions about this privacy policy or our privacy practices, please contact us at:</p>
+                        <div className="flex items-center gap-3 mb-4">
+                            <Mail className="text-[#2E5A2E]" size={24} />
+                            <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t('Contact Us')}</h2>
+                        </div>
+                        <p>Developed by <strong>Ilayangudi Mart</strong>. If you have questions about this Privacy Policy or our privacy practices, please contact us at:</p>
                         <p className="mt-2 font-bold text-[#2E5A2E]">ilymart.28@gmail.com</p>
+                        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">App: <strong>ILY mart</strong> &nbsp;|&nbsp; Package: <strong>com.ilayangudimart.app</strong> &nbsp;|&nbsp; Developer: <strong>Ilayangudi Mart</strong></p>
                     </section>
                 </div>
             </div>

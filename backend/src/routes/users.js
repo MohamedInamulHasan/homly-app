@@ -14,7 +14,9 @@ import {
     logoutUser,
     testEmailController,
     googleAuth,
-    requestAccountDeletion
+    requestAccountDeletion,
+    sendOTP,
+    verifyOTP
 } from '../controllers/userController.js';
 
 import { protect, adminOnly } from '../middleware/authMiddleware.js';
@@ -24,6 +26,8 @@ const router = express.Router();
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.post('/google', googleAuth);
+router.post('/send-otp', sendOTP);
+router.post('/verify-otp', verifyOTP);
 router.post('/forgotpassword', forgotPassword);
 router.put('/resetpassword/:resettoken', resetPassword);
 router.post('/logout', logoutUser);

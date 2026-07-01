@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { API_BASE_URL } from '../../utils/api';
 import { useLanguage } from '../../context/LanguageContext';
+import { useData } from '../../context/DataContext';
 
 const CategorySection = ({ categories = [], isLoading = false, selectedCategory = 'All', onSelectCategory }) => {
     const { t, language } = useLanguage();
+    const { settings } = useData();
     const [isExpanded, setIsExpanded] = useState(false);
-    const allCategoryImage = localStorage.getItem('allCategoryImage') || '';
+    const allCategoryImage = settings?.allCategoryImage || '';
 
     if (isLoading) {
         return (

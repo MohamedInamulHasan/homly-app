@@ -52,6 +52,36 @@ export const sendPasswordResetEmail = async (email, resetUrl) => {
     }
 };
 
+export const sendOTPEmail = async (email, otp) => {
+    try {
+        const mailOptions = {
+            from: `"ILY mart Support" <${process.env.EMAIL_USER}>`,
+            to: email,
+            subject: 'Your ILY mart Verification Code',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px;">
+                    <h2 style="color: #2E5A2E; text-align: center;">ILY mart Verification Code</h2>
+                    <p style="font-size: 16px; color: #333;">Hello,</p>
+                    <p style="font-size: 16px; color: #333;">Please use the following 6-digit verification code to sign in/up to your account. This code is valid for 5 minutes:</p>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <span style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #2E5A2E; background-color: #f3f4f6; padding: 12px 24px; border-radius: 8px; border: 1px solid #e5e7eb;">${otp}</span>
+                    </div>
+                    <p style="font-size: 14px; color: #666; text-align: center;">If you did not request this verification code, please ignore this email.</p>
+                    <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 30px 0;" />
+                    <p style="font-size: 12px; color: #999; text-align: center;">© ${new Date().getFullYear()} ILY mart. All rights reserved.</p>
+                </div>
+            `
+        };
+
+        const info = await getTransporter().sendMail(mailOptions);
+        console.log('✅ OTP email sent:', info.messageId);
+        return { success: true, messageId: info.messageId };
+    } catch (error) {
+        console.error('❌ Failed to send OTP email:', error);
+        throw error;
+    }
+};
+
 export const sendOrderNotificationEmail = async (order) => {
     try {
         const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER;

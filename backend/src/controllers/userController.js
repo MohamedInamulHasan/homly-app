@@ -1,10 +1,11 @@
 import User from '../models/User.js';
 import Settings from '../models/Settings.js';
 import LoginLog from '../models/LoginLog.js';
+import OTP from '../models/OTP.js';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import axios from 'axios';
-import { sendPasswordResetEmail, sendDeleteAccountRequestEmail } from '../services/emailService.js';
+import { sendPasswordResetEmail, sendDeleteAccountRequestEmail, sendOTPEmail } from '../services/emailService.js';
 import { OAuth2Client } from 'google-auth-library';
 import { getIO } from '../socket.js';
 
@@ -654,7 +655,197 @@ export const requestAccountDeletion = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
+};// @desc    Send OTP to email or mobile
+// @route   POST /api/users/send-otp
+// @access  Public
+export const sendOTP = async (req, res, next) => {
+    try {
+        const { emailOrMobile } = req.body;
+
+        if (!emailOrMobile) {
+            return res.status(400).json({ success: false, message: 'Email or Mobile number is required' });
+        }
+
+        const trimmedInput = emailOrMobile.trim();
+        const isEmail = /^\S+@\S+\.\S+$/.test(trimmedInput);
+        const isMobile = /^\+?[0-9]{10,15}$/.test(trimmedInput.replace(/[\s\-\(\)]/g, ''));
+
+        if (!isEmail && !isMobile) {
+            return res.status(400).json({ success: false, message: 'Please provide a valid email or mobile number' });
+        }
+
+        // Generate 6-digit code
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes expiration
+
+        // Save OTP to database (upsert for the input)
+        const key = trimmedInput.toLowerCase();
+        await OTP.findOneAndUpdate(
+            { emailOrMobile: key },
+            { otp, expiresAt },
+            { upsert: true, new: true, setDefaultsOnInsert: true }
+        );
+
+        if (isEmail) {
+            // Send OTP via Brevo SMTP
+            await sendOTPEmail(key, otp);
+            console.log(`📧 OTP sent to email ${key}: ${otp}`);
+        } else {
+            // Send OTP via Brevo Transactional SMS API
+            const formattedMobile = trimmedInput.replace(/[^0-9]/g, '');
+            // If it's a 10-digit number without country code, prefix India (91)
+            const recipient = formattedMobile.length === 10 ? '91' + formattedMobile : formattedMobile;
+
+            let smsSent = false;
+            if (process.env.SMTP_PASS && process.env.SMTP_PASS.startsWith('xsmtpsib-')) {
+                try {
+                    const response = await axios.post(
+                        'https://api.brevo.com/v3/transactionalSMS/sms',
+                        {
+                            sender: 'ILYmart',
+                            recipient,
+                            content: `Your ILY mart verification code is: ${otp}. Valid for 5 minutes.`,
+                            type: 'transactional'
+                        },
+                        {
+                            headers: {
+                                'api-key': process.env.SMTP_PASS,
+                                'Content-Type': 'application/json'
+                            }
+                        }
+                    );
+                    if (response.data) {
+                        console.log(`✅ Brevo SMS API response:`, response.data);
+                        smsSent = true;
+                    }
+                } catch (smsError) {
+                    console.warn(`⚠️ Brevo SMS API failed:`, smsError.response?.data || smsError.message);
+                }
+            } else {
+                console.warn(`⚠️ Brevo SMS API skipped: No Brevo API Key found in SMTP_PASS`);
+            }
+
+            // Developer fallback console log (always printed for easy testing)
+            console.log(`\n🔑 [DEVELOPER TEST] Mobile OTP for ${trimmedInput} is: ${otp}\n`);
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Verification code sent successfully'
+        });
+    } catch (error) {
+        next(error);
+    }
 };
 
+// @desc    Verify OTP and log in / register
+// @route   POST /api/users/verify-otp
+// @access  Public
+export const verifyOTP = async (req, res, next) => {
+    try {
+        const { emailOrMobile, otp } = req.body;
 
+        if (!emailOrMobile || !otp) {
+            return res.status(400).json({ success: false, message: 'Email/Mobile and OTP are required' });
+        }
 
+        const key = emailOrMobile.trim().toLowerCase();
+
+        // Find OTP record
+        const otpRecord = await OTP.findOne({ emailOrMobile: key, otp });
+
+        if (!otpRecord) {
+            return res.status(400).json({ success: false, message: 'Invalid verification code' });
+        }
+
+        if (otpRecord.expiresAt < new Date()) {
+            await OTP.deleteOne({ _id: otpRecord._id });
+            return res.status(400).json({ success: false, message: 'Verification code has expired' });
+        }
+
+        // Delete verified OTP code
+        await OTP.deleteOne({ _id: otpRecord._id });
+
+        const isEmail = /^\S+@\S+\.\S+$/.test(key);
+
+        let user = null;
+
+        if (isEmail) {
+            user = await User.findOne({ email: key });
+        } else {
+            const rawMobile = key.replace(/[^0-9]/g, '');
+            // Search robustly with or without country code prefixes
+            user = await User.findOne({
+                $or: [
+                    { mobile: rawMobile },
+                    { mobile: rawMobile.replace(/^91/, '') },
+                    { mobile: '91' + rawMobile.replace(/^91/, '') }
+                ]
+            });
+        }
+
+        if (user) {
+            // Existing user - Log Login
+            await LoginLog.create({
+                user: user._id,
+                ipAddress: req.ip,
+                device: req.headers['user-agent']
+            });
+            sendTokenResponse(user, 200, res);
+        } else {
+            // New user registration
+            const randomPassword = crypto.randomBytes(16).toString('hex');
+
+            let emailValue = '';
+            let mobileValue = '';
+            let nameValue = '';
+
+            if (isEmail) {
+                emailValue = key;
+                nameValue = key.split('@')[0];
+            } else {
+                const rawMobile = key.replace(/[^0-9]/g, '');
+                mobileValue = rawMobile;
+                emailValue = `mobile_${rawMobile}@ily-mart.com`;
+                nameValue = `User_${rawMobile.slice(-4)}`;
+            }
+
+            // Check for signup bonus
+            let initialCoins = 0;
+            const bonusConfig = await Settings.findOne({ key: 'signup_bonus' });
+            
+            if (bonusConfig && bonusConfig.value?.isEnabled && bonusConfig.value?.remainingLimit > 0) {
+                initialCoins = 1;
+                
+                // Decrement limit
+                bonusConfig.value.remainingLimit -= 1;
+                if (bonusConfig.value.remainingLimit <= 0) {
+                    bonusConfig.value.isEnabled = false;
+                }
+                bonusConfig.markModified('value');
+                await bonusConfig.save();
+            }
+
+            user = await User.create({
+                name: nameValue,
+                email: emailValue,
+                password: randomPassword,
+                mobile: mobileValue,
+                role: ['customer'],
+                coins: initialCoins
+            });
+
+            if (user) {
+                // Log Login
+                await LoginLog.create({
+                    user: user._id,
+                    ipAddress: req.ip,
+                    device: req.headers['user-agent']
+                });
+                sendTokenResponse(user, 201, res);
+            }
+        }
+    } catch (error) {
+        next(error);
+    }
+};

@@ -200,7 +200,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                                 ) : (
                                     <>
                                         <span className="text-base font-bold text-gray-900 dark:text-white">
-                                            ₹{Number(product.price).toFixed(0)}
+                                            ₹{Number(product.price * (quantity || 1)).toFixed(0)}
                                         </span>
                                     </>
                                 )}
