@@ -8,6 +8,7 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
     const { settings } = useData();
     const [isExpanded, setIsExpanded] = useState(false);
     const allCategoryImage = settings?.allCategoryImage || '';
+    const allCategoryName = settings?.allCategoryName || '';
 
     if (isLoading) {
         return (
@@ -70,7 +71,7 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                         )}
                     </div>
                     <span className={`text-[11px] md:text-xs lg:text-sm font-bold transition-colors truncate ${selectedCategory === 'All' ? 'text-[#2E5A2E] dark:text-[#CBF9B2]' : 'text-gray-400'}`}>
-                        {t('All')}
+                        {allCategoryName || t('All')}
                     </span>
                 </div>
 

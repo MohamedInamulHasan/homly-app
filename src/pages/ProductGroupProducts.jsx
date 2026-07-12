@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useProducts } from '../hooks/queries/useProducts';
 import { useLanguage } from '../context/LanguageContext';
-import { useData } from '../context/DataContext'; // Import useData
+import { useData } from '../context/DataContext';
+import { useCart } from '../context/CartContext';
 import SimpleProductCard from '../components/SimpleProductCard';
 import ProductCard from '../components/ProductCard';
 import PullToRefreshLayout from '../components/PullToRefreshLayout';
-import { ChevronLeft, Zap } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Zap } from 'lucide-react';
 import { isStoreOpen, isProductScheduled } from '../utils/storeHelpers';
 import { useStores } from '../hooks/queries/useStores';
 
@@ -15,7 +16,9 @@ const ProductGroupProducts = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const { fastMode, toggleFastMode } = useData(); // Global state
+    const { fastMode, toggleFastMode } = useData();
+    const { cartItems } = useCart();
+    const cartCount = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
 
     // Fetch stores for status check
     const { data: rawStores = [] } = useStores();
@@ -38,12 +41,9 @@ const ProductGroupProducts = () => {
 
             let matchesName;
             if (isExactTitleSearch) {
-                // URL has brackets e.g. "Pizza (100)"
-                // Try 1: exact full-title match  → "Pizza (100)" === "Pizza (100)"
                 const exactMatch = productTitle.toLowerCase() === searchTitle.toLowerCase();
 
                 if (!exactMatch) {
-                    // Try 2: synthetically built title — DB has "Pizza" + unit "100"
                     const searchBase = searchTitle.substring(0, searchTitle.indexOf('(')).trim().toLowerCase();
                     const searchBracket = searchTitle.match(/\(([^)]+)\)/)?.[1]?.toLowerCase() || '';
 
@@ -57,19 +57,14 @@ const ProductGroupProducts = () => {
                     matchesName = true;
                 }
             } else {
-                // Plain base name: match by base title (before any bracket)
                 const baseProductTitle = productTitle.split('(')[0].trim().toLowerCase();
                 matchesName = baseProductTitle === searchTitle.toLowerCase();
             }
 
-            // Consistent availability check (Manual + Time-based)
+            // Consistent availability check (Manual only — timed products show overlay on card)
             if (product.isAvailable === false) return false;
 
-            if (!isProductScheduled(product)) return false;
-
             // Apply storeId filter when present in the URL.
-            // - From store page: storeId IS set → only show that store's products ✅
-            // - From Home page group click: no storeId in URL → show all stores ✅
             let matchesStore = true;
             if (storeIdParam) {
                 const pStoreId = product.storeId?._id || product.storeId;
@@ -79,56 +74,89 @@ const ProductGroupProducts = () => {
             return matchesName && matchesStore;
         })
         .sort((a, b) => {
-            // Sort: Open stores first, then by price
             const storeA = stores.find(s => (s._id || s.id) === (a.storeId?._id || a.storeId));
             const storeB = stores.find(s => (s._id || s.id) === (b.storeId?._id || b.storeId));
-
-            // Default to TRUE (Open) if store is missing
             const isOpenA = storeA ? isStoreOpen(storeA) : true;
             const isOpenB = storeB ? isStoreOpen(storeB) : true;
-
             if (isOpenA && !isOpenB) return -1;
             if (!isOpenA && isOpenB) return 1;
             return Number(a.price) - Number(b.price);
         });
 
+    // Resolved page title
+    const pageTitle = (() => {
+        const fullTitle = t(decodedName);
+        const bracketIndex = fullTitle.indexOf('(');
+        let mainTitle = fullTitle;
+        let bracketText = '';
+
+        if (bracketIndex !== -1) {
+            mainTitle = fullTitle.substring(0, bracketIndex).trim();
+            bracketText = fullTitle.substring(bracketIndex).trim();
+        } else {
+            const firstProduct = groupProducts[0];
+            if (firstProduct) {
+                const pTitle = firstProduct.title || '';
+                const pTitleTa = firstProduct.title_ta || '';
+                const bMatch = pTitle.match(/\(([^)]+)\)/);
+                if (bMatch) bracketText = bMatch[0];
+                else if (pTitleTa && pTitleTa !== pTitle) bracketText = `(${pTitleTa})`;
+            }
+        }
+
+        return `${mainTitle} ${bracketText || ''}`.trim();
+    })();
+
     return (
         <PullToRefreshLayout>
             <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-20 transition-colors duration-200">
-                {/* Clean Header */}
-                <div className="relative max-w-7xl mx-auto px-4 pt-8 pb-2 flex items-center justify-center">
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="absolute left-4 w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-[0_2px_15px_rgba(0,0,0,0.06)] dark:shadow-none text-gray-700 dark:text-gray-300 transition-all active:scale-90 z-10"
-                    >
-                        <ChevronLeft size={28} strokeWidth={1.5} />
-                    </button>
-                    <h1 className="text-xl font-medium text-gray-700 dark:text-gray-300 truncate leading-normal text-center px-16">
-                        {(() => {
-                            const fullTitle = t(decodedName);
-                            const bracketIndex = fullTitle.indexOf('(');
-                            let mainTitle = fullTitle;
-                            let bracketText = '';
 
-                            if (bracketIndex !== -1) {
-                                mainTitle = fullTitle.substring(0, bracketIndex).trim();
-                                bracketText = fullTitle.substring(bracketIndex).trim();
-                            } else {
-                                const firstProduct = groupProducts[0];
-                                if (firstProduct) {
-                                    const pTitle = firstProduct.title || '';
-                                    const pTitleTa = firstProduct.title_ta || '';
-                                    const bMatch = pTitle.match(/\(([^)]+)\)/);
-                                    if (bMatch) bracketText = bMatch[0];
-                                    else if (pTitleTa && pTitleTa !== pTitle) bracketText = `(${pTitleTa})`;
-                                }
-                            }
+                {/* Premium Header — matches home/store page style */}
+                <div className="w-full bg-[#CBF9B2] dark:bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm relative overflow-hidden mb-6">
+                    {/* Decorative blur blob */}
+                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none" />
 
-                            return `${mainTitle} ${bracketText || ''}`;
-                        })()}
-                    </h1>
+                    <div className="relative z-10">
+                        <div className="max-w-7xl mx-auto px-2 relative min-h-[42px]">
+
+                            {/* Back button */}
+                            <button
+                                onClick={() => navigate(-1)}
+                                className="absolute left-2 top-1/2 -translate-y-1/2 w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-white/80 rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50 z-10"
+                            >
+                                <ArrowLeft size={22} />
+                            </button>
+
+                            {/* Centered title */}
+                            <div className="flex flex-col items-center text-center px-14 pt-1 min-w-0">
+                                <h1 className="text-gray-900 text-[18px] font-bold tracking-tight truncate w-full leading-tight">
+                                    {pageTitle}
+                                </h1>
+                                {groupProducts.length > 0 && (
+                                    <p className="text-[#2E5A2E] text-[12px] font-semibold mt-0.5">
+                                        {groupProducts.length} {t('options')}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Cart icon */}
+                            <Link
+                                to="/cart"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-white/80 rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50 z-10"
+                            >
+                                <ShoppingCart size={22} className="text-[#2E5A2E]" />
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center border border-white">
+                                        {cartCount}
+                                    </span>
+                                )}
+                            </Link>
+
+                        </div>
+                    </div>
                 </div>
-                <div className="max-w-7xl mx-auto px-4 py-6">
+
+                <div className="max-w-7xl mx-auto px-4 py-2">
                     {isLoading ? (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                             {[...Array(10)].map((_, i) => (
@@ -148,12 +176,12 @@ const ProductGroupProducts = () => {
                     ) : groupProducts.length > 0 ? (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                             {groupProducts.map(product => (
-                                    <ProductCard 
-                                        key={product._id || product.id} 
-                                        product={product} 
-                                        showCartControls={true} 
-                                        stores={stores}
-                                    />
+                                <ProductCard
+                                    key={product._id || product.id}
+                                    product={product}
+                                    showCartControls={true}
+                                    stores={stores}
+                                />
                             ))}
                         </div>
                     ) : (

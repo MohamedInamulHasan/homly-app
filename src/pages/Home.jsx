@@ -77,11 +77,11 @@ const Home = () => {
     }, [rawCategories, rawProducts]);
 
 
-    // Grouping Logic (Only available products for main categories/sections)
+    // Grouping Logic (show all available products - timed-out ones show overlay)
     const groupedByStore = useMemo(() => {
         const availableProducts = products.filter(p => {
             if (p.isAvailable === false) return false;
-            return isProductScheduled(p);
+            return true; // Timed products still show with an availability overlay
         });
 
         return availableProducts.reduce((acc, product) => {
@@ -97,8 +97,7 @@ const Home = () => {
     const freeProducts = useMemo(() => {
         return products.filter(p => 
             p.isGold === true && 
-            p.isAvailable !== false && 
-            isProductScheduled(p)
+            p.isAvailable !== false
         );
     }, [products]);
 

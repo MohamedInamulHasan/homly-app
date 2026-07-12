@@ -168,6 +168,10 @@ const EditAddress = () => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Location Detection Block */}
                     <div className="relative">
+                        <div className="flex items-center justify-between mb-2 px-1">
+                            <span className="text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest">{t('GPS Location')}</span>
+                            <span className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">{t('Optional')}</span>
+                        </div>
                         {isDetecting && (
                             <motion.div
                                 initial={{ scale: 0.8, opacity: 0 }}
@@ -226,7 +230,7 @@ const EditAddress = () => {
                                         {isDetecting ? t('Finding location...') : formData.location ? t('Location Attached') : t('Pin exact GPS')}
                                     </h3>
                                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
-                                        {isDetecting ? t('Please wait while we sync labels...') : formData.location ? t('Fast delivery with precise coordinates') : t('Tap to use current location')}
+                                        {isDetecting ? t('Please wait while we sync labels...') : formData.location ? t('Tap to update location') : t('Helps deliver faster — tap to attach')}
                                     </p>
                                 </div>
                             </div>
@@ -236,6 +240,16 @@ const EditAddress = () => {
                                  <ArrowLeft size={16} className={`transition-transform duration-300 ${isDetecting ? 'rotate-90' : 'rotate-180'}`} />
                             </div>
                         </button>
+                        {/* Clear location — only visible when attached */}
+                        {formData.location && !isDetecting && (
+                            <button
+                                type="button"
+                                onClick={() => setFormData(prev => ({ ...prev, location: '' }))}
+                                className="mt-2 w-full text-center text-xs text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors py-1"
+                            >
+                                {t('Remove location')}
+                            </button>
+                        )}
                     </div>
 
                     {/* Form Fields */}

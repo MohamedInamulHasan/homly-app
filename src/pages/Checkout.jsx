@@ -175,14 +175,6 @@ const Checkout = () => {
             return;
         }
 
-        // Validate Location (Require GPS location)
-        if (!formData.location) {
-            setIsEditingAddress(true); // Open edit mode to show the location button
-            setLocationMessage({ show: true, type: 'error', text: t('Please share your current location for delivery') });
-            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll up to show the message and location button
-            return;
-        }
-
         // Validate Mobile Number (10 digits)
         if (!/^\d{10}$/.test(formData.mobile)) {
             alert(t('Please enter a valid 10-digit mobile number'));
@@ -358,6 +350,10 @@ const Checkout = () => {
                                 <div className="space-y-5">
                                     {/* Location Detection Block */}
                                     <div className="relative mb-6">
+                                        <div className="flex items-center justify-between mb-2 px-1">
+                                            <span className="text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest">{t('GPS Location')}</span>
+                                            <span className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">{t('Optional')}</span>
+                                        </div>
                                         {isLocationSearching && (
                                             <motion.div
                                                 initial={{ scale: 0.8, opacity: 0 }}
@@ -428,7 +424,7 @@ const Checkout = () => {
                                                         {isLocationSearching ? t('Finding location...') : formData.location ? t('Location Attached') : t('Pin exact GPS')}
                                                     </h3>
                                                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
-                                                        {isLocationSearching ? t('Please wait while we sync labels...') : formData.location ? t('Fast delivery with precise coordinates') : t('Tap to use current location')}
+                                                        {isLocationSearching ? t('Please wait while we sync labels...') : formData.location ? t('Tap to update location') : t('Helps deliver faster — tap to attach')}
                                                     </p>
                                                 </div>
                                             </div>
@@ -438,6 +434,16 @@ const Checkout = () => {
                                                  <ArrowLeft size={16} className={`transition-transform duration-300 ${isLocationSearching ? 'rotate-90' : 'rotate-180'}`} />
                                             </div>
                                         </button>
+                                        {/* Clear location — only visible when attached */}
+                                        {formData.location && !isLocationSearching && (
+                                            <button
+                                                type="button"
+                                                onClick={() => setFormData(prev => ({ ...prev, location: '' }))}
+                                                className="mt-2 w-full text-center text-xs text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors py-1"
+                                            >
+                                                {t('Remove location')}
+                                            </button>
+                                        )}
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

@@ -5,7 +5,7 @@ import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
 import { API_BASE_URL } from '../utils/api';
-import { isStoreOpen } from '../utils/storeHelpers';
+import { isStoreOpen, isProductScheduled, getProductTimeLabel } from '../utils/storeHelpers';
 import { useState, useEffect } from 'react';
 
 const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSave = false }) => {
@@ -47,7 +47,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
             return;
         }
 
-        if (!isAvailable || !isStoreOpenCheck) return;
+        if (!isAvailable || !isStoreOpenCheck || !isScheduled) return;
 
         if (cartQuantity > 0) {
             // If already in cart, show quantity controls
@@ -267,23 +267,23 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
     }
 
     const isAvailable = product.isAvailable !== false; // Default to true
-
-    if (!isAvailable) return null; // Hide if unavailable
+    const isScheduled = isProductScheduled(product);
+    const timeLabel = !isScheduled ? getProductTimeLabel(product) : null;
 
     return (
         <Link
-            to={(isStoreOpenCheck && isAvailable) ? `/product/${productId}` : '#'}
+            to={(isStoreOpenCheck && isAvailable && isScheduled) ? `/product/${productId}` : '#'}
             onClick={(e) => {
-                if (!isAvailable || !isStoreOpenCheck) {
+                if (!isAvailable || !isStoreOpenCheck || !isScheduled) {
                     e.preventDefault();
                     return;
                 }
                 handleClick(e);
             }}
-            className={`rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 ${isStoreOpenCheck && isAvailable ? 'hover:scale-[1.01]' : 'cursor-default'
+            className={`rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 ${isStoreOpenCheck && isAvailable && isScheduled ? 'hover:scale-[1.01]' : 'cursor-default'
                 }`}
         >
-            <div className={`relative pb-[100%] m-1 rounded-2xl overflow-hidden bg-[#F9FAFB] ${(!isStoreOpenCheck || !isAvailable) ? 'opacity-60 grayscale-[0.5]' : ''}`}>
+            <div className={`relative pb-[100%] m-1 rounded-2xl overflow-hidden bg-[#F9FAFB] ${(!isStoreOpenCheck || !isAvailable || !isScheduled) ? 'opacity-60 grayscale-[0.5]' : ''}`}>
                     <div className="absolute top-0 left-0 flex flex-col items-start gap-0 z-[25] pointer-events-none">
                         {product.isGold && (
                             <span className="bg-[#16A34A] text-white text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-br-lg shadow-sm">
@@ -330,6 +330,14 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                         <span className="bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg transform -rotate-12 border-2 border-white">
                             {t('OUT OF STOCK')}
                         </span>
+                    </div>
+                )}
+                {isAvailable && isStoreOpenCheck && !isScheduled && timeLabel && (
+                    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center backdrop-blur-[1px] bg-black/10 gap-1">
+                        <div className="bg-white/95 dark:bg-gray-900/95 shadow-lg rounded-xl px-3 py-2 flex flex-col items-center gap-0.5 mx-2">
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">{t('Available')}</span>
+                            <span className="text-[11px] font-bold text-gray-800 dark:text-white leading-tight text-center">{timeLabel}</span>
+                        </div>
                     </div>
                 )}
 

@@ -73,7 +73,7 @@ const SavedProducts = () => {
                         {groupProducts(sortProductsByGoldAndOpen(savedProducts, stores), stores)
                             .filter(product => {
                                 if (product.isAvailable === false) return false;
-                                return isProductScheduled(product);
+                                return true; // Timed products show with availability overlay on card
                             })
                             .map((product) => {
                                 // Ensure product is an object (in case populate failed or mixed types)

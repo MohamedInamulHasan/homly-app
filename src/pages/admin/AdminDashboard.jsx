@@ -2100,10 +2100,10 @@ const CategoryManagement = () => {
     });
     const [newSubcategory, setNewSubcategory] = useState(''); // For adding new subcategories
 
-    // "All" category image (stored in database settings)
-    const { settings, updateAllCategoryImage } = useData();
+    // "All" category image/name (stored in database settings)
+    const { settings, updateAllCategoryImage, updateAllCategoryName } = useData();
     const allCategoryImage = settings?.allCategoryImage || '';
-    const [editingAllImage, setEditingAllImage] = useState(false);
+    const allCategoryName = settings?.allCategoryName || '';
 
     // Local state for DnD
     const [items, setItems] = useState([]);
@@ -2214,6 +2214,16 @@ const CategoryManagement = () => {
         setView('form');
     };
 
+    const handleEditAll = () => {
+        setEditingCategory({ id: 'all', name: allCategoryName || t('All'), image: allCategoryImage, isAll: true });
+        setFormData({
+            name: allCategoryName || t('All'),
+            image: allCategoryImage,
+            subcategories: []
+        });
+        setView('form');
+    };
+
     const handleDelete = async (id) => {
         if (window.confirm(t('Are you sure you want to delete this category?'))) {
             try {
@@ -2231,7 +2241,16 @@ const CategoryManagement = () => {
         e.preventDefault();
 
         try {
-            if (editingCategory) {
+            if (editingCategory?.isAll) {
+                // Save the "All" category name and image to settings
+                if (formData.name && formData.name !== (allCategoryName || t('All'))) {
+                    await updateAllCategoryName(formData.name);
+                }
+                if (formData.image && formData.image !== allCategoryImage) {
+                    await updateAllCategoryImage(formData.image);
+                }
+                alert(t('Category updated successfully!'));
+            } else if (editingCategory) {
                 const updateData = { ...formData };
                 // Check if image is a backend proxy URL (hasn't been changed)
                 // If it contains API_BASE_URL or '/api/categories', don't send it
@@ -2329,13 +2348,19 @@ const CategoryManagement = () => {
                                             </td>
                                             <td className="p-4 font-medium text-gray-900 dark:text-white">
                                                 <div className="flex items-center gap-2">
-                                                    {t('All')}
+                                                    {allCategoryName || t('All')}
                                                     <span className="text-[10px] bg-[#2E5A2E] text-white px-2 py-0.5 rounded-full font-bold">SYSTEM</span>
                                                 </div>
                                             </td>
                                             <td className="p-4">
                                                 <div className="flex gap-2 items-center">
-
+                                                    <button
+                                                        onClick={handleEditAll}
+                                                        className="p-2 text-[#2E5A2E] hover:bg-[#E8F5E9] rounded-xl transition-colors"
+                                                        title={t('Edit')}
+                                                    >
+                                                        <Edit2 size={18} />
+                                                    </button>
                                                     <span className="text-xs text-gray-400 italic">{t('Cannot be deleted')}</span>
                                                 </div>
                                             </td>
@@ -2448,7 +2473,7 @@ const CategoryManagement = () => {
                             />
                         </div>
 
-                        <div>
+                        {!editingCategory?.isAll && <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Subcategories')} ({t('Optional')})</label>
                             <div className="space-y-3">
                                 {/* Input field with add button */}
@@ -2515,7 +2540,7 @@ const CategoryManagement = () => {
                                 )}
                                 <p className="text-xs text-gray-500 dark:text-gray-400">{t('Add subcategories for this main category (e.g., for Grocery: Spices, Snacks, Beverages)')}</p>
                             </div>
-                        </div>
+                        </div>}
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Category Image')}</label>

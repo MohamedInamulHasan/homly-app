@@ -201,6 +201,25 @@ export const isProductScheduled = (product) => {
     }
 };
 
+// Get the formatted availability label for a timed product
+// e.g. "10:00 AM – 2:00 PM"
+export const getProductTimeLabel = (product) => {
+    if (!product || !product.useTimeLimit) return null;
+    const open = formatTime12h(product.openingTime || '00:00');
+    const close = formatTime12h(product.closingTime || '23:59');
+    return `${open} – ${close}`;
+};
+
+// Get the formatted availability label for a timed store
+// e.g. "9:00 AM – 9:00 PM"
+export const getStoreTimeLabel = (store) => {
+    if (!store || store.timingType === 'permanent' || store.isManuallyClosed) return null;
+    if (store.openingTime && store.closingTime) {
+        return `${formatTime12h(store.openingTime)} – ${formatTime12h(store.closingTime)}`;
+    }
+    return null;
+};
+
 export const calculateDeliveryCharge = (items) => {
     if (!items || items.length === 0) return 0;
 

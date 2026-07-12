@@ -65,7 +65,8 @@ export const DataProvider = ({ children }) => {
         deliveryTimingType: 'permanent', // Default to permanent as requested
         maintenanceMode: false, // Default false
         maintenanceMessage: '', // Custom message for maintenance
-        allCategoryImage: '' // Virtual "All" category image
+        allCategoryImage: '', // Virtual "All" category image
+        allCategoryName: '' // Custom name for the "All" category
     });
 
     // Global Fast Purchase Mode State (User-Specific)
@@ -906,7 +907,8 @@ export const DataProvider = ({ children }) => {
                     deliveryTimes: [],
                     deliveryTimingType: 'permanent',
                     maintenanceMode: false,
-                    allCategoryImage: ''
+                    allCategoryImage: '',
+                    allCategoryName: ''
                 };
 
                 if (Array.isArray(response.data)) {
@@ -916,6 +918,7 @@ export const DataProvider = ({ children }) => {
                         if (setting.key === 'maintenance_mode') settingsMap.maintenanceMode = setting.value;
                         if (setting.key === 'maintenance_message') settingsMap.maintenanceMessage = setting.value;
                         if (setting.key === 'all_category_image') settingsMap.allCategoryImage = setting.value;
+                        if (setting.key === 'all_category_name') settingsMap.allCategoryName = setting.value;
                     });
                 }
 
@@ -996,6 +999,20 @@ export const DataProvider = ({ children }) => {
         }
     };
 
+    const updateAllCategoryName = async (name) => {
+        try {
+            const response = await apiService.settings.update('all_category_name', name);
+            if (response.success && response.data) {
+                setSettings(prev => ({ ...prev, allCategoryName: response.data.value }));
+                return true;
+            }
+            return false;
+        } catch (err) {
+            console.error('Failed to update all category name setting:', err);
+            throw err;
+        }
+    };
+
     const value = {
         products,
         stores,
@@ -1052,6 +1069,7 @@ export const DataProvider = ({ children }) => {
         updateMaintenanceMode,
         updateMaintenanceMessage,
         updateAllCategoryImage,
+        updateAllCategoryName,
         fetchSettings, // Export fetch function for refresh
         fastMode,
         toggleFastMode,

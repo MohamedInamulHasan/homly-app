@@ -51,10 +51,10 @@ const StoreProducts = () => {
     const checkProductOpen = (p, s) => {
         if (p.isAvailable === false) return false;
         if (!isStoreOpen(s)) return false;
-        return isProductScheduled(p);
+        return true; // Timed products show with availability overlay on card
     };
 
-    // Filtered products for main display (ONLY available)
+    // Filtered products for main display (include timed-out ones for overlay display)
     const availableStoreProducts = useMemo(() => {
         return storeProducts.filter(p => checkProductOpen(p, store));
     }, [storeProducts, store]);

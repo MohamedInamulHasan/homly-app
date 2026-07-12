@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
 import { API_BASE_URL } from '../utils/api';
-import { isStoreOpen, getStoreName } from '../utils/storeHelpers';
+import { isStoreOpen, getStoreName, isProductScheduled, getProductTimeLabel } from '../utils/storeHelpers';
 
 import { useData } from '../context/DataContext';
 
@@ -31,6 +31,8 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
         ? (storeToUse?._id ? isStoreOpen(storeToUse) : (product.anyStoreOpen ?? true)) 
         : isStoreOpen(storeToUse);
     const isAvailable = product.isGroup ? true : product.isAvailable !== false;
+    const isScheduled = product.isGroup ? true : isProductScheduled(product);
+    const timeLabel = !isScheduled ? getProductTimeLabel(product) : null;
 
 
 
@@ -53,10 +55,10 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
         <div className={`relative flex flex-col h-full bg-white dark:bg-gray-800 rounded-3xl overflow-hidden group transition-all duration-300`}>
             
             <Link 
-                to={(!isOpen || !isAvailable) ? '#' : (product.isGroup ? `/product-group/${encodeURIComponent(product.title)}` : `/product/${productId}`)} 
-                className={`flex-1 ${(!isOpen || !isAvailable) ? 'cursor-default' : ''}`}
+                to={(!isOpen || !isAvailable || !isScheduled) ? '#' : (product.isGroup ? `/product-group/${encodeURIComponent(product.title)}` : `/product/${productId}`)} 
+                className={`flex-1 ${(!isOpen || !isAvailable || !isScheduled) ? 'cursor-default' : ''}`}
                 onClick={(e) => {
-                    if (!isOpen || !isAvailable) {
+                    if (!isOpen || !isAvailable || !isScheduled) {
                         e.preventDefault();
                     }
                 }}
@@ -101,9 +103,17 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                         </span>
                     </div>
                 )}
+                {isAvailable && isOpen && !isScheduled && timeLabel && (
+                    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center backdrop-blur-[1px] bg-black/10 rounded-2xl gap-1">
+                        <div className="bg-white/95 dark:bg-gray-900/95 shadow-lg rounded-xl px-3 py-2 flex flex-col items-center gap-0.5 mx-2">
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">{t('Available')}</span>
+                            <span className="text-[11px] font-bold text-gray-800 dark:text-white leading-tight text-center">{timeLabel}</span>
+                        </div>
+                    </div>
+                )}
 
                 {/* Image Container (Full Bleed) */}
-                <div className={`aspect-square bg-[#F9FAFB] m-1 rounded-2xl overflow-hidden flex items-center justify-center relative ${!isOpen || !isAvailable ? 'opacity-60' : ''}`}>
+                <div className={`aspect-square bg-[#F9FAFB] m-1 rounded-2xl overflow-hidden flex items-center justify-center relative ${!isOpen || !isAvailable ? 'opacity-60' : !isScheduled ? 'opacity-75' : ''}`}>
                     {showHeart && (
                         <button
                             onClick={(e) => {
@@ -258,7 +268,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                                         addToCart(product);
                                     }}
                                      className="w-10 h-10 bg-[#2E5A2E] dark:bg-[#CBF9B2] hover:opacity-90 text-white dark:text-gray-900 rounded-full flex items-center justify-center transition-all active:scale-90 select-none"
-                                    disabled={!isAvailable || !isOpen}
+                                    disabled={!isAvailable || !isOpen || !isScheduled}
                                 >
                                     <ShoppingCart size={18} />
                                 </button>

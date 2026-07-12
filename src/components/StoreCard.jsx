@@ -38,7 +38,7 @@ const StoreCard = ({ store }) => {
                 <div className={`absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent transition-opacity duration-300 ${!isOpen ? 'opacity-100 bg-black/20' : 'opacity-90 group-hover:opacity-100'}`} />
             </div>
 
-            {/* Status Overlays (Centered - Product Card Style) */}
+            {/* Status Overlay — same blur style as product cards */}
             {!isOpen && (
                 <div className="absolute inset-0 z-20 bg-black/10 flex items-center justify-center backdrop-blur-[1px]">
                     <span className="bg-gray-800 text-white px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg animate-in fade-in zoom-in-95 duration-500">
