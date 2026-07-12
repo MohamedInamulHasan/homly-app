@@ -14,14 +14,21 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
         return (
             <section className="py-4 mt-2">
                 <div className="flex justify-between items-center mb-4 px-4">
-                    <div className="h-6 w-32 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
-                    <div className="h-4 w-16 bg-gray-100 dark:bg-gray-800 rounded animate-pulse"></div>
+                    {/* Header skeletons */}
+                    <div className="h-6 w-44 bg-gray-200 dark:bg-gray-800 rounded-xl animate-pulse"></div>
+                    <div className="h-4 w-12 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse"></div>
                 </div>
+                
+                {/* Horizontal Category Items list */}
                 <div className="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-4">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                        <div key={i} className="flex flex-col items-center gap-2">
-                            <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-800 animate-pulse"></div>
-                            <div className="h-3 w-12 bg-gray-100 dark:bg-gray-800 rounded animate-pulse"></div>
+                    {[1, 2, 3, 4, 5, 6].map((i) => (
+                        <div key={i} className="flex flex-col items-center gap-2 md:gap-3 min-w-[72px] md:min-w-[85px] lg:min-w-[110px]">
+                            {/* Circle shape placeholder */}
+                            <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full bg-white dark:bg-gray-800 shadow-sm border-2 border-gray-100 dark:border-gray-700/50 flex items-center justify-center">
+                                <div className="w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full bg-gray-100 dark:bg-gray-900 animate-pulse"></div>
+                            </div>
+                            {/* Text label placeholder */}
+                            <div className="h-3.5 w-14 bg-gray-200 dark:bg-gray-800 rounded-full animate-pulse"></div>
                         </div>
                     ))}
                 </div>
