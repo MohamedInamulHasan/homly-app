@@ -359,16 +359,44 @@ const Home = () => {
                     onSelectCategory={setSelectedCategory}
                 />
 
-                {/* Store Sections */}
+                {/* Store Sections Loading Skeleton */}
                 {isLoadingAll ? (
-                   <section className="px-4 py-4 mt-2">
-                        <div className="h-6 w-48 bg-white dark:bg-gray-800/50 rounded-xl animate-pulse mb-8 shadow-sm"></div>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            {[1, 2, 3, 4].map((i) => (
-                                <div key={i} className="aspect-[4/5] bg-white dark:bg-gray-800/50 rounded-2xl animate-pulse shadow-sm border border-gray-100 dark:border-gray-700/50"></div>
-                            ))}
-                        </div>
-                    </section>
+                    <div className="space-y-8 px-4 py-4 mt-2">
+                        {[1, 2].map((sectionIndex) => (
+                            <section key={sectionIndex} className="space-y-4">
+                                {/* Store Title and Address Placeholder */}
+                                <div className="space-y-2">
+                                    <div className="h-6 w-48 bg-gray-200 dark:bg-gray-800 rounded-xl animate-pulse"></div>
+                                    <div className="h-3.5 w-64 bg-gray-200 dark:bg-gray-800/60 rounded-lg animate-pulse"></div>
+                                </div>
+
+                                {/* Product Cards Grid Placeholder */}
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    {[1, 2, 3, 4].map((cardIndex) => (
+                                        <div 
+                                            key={cardIndex} 
+                                            className="bg-white dark:bg-gray-800 rounded-3xl p-3 shadow-sm border border-gray-50 dark:border-gray-700/50 flex flex-col h-full space-y-3"
+                                        >
+                                            {/* Image placeholder */}
+                                            <div className="aspect-square w-full bg-gray-100 dark:bg-gray-900 rounded-2xl animate-pulse"></div>
+                                            
+                                            {/* Content placeholders */}
+                                            <div className="space-y-2 flex-1">
+                                                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-lg w-11/12 animate-pulse"></div>
+                                                <div className="h-3 bg-gray-150 dark:bg-gray-700/70 rounded-md w-2/3 animate-pulse"></div>
+                                            </div>
+
+                                            {/* Price & Action Row placeholder */}
+                                            <div className="flex items-center justify-between pt-1">
+                                                <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded-md w-1/3 animate-pulse"></div>
+                                                <div className="h-9 w-9 bg-gray-100 dark:bg-gray-700 rounded-full animate-pulse"></div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        ))}
+                    </div>
                 ) : displaySections.length > 0 ? (
                     <div className="space-y-2 md:space-y-4">
                         {displaySections.map((section) => (
