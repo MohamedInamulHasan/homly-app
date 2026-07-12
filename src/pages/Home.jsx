@@ -354,7 +354,7 @@ const Home = () => {
                 {/* Categories */}
                 <CategorySection 
                     categories={featuredCategories} 
-                    isLoading={loadingCategories} 
+                    isLoading={isLoadingAll} 
                     selectedCategory={selectedCategory}
                     onSelectCategory={setSelectedCategory}
                 />
