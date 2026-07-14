@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Lock, Loader } from 'lucide-react';
-import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 
 const Login = () => {
@@ -13,9 +12,9 @@ const Login = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [loginError, setLoginError] = useState(null);
 
-    // Retrieve client ID
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
+    // Redirect logged-in users
     useEffect(() => {
         if (user) {
             const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
@@ -28,112 +27,64 @@ const Login = () => {
                     const normalized = String(r || '').toLowerCase().trim();
                     return normalized === 'delivery_boy' || normalized === 'deliveryboy';
                 });
-                if (isDeliveryBoy) {
-                    navigate('/admin');
-                } else {
-                    navigate('/');
-                }
+                navigate(isDeliveryBoy ? '/admin' : '/');
             }
         }
     }, [navigate, user]);
 
-    // Handle OAuth Callback/Token handling from URL redirect
+    // On mount: check if Google redirected back with an access token in the URL hash
     useEffect(() => {
-        const handleCallback = async () => {
+        const handleOAuthCallback = async () => {
             const hash = window.location.hash;
-            if (hash) {
-                const params = new URLSearchParams(hash.replace('#', '?'));
-                const accessToken = params.get('access_token');
-                if (accessToken) {
-                    setIsSubmitting(true);
-                    setLoginError(null);
-                    // Clear the hash in URL
-                    window.history.replaceState(null, null, ' ');
-                    try {
-                        const success = await googleLogin({ accessToken });
-                        if (success) {
-                            const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
-                            if (savedRedirect) {
-                                sessionStorage.removeItem('redirectAfterLogin');
-                                navigate(savedRedirect);
-                            }
-                        }
-                    } catch (err) {
-                        setLoginError('Google Sign-In failed. Please try again.');
+            if (!hash) return;
+
+            const params = new URLSearchParams(hash.replace('#', ''));
+            const accessToken = params.get('access_token');
+            if (!accessToken) return;
+
+            // Clear token from URL immediately
+            window.history.replaceState(null, '', window.location.pathname);
+
+            setIsSubmitting(true);
+            setLoginError(null);
+            try {
+                const success = await googleLogin({ accessToken });
+                if (success) {
+                    const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
+                    if (savedRedirect) {
+                        sessionStorage.removeItem('redirectAfterLogin');
+                        navigate(savedRedirect);
                     }
-                    setIsSubmitting(false);
+                } else {
+                    setLoginError('Google Sign-In failed. Please try again.');
                 }
+            } catch (err) {
+                setLoginError('Google Sign-In failed. Please try again.');
             }
+            setIsSubmitting(false);
         };
 
-        handleCallback();
-
-        // Listen for Capacitor App Url Open events (handles login completion redirect back to app)
-        if (Capacitor.isNativePlatform()) {
-            const setupAppListener = async () => {
-                const { App } = await import('@capacitor/app');
-                App.addListener('appUrlOpen', async (data) => {
-                    const url = new URL(data.url);
-                    // Check if redirect contains access token in hash or params
-                    const hashParams = new URLSearchParams(url.hash.replace('#', '?'));
-                    const accessToken = hashParams.get('access_token') || url.searchParams.get('access_token');
-                    
-                    if (accessToken) {
-                        setIsSubmitting(true);
-                        setLoginError(null);
-                        try {
-                            const success = await googleLogin({ accessToken });
-                            if (success) {
-                                // Close the browser tab if still open
-                                await Browser.close();
-                                const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
-                                if (savedRedirect) {
-                                    sessionStorage.removeItem('redirectAfterLogin');
-                                    navigate(savedRedirect);
-                                }
-                            }
-                        } catch (err) {
-                            setLoginError('Google Sign-In failed. Please try again.');
-                        }
-                        setIsSubmitting(false);
-                    }
-                });
-            };
-            setupAppListener();
-        }
+        handleOAuthCallback();
     }, [googleLogin, navigate]);
 
-    const handleGoogleLogin = async () => {
-        setIsSubmitting(true);
-        setLoginError(null);
+    const handleGoogleLogin = () => {
+        // Use https://localhost as redirect_uri on Android (Capacitor's internal scheme)
+        // and window.location.origin on browser
+        const redirectUri = Capacitor.isNativePlatform()
+            ? 'https://localhost'
+            : window.location.origin;
 
-        // Determine redirect URI: localhost for local dev/app, or Vercel domain for prod
-        let redirectUri = window.location.origin;
-        if (Capacitor.isNativePlatform()) {
-            // Use custom app scheme registered in AndroidManifest
-            redirectUri = 'com.ilayangudimart.app://login';
-        }
-
-        // Construct Google OAuth URL manually
-        const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
-            `client_id=${clientId}` +
+        const oauthUrl =
+            `https://accounts.google.com/o/oauth2/v2/auth` +
+            `?client_id=${clientId}` +
             `&redirect_uri=${encodeURIComponent(redirectUri)}` +
             `&response_type=token` +
             `&scope=${encodeURIComponent('openid profile email')}` +
             `&prompt=select_account`;
 
-        try {
-            if (Capacitor.isNativePlatform()) {
-                // Open inside custom Chrome tab / Safari View Controller
-                await Browser.open({ url: oauthUrl });
-            } else {
-                // Open in same window on standard browser
-                window.location.href = oauthUrl;
-            }
-        } catch (err) {
-            setLoginError('Could not open login page. Please try again.');
-        }
-        setIsSubmitting(false);
+        // Navigate in the same WebView — on Android this uses the internal WebView
+        // which recognises https://localhost as itself and catches the token on redirect
+        window.location.href = oauthUrl;
     };
 
     return (
@@ -169,7 +120,6 @@ const Login = () => {
                             <Loader className="animate-spin h-5 w-5 text-gray-500" />
                         ) : (
                             <>
-                                {/* Google Logo SVG */}
                                 <svg width="20" height="20" viewBox="0 0 48 48">
                                     <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
                                     <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
