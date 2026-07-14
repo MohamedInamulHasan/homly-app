@@ -479,6 +479,19 @@ const Checkout = () => {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                         <div className="md:col-span-2">
+                                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">{t('Full Name')}</label>
+                                            <input
+                                                type="text"
+                                                name="fullName"
+                                                required
+                                                value={formData.fullName}
+                                                onChange={handleChange}
+                                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm"
+                                                placeholder={t('Enter your full name')}
+                                            />
+                                        </div>
+
+                                        <div className="md:col-span-2">
                                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">{t('Full Address')}</label>
                                             <textarea
                                                 name="address"
