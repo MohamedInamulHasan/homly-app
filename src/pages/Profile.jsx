@@ -107,6 +107,12 @@ const Profile = () => {
 
     const roles = user ? (Array.isArray(user.role) ? user.role : [user.role || 'customer']) : [];
     const isAdminView = roles.some(role => ['admin', 'delivery_boy', 'store_admin', 'service_admin'].includes(role));
+    const addressObj = user?.address || {};
+    const isAddressObject = typeof user?.address === 'object' && user?.address !== null;
+    const hasAddress = isAddressObject 
+        ? (addressObj.street && addressObj.street.trim().length > 0)
+        : (user?.address && String(user.address).trim().length > 0);
+    const showLogout = hasAddress || isAdminView;
 
     useEffect(() => {
         setIsFooterHidden(showLogoutModal);
@@ -199,7 +205,16 @@ const Profile = () => {
                                    {user?.name || 'Guest User'}
                                </h2>
                                <p className="text-[13px] font-medium text-gray-400 dark:text-gray-500 mt-0.5 truncate">
-                                   {user?.email || 'Not logged in'}
+                                   {user ? (() => {
+                                       const idStr = String(user._id || user.id || '');
+                                       if (!idStr) return 'Not logged in';
+                                       let hash = 0;
+                                       for (let i = 0; i < idStr.length; i++) {
+                                           hash = idStr.charCodeAt(i) + ((hash << 5) - hash);
+                                       }
+                                       const code = Math.abs(hash % 90000) + 10000;
+                                       return `User ${code}`;
+                                   })() : 'Not logged in'}
                                </p>
                           </div>
                      </div>
@@ -355,13 +370,17 @@ const Profile = () => {
                           <MenuLink to="/privacy-policy" icon={<Shield size={18} strokeWidth={2} />} title={t('Privacy Policy')} />
                           <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
                           <MenuLink to="/delete-account" icon={<Trash2 size={18} strokeWidth={2} />} title={t('Delete Account')} isRed={true} />
-                          <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
-                          <MenuLink 
-                              onClick={handleLogout} 
-                              icon={<LogOut size={18} strokeWidth={2} />} 
-                              title={t('Logout')} 
-                              isRed={false} // Match mockup design text
-                          />
+                          {showLogout && (
+                               <>
+                                   <div className="h-[1px] w-[calc(100%-4.5rem)] ml-auto bg-gray-200/60 dark:bg-gray-700/60 mr-4"></div>
+                                   <MenuLink 
+                                       onClick={handleLogout} 
+                                       icon={<LogOut size={18} strokeWidth={2} />} 
+                                       title={t('Logout')} 
+                                       isRed={false} // Match mockup design text
+                                   />
+                               </>
+                           )}
                      </div>
                 </div>
             </div>
