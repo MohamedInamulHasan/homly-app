@@ -120,7 +120,7 @@ const Profile = () => {
     }, [showLogoutModal, setIsFooterHidden]);
 
     const handleLogout = () => setShowLogoutModal(true);
-    const confirmLogout = () => { logout(); navigate('/login'); };
+    const confirmLogout = () => { logout(); };
 
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 w-full relative pb-48">
