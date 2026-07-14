@@ -16,7 +16,9 @@ import {
     googleAuth,
     requestAccountDeletion,
     sendOTP,
-    verifyOTP
+    verifyOTP,
+    registerGuest,
+    updateGuest
 } from '../controllers/userController.js';
 
 import { protect, adminOnly } from '../middleware/authMiddleware.js';
@@ -28,6 +30,8 @@ router.post('/login', loginUser);
 router.post('/google', googleAuth);
 router.post('/send-otp', sendOTP);
 router.post('/verify-otp', verifyOTP);
+router.post('/register-guest', registerGuest);
+router.post('/update-guest', protect, updateGuest);
 router.post('/forgotpassword', forgotPassword);
 router.put('/resetpassword/:resettoken', resetPassword);
 router.post('/logout', logoutUser);

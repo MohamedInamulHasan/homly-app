@@ -43,8 +43,21 @@ export const AuthProvider = ({ children }) => {
             // Exception: If we are on Desktop and rely on Cookies only, this might be strict, 
             // but since we moved to Hybrid Auth, we expect a token.
             if (!storedToken && !storedUser) {
-                console.log('ℹ️ AuthContext: No token/user found. Stopping check.');
-                setLoading(false);
+                console.log('ℹ️ AuthContext: No token/user found. Registering guest user silently...');
+                try {
+                    const data = await apiService.registerGuest();
+                    console.log('✅ AuthContext: Silent Guest Registration Success', data);
+                    setUser(data.data);
+                    localStorage.setItem('userInfo', JSON.stringify(data.data));
+                    if (data.token) {
+                        localStorage.setItem('authToken', data.token);
+                    }
+                    window.dispatchEvent(new Event('userChanged'));
+                } catch (err) {
+                    console.error('❌ AuthContext: Failed to register guest user silently:', err);
+                } finally {
+                    setLoading(false);
+                }
                 return;
             }
 
@@ -84,12 +97,29 @@ export const AuthProvider = ({ children }) => {
         checkUserLoggedIn();
 
         // Listen for global 401 unauthorized events from apiService
-        const handleUnauthorized = (e) => {
+        const handleUnauthorized = async (e) => {
             console.warn('⚠️ Global 401 Unauthorized Event Triggered', e);
-            setUser(null);
+            // Clear stale session data
             localStorage.removeItem('userInfo');
             localStorage.removeItem('authToken');
-            window.dispatchEvent(new Event('userChanged'));
+            setUser(null);
+
+            // Re-register as guest silently — avoids showing the login page
+            try {
+                console.log('🔄 Re-registering as guest after 401...');
+                const data = await apiService.registerGuest();
+                console.log('✅ Guest re-registration success after 401', data);
+                setUser(data.data);
+                localStorage.setItem('userInfo', JSON.stringify(data.data));
+                if (data.token) {
+                    localStorage.setItem('authToken', data.token);
+                }
+                window.dispatchEvent(new Event('userChanged'));
+            } catch (err) {
+                console.error('❌ Guest re-registration after 401 failed:', err);
+                // Last resort: notify cart
+                window.dispatchEvent(new Event('userChanged'));
+            }
         };
 
         window.addEventListener('auth:unauthorized', handleUnauthorized);
@@ -239,8 +269,31 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const updateGuest = async (name, mobile) => {
+        try {
+            setError(null);
+            const data = await apiService.updateGuest({ name, mobile });
+
+            setUser(data.data);
+            localStorage.setItem('userInfo', JSON.stringify(data.data));
+            if (data.token) {
+                localStorage.setItem('authToken', data.token); // Store token for Hybrid Auth
+            }
+            // Dispatch custom event to notify cart of user change
+            window.dispatchEvent(new Event('userChanged'));
+            return data.data;
+        } catch (err) {
+            setError(
+                err.response && err.response.data.message
+                    ? err.response.data.message
+                    : err.message
+            );
+            return null;
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, setUser: updateUserState, login, register, sendOtp, verifyOtp, googleLogin, logout, loading, error, refreshUser }}>
+        <AuthContext.Provider value={{ user, setUser: updateUserState, login, register, sendOtp, verifyOtp, googleLogin, logout, loading, error, refreshUser, updateGuest }}>
             {children}
         </AuthContext.Provider>
     );

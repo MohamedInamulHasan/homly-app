@@ -75,8 +75,12 @@ api.interceptors.response.use(
         });
 
         // Global 401 (Unauthorized) Handler
-        if (error.response?.status === 401) {
-            console.warn('Session expired or unauthorized. Dispatching logout event. URL:', error.config?.url);
+        // Skip guest/auth endpoints to avoid recursive re-registration loops
+        const skipUnauthorizedUrls = ['/register-guest', '/login', '/register', '/verify-otp', '/send-otp', '/google'];
+        const requestUrl = error.config?.url || '';
+        const isAuthEndpoint = skipUnauthorizedUrls.some(u => requestUrl.includes(u));
+        if (error.response?.status === 401 && !isAuthEndpoint) {
+            console.warn('Session expired or unauthorized. Dispatching logout event. URL:', requestUrl);
             window.dispatchEvent(new Event('auth:unauthorized'));
         }
 
@@ -137,6 +141,8 @@ export const apiService = {
     login: (data) => api.post('/users/login', data),
     sendOtp: (data) => api.post('/users/send-otp', data),
     verifyOtp: (data) => api.post('/users/verify-otp', data),
+    registerGuest: () => api.post('/users/register-guest'),
+    updateGuest: (data) => api.post('/users/update-guest', data),
     logout: () => api.post('/users/logout'),
     forgotPassword: (email) => api.post('/users/forgotpassword', { email }),
     resetPassword: (token, password) => api.put(`/users/resetpassword/${token}`, { password }),

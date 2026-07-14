@@ -15,6 +15,13 @@ const Login = () => {
     const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [loginError, setLoginError] = useState(null);
+    const [debugLogs, setDebugLogs] = useState([]);
+
+    // Load initial debug logs
+    useEffect(() => {
+        const logs = JSON.parse(localStorage.getItem('oauth_debug_logs') || '[]');
+        setDebugLogs(logs);
+    }, []);
 
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -100,7 +107,13 @@ const Login = () => {
         if (!Capacitor.isNativePlatform()) return;
 
         const checkAndLogin = async () => {
+            const logs = JSON.parse(localStorage.getItem('oauth_debug_logs') || '[]');
             const pendingToken = localStorage.getItem('pending_google_access_token');
+            
+            logs.push(`[Login] Checking pending token on mount/event: ${pendingToken ? 'Found' : 'None'}`);
+            localStorage.setItem('oauth_debug_logs', JSON.stringify(logs));
+            setDebugLogs(logs);
+
             if (!pendingToken) return;
 
             // Consume it immediately
@@ -109,7 +122,16 @@ const Login = () => {
             setIsSubmitting(true);
             setLoginError(null);
             try {
+                logs.push(`[Login] Sending token to backend...`);
+                localStorage.setItem('oauth_debug_logs', JSON.stringify(logs));
+                setDebugLogs(logs);
+
                 const success = await googleLogin({ accessToken: pendingToken });
+                
+                logs.push(`[Login] Backend response: ${success ? 'SUCCESS' : 'FAILED'}`);
+                localStorage.setItem('oauth_debug_logs', JSON.stringify(logs));
+                setDebugLogs(logs);
+
                 if (success) {
                     const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
                     if (savedRedirect) {
@@ -121,7 +143,10 @@ const Login = () => {
                 } else {
                     setLoginError('Google Sign-In failed. Please try again.');
                 }
-            } catch {
+            } catch (err) {
+                logs.push(`[Login] Backend exception: ${err.message || err}`);
+                localStorage.setItem('oauth_debug_logs', JSON.stringify(logs));
+                setDebugLogs(logs);
                 setLoginError('Google Sign-In failed. Please try again.');
             }
             setIsSubmitting(false);
@@ -142,6 +167,11 @@ const Login = () => {
         setIsSubmitting(true);
         setLoginError(null);
 
+        const logs = JSON.parse(localStorage.getItem('oauth_debug_logs') || '[]');
+        logs.push(`[Login] Initiating Google Sign-In...`);
+        localStorage.setItem('oauth_debug_logs', JSON.stringify(logs));
+        setDebugLogs(logs);
+
         // Always use the Vercel URL as redirect_uri so Google doesn't block it.
         // On Android: Chrome Custom Tab opens Google → redirects to Vercel → Vercel page
         //             sends deep link → app receives appUrlOpen with token.
@@ -161,9 +191,16 @@ const Login = () => {
         if (Capacitor.isNativePlatform()) {
             try {
                 const { Browser } = await import('@capacitor/browser');
+                logs.push(`[Login] Opening Chrome Custom Tab...`);
+                localStorage.setItem('oauth_debug_logs', JSON.stringify(logs));
+                setDebugLogs(logs);
+                
                 // Chrome Custom Tab — NOT blocked by Google (unlike embedded WebView)
                 await Browser.open({ url: oauthUrl });
-            } catch {
+            } catch (err) {
+                logs.push(`[Login] Failed to open Chrome Custom Tab: ${err.message || err}`);
+                localStorage.setItem('oauth_debug_logs', JSON.stringify(logs));
+                setDebugLogs(logs);
                 setLoginError('Could not open login page. Please try again.');
             }
         } else {
@@ -220,6 +257,24 @@ const Login = () => {
                         )}
                     </button>
                 </div>
+
+                {/* Debug Logs Container */}
+                {debugLogs.length > 0 && (
+                    <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-2xl text-left">
+                        <h4 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">OAuth Debug Logs:</h4>
+                        <div className="max-h-32 overflow-y-auto space-y-1 text-[10px] font-mono text-gray-600 dark:text-gray-400">
+                            {debugLogs.map((log, i) => (
+                                <div key={i} className="border-b border-gray-100 dark:border-gray-800 pb-1 last:border-0">{log}</div>
+                            ))}
+                        </div>
+                        <button 
+                            onClick={() => { localStorage.removeItem('oauth_debug_logs'); setDebugLogs([]); }}
+                            className="mt-2 text-xs text-red-500 hover:text-red-600 underline font-medium"
+                        >
+                            Clear Logs
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

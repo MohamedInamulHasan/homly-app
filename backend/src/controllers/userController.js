@@ -849,3 +849,73 @@ export const verifyOTP = async (req, res, next) => {
         next(error);
     }
 };
+
+// @desc    Register a silent guest user
+// @route   POST /api/users/register-guest
+// @access  Public
+export const registerGuest = async (req, res, next) => {
+    try {
+        const guestCount = await User.countDocuments({ email: { $regex: /^guest_/ } });
+        const nameValue = `User_${guestCount + 1}`;
+        const randomStr = crypto.randomBytes(6).toString('hex');
+        const emailValue = `guest_${randomStr}@ily-mart.com`;
+        const passwordValue = crypto.randomBytes(16).toString('hex');
+
+        const user = await User.create({
+            name: nameValue,
+            email: emailValue,
+            password: passwordValue,
+            role: ['customer']
+        });
+
+        if (user) {
+            sendTokenResponse(user, 201, res);
+        }
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Update guest user info with name and mobile, or log in if mobile already exists
+// @route   POST /api/users/update-guest
+// @access  Private
+export const updateGuest = async (req, res, next) => {
+    try {
+        const { name, mobile } = req.body;
+
+        if (!name || !mobile) {
+            return res.status(400).json({ success: false, message: 'Name and mobile number are required' });
+        }
+
+        const rawMobile = mobile.replace(/[^0-9]/g, '');
+
+        // Check if a user with this mobile number already exists
+        const existingUser = await User.findOne({
+            $or: [
+                { mobile: rawMobile },
+                { mobile: rawMobile.replace(/^91/, '') },
+                { mobile: '91' + rawMobile.replace(/^91/, '') }
+            ]
+        });
+
+        if (existingUser) {
+            // Mobile is already registered! Log in as that existing user
+            return sendTokenResponse(existingUser, 200, res);
+        }
+
+        // Update current guest user
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        user.name = name;
+        user.mobile = rawMobile;
+        user.email = `mobile_${rawMobile}@ily-mart.com`;
+        await user.save();
+
+        sendTokenResponse(user, 200, res);
+    } catch (error) {
+        next(error);
+    }
+};

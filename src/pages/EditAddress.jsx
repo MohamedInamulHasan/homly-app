@@ -10,7 +10,7 @@ import { getCurrentLocation } from '../utils/locationHelpers';
 
 const EditAddress = () => {
     const navigate = useNavigate();
-    const { user, setUser } = useAuth();
+    const { user, setUser, updateGuest } = useAuth();
     const { t } = useLanguage();
     const { updateProfile } = useData();
 
@@ -104,19 +104,25 @@ const EditAddress = () => {
         }
 
         setIsSaving(true);
-        const profileData = {
-            name: formData.fullName, // Map fullName to name for backend
-            mobile: formData.mobile,
-            address: {
-                street: formData.street,
-                city: formData.city,
-                zip: formData.zip,
-                country: 'India'
-            },
-            location: formData.location
-        };
 
         try {
+            // Link guest profile or switch to existing profile using phone number
+            const freshUser = await updateGuest(formData.fullName, formData.mobile);
+            const activeUser = freshUser || user;
+
+            const profileData = {
+                ...activeUser,
+                name: formData.fullName,
+                mobile: formData.mobile,
+                address: {
+                    street: formData.street,
+                    city: formData.city,
+                    zip: formData.zip,
+                    country: 'India'
+                },
+                location: formData.location
+            };
+
             const result = await updateProfile(profileData);
             if (result) {
                 // Update local auth state with returned data

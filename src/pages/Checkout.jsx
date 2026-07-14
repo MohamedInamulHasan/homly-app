@@ -17,7 +17,7 @@ const Checkout = () => {
     const location = useLocation();
     const directPurchase = location.state?.directPurchase;
     const { cartItems, cartTotal, clearCart, removeFromCart } = useCart();
-    const { user, setUser, loading: authLoading } = useAuth();
+    const { user, setUser, loading: authLoading, updateGuest } = useAuth();
     const { data: userProfile } = useUserProfile(); // Fetch fresh user data with coins
     const { t, language } = useLanguage();
     const { stores, updateUser } = useData();
@@ -69,15 +69,15 @@ const Checkout = () => {
     const [permissionStatus, setPermissionStatus] = useState('prompt'); // granted, prompt, denied
 
 
-    // Check if user is authenticated
+    // With the guest-first flow, all users have a session auto-created on launch.
+    // Only redirect if loading is complete AND there is still no user (should not happen normally).
     useEffect(() => {
-        if (!user) {
-            // Store the current path to redirect back after login
+        if (!authLoading && !user) {
+            // This is a fallback — guest registration must have failed silently.
             sessionStorage.setItem('redirectAfterLogin', '/checkout');
-            alert(t('Please sign in to continue with checkout'));
             navigate('/login');
         }
-    }, [user, navigate, t]);
+    }, [user, authLoading, navigate]);
 
     // Autofill form with user's saved address data
     // Priority: fullName > name (to use updated profile name instead of signup username)
@@ -196,59 +196,69 @@ const Checkout = () => {
         // Show loading state for instant feedback
         setIsNavigating(true);
 
-        // Save updated address to user profile in background (non-blocking)
-        const updatedUserData = {
-            ...user,
-            name: formData.fullName,
-            fullName: formData.fullName,
-            mobile: formData.mobile,
-            phone: formData.mobile,
-            // Construct proper address object for backend schema
-            address: {
-                street: formData.address,
-                city: formData.city,
-                zip: formData.zip,
-                state: '', // We don't have state input yet
-                country: 'India'
-            },
-            // Keep flat fields if legacy/other parts use them, but backend prefers nested
-            city: formData.city,
-            zip: formData.zip,
-            pincode: formData.zip
+        const performOrderCheckout = async () => {
+            try {
+                // Step A: Link guest account or switch to existing profile using the phone number
+                console.log('🔄 Upgrading guest user profile with name and mobile...');
+                const freshUser = await updateGuest(formData.fullName, formData.mobile);
+                const activeUser = freshUser || user;
+
+                // Step B: Update user profile address details
+                const updatedUserData = {
+                    ...activeUser,
+                    name: formData.fullName,
+                    fullName: formData.fullName,
+                    mobile: formData.mobile,
+                    phone: formData.mobile,
+                    address: {
+                        street: formData.address,
+                        city: formData.city,
+                        zip: formData.zip,
+                        state: '',
+                        country: 'India'
+                    },
+                    city: formData.city,
+                    zip: formData.zip,
+                    pincode: formData.zip
+                };
+
+                // Save locally
+                localStorage.setItem('userInfo', JSON.stringify(updatedUserData));
+                setUser(updatedUserData);
+
+                // Update database
+                await updateUser(updatedUserData);
+                console.log('✅ User profile upgraded and address saved.');
+
+                // Step C: Proceed to Order Confirmation
+                const currentUser = userProfile?.data || updatedUserData;
+                const hasCoins = currentUser?.coins > 0;
+                const hasGoldProduct = displayItems.some(item => item.isGold);
+                const baseDeliveryCharge = calculateDeliveryCharge(displayItems);
+                const finalDeliveryCharge = (hasCoins || hasGoldProduct) ? 0 : baseDeliveryCharge;
+
+                navigate('/order-confirmation', {
+                    state: {
+                        formData: {
+                            ...formData,
+                            name: formData.fullName,
+                            pincode: formData.zip,
+                            location: formData.location
+                        },
+                        cartItems: displayItems,
+                        cartTotal: displayTotal,
+                        deliveryCharge: finalDeliveryCharge,
+                        isDirectPurchase: !!directPurchase
+                    }
+                });
+            } catch (err) {
+                console.error('❌ Checkout submit error:', err);
+                alert(t('Checkout failed. Please try again.'));
+                setIsNavigating(false);
+            }
         };
 
-        // Update localStorage immediately for instant availability
-        localStorage.setItem('userInfo', JSON.stringify(updatedUserData));
-
-        // Update AuthContext state immediately so autofill uses new data
-        setUser(updatedUserData);
-
-        // Update database in background (don't await to avoid delay)
-        updateUser(updatedUserData)
-            .then(() => console.log('✅ User address updated successfully'))
-            .catch(error => console.error('❌ Failed to update user address:', error));
-
-        // Navigate immediately without waiting for API call
-        const currentUser = userProfile?.data || user;
-        const hasCoins = currentUser?.coins > 0;
-        const hasGoldProduct = displayItems.some(item => item.isGold);
-        const baseDeliveryCharge = calculateDeliveryCharge(displayItems);
-        const finalDeliveryCharge = (hasCoins || hasGoldProduct) ? 0 : baseDeliveryCharge;
-
-        navigate('/order-confirmation', {
-            state: {
-                formData: {
-                    ...formData,
-                    name: formData.fullName,
-                    pincode: formData.zip,
-                    location: formData.location
-                },
-                cartItems: displayItems,
-                cartTotal: displayTotal,
-                deliveryCharge: finalDeliveryCharge,
-                isDirectPurchase: !!directPurchase
-            }
-        });
+        performOrderCheckout();
     };
 
     // Determine items to show (Direct Purchase or Cart)

@@ -54,11 +54,8 @@ const HomeWithRedirect = () => {
     const { user, loading } = useAuth();
     if (loading) return null;
 
-    // Not logged in → show Login page first
-    if (!user) {
-        return <Navigate to="/login" replace />;
-    }
-
+    // Guests are auto-created on app launch, so !user is only a rare fallback.
+    // Don't redirect to /login — just show Home for all users (including guests).
     const roles = Array.isArray(user?.role) ? user.role : [user?.role || 'customer'];
     const isDeliveryBoy = roles.some(r => {
         const normalized = String(r || '').toLowerCase().trim();
