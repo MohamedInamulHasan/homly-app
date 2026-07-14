@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Lock, Loader } from 'lucide-react';
-import { useGoogleLogin } from '@react-oauth/google';
+import { Browser } from '@capacitor/browser';
+import { Capacitor } from '@capacitor/core';
 
 const Login = () => {
     const { googleLogin, error, user } = useContext(AuthContext);
@@ -11,6 +12,9 @@ const Login = () => {
     const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [loginError, setLoginError] = useState(null);
+
+    // Retrieve client ID
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
     useEffect(() => {
         if (user) {
@@ -33,31 +37,104 @@ const Login = () => {
         }
     }, [navigate, user]);
 
-    const handleGoogleSuccess = async (tokenResponse) => {
-        setIsSubmitting(true);
-        setLoginError(null);
-        try {
-            const success = await googleLogin({ accessToken: tokenResponse.access_token });
-            if (success) {
-                const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
-                if (savedRedirect) {
-                    sessionStorage.removeItem('redirectAfterLogin');
-                    navigate(savedRedirect);
+    // Handle OAuth Callback/Token handling from URL redirect
+    useEffect(() => {
+        const handleCallback = async () => {
+            const hash = window.location.hash;
+            if (hash) {
+                const params = new URLSearchParams(hash.replace('#', '?'));
+                const accessToken = params.get('access_token');
+                if (accessToken) {
+                    setIsSubmitting(true);
+                    setLoginError(null);
+                    // Clear the hash in URL
+                    window.history.replaceState(null, null, ' ');
+                    try {
+                        const success = await googleLogin({ accessToken });
+                        if (success) {
+                            const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
+                            if (savedRedirect) {
+                                sessionStorage.removeItem('redirectAfterLogin');
+                                navigate(savedRedirect);
+                            }
+                        }
+                    } catch (err) {
+                        setLoginError('Google Sign-In failed. Please try again.');
+                    }
+                    setIsSubmitting(false);
                 }
             }
+        };
+
+        handleCallback();
+
+        // Listen for Capacitor App Url Open events (handles login completion redirect back to app)
+        if (Capacitor.isNativePlatform()) {
+            const setupAppListener = async () => {
+                const { App } = await import('@capacitor/app');
+                App.addListener('appUrlOpen', async (data) => {
+                    const url = new URL(data.url);
+                    // Check if redirect contains access token in hash or params
+                    const hashParams = new URLSearchParams(url.hash.replace('#', '?'));
+                    const accessToken = hashParams.get('access_token') || url.searchParams.get('access_token');
+                    
+                    if (accessToken) {
+                        setIsSubmitting(true);
+                        setLoginError(null);
+                        try {
+                            const success = await googleLogin({ accessToken });
+                            if (success) {
+                                // Close the browser tab if still open
+                                await Browser.close();
+                                const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
+                                if (savedRedirect) {
+                                    sessionStorage.removeItem('redirectAfterLogin');
+                                    navigate(savedRedirect);
+                                }
+                            }
+                        } catch (err) {
+                            setLoginError('Google Sign-In failed. Please try again.');
+                        }
+                        setIsSubmitting(false);
+                    }
+                });
+            };
+            setupAppListener();
+        }
+    }, [googleLogin, navigate]);
+
+    const handleGoogleLogin = async () => {
+        setIsSubmitting(true);
+        setLoginError(null);
+
+        // Determine redirect URI: localhost for local dev/app, or Vercel domain for prod
+        let redirectUri = window.location.origin;
+        if (Capacitor.isNativePlatform()) {
+            // Android uses com.ilayangudimart.app as scheme or localhost
+            redirectUri = 'https://localhost';
+        }
+
+        // Construct Google OAuth URL manually
+        const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+            `client_id=${clientId}` +
+            `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+            `&response_type=token` +
+            `&scope=${encodeURIComponent('openid profile email')}` +
+            `&prompt=select_account`;
+
+        try {
+            if (Capacitor.isNativePlatform()) {
+                // Open inside custom Chrome tab / Safari View Controller
+                await Browser.open({ url: oauthUrl });
+            } else {
+                // Open in same window on standard browser
+                window.location.href = oauthUrl;
+            }
         } catch (err) {
-            setLoginError('Google Sign-In failed. Please try again.');
+            setLoginError('Could not open login page. Please try again.');
         }
         setIsSubmitting(false);
     };
-
-    const googleSignIn = useGoogleLogin({
-        onSuccess: handleGoogleSuccess,
-        onError: () => {
-            setLoginError('Google Sign-In failed. Please try again.');
-        },
-        flow: 'implicit',
-    });
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#CBF9B2] dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
@@ -84,7 +161,7 @@ const Login = () => {
 
                 <div className="flex flex-col items-center justify-center w-full gap-4">
                     <button
-                        onClick={() => googleSignIn()}
+                        onClick={handleGoogleLogin}
                         disabled={isSubmitting}
                         className="flex items-center justify-center gap-3 w-full max-w-xs py-3 px-6 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full shadow-sm hover:shadow-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
