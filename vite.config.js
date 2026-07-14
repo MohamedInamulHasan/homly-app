@@ -128,11 +128,11 @@ export default defineConfig({
   ],
   server: {
     host: true, // Listen on all network interfaces
-    port: 5134,
+    port: 5173,
     strictPort: false,
   },
   preview: {
-    port: 5134,
+    port: 5173,
   },
   build: {
     chunkSizeWarningLimit: 1600,

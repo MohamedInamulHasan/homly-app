@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
-import { isStoreOpen } from '../../utils/storeHelpers';
+import { isStoreOpen, isProductScheduled } from '../../utils/storeHelpers';
 import { groupProducts } from '../../utils/productGrouping';
 import { useData } from '../../context/DataContext';
 import ProductCard from '../ProductCard';
@@ -86,12 +86,28 @@ const StoreSection = ({ section, products: rawProducts = [], singleStore = false
             }
         });
 
-        return slots;
+        // Put timing finished (not currently scheduled) products last
+        return slots.sort((a, b) => {
+            const isAScheduled = a.isGroup ? true : isProductScheduled(a);
+            const isBScheduled = b.isGroup ? true : isProductScheduled(b);
+            if (isAScheduled && !isBScheduled) return -1;
+            if (!isAScheduled && isBScheduled) return 1;
+            return 0;
+        });
     })();
 
     const singleStoreProducts = useMemo(() => {
         if (!singleStore) return [];
-        return groupProducts(products, contextStores, { forcedStoreId: section.type === 'store' ? section.id : null });
+        const grouped = groupProducts(products, contextStores, { forcedStoreId: section.type === 'store' ? section.id : null });
+        
+        // Put timing finished products last in single store view too
+        return [...grouped].sort((a, b) => {
+            const isAScheduled = a.isGroup ? true : isProductScheduled(a);
+            const isBScheduled = b.isGroup ? true : isProductScheduled(b);
+            if (isAScheduled && !isBScheduled) return -1;
+            if (!isAScheduled && isBScheduled) return 1;
+            return 0;
+        });
     }, [products, singleStore, contextStores, section.type, section.id]);
 
     return (
@@ -121,10 +137,18 @@ const StoreSection = ({ section, products: rawProducts = [], singleStore = false
                         </p>
                     )}
                 </div>
-                {section.type !== 'special' && (
+                {section.id === 'free_delivery' ? (
+                    <Link to="/store" className="text-[13px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] hover:opacity-70 transition-all underline decoration-[2.5px] underline-offset-[6px]">
+                        {t('See All')}
+                    </Link>
+                ) : isOpen ? (
                     <Link to={navigateTo} className="text-[13px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] hover:opacity-70 transition-all underline decoration-[2.5px] underline-offset-[6px]">
                         {t('See All')}
                     </Link>
+                ) : (
+                    <span className="text-[13px] font-bold text-gray-400 dark:text-gray-650 cursor-not-allowed select-none underline decoration-[2.5px] underline-offset-[6px]">
+                        {t('See All')}
+                    </span>
                 )}
             </div>
 

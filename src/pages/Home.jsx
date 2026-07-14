@@ -77,10 +77,10 @@ const Home = () => {
     }, [rawCategories, rawProducts]);
 
 
-    // Grouping Logic (show all available products - timed-out ones show overlay)
+    // Grouping Logic (show all available products - timed-out ones show overlay, manually disabled are hidden)
     const groupedByStore = useMemo(() => {
         const availableProducts = products.filter(p => {
-            if (p.isAvailable === false) return false;
+            if (p.isAvailable === false) return false; // Manually disabled -> hide completely
             return true; // Timed products still show with an availability overlay
         });
 

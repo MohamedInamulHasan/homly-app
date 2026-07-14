@@ -21,7 +21,7 @@ import CategoryProducts from './pages/CategoryProducts';
 import ProductGroupProducts from './pages/ProductGroupProducts';
 import MyStore from './pages/MyStore';
 import Login from './pages/Login';
-import Signup from './pages/Signup';
+
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import MyService from './pages/MyService';
@@ -54,9 +54,9 @@ const HomeWithRedirect = () => {
     const { user, loading } = useAuth();
     if (loading) return null;
 
-    // Not logged in → show Sign Up page first
+    // Not logged in → show Login page first
     if (!user) {
-        return <Navigate to="/signup" replace />;
+        return <Navigate to="/login" replace />;
     }
 
     const roles = Array.isArray(user?.role) ? user.role : [user?.role || 'customer'];
@@ -224,7 +224,7 @@ function App() {
                                     <Route path="/news" element={<News />} />
                                     <Route path="/services" element={<Services />} />
                                     <Route path="/login" element={<Login />} />
-                                    <Route path="/signup" element={<Signup />} />
+                                    <Route path="/signup" element={<Navigate to="/login" replace />} />
                                     <Route path="/forgot-password" element={<ForgotPassword />} />
                                     <Route path="/reset-password/:token" element={<ResetPassword />} />
 

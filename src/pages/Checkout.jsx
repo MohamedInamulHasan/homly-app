@@ -175,6 +175,12 @@ const Checkout = () => {
             return;
         }
 
+        // Validate Location (GPS Location must be pinned/attached)
+        if (!formData.location) {
+            alert(t('Please attach your GPS Location. It is required for delivery coordinates.'));
+            return;
+        }
+
         // Validate Mobile Number (10 digits)
         if (!/^\d{10}$/.test(formData.mobile)) {
             alert(t('Please enter a valid 10-digit mobile number'));
@@ -352,7 +358,7 @@ const Checkout = () => {
                                     <div className="relative mb-6">
                                         <div className="flex items-center justify-between mb-2 px-1">
                                             <span className="text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest">{t('GPS Location')}</span>
-                                            <span className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">{t('Optional')}</span>
+                                            <span className="text-[10px] font-semibold text-red-500 bg-red-50 dark:bg-red-950/20 px-2.5 py-0.5 rounded-full">{t('Required')}</span>
                                         </div>
                                         {isLocationSearching && (
                                             <motion.div

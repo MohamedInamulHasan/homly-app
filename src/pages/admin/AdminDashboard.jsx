@@ -1203,13 +1203,6 @@ const ProductManagement = () => {
                                                                     onClick={async () => {
                                                                         const currentStatus = product.isAvailable !== false;
                                                                         const productId = product._id || product.id;
-
-                                                                        // If automatically off due to time, we cannot manually turn it ON
-                                                                        if (!currentStatus && !isProductScheduled(product)) {
-                                                                            alert(t('Cannot enable: Product is currently outside its scheduled timing window.'));
-                                                                            return;
-                                                                        }
-
                                                                         // Optimistic update
                                                                         queryClient.setQueryData(['products'], (old) => {
                                                                             const oldData = Array.isArray(old) ? old : (old?.data || []);
@@ -1239,15 +1232,13 @@ const ProductManagement = () => {
                                                                             alert(t('Failed to update status'));
                                                                         }
                                                                     }}
-                                                                    disabled={product.isAvailable === false && !isProductScheduled(product)}
-                                                                    className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7CA90E] ${product.isAvailable !== false && isProductScheduled(product) ? 'bg-[#2E5A2E]' : 'bg-gray-200 dark:bg-gray-600'
-                                                                        } ${(product.isAvailable === false && !isProductScheduled(product)) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                                                    title={product.isAvailable !== false && isProductScheduled(product) ? t('Available') : !isProductScheduled(product) ? t('Timed Out') : t('Out of Stock')}
+                                                                    className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7CA90E] ${product.isAvailable !== false ? 'bg-[#2E5A2E]' : 'bg-gray-200 dark:bg-gray-600'}`}
+                                                                    title={product.isAvailable !== false ? t('Available') : t('Out of Stock')}
                                                                 >
                                                                     <motion.span
                                                                         layout
                                                                         transition={{ type: "spring", stiffness: 700, damping: 30 }}
-                                                                        animate={{ x: (product.isAvailable !== false && isProductScheduled(product)) ? 22 : 2 }}
+                                                                        animate={{ x: (product.isAvailable !== false) ? 22 : 2 }}
                                                                         className="inline-block h-5 w-5 transform rounded-full bg-white shadow-md"
                                                                     />
                                                                 </button>

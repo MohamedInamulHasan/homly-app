@@ -1065,12 +1065,6 @@ const StoreManagement = () => {
                                                                 const isScheduled = isProductScheduled(product);
                                                                 const currentStatus = product.isAvailable !== false;
 
-                                                                // If product is currently OFF due to timing, and user tries to turn it ON manually
-                                                                if (!currentStatus && !isScheduled && product.useTimeLimit) {
-                                                                    alert(t('Cannot enable: Product is currently outside its scheduled timing window.'));
-                                                                    return;
-                                                                }
-
                                                                 const productId = product._id || product.id;
 
                                                                 // Optimistic update - instant UI response
@@ -1109,7 +1103,7 @@ const StoreManagement = () => {
                                                             <motion.span
                                                                 layout
                                                                 transition={{ type: "spring", stiffness: 700, damping: 30 }}
-                                                                animate={{ x: (product.isAvailable !== false && isProductScheduled(product)) ? 22 : 2 }}
+                                                                animate={{ x: (product.isAvailable !== false) ? 22 : 2 }}
                                                                 className="inline-block h-5 w-5 transform rounded-full bg-white shadow-md"
                                                             />
                                                         </button>
