@@ -90,7 +90,19 @@ const PrivacyPolicy = () => {
                         </div>
                         <p>Developed by <strong>Ilayangudi Mart</strong>. If you have questions about this Privacy Policy or our privacy practices, please contact us at:</p>
                         <p className="mt-2 font-bold text-[#2E5A2E]">ilymart.28@gmail.com</p>
-                        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">App: <strong>ILY mart</strong> &nbsp;|&nbsp; Package: <strong>com.ilayangudimart.app</strong> &nbsp;|&nbsp; Developer: <strong>Ilayangudi Mart</strong></p>
+                    </section>
+
+                    <section className="pt-6 border-t border-gray-100 dark:border-gray-700 flex flex-col items-center">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 text-center">
+                            {t('If you wish to permanently delete your account and all associated data, you can request it here:')}
+                        </p>
+                        <button
+                            onClick={() => navigate('/delete-account')}
+                            className="flex items-center gap-2 px-6 py-3 bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-950/30 text-red-600 dark:text-red-400 font-bold rounded-full text-xs uppercase tracking-wider transition-all"
+                        >
+                            <Trash2 size={14} />
+                            {t('Request Account Deletion')}
+                        </button>
                     </section>
                 </div>
             </div>

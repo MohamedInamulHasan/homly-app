@@ -2830,11 +2830,13 @@ const UserManagement = () => {
                                 {filteredUsers.filter(user => {
                                     const query = searchQuery.toLowerCase();
                                     return user.name?.toLowerCase().includes(query) ||
-                                        user.email?.toLowerCase().includes(query);
+                                        user.email?.toLowerCase().includes(query) ||
+                                        user.mobile?.toLowerCase().includes(query);
                                 }).length > 0 ? filteredUsers.filter(user => {
                                     const query = searchQuery.toLowerCase();
                                     return user.name?.toLowerCase().includes(query) ||
-                                        user.email?.toLowerCase().includes(query);
+                                        user.email?.toLowerCase().includes(query) ||
+                                        user.mobile?.toLowerCase().includes(query);
                                 }).map((user) => (
                                     <tr key={user._id || user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
                                         <td className="px-6 py-4">
@@ -2850,16 +2852,13 @@ const UserManagement = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-                                                <div className="flex items-center gap-1 text-gray-900 dark:text-white whitespace-nowrap">
-                                                    <Mail size={14} className="text-gray-400" />
-                                                    <span>{user.email}</span>
-                                                </div>
-                                                {user.mobile && (
-                                                    <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                                                        <span className="hidden sm:inline text-gray-300">|</span>
+                                                {user.mobile ? (
+                                                    <div className="flex items-center gap-1 text-gray-900 dark:text-white whitespace-nowrap">
                                                         <Phone size={14} className="text-gray-400" />
                                                         <span>{user.mobile}</span>
                                                     </div>
+                                                ) : (
+                                                    <span className="text-gray-400 dark:text-gray-500">-</span>
                                                 )}
                                             </div>
                                         </td>
@@ -3242,7 +3241,7 @@ const DeliveryBoyManagement = () => {
                                             </div>
                                             <div className="ml-4">
                                                 <div className="text-sm font-medium text-gray-900 dark:text-white">{boy.name}</div>
-                                                <div className="text-xs text-gray-500 dark:text-gray-400">{boy.email}</div>
+                                                {boy.mobile && <div className="text-xs text-gray-500 dark:text-gray-400">{boy.mobile}</div>}
                                             </div>
                                         </div>
                                     </td>
