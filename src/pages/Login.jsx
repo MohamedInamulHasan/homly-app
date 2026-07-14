@@ -53,14 +53,19 @@ const Login = () => {
 
         if (!Capacitor.isNativePlatform()) {
             // We are running on Vercel (real browser / Chrome Custom Tab).
-            // Check if we came from an Android app by looking at referrer or
-            // just always try the deep link first, fall back to web login.
+            
+            // Build an Android Intent URI. Chrome Custom Tab on Android recognises this format
+            // and natively launches the app matching the package name.
+            const intentUrl = `intent://login#access_token=${accessToken}#Intent;scheme=com.ilayangudimart.app;package=com.ilayangudimart.app;end;`;
             const deepLink = `com.ilayangudimart.app://login#access_token=${accessToken}`;
 
-            // Try to open the deep link — Android will intercept via intent-filter
-            window.location.href = deepLink;
+            if (/android/i.test(navigator.userAgent)) {
+                window.location.href = intentUrl;
+            } else {
+                window.location.href = deepLink;
+            }
 
-            // Fallback: if still on the page after 2s (e.g., desktop browser), do web login
+            // Fallback: if still on the page after 2.5s (e.g., desktop browser), do web login
             const fallbackTimer = setTimeout(async () => {
                 setIsSubmitting(true);
                 setLoginError(null);
@@ -81,7 +86,7 @@ const Login = () => {
                     setLoginError('Google Sign-In failed. Please try again.');
                 }
                 setIsSubmitting(false);
-            }, 2000);
+            }, 2500);
 
             return () => clearTimeout(fallbackTimer);
         }
