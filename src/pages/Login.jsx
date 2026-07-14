@@ -110,8 +110,8 @@ const Login = () => {
         // Determine redirect URI: localhost for local dev/app, or Vercel domain for prod
         let redirectUri = window.location.origin;
         if (Capacitor.isNativePlatform()) {
-            // Android uses com.ilayangudimart.app as scheme or localhost
-            redirectUri = 'https://localhost';
+            // Use custom app scheme registered in AndroidManifest
+            redirectUri = 'com.ilayangudimart.app://login';
         }
 
         // Construct Google OAuth URL manually
