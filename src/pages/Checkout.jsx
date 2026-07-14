@@ -200,8 +200,13 @@ const Checkout = () => {
             try {
                 // Step A: Link guest account or switch to existing profile using the phone number
                 console.log('🔄 Upgrading guest user profile with name and mobile...');
-                const freshUser = await updateGuest(formData.fullName, formData.mobile);
-                const activeUser = freshUser || user;
+                let activeUser = user;
+                try {
+                    const freshUser = await updateGuest(formData.fullName, formData.mobile);
+                    if (freshUser) activeUser = freshUser;
+                } catch (guestErr) {
+                    console.warn('⚠️ Guest upgrade failed (non-critical), continuing:', guestErr);
+                }
 
                 // Step B: Update user profile address details
                 const updatedUserData = {
@@ -222,13 +227,23 @@ const Checkout = () => {
                     pincode: formData.zip
                 };
 
-                // Save locally
+                // Save locally first (always succeeds)
                 localStorage.setItem('userInfo', JSON.stringify(updatedUserData));
                 setUser(updatedUserData);
 
-                // Update database
-                await updateUser(updatedUserData);
-                console.log('✅ User profile upgraded and address saved.');
+                // Save to database via own profile endpoint (non-blocking — don't fail order if this fails)
+                try {
+                    await apiService.updateProfile({
+                        name: formData.fullName,
+                        mobile: formData.mobile,
+                        address: updatedUserData.address,
+                        city: formData.city,
+                        zip: formData.zip
+                    });
+                    console.log('✅ User profile and address saved to DB.');
+                } catch (profileErr) {
+                    console.warn('⚠️ Profile save failed (non-critical), continuing with order:', profileErr);
+                }
 
                 // Step C: Proceed to Order Confirmation
                 const currentUser = userProfile?.data || updatedUserData;
