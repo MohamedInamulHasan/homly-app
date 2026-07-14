@@ -14,15 +14,23 @@
             android:theme="@style/AppTheme.NoActionBarLaunch"
             android:launchMode="singleTask"
             android:exported="true">
+
+            <!-- App launcher -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- Deep link: com.ilayangudimart.app://login#access_token=...
+                 Android intercepts this URL after Google OAuth redirect chain
+                 and fires a Capacitor appUrlOpen event with the token. -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="com.ilayangudimart.app" />
+                <data
+                    android:scheme="com.ilayangudimart.app"
+                    android:host="login" />
             </intent-filter>
         </activity>
 
@@ -41,4 +49,5 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-feature android:name="android.hardware.location" android:required="false" />
     <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+
 </manifest>

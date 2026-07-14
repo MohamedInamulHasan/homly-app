@@ -5,6 +5,10 @@ import { useLanguage } from '../context/LanguageContext';
 import { Lock, Loader } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
 
+// The Vercel URL where Google will redirect after login.
+// This MUST match what is registered in Google Cloud Console as an Authorised redirect URI.
+const VERCEL_REDIRECT_URI = 'https://homly-app.vercel.app/login';
+
 const Login = () => {
     const { googleLogin, error, user } = useContext(AuthContext);
     const { t } = useLanguage();
@@ -14,7 +18,7 @@ const Login = () => {
 
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-    // Redirect logged-in users
+    // Redirect already-logged-in users
     useEffect(() => {
         if (user) {
             const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
@@ -32,46 +36,125 @@ const Login = () => {
         }
     }, [navigate, user]);
 
-    // On mount: check if Google redirected back with an access token in the URL hash
+    // ─── Case A: Running in a REAL browser (Vercel / desktop) ───────────────────
+    // Standard web OAuth: Google redirects back here with token in URL hash.
+    // Also handles the "bridge" step: when Chrome Custom Tab loads the Vercel page
+    // after Google auth, we detect the token and redirect to the app custom scheme.
     useEffect(() => {
-        const handleOAuthCallback = async () => {
-            const hash = window.location.hash;
-            if (!hash) return;
+        const hash = window.location.hash;
+        if (!hash) return;
 
-            const params = new URLSearchParams(hash.replace('#', ''));
-            const accessToken = params.get('access_token');
-            if (!accessToken) return;
+        const params = new URLSearchParams(hash.replace('#', ''));
+        const accessToken = params.get('access_token');
+        if (!accessToken) return;
 
-            // Clear token from URL immediately
-            window.history.replaceState(null, '', window.location.pathname);
+        // Clear token from URL immediately so it doesn't leak
+        window.history.replaceState(null, '', window.location.pathname);
 
-            setIsSubmitting(true);
-            setLoginError(null);
-            try {
-                const success = await googleLogin({ accessToken });
-                if (success) {
-                    const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
-                    if (savedRedirect) {
-                        sessionStorage.removeItem('redirectAfterLogin');
-                        navigate(savedRedirect);
+        if (!Capacitor.isNativePlatform()) {
+            // We are running on Vercel (real browser / Chrome Custom Tab).
+            // Check if we came from an Android app by looking at referrer or
+            // just always try the deep link first, fall back to web login.
+            const deepLink = `com.ilayangudimart.app://login#access_token=${accessToken}`;
+
+            // Try to open the deep link — Android will intercept via intent-filter
+            window.location.href = deepLink;
+
+            // Fallback: if still on the page after 2s (e.g., desktop browser), do web login
+            const fallbackTimer = setTimeout(async () => {
+                setIsSubmitting(true);
+                setLoginError(null);
+                try {
+                    const success = await googleLogin({ accessToken });
+                    if (success) {
+                        const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
+                        if (savedRedirect) {
+                            sessionStorage.removeItem('redirectAfterLogin');
+                            navigate(savedRedirect);
+                        } else {
+                            navigate('/');
+                        }
+                    } else {
+                        setLoginError('Google Sign-In failed. Please try again.');
                     }
-                } else {
+                } catch {
                     setLoginError('Google Sign-In failed. Please try again.');
                 }
-            } catch (err) {
-                setLoginError('Google Sign-In failed. Please try again.');
+                setIsSubmitting(false);
+            }, 2000);
+
+            return () => clearTimeout(fallbackTimer);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // ─── Case B: Running inside the Capacitor Android app ───────────────────────
+    // The Android system intercepts the deep link com.ilayangudimart.app://login#access_token=...
+    // and fires an appUrlOpen event which we listen for here.
+    useEffect(() => {
+        if (!Capacitor.isNativePlatform()) return;
+
+        let removeListener;
+
+        const setupAppListener = async () => {
+            try {
+                const { App } = await import('@capacitor/app');
+                const { Browser } = await import('@capacitor/browser');
+
+                const listener = await App.addListener('appUrlOpen', async (data) => {
+                    try {
+                        const url = new URL(data.url);
+                        // Token is in the fragment: com.ilayangudimart.app://login#access_token=xxx
+                        const hashParams = new URLSearchParams(url.hash.replace('#', ''));
+                        const accessToken = hashParams.get('access_token');
+
+                        if (!accessToken) return;
+
+                        setIsSubmitting(true);
+                        setLoginError(null);
+
+                        // Close the Chrome Custom Tab
+                        await Browser.close().catch(() => {});
+
+                        const success = await googleLogin({ accessToken });
+                        if (success) {
+                            const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
+                            if (savedRedirect) {
+                                sessionStorage.removeItem('redirectAfterLogin');
+                                navigate(savedRedirect);
+                            }
+                        } else {
+                            setLoginError('Google Sign-In failed. Please try again.');
+                        }
+                    } catch {
+                        setLoginError('Google Sign-In failed. Please try again.');
+                    }
+                    setIsSubmitting(false);
+                });
+
+                removeListener = () => listener.remove();
+            } catch (e) {
+                console.error('Failed to setup appUrlOpen listener', e);
             }
-            setIsSubmitting(false);
         };
 
-        handleOAuthCallback();
+        setupAppListener();
+
+        return () => {
+            if (removeListener) removeListener();
+        };
     }, [googleLogin, navigate]);
 
-    const handleGoogleLogin = () => {
-        // Use https://localhost as redirect_uri on Android (Capacitor's internal scheme)
-        // and window.location.origin on browser
+    const handleGoogleLogin = async () => {
+        setIsSubmitting(true);
+        setLoginError(null);
+
+        // Always use the Vercel URL as redirect_uri so Google doesn't block it.
+        // On Android: Chrome Custom Tab opens Google → redirects to Vercel → Vercel page
+        //             sends deep link → app receives appUrlOpen with token.
+        // On browser: Google → redirects to Vercel → Vercel page handles web login directly.
         const redirectUri = Capacitor.isNativePlatform()
-            ? 'https://localhost'
+            ? VERCEL_REDIRECT_URI
             : window.location.origin;
 
         const oauthUrl =
@@ -82,9 +165,20 @@ const Login = () => {
             `&scope=${encodeURIComponent('openid profile email')}` +
             `&prompt=select_account`;
 
-        // Navigate in the same WebView — on Android this uses the internal WebView
-        // which recognises https://localhost as itself and catches the token on redirect
-        window.location.href = oauthUrl;
+        if (Capacitor.isNativePlatform()) {
+            try {
+                const { Browser } = await import('@capacitor/browser');
+                // Chrome Custom Tab — NOT blocked by Google (unlike embedded WebView)
+                await Browser.open({ url: oauthUrl });
+            } catch {
+                setLoginError('Could not open login page. Please try again.');
+            }
+        } else {
+            // Standard browser: redirect in the same tab
+            window.location.href = oauthUrl;
+        }
+
+        setIsSubmitting(false);
     };
 
     return (
