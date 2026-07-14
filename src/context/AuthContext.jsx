@@ -44,20 +44,34 @@ export const AuthProvider = ({ children }) => {
             // but since we moved to Hybrid Auth, we expect a token.
             if (!storedToken && !storedUser) {
                 console.log('ℹ️ AuthContext: No token/user found. Registering guest user silently...');
-                try {
-                    const data = await apiService.registerGuest();
-                    console.log('✅ AuthContext: Silent Guest Registration Success', data);
-                    setUser(data.data);
-                    localStorage.setItem('userInfo', JSON.stringify(data.data));
-                    if (data.token) {
-                        localStorage.setItem('authToken', data.token);
+                // Retry up to 3 times — handles Render free-tier cold start delay
+                const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+                let lastError = null;
+                for (let attempt = 1; attempt <= 3; attempt++) {
+                    try {
+                        if (attempt > 1) {
+                            console.log(`🔄 AuthContext: Guest registration retry #${attempt}...`);
+                            await sleep(2000 * (attempt - 1)); // 0s, 2s, 4s
+                        }
+                        const data = await apiService.registerGuest();
+                        console.log('✅ AuthContext: Silent Guest Registration Success', data);
+                        setUser(data.data);
+                        localStorage.setItem('userInfo', JSON.stringify(data.data));
+                        if (data.token) {
+                            localStorage.setItem('authToken', data.token);
+                        }
+                        window.dispatchEvent(new Event('userChanged'));
+                        lastError = null;
+                        break; // success — stop retrying
+                    } catch (err) {
+                        lastError = err;
+                        console.error(`❌ AuthContext: Guest registration attempt ${attempt} failed:`, err);
                     }
-                    window.dispatchEvent(new Event('userChanged'));
-                } catch (err) {
-                    console.error('❌ AuthContext: Failed to register guest user silently:', err);
-                } finally {
-                    setLoading(false);
                 }
+                if (lastError) {
+                    console.error('❌ AuthContext: All guest registration attempts failed. App continues without user session.');
+                }
+                setLoading(false);
                 return;
             }
 
