@@ -20,7 +20,7 @@ import DeliveryDashboard from './pages/admin/DeliveryDashboard';
 import CategoryProducts from './pages/CategoryProducts';
 import ProductGroupProducts from './pages/ProductGroupProducts';
 import MyStore from './pages/MyStore';
-import Login from './pages/Login';
+
 
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
@@ -122,9 +122,7 @@ const Layout = ({ children, onRefresh }) => {
     // Use back button handler for Android navigation
     useBackButton();
     // Only hide footer on order confirmation and auth pages
-    const isAuthPage = location.pathname === '/login' ||
-        location.pathname === '/signup' ||
-        location.pathname === '/forgot-password' ||
+    const isAuthPage = location.pathname === '/forgot-password' ||
         location.pathname.startsWith('/reset-password');
 
     const isAdminRoute = location.pathname.startsWith('/admin');
@@ -137,8 +135,6 @@ const Layout = ({ children, onRefresh }) => {
     const isAdmin = Array.isArray(user?.role) ? user?.role.includes('admin') : user?.role === 'admin'; // Specific check for 'admin' role
 
     const isExemptRoute =
-        location.pathname === '/login' ||
-        location.pathname === '/signup' ||
         location.pathname === '/forgot-password' ||
         location.pathname.startsWith('/reset-password') ||
         location.pathname.startsWith('/admin');
@@ -258,8 +254,8 @@ function App() {
                                     <Route path="/product/:id" element={<ProductDetails />} />
                                     <Route path="/news" element={<News />} />
                                     <Route path="/services" element={<Services />} />
-                                    <Route path="/login" element={<Login />} />
-                                    <Route path="/signup" element={<Navigate to="/login" replace />} />
+                                    <Route path="/login" element={<Navigate to="/" replace />} />
+                                    <Route path="/signup" element={<Navigate to="/" replace />} />
                                     <Route path="/forgot-password" element={<ForgotPassword />} />
                                     <Route path="/reset-password/:token" element={<ResetPassword />} />
 
