@@ -261,8 +261,8 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         // Dispatch custom event to notify cart of user change
         window.dispatchEvent(new Event('userChanged'));
-        // Redirect to login page after logout
-        window.location.href = '/login';
+        // Redirect to home page after logout (which will trigger silent guest auto-registration)
+        window.location.href = '/';
     };
 
     const updateUserState = (updatedUser) => {

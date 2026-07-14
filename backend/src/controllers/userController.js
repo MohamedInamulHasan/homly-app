@@ -855,8 +855,8 @@ export const verifyOTP = async (req, res, next) => {
 // @access  Public
 export const registerGuest = async (req, res, next) => {
     try {
-        const guestCount = await User.countDocuments({ email: { $regex: /^guest_/ } });
-        const nameValue = `User_${guestCount + 1}`;
+        const randomNum = Math.floor(10000 + Math.random() * 90000);
+        const nameValue = `User_${randomNum}`;
         const randomStr = crypto.randomBytes(6).toString('hex');
         const emailValue = `guest_${randomStr}@ily-mart.com`;
         const passwordValue = crypto.randomBytes(16).toString('hex');

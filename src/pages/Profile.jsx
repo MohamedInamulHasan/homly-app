@@ -204,18 +204,6 @@ const Profile = () => {
                                <h2 className="text-[17px] font-bold text-gray-900 dark:text-white leading-tight tracking-tight truncate">
                                    {user?.name || 'Guest User'}
                                </h2>
-                               <p className="text-[13px] font-medium text-gray-400 dark:text-gray-500 mt-0.5 truncate">
-                                   {user ? (() => {
-                                       const idStr = String(user._id || user.id || '');
-                                       if (!idStr) return 'Not logged in';
-                                       let hash = 0;
-                                       for (let i = 0; i < idStr.length; i++) {
-                                           hash = idStr.charCodeAt(i) + ((hash << 5) - hash);
-                                       }
-                                       const code = Math.abs(hash % 90000) + 10000;
-                                       return `User ${code}`;
-                                   })() : 'Not logged in'}
-                               </p>
                           </div>
                      </div>
                 </div>
