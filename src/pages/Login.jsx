@@ -94,59 +94,47 @@ const Login = () => {
     }, []);
 
     // ─── Case B: Running inside the Capacitor Android app ───────────────────────
-    // The Android system intercepts the deep link com.ilayangudimart.app://login#access_token=...
-    // and fires an appUrlOpen event which we listen for here.
+    // Reads pending token from localStorage (captured by the global App.jsx listener)
+    // or waits for the custom 'pendingTokenReceived' event to fire if already mounted.
     useEffect(() => {
         if (!Capacitor.isNativePlatform()) return;
 
-        let removeListener;
+        const checkAndLogin = async () => {
+            const pendingToken = localStorage.getItem('pending_google_access_token');
+            if (!pendingToken) return;
 
-        const setupAppListener = async () => {
+            // Consume it immediately
+            localStorage.removeItem('pending_google_access_token');
+
+            setIsSubmitting(true);
+            setLoginError(null);
             try {
-                const { App } = await import('@capacitor/app');
-                const { Browser } = await import('@capacitor/browser');
-
-                const listener = await App.addListener('appUrlOpen', async (data) => {
-                    try {
-                        const url = new URL(data.url);
-                        // Token is in the fragment: com.ilayangudimart.app://login#access_token=xxx
-                        const hashParams = new URLSearchParams(url.hash.replace('#', ''));
-                        const accessToken = hashParams.get('access_token');
-
-                        if (!accessToken) return;
-
-                        setIsSubmitting(true);
-                        setLoginError(null);
-
-                        // Close the Chrome Custom Tab
-                        await Browser.close().catch(() => {});
-
-                        const success = await googleLogin({ accessToken });
-                        if (success) {
-                            const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
-                            if (savedRedirect) {
-                                sessionStorage.removeItem('redirectAfterLogin');
-                                navigate(savedRedirect);
-                            }
-                        } else {
-                            setLoginError('Google Sign-In failed. Please try again.');
-                        }
-                    } catch {
-                        setLoginError('Google Sign-In failed. Please try again.');
+                const success = await googleLogin({ accessToken: pendingToken });
+                if (success) {
+                    const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
+                    if (savedRedirect) {
+                        sessionStorage.removeItem('redirectAfterLogin');
+                        navigate(savedRedirect);
+                    } else {
+                        navigate('/');
                     }
-                    setIsSubmitting(false);
-                });
-
-                removeListener = () => listener.remove();
-            } catch (e) {
-                console.error('Failed to setup appUrlOpen listener', e);
+                } else {
+                    setLoginError('Google Sign-In failed. Please try again.');
+                }
+            } catch {
+                setLoginError('Google Sign-In failed. Please try again.');
             }
+            setIsSubmitting(false);
         };
 
-        setupAppListener();
+        // Check on mount (handles cold starts where token was captured before mount)
+        checkAndLogin();
+
+        // Listen for new token events (handles cases where login screen is already open)
+        window.addEventListener('pendingTokenReceived', checkAndLogin);
 
         return () => {
-            if (removeListener) removeListener();
+            window.removeEventListener('pendingTokenReceived', checkAndLogin);
         };
     }, [googleLogin, navigate]);
 

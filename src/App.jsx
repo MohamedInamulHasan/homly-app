@@ -176,6 +176,44 @@ function App() {
     const { initialLoading, refreshData } = useData();
     const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
+    // Global listener for Android/iOS deep links (handles OAuth callback cold starts)
+    useEffect(() => {
+        const setupAppListener = async () => {
+            try {
+                // Only import on native platforms
+                const { Capacitor } = await import('@capacitor/core');
+                if (!Capacitor.isNativePlatform()) return;
+
+                const { App: CapApp } = await import('@capacitor/app');
+                const { Browser } = await import('@capacitor/browser');
+
+                CapApp.addListener('appUrlOpen', async (data) => {
+                    console.log('App received deep link URL:', data.url);
+                    const urlString = data.url || '';
+                    
+                    // Safe string-based token extraction
+                    if (urlString.includes('access_token=')) {
+                        const tokenMatch = urlString.match(/access_token=([^&#\s?]+)/);
+                        if (tokenMatch && tokenMatch[1]) {
+                            const accessToken = tokenMatch[1];
+                            localStorage.setItem('pending_google_access_token', accessToken);
+                            
+                            // Close the secure Chrome tab
+                            await Browser.close().catch(() => {});
+                            
+                            // Dispatch event to notify active Login component
+                            window.dispatchEvent(new Event('pendingTokenReceived'));
+                        }
+                    }
+                });
+            } catch (err) {
+                console.error('Failed to setup global deep link listener:', err);
+            }
+        };
+
+        setupAppListener();
+    }, []);
+
     useEffect(() => {
         const handleOnline = () => setIsOffline(false);
         const handleOffline = () => setIsOffline(true);
