@@ -163,7 +163,7 @@ const Login = () => {
                     <button
                         onClick={handleGoogleLogin}
                         disabled={isSubmitting}
-                        className="flex items-center justify-center gap-3 w-full max-w-xs py-3 px-6 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full shadow-sm hover:shadow-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="flex items-center justify-center gap-3 w-full max-w-xs py-3 px-6 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                         {isSubmitting ? (
                             <Loader className="animate-spin h-5 w-5 text-gray-500" />
