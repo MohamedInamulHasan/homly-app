@@ -1,70 +1,63 @@
 import { useState, useContext, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { Mail, Lock, ArrowRight, Loader, Eye, EyeOff } from 'lucide-react';
-import { GoogleLogin } from '@react-oauth/google';
+import { Lock, Loader } from 'lucide-react';
+import { useGoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const { login, googleLogin, error, user } = useContext(AuthContext);
+    const { googleLogin, error, user } = useContext(AuthContext);
     const { t } = useLanguage();
     const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-
-
-
-    // Get redirect param from URL
-    const location = window.location;
-    const queryParams = new URLSearchParams(location.search);
-    const redirect = queryParams.get('redirect');
+    const [loginError, setLoginError] = useState(null);
 
     useEffect(() => {
         if (user) {
-            // Check if there's a saved redirect path from checkout
             const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
             if (savedRedirect) {
                 sessionStorage.removeItem('redirectAfterLogin');
                 navigate(savedRedirect);
             } else {
-                // Only force delivery boys directly to the admin dashboard. 
-                // Global admins, store admins, etc. may want to see the storefront first.
                 const roles = Array.isArray(user.role) ? user.role : [user.role || 'customer'];
                 const isDeliveryBoy = roles.some(r => {
                     const normalized = String(r || '').toLowerCase().trim();
                     return normalized === 'delivery_boy' || normalized === 'deliveryboy';
                 });
-
                 if (isDeliveryBoy) {
                     navigate('/admin');
                 } else {
-                    // Always go to home page after login for regular users, admins, store admins, and service admins
                     navigate('/');
                 }
             }
         }
     }, [navigate, user]);
 
-    const submitHandler = async (e) => {
-        e.preventDefault();
+    const handleGoogleSuccess = async (tokenResponse) => {
         setIsSubmitting(true);
-        const success = await login(email, password);
-        if (success) {
-            // Check for saved redirect
-            const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
-            if (savedRedirect) {
-                sessionStorage.removeItem('redirectAfterLogin');
-                navigate(savedRedirect);
-            } else {
-                // The Context doesn't return the full user immediately here in submitHandler, 
-                // but useEffect will catch it. If needed, we just let useEffect handle the default routing.
+        setLoginError(null);
+        try {
+            const success = await googleLogin({ accessToken: tokenResponse.access_token });
+            if (success) {
+                const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
+                if (savedRedirect) {
+                    sessionStorage.removeItem('redirectAfterLogin');
+                    navigate(savedRedirect);
+                }
             }
+        } catch (err) {
+            setLoginError('Google Sign-In failed. Please try again.');
         }
         setIsSubmitting(false);
     };
+
+    const googleSignIn = useGoogleLogin({
+        onSuccess: handleGoogleSuccess,
+        onError: () => {
+            setLoginError('Google Sign-In failed. Please try again.');
+        },
+        flow: 'implicit',
+    });
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#CBF9B2] dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
@@ -81,45 +74,37 @@ const Login = () => {
                     </p>
                 </div>
 
-                {error && (
+                {(error || loginError) && (
                     <div className="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 p-4 rounded-md">
-                        <div className="flex">
-                            <div className="flex-shrink-0">
-                                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                                </svg>
-                            </div>
-                            <div className="ml-3">
-                                <p className="text-sm text-red-700 dark:text-red-200">
-                                    {t(error)}
-                                </p>
-                            </div>
-                        </div>
+                        <p className="text-sm text-red-700 dark:text-red-200">
+                            {loginError || t(error)}
+                        </p>
                     </div>
                 )}
 
                 <div className="flex flex-col items-center justify-center w-full gap-4">
-                    <GoogleLogin
-                        onSuccess={async (credentialResponse) => {
-                            setIsSubmitting(true);
-                            const success = await googleLogin({ credential: credentialResponse.credential });
-                            setIsSubmitting(false);
-                            if (success) {
-                                const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
-                                if (savedRedirect) {
-                                    sessionStorage.removeItem('redirectAfterLogin');
-                                    navigate(savedRedirect);
-                                }
-                            }
-                        }}
-                        onError={() => {
-                            console.error('Google Login Failed');
-                        }}
-                        theme="outline"
-                        size="large"
-                        shape="pill"
-                        width="300"
-                    />
+                    <button
+                        onClick={() => googleSignIn()}
+                        disabled={isSubmitting}
+                        className="flex items-center justify-center gap-3 w-full max-w-xs py-3 px-6 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full shadow-sm hover:shadow-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                        {isSubmitting ? (
+                            <Loader className="animate-spin h-5 w-5 text-gray-500" />
+                        ) : (
+                            <>
+                                {/* Google Logo SVG */}
+                                <svg width="20" height="20" viewBox="0 0 48 48">
+                                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                                </svg>
+                                <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                    Sign in with Google
+                                </span>
+                            </>
+                        )}
+                    </button>
                 </div>
             </div>
         </div>
