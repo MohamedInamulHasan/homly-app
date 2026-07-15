@@ -1,13 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Clock, Store, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { isStoreOpen, formatTime12h } from '../utils/storeHelpers';
+import { isStoreOpen, formatTime12h, getStoreTimeLabel } from '../utils/storeHelpers';
 import { API_BASE_URL } from '../utils/api';
 
 const StoreCard = ({ store }) => {
     const { t } = useLanguage();
     const navigate = useNavigate();
     const isOpen = isStoreOpen(store);
+    const timeLabel = getStoreTimeLabel(store);
 
     const handleVisit = () => {
         if (isOpen) {
@@ -44,6 +45,14 @@ const StoreCard = ({ store }) => {
                     <span className="bg-gray-800 text-white px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg animate-in fade-in zoom-in-95 duration-500">
                         {t('Closed')}
                     </span>
+                </div>
+            )}
+
+            {/* Timing Badge — top-right corner, only if timing is set and not manually closed */}
+            {timeLabel && (
+                <div className="absolute top-2.5 right-2.5 z-30 flex items-center gap-1 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded-full shadow-md">
+                    <Clock size={9} className="flex-shrink-0 opacity-80" />
+                    <span className="text-[9px] font-bold tracking-tight leading-none">{timeLabel}</span>
                 </div>
             )}
 
