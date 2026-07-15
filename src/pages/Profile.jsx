@@ -196,9 +196,10 @@ const Profile = () => {
                                         {user?.name || 'Guest User'}
                                     </h2>
                                     {Number(user?.coins || 0) > 0 && (
-                                        <div className="flex items-center gap-1 bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] rounded-full px-2 py-0.5 shadow-sm border border-[#AA8A2E]">
-                                            <span className="text-[10px] font-black text-[#5C4033] leading-none">🪙</span>
-                                            <span className="text-[10px] font-black text-[#5C4033] leading-none">{user?.coins}</span>
+                                        <div className="w-5 h-5 rounded-full bg-gradient-to-tr from-[#BF953F] via-[#FCF6BA] to-[#B38728] border border-[#AA8A2E] flex items-center justify-center shadow-sm">
+                                            <span className="text-[10px] font-black text-[#5C4033] leading-none">
+                                                {user?.coins}
+                                            </span>
                                         </div>
                                     )}
                                 </div>

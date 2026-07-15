@@ -97,7 +97,7 @@ const Checkout = () => {
 
                 setFormData(prev => ({
                     ...prev,
-                    fullName: user.fullName || user.name || prev.fullName,
+                    fullName: user.fullName || '',
                     mobile: user.mobile || user.phone || prev.mobile,
                     // If user.address is an object, use .street, otherwise use it directly if string
                     address: (isAddressObject ? addressObj.street : user.address) || prev.address,
