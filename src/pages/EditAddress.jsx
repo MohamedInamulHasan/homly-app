@@ -172,86 +172,77 @@ const EditAddress = () => {
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Location Detection Block */}
-                    <div className="relative">
+                    {/* Location Detection Block — slim horizontal bar */}
+                    <div>
                         <div className="flex items-center justify-between mb-2 px-1">
                             <span className="text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest">{t('GPS Location')}</span>
                             <span className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">{t('Optional')}</span>
                         </div>
-                        {isDetecting && (
-                            <motion.div
-                                initial={{ scale: 0.8, opacity: 0 }}
-                                animate={{ scale: [0.8, 1.2, 1.4], opacity: [0, 0.3, 0] }}
-                                transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
-                                className="absolute inset-0 bg-[#2E5A2E]/20 rounded-[2rem] z-0"
-                            />
-                        )}
+
                         <button
                             type="button"
                             onClick={handleDetectLocation}
                             disabled={isDetecting}
-                            className={`w-full relative z-10 bg-white dark:bg-gray-800 border-2 border-dashed p-5 rounded-[2rem] flex items-center justify-between gap-3 group transition-all duration-300 active:scale-[0.98] ${
-                                isDetecting ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-green-50/30 dark:bg-[#CBF9B2]/5' : 
-                                formData.location ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-green-50/30 dark:bg-[#CBF9B2]/5' : 'border-gray-200 dark:border-gray-700'
+                            className={`w-full bg-white dark:bg-gray-800 border rounded-2xl px-4 py-3 flex items-center gap-3 transition-all duration-300 active:scale-[0.98] ${
+                                isDetecting ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-green-50/30' :
+                                formData.location ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-green-50/30 dark:bg-[#CBF9B2]/5' :
+                                'border-gray-200 dark:border-gray-700'
                             }`}
                         >
-                            <div className="flex items-center gap-4 flex-1 min-w-0">
-                                <div className="relative flex-shrink-0">
-                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 ${
-                                        isDetecting ? 'bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-gray-900 shadow-lg shadow-green-200 scale-110' :
-                                        formData.location ? 'bg-green-100 dark:bg-[#CBF9B2]/20 text-[#2E5A2E] dark:text-[#CBF9B2]' : 'bg-gray-50 dark:bg-gray-700 text-gray-400'
-                                    }`}>
-                                        <AnimatePresence mode="wait">
-                                            {isDetecting ? (
-                                                <motion.div
-                                                    key="detecting"
-                                                    initial={{ rotate: 0 }}
-                                                    animate={{ rotate: 360 }}
-                                                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                                                >
-                                                    <Navigation size={22} />
-                                                </motion.div>
-                                            ) : (
-                                                <motion.div
-                                                    key={formData.location ? 'saved' : 'empty'}
-                                                    initial={{ scale: 0.5, opacity: 0 }}
-                                                    animate={{ scale: 1, opacity: 1 }}
-                                                    exit={{ scale: 0.5, opacity: 0 }}
-                                                >
-                                                    <MapPin size={22} className={formData.location ? 'animate-bounce' : ''} />
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    </div>
-                                    {isDetecting && (
-                                        <motion.div
-                                            animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
-                                            transition={{ duration: 1, repeat: Infinity }}
-                                            className="absolute inset-0 rounded-full bg-[#2E5A2E]"
-                                        />
-                                    )}
-                                </div>
-                                <div className="text-left flex-1 min-w-0">
-                                    <h3 className={`font-bold text-[15px] transition-colors duration-300 truncate ${isDetecting || formData.location ? 'text-[#2E5A2E] dark:text-[#CBF9B2]' : 'text-gray-900 dark:text-white'}`}>
-                                        {isDetecting ? t('Finding location...') : formData.location ? t('Location Attached') : t('Pin exact GPS')}
-                                    </h3>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
-                                        {isDetecting ? t('Please wait while we sync labels...') : formData.location ? t('Tap to update location') : t('Helps deliver faster — tap to attach')}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className={`w-8 h-8 rounded-full border flex-shrink-0 flex items-center justify-center transition-colors ${
-                                isDetecting || formData.location ? 'bg-white dark:bg-gray-700 border-[#2E5A2E]/20 dark:border-[#CBF9B2]/20 text-[#2E5A2E] dark:text-[#CBF9B2]' : 'border-gray-100 dark:border-gray-700 text-gray-400'
+                            {/* Icon */}
+                            <div className={`w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center transition-all duration-300 ${
+                                isDetecting ? 'bg-[#2E5A2E] text-white' :
+                                formData.location ? 'bg-green-100 dark:bg-[#CBF9B2]/20 text-[#2E5A2E] dark:text-[#CBF9B2]' :
+                                'bg-gray-100 dark:bg-gray-700 text-gray-400'
                             }`}>
-                                 <ArrowLeft size={16} className={`transition-transform duration-300 ${isDetecting ? 'rotate-90' : 'rotate-180'}`} />
+                                <AnimatePresence mode="wait">
+                                    {isDetecting ? (
+                                        <motion.div key="spin" animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}>
+                                            <Navigation size={16} />
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div key={formData.location ? 'pin-on' : 'pin-off'} initial={{ scale: 0.6 }} animate={{ scale: 1 }}>
+                                            <MapPin size={16} />
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
+
+                            {/* Text */}
+                            <div className="flex-1 text-left min-w-0">
+                                <p className={`text-[13px] font-bold truncate ${
+                                    formData.location ? 'text-[#2E5A2E] dark:text-[#CBF9B2]' :
+                                    isDetecting ? 'text-[#2E5A2E] dark:text-[#CBF9B2]' : 'text-gray-700 dark:text-gray-300'
+                                }`}>
+                                    {isDetecting ? t('Finding location...') : formData.location ? t('Location Attached') : t('Tap to attach GPS location')}
+                                </p>
+                                {!isDetecting && (
+                                    <p className="text-[11px] text-gray-400 truncate">
+                                        {formData.location ? t('Tap to update location') : t('Helps us deliver faster')}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Arrow */}
+                            <ArrowLeft size={14} className={`flex-shrink-0 rotate-180 transition-colors ${
+                                formData.location ? 'text-[#2E5A2E] dark:text-[#CBF9B2]' : 'text-gray-300 dark:text-gray-600'
+                            }`} />
                         </button>
-                        {/* Clear location — only visible when attached */}
+
+                        {/* Inline hint when location not attached */}
+                        {!formData.location && !isDetecting && (
+                            <div className="mt-2 flex items-center gap-2 px-2">
+                                <AlertCircle size={13} className="text-amber-400 flex-shrink-0" />
+                                <p className="text-[11px] text-amber-500 font-medium">{t('Please attach your location for accurate delivery')}</p>
+                            </div>
+                        )}
+
+                        {/* Remove link when attached */}
                         {formData.location && !isDetecting && (
                             <button
                                 type="button"
                                 onClick={() => setFormData(prev => ({ ...prev, location: '' }))}
-                                className="mt-2 w-full text-center text-xs text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors py-1"
+                                className="mt-1.5 w-full text-center text-[11px] text-gray-400 hover:text-red-500 transition-colors py-1"
                             >
                                 {t('Remove location')}
                             </button>
