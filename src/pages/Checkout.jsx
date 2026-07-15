@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -55,6 +55,8 @@ const Checkout = () => {
     const [isLocationSearching, setIsLocationSearching] = useState(false);
     const [cachedLocation, setCachedLocation] = useState(null); 
     const [locationMessage, setLocationMessage] = useState({ show: false, type: '', text: '' });
+    const [showLocationError, setShowLocationError] = useState(false);
+    const locationRef = useRef(null);
 
     // PRE-FETCH LOCATION DISABLED - Causes crashes when permission dialog appears
     // User must manually click "Use Current Location" button
@@ -177,7 +179,11 @@ const Checkout = () => {
 
         // Validate Location (GPS Location must be pinned/attached)
         if (!formData.location) {
-            alert(t('Please attach your GPS Location. It is required for delivery coordinates.'));
+            setIsEditingAddress(true);
+            setShowLocationError(true);
+            setTimeout(() => {
+                locationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 150);
             return;
         }
 
@@ -380,23 +386,17 @@ const Checkout = () => {
                             ) : (
                                 <div className="space-y-5">
                                     {/* Location Detection Block */}
-                                    <div className="relative mb-6">
+                                    <div ref={locationRef} className="relative mb-6">
                                         <div className="flex items-center justify-between mb-2 px-1">
                                             <span className="text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest">{t('GPS Location')}</span>
                                             <span className="text-[10px] font-semibold text-red-500 bg-red-50 dark:bg-red-950/20 px-2.5 py-0.5 rounded-full">{t('Required')}</span>
                                         </div>
-                                        {isLocationSearching && (
-                                            <motion.div
-                                                initial={{ scale: 0.8, opacity: 0 }}
-                                                animate={{ scale: [0.8, 1.2, 1.4], opacity: [0, 0.3, 0] }}
-                                                transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
-                                                className="absolute inset-0 bg-[#2E5A2E]/20 rounded-[2rem] z-0"
-                                            />
-                                        )}
+
                                         <button
                                             type="button"
                                             onClick={async () => {
                                                 setIsLocationSearching(true);
+                                                setShowLocationError(false);
                                                 const result = await getCurrentLocation();
                                                 
                                                 if (result.success) {
@@ -409,68 +409,71 @@ const Checkout = () => {
                                                 }
                                             }}
                                             disabled={isLocationSearching}
-                                            className={`w-full relative z-10 bg-white dark:bg-gray-800 border-2 border-dashed p-5 rounded-[2rem] flex items-center justify-between gap-3 group transition-all duration-300 active:scale-[0.98] ${
-                                                isLocationSearching ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-green-50/30 dark:bg-[#CBF9B2]/5' : 
-                                                formData.location ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-green-50/30 dark:bg-[#CBF9B2]/5' : 'border-gray-200 dark:border-gray-700'
+                                            className={`w-full bg-white dark:bg-gray-800 border rounded-2xl px-4 py-3 flex items-center gap-3 transition-all duration-300 active:scale-[0.98] ${
+                                                isLocationSearching ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-green-50/30' :
+                                                formData.location ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-green-50/30 dark:bg-[#CBF9B2]/5' :
+                                                showLocationError ? 'border-amber-400 bg-amber-50/10' :
+                                                'border-gray-200 dark:border-gray-700'
                                             }`}
                                         >
-                                            <div className="flex items-center gap-4 flex-1 min-w-0">
-                                                <div className="relative flex-shrink-0">
-                                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 ${
-                                                        isLocationSearching ? 'bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-gray-900 shadow-lg shadow-green-200 scale-110' :
-                                                        formData.location ? 'bg-green-100 dark:bg-[#CBF9B2]/20 text-[#2E5A2E] dark:text-[#CBF9B2]' : 'bg-gray-50 dark:bg-gray-700 text-gray-400'
-                                                    }`}>
-                                                        <AnimatePresence mode="wait">
-                                                            {isLocationSearching ? (
-                                                                <motion.div
-                                                                    key="detecting"
-                                                                    initial={{ rotate: 0 }}
-                                                                    animate={{ rotate: 360 }}
-                                                                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                                                                >
-                                                                    <Navigation size={22} />
-                                                                </motion.div>
-                                                            ) : (
-                                                                <motion.div
-                                                                    key={formData.location ? 'saved' : 'empty'}
-                                                                    initial={{ scale: 0.5, opacity: 0 }}
-                                                                    animate={{ scale: 1, opacity: 1 }}
-                                                                    exit={{ scale: 0.5, opacity: 0 }}
-                                                                >
-                                                                    <MapPin size={22} className={formData.location ? 'animate-bounce' : ''} />
-                                                                </motion.div>
-                                                            )}
-                                                        </AnimatePresence>
-                                                    </div>
-                                                    {isLocationSearching && (
-                                                        <motion.div
-                                                            animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
-                                                            transition={{ duration: 1, repeat: Infinity }}
-                                                            className="absolute inset-0 rounded-full bg-[#2E5A2E]"
-                                                        />
-                                                    )}
-                                                </div>
-                                                <div className="text-left flex-1 min-w-0">
-                                                    <h3 className={`font-bold text-[15px] transition-colors duration-300 truncate ${isLocationSearching || formData.location ? 'text-[#2E5A2E] dark:text-[#CBF9B2]' : 'text-gray-900 dark:text-white'}`}>
-                                                        {isLocationSearching ? t('Finding location...') : formData.location ? t('Location Attached') : t('Pin exact GPS')}
-                                                    </h3>
-                                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
-                                                        {isLocationSearching ? t('Please wait while we sync labels...') : formData.location ? t('Tap to update location') : t('Helps deliver faster — tap to attach')}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className={`w-8 h-8 rounded-full border flex-shrink-0 flex items-center justify-center transition-colors ${
-                                                isLocationSearching || formData.location ? 'bg-white dark:bg-gray-700 border-[#2E5A2E]/20 dark:border-[#CBF9B2]/20 text-[#2E5A2E] dark:text-[#CBF9B2]' : 'border-gray-100 dark:border-gray-700 text-gray-400'
+                                            {/* Icon */}
+                                            <div className={`w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center transition-all duration-300 ${
+                                                isLocationSearching ? 'bg-[#2E5A2E] text-white' :
+                                                formData.location ? 'bg-green-100 dark:bg-[#CBF9B2]/20 text-[#2E5A2E] dark:text-[#CBF9B2]' :
+                                                showLocationError ? 'bg-amber-100 text-amber-600' :
+                                                'bg-gray-100 dark:bg-gray-700 text-gray-400'
                                             }`}>
-                                                 <ArrowLeft size={16} className={`transition-transform duration-300 ${isLocationSearching ? 'rotate-90' : 'rotate-180'}`} />
+                                                <AnimatePresence mode="wait">
+                                                    {isLocationSearching ? (
+                                                        <motion.div key="spin" animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}>
+                                                            <Navigation size={16} />
+                                                        </motion.div>
+                                                    ) : (
+                                                        <motion.div key={formData.location ? 'pin-on' : 'pin-off'} initial={{ scale: 0.6 }} animate={{ scale: 1 }}>
+                                                            <MapPin size={16} />
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
                                             </div>
+
+                                            {/* Text */}
+                                            <div className="flex-1 text-left min-w-0">
+                                                <p className={`text-[13px] font-bold truncate ${
+                                                    formData.location ? 'text-[#2E5A2E] dark:text-[#CBF9B2]' :
+                                                    isLocationSearching ? 'text-[#2E5A2E] dark:text-[#CBF9B2]' : 
+                                                    showLocationError ? 'text-amber-600 font-bold' : 'text-gray-700 dark:text-gray-300'
+                                                }`}>
+                                                    {isLocationSearching ? t('Finding location...') : formData.location ? t('Location Attached') : t('Tap to attach GPS location')}
+                                                </p>
+                                                {!isLocationSearching && (
+                                                    <p className="text-[11px] text-gray-400 truncate">
+                                                        {formData.location ? t('Tap to update location') : t('Helps us deliver faster')}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            {/* Arrow */}
+                                            <ArrowLeft size={14} className={`flex-shrink-0 rotate-180 transition-colors ${
+                                                formData.location ? 'text-[#2E5A2E] dark:text-[#CBF9B2]' : 'text-gray-300 dark:text-gray-600'
+                                            }`} />
                                         </button>
-                                        {/* Clear location — only visible when attached */}
+
+                                        {/* Inline hint when location not attached or showLocationError is true */}
+                                        {(!formData.location || showLocationError) && !isLocationSearching && (
+                                            <div className="mt-2 flex items-center gap-2 px-2">
+                                                <AlertCircle size={13} className={showLocationError ? "text-amber-500 flex-shrink-0" : "text-amber-400 flex-shrink-0"} />
+                                                <p className={`text-[11px] font-medium ${showLocationError ? "text-amber-600 font-bold animate-pulse" : "text-amber-500"}`}>
+                                                    {showLocationError ? t('Please attach your GPS Location to place your order') : t('Please attach your location for accurate delivery')}
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        {/* Remove link when attached */}
                                         {formData.location && !isLocationSearching && (
                                             <button
                                                 type="button"
                                                 onClick={() => setFormData(prev => ({ ...prev, location: '' }))}
-                                                className="mt-2 w-full text-center text-xs text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors py-1"
+                                                className="mt-1.5 w-full text-center text-[11px] text-gray-400 hover:text-red-500 transition-colors py-1"
                                             >
                                                 {t('Remove location')}
                                             </button>
