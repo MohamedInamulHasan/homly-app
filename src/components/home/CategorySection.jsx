@@ -22,10 +22,10 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                 {/* Horizontal Category Items list */}
                 <div className="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-4">
                     {[1, 2, 3, 4, 5, 6].map((i) => (
-                        <div key={i} className="flex flex-col items-center gap-2 md:gap-3 min-w-[72px] md:min-w-[85px] lg:min-w-[110px]">
+                        <div key={i} className="flex flex-col items-center gap-2 md:gap-3 min-w-[84px] md:min-w-[100px] lg:min-w-[120px]">
                             {/* Circle shape placeholder */}
-                            <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full bg-white dark:bg-gray-800 shadow-sm border-2 border-gray-100 dark:border-gray-700/50 flex items-center justify-center">
-                                <div className="w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full bg-gray-100 dark:bg-gray-900 animate-pulse"></div>
+                            <div className="w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full bg-white dark:bg-gray-800 shadow-sm border-2 border-gray-100 dark:border-gray-700/50 flex items-center justify-center">
+                                <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full bg-gray-100 dark:bg-gray-900 animate-pulse"></div>
                             </div>
                             {/* Text label placeholder */}
                             <div className="h-3.5 w-14 bg-gray-200 dark:bg-gray-800 rounded-full animate-pulse"></div>
@@ -60,9 +60,9 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                 {/* All Categories Option — styled like other category items */}
                 <div
                     onClick={() => onSelectCategory('All')}
-                    className={`${isExpanded ? 'w-full' : 'min-w-[72px] md:min-w-[85px] lg:min-w-[110px]'} flex flex-col items-center gap-2 md:gap-3 group cursor-pointer`}
+                    className={`${isExpanded ? 'w-full' : 'min-w-[84px] md:min-w-[100px] lg:min-w-[120px]'} flex flex-col items-center gap-2 md:gap-3 group cursor-pointer`}
                 >
-                    <div className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 shadow-sm border-2 bg-[#CBF9B2] dark:bg-[#CBF9B2] ${selectedCategory === 'All' ? 'border-[#2E5A2E] dark:border-[#2E5A2E]' : 'border-transparent'}`}>
+                    <div className={`w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 shadow-sm border-2 bg-[#CBF9B2] dark:bg-[#CBF9B2] ${selectedCategory === 'All' ? 'border-[#2E5A2E] dark:border-[#2E5A2E]' : 'border-transparent'}`}>
                         {allCategoryImage ? (
                             <img
                                 src={allCategoryImage}
@@ -88,9 +88,9 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                         <div
                             key={category._id || category.id}
                             onClick={() => onSelectCategory(category.name)}
-                            className={`${isExpanded ? 'w-full' : 'min-w-[72px] md:min-w-[85px] lg:min-w-[110px]'} flex flex-col items-center gap-2 md:gap-3 group cursor-pointer`}
+                            className={`${isExpanded ? 'w-full' : 'min-w-[84px] md:min-w-[100px] lg:min-w-[120px]'} flex flex-col items-center gap-2 md:gap-3 group cursor-pointer`}
                         >
-                            <div className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 shadow-sm border-2 bg-[#CBF9B2] dark:bg-[#CBF9B2] ${isSelected ? 'border-[#2E5A2E] dark:border-[#2E5A2E]' : 'border-transparent'}`}>
+                            <div className={`w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full overflow-hidden flex items-center justify-center transition-all group-hover:scale-105 shadow-sm border-2 bg-[#CBF9B2] dark:bg-[#CBF9B2] ${isSelected ? 'border-[#2E5A2E] dark:border-[#2E5A2E]' : 'border-transparent'}`}>
                                 <img
                                     src={`${category.image || `${API_BASE_URL}/categories/${category._id || category.id}/image`}?t=${Math.floor((category.updatedAt ? new Date(category.updatedAt).getTime() : Date.now()) / 60000)}`}
                                     alt={category.name}

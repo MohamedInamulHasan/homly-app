@@ -137,18 +137,16 @@ const StoreSection = ({ section, products: rawProducts = [], singleStore = false
                         </p>
                     )}
                 </div>
-                {section.id === 'free_delivery' ? (
-                    <Link to="/store" className="text-[13px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] hover:opacity-70 transition-all underline decoration-[2.5px] underline-offset-[6px]">
-                        {t('See All')}
-                    </Link>
-                ) : isOpen ? (
-                    <Link to={navigateTo} className="text-[13px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] hover:opacity-70 transition-all underline decoration-[2.5px] underline-offset-[6px]">
-                        {t('See All')}
-                    </Link>
-                ) : (
-                    <span className="text-[13px] font-bold text-gray-400 dark:text-gray-650 cursor-not-allowed select-none underline decoration-[2.5px] underline-offset-[6px]">
-                        {t('See All')}
-                    </span>
+                {section.id !== 'free_delivery' && (
+                    isOpen ? (
+                        <Link to={navigateTo} className="text-[13px] font-bold text-[#2E5A2E] dark:text-[#CBF9B2] hover:opacity-70 transition-all underline decoration-[2.5px] underline-offset-[6px]">
+                            {t('See All')}
+                        </Link>
+                    ) : (
+                        <span className="text-[13px] font-bold text-gray-400 dark:text-gray-650 cursor-not-allowed select-none underline decoration-[2.5px] underline-offset-[6px]">
+                            {t('See All')}
+                        </span>
+                    )
                 )}
             </div>
 
