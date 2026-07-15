@@ -188,23 +188,27 @@ const Profile = () => {
                                >
                                    <Camera size={14} />
                                </button>
-
-                               {/* Literal Gold Coin Design - Smaller */}
-                               <div className="absolute -top-0.5 -right-0.5 z-10">
-                                   {Number(user?.coins || 0) > 0 && (
-                                       <div className="w-[18px] h-[18px] rounded-full bg-gradient-to-tr from-[#BF953F] via-[#FCF6BA] to-[#B38728] border border-[#AA8A2E] shadow-[0_2px_6px_rgba(0,0,0,0.15)] flex items-center justify-center transition-transform hover:rotate-12">
-                                            <span className="text-[8px] font-black text-[#5C4033] leading-none drop-shadow-sm">
-                                                {user?.coins}
-                                            </span>
-                                       </div>
-                                   )}
-                               </div>
                           </div>
                           <div className="flex-1 min-w-0">
-                               <h2 className="text-[17px] font-bold text-gray-900 dark:text-white leading-tight tracking-tight truncate">
-                                   {user?.name || 'Guest User'}
-                               </h2>
-                          </div>
+                                {/* Name + Coin inline */}
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    <h2 className="text-[17px] font-bold text-gray-900 dark:text-white leading-tight tracking-tight truncate">
+                                        {user?.name || 'Guest User'}
+                                    </h2>
+                                    {Number(user?.coins || 0) > 0 && (
+                                        <div className="flex items-center gap-1 bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] rounded-full px-2 py-0.5 shadow-sm border border-[#AA8A2E]">
+                                            <span className="text-[10px] font-black text-[#5C4033] leading-none">🪙</span>
+                                            <span className="text-[10px] font-black text-[#5C4033] leading-none">{user?.coins}</span>
+                                        </div>
+                                    )}
+                                </div>
+                                {/* Mobile number */}
+                                {user?.mobile && (
+                                    <p className="text-[13px] text-gray-500 dark:text-gray-400 font-medium mt-0.5">
+                                        {user.mobile}
+                                    </p>
+                                )}
+                           </div>
                      </div>
                 </div>
 
