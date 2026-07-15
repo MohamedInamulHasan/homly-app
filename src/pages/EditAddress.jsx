@@ -15,6 +15,10 @@ const EditAddress = () => {
     const { updateProfile } = useData();
     const [showLocationError, setShowLocationError] = useState(false);
     const locationRef = useRef(null);
+    const fullNameRef = useRef(null);
+    const mobileRef = useRef(null);
+    const streetRef = useRef(null);
+    const cityRef = useRef(null);
 
     const [formData, setFormData] = useState({
         fullName: '',
@@ -50,8 +54,10 @@ const EditAddress = () => {
 
         // Initialize form with user data
         if (user) {
+            const userDisplayName = user.fullName || user.name || '';
+            const isGuestName = userDisplayName.startsWith('User_') || userDisplayName === 'Guest User';
             setFormData({
-                fullName: user.fullName || '',
+                fullName: isGuestName ? '' : userDisplayName,
                 mobile: user.mobile || user.phone || '',
                 street: user.address?.street || '',
                 city: user.address?.city || '',
@@ -101,8 +107,24 @@ const EditAddress = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!formData.fullName || !formData.mobile || !formData.street || !formData.city) {
-            setMessage({ type: 'error', text: t('Please fill all required fields') });
+        if (!formData.fullName) {
+            fullNameRef.current?.focus();
+            fullNameRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+        if (!formData.mobile) {
+            mobileRef.current?.focus();
+            mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+        if (!formData.street) {
+            streetRef.current?.focus();
+            streetRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+        if (!formData.city) {
+            cityRef.current?.focus();
+            cityRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
         }
 
@@ -257,6 +279,7 @@ const EditAddress = () => {
                         <div>
                             <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest mb-2 px-1">{t('Recipient Name')}</label>
                             <input
+                                ref={fullNameRef}
                                 type="text"
                                 name="fullName"
                                 value={formData.fullName}
@@ -269,6 +292,7 @@ const EditAddress = () => {
                         <div>
                             <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest mb-2 px-1">{t('Mobile Number')}</label>
                             <input
+                                ref={mobileRef}
                                 type="tel"
                                 name="mobile"
                                 value={formData.mobile}
@@ -281,6 +305,7 @@ const EditAddress = () => {
                         <div>
                             <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest mb-2 px-1">{t('Street / Area')}</label>
                             <textarea
+                                ref={streetRef}
                                 name="street"
                                 rows="3"
                                 value={formData.street}
@@ -294,6 +319,7 @@ const EditAddress = () => {
                             <div>
                                 <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest mb-2 px-1">{t('City')}</label>
                                 <select
+                                    ref={cityRef}
                                     name="city"
                                     value={formData.city}
                                     onChange={handleChange}

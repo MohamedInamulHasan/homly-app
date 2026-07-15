@@ -95,9 +95,12 @@ const Checkout = () => {
                 const hasValidAddress = (isAddressObject && addressObj.street && addressObj.city) ||
                     (!isAddressObject && user.address && user.city);
 
+                const userDisplayName = user.fullName || user.name || '';
+                const isGuestName = userDisplayName.startsWith('User_') || userDisplayName === 'Guest User';
+
                 setFormData(prev => ({
                     ...prev,
-                    fullName: user.fullName || '',
+                    fullName: isGuestName ? '' : userDisplayName,
                     mobile: user.mobile || user.phone || prev.mobile,
                     // If user.address is an object, use .street, otherwise use it directly if string
                     address: (isAddressObject ? addressObj.street : user.address) || prev.address,
