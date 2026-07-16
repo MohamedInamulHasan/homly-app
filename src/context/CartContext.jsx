@@ -307,93 +307,123 @@ export const CartProvider = ({ children }) => {
         <CartContext.Provider value={value}>
             {children}
             
-            {/* Multi-Store Warning Popup Modal (Character mascot with speech bubble and blur background) */}
+            {/* Multi-Store Warning - Slide-up bottom sheet with real character image */}
             {showStoreWarning && (
-                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 select-none pointer-events-auto">
-                    {/* Dark Blurred Backdrop */}
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={cancelAddToCart} />
-                    
-                    {/* Modal Dialog */}
-                    <div className="relative bg-white dark:bg-gray-900 rounded-[2.5rem] p-6 max-w-md w-full shadow-2xl border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in duration-300 overflow-hidden">
-                        
-                        {/* Layout: Character Mascot + Speech Bubble */}
-                        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-6">
-                            
-                            {/* SVG of Vector Character Girl with Glasses, bow-tie wrap, yellow jacket */}
-                            <div className="w-28 sm:w-32 flex-shrink-0">
-                                <svg viewBox="0 0 160 200" className="w-full h-auto drop-shadow-md">
-                                    {/* Hair (Back) */}
-                                    <path d="M50 80 C30 90 30 130 50 150 C40 130 40 100 50 80 Z" fill="#3B2314" />
-                                    <path d="M110 80 C130 90 130 130 110 150 C120 130 120 100 110 80 Z" fill="#3B2314" />
-                                    
-                                    {/* Face/Neck */}
-                                    <path d="M72 110 L72 125 L88 125 L88 110 Z" fill="#C68B59" />
-                                    <circle cx="80" cy="85" r="28" fill="#DFA375" />
-                                    
-                                    {/* Hair (Front Curly) */}
-                                    <path d="M52 75 C45 50 115 50 108 75 C95 60 65 60 52 75 Z" fill="#4A2E1B" />
-                                    <path d="M50 72 C40 85 45 110 55 115 C48 100 48 85 50 72 Z" fill="#4A2E1B" />
-                                    <path d="M110 72 C120 85 115 110 105 115 C112 100 112 85 110 72 Z" fill="#4A2E1B" />
-                                    
-                                    {/* Red Head-wrap / Bow */}
-                                    <path d="M48 65 Q80 50 112 65 L108 55 Q80 40 52 55 Z" fill="#E0533C" />
-                                    <path d="M70 48 C60 32 73 25 78 43 C83 25 96 32 86 48 Z" fill="#E0533C" />
-                                    
-                                    {/* Glasses */}
-                                    <rect x="58" y="76" width="18" height="14" rx="3" fill="none" stroke="#2B1A0F" strokeWidth="2.5" />
-                                    <rect x="84" y="76" width="18" height="14" rx="3" fill="none" stroke="#2B1A0F" strokeWidth="2.5" />
-                                    <line x1="76" y1="83" x2="84" y2="83" stroke="#2B1A0F" strokeWidth="2.5" />
-                                    
-                                    {/* Eyes */}
-                                    <circle cx="67" cy="83" r="2.5" fill="#2B1A0F" />
-                                    <circle cx="93" cy="83" r="2.5" fill="#2B1A0F" />
-                                    
-                                    {/* Nose & Smile */}
-                                    <path d="M78 90 Q80 94 82 90" fill="none" stroke="#2B1A0F" strokeWidth="2" strokeLinecap="round" />
-                                    <path d="M72 99 Q80 106 88 99" fill="none" stroke="#2B1A0F" strokeWidth="2.5" strokeLinecap="round" />
-                                    
-                                    {/* Yellow Jacket & Orange Shirt */}
-                                    <path d="M50 125 L110 125 L120 200 L40 200 Z" fill="#F4B843" />
-                                    <path d="M68 125 L92 125 L98 200 L62 200 Z" fill="#E06A43" />
-                                    {/* White stripes on shirt */}
-                                    <line x1="68" y1="135" x2="92" y2="135" stroke="#FFFFFF" strokeWidth="2" opacity="0.3" />
-                                    <line x1="66" y1="155" x2="94" y2="155" stroke="#FFFFFF" strokeWidth="2" opacity="0.3" />
-                                    <line x1="64" y1="175" x2="96" y2="175" stroke="#FFFFFF" strokeWidth="2" opacity="0.3" />
-                                    
-                                    {/* Arm Gesturing Up/Right */}
-                                    <path d="M102 145 C115 140 135 125 145 122 C148 121 150 124 146 127 C138 135 120 155 106 165 Z" fill="#DFA375" />
-                                </svg>
+                <div className="fixed inset-0 z-[9999] select-none pointer-events-auto" style={{ fontFamily: 'system-ui, sans-serif' }}>
+                    {/* Blurred Backdrop - click to cancel */}
+                    <div 
+                        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                        style={{ animation: 'fadeIn 0.2s ease-out forwards' }}
+                        onClick={cancelAddToCart} 
+                    />
+
+                    {/* Bottom Sheet Container */}
+                    <div 
+                        className="absolute bottom-0 left-0 right-0 flex flex-col items-center"
+                        style={{ animation: 'slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards' }}
+                    >
+                        {/* Character Image - floats above the card, slides up separately */}
+                        <div 
+                            className="relative z-10 mb-[-24px]"
+                            style={{ animation: 'charSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.05s both' }}
+                        >
+                            {/* Speech Bubble - pops in with delay */}
+                            <div 
+                                className="absolute -top-[90px] left-[55%] w-[220px]"
+                                style={{ animation: 'bubblePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.35s both', opacity: 0 }}
+                            >
+                                {/* Bubble shape */}
+                                <div className="relative bg-white rounded-[1.4rem] px-4 py-3 shadow-xl border border-gray-100">
+                                    {/* Bubble tail pointing down-left to character mouth */}
+                                    <div className="absolute -bottom-[9px] left-6 w-0 h-0"
+                                        style={{
+                                            borderLeft: '8px solid transparent',
+                                            borderRight: '5px solid transparent',
+                                            borderTop: '10px solid white',
+                                            filter: 'drop-shadow(0 2px 2px rgba(0,0,0,0.08))'
+                                        }}
+                                    />
+                                    <p className="text-[13px] font-black leading-snug text-gray-800 tracking-tight">
+                                        Heads up! 🙌
+                                    </p>
+                                    <p className="text-[11.5px] font-medium text-gray-500 leading-relaxed mt-0.5">
+                                        Adding from another store bumps delivery to{' '}
+                                        <span className="font-black text-orange-500">₹{nextStoreCharge}</span>{' '}
+                                        <span className="text-gray-400 text-[10px]">(+₹5)</span>
+                                        . Cool with that?
+                                    </p>
+                                </div>
                             </div>
-                            
-                            {/* Speech Bubble */}
-                            <div className="relative flex-1 bg-[#FADBD8] dark:bg-red-950/40 text-gray-800 dark:text-gray-100 p-5 rounded-[2rem] border border-[#F5B7B1] dark:border-red-900 shadow-sm mt-3 sm:mt-0">
-                                {/* Speech Bubble Arrow pointing to the left character */}
-                                <div className="hidden sm:block absolute left-[-10px] top-12 w-0 h-0 border-t-[8px] border-t-transparent border-r-[10px] border-r-[#FADBD8] border-b-[8px] border-b-transparent" />
-                                <div className="sm:hidden absolute top-[-10px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[8px] border-l-transparent border-b-[10px] border-b-[#FADBD8] border-r-[8px] border-r-transparent" />
-                                
-                                <p className="text-xs sm:text-sm font-semibold leading-relaxed">
-                                    Adding products from another store increases the delivery charge to <strong className="text-red-600 dark:text-red-400">₹{nextStoreCharge}</strong> (+₹5). Do you wish to proceed?
-                                </p>
-                            </div>
-                            
+
+                            {/* Character Image */}
+                            <img 
+                                src="/delivery-character.png" 
+                                alt="Delivery Character"
+                                className="w-40 h-40 object-contain object-bottom drop-shadow-2xl"
+                                style={{ imageRendering: 'crisp-edges' }}
+                            />
                         </div>
-                        
-                        {/* Buttons Footer */}
-                        <div className="flex gap-3 justify-end">
-                            <button 
-                                onClick={cancelAddToCart}
-                                className="px-6 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-full text-xs sm:text-sm active:scale-95 transition-transform"
-                            >
-                                Cancel
-                            </button>
-                            <button 
-                                onClick={confirmAddToCart}
-                                className="px-8 py-2.5 bg-[#FF6B00] text-white font-bold rounded-full text-xs sm:text-sm active:scale-95 transition-transform shadow-md"
-                            >
-                                OK
-                            </button>
+
+                        {/* Card Panel */}
+                        <div className="w-full bg-white dark:bg-gray-900 rounded-t-[2.5rem] px-6 pt-8 pb-8 shadow-2xl">
+                            {/* Drag handle */}
+                            <div className="w-10 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-5" />
+
+                            {/* Title */}
+                            <h2 className="text-xl font-black text-gray-900 dark:text-white text-center mb-1 tracking-tight">
+                                Multi-store cart? 🛒
+                            </h2>
+                            <p className="text-center text-xs text-gray-400 dark:text-gray-500 mb-6 font-medium">
+                                Your wallet might feel it a little 👀
+                            </p>
+
+                            {/* Charge Info Card */}
+                            <div className="flex items-center justify-between bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-900 rounded-2xl px-4 py-3 mb-6">
+                                <div>
+                                    <p className="text-[11px] text-orange-400 font-bold uppercase tracking-widest">New Delivery Charge</p>
+                                    <p className="text-2xl font-black text-orange-500 mt-0.5">₹{nextStoreCharge}</p>
+                                </div>
+                                <div className="text-3xl">🛵</div>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="flex gap-3">
+                                <button 
+                                    onClick={cancelAddToCart}
+                                    className="flex-1 py-3.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-extrabold rounded-2xl text-sm active:scale-95 transition-transform"
+                                >
+                                    Nah, cancel
+                                </button>
+                                <button 
+                                    onClick={confirmAddToCart}
+                                    className="flex-1 py-3.5 text-white font-extrabold rounded-2xl text-sm active:scale-95 transition-transform shadow-lg"
+                                    style={{ background: 'linear-gradient(135deg, #FF6B00, #FF9D00)' }}
+                                >
+                                    Yeah, add it! 🔥
+                                </button>
+                            </div>
                         </div>
                     </div>
+
+                    {/* Keyframe animations injected inline */}
+                    <style>{`
+                        @keyframes fadeIn {
+                            from { opacity: 0; }
+                            to { opacity: 1; }
+                        }
+                        @keyframes slideUp {
+                            from { transform: translateY(100%); opacity: 0.5; }
+                            to { transform: translateY(0%); opacity: 1; }
+                        }
+                        @keyframes charSlideUp {
+                            from { transform: translateY(60px); opacity: 0; }
+                            to { transform: translateY(0px); opacity: 1; }
+                        }
+                        @keyframes bubblePop {
+                            from { transform: scale(0.5) translateY(10px); opacity: 0; }
+                            to { transform: scale(1) translateY(0px); opacity: 1; }
+                        }
+                    `}</style>
                 </div>
             )}
         </CartContext.Provider>
