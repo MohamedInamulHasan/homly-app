@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { apiService } from '../utils/api';
 import { useData } from './DataContext';
 import { useAuth } from './AuthContext';
+import { useLanguage } from './LanguageContext';
 import { isStoreOpen, calculateDeliveryCharge } from '../utils/storeHelpers';
 
 const CartContext = createContext();
@@ -27,6 +28,7 @@ export const CartProvider = ({ children }) => {
 
     const [userId, setUserId] = useState(getUserId());
     const { user } = useAuth();
+    const { t } = useLanguage();
     const [pendingProduct, setPendingProduct] = useState(null);
     const [showStoreWarning, setShowStoreWarning] = useState(false);
     const [nextStoreCharge, setNextStoreCharge] = useState(25);
@@ -307,120 +309,109 @@ export const CartProvider = ({ children }) => {
         <CartContext.Provider value={value}>
             {children}
             
-            {/* Multi-Store Warning - Slide-up bottom sheet with real character image */}
+            {/* Multi-Store Warning — Side screen slide-up character popup */}
             {showStoreWarning && (
-                <div className="fixed inset-0 z-[9999] select-none pointer-events-auto" style={{ fontFamily: 'system-ui, sans-serif' }}>
-                    {/* Blurred Backdrop - click to cancel */}
-                    <div 
-                        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-                        style={{ animation: 'fadeIn 0.2s ease-out forwards' }}
-                        onClick={cancelAddToCart} 
+                <div className="fixed inset-0 z-[9999] select-none pointer-events-auto">
+                    {/* Blurred backdrop */}
+                    <div
+                        className="absolute inset-0 bg-black/55 backdrop-blur-sm"
+                        style={{ animation: 'msOverlayIn 0.25s ease-out forwards' }}
+                        onClick={cancelAddToCart}
                     />
 
-                    {/* Bottom Sheet Container */}
-                    <div 
-                        className="absolute bottom-0 left-0 right-0 flex flex-col items-center"
-                        style={{ animation: 'slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards' }}
+                    {/* Side panel — bottom-left, slides up */}
+                    <div
+                        className="absolute bottom-0 left-0 flex flex-col items-start"
+                        style={{ animation: 'msPanelUp 0.45s cubic-bezier(0.34, 1.4, 0.64, 1) forwards' }}
                     >
-                        {/* Character Image - floats above the card, slides up separately */}
-                        <div 
-                            className="relative z-10 mb-[-24px]"
-                            style={{ animation: 'charSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.05s both' }}
-                        >
-                            {/* Speech Bubble - pops in with delay */}
-                            <div 
-                                className="absolute -top-[90px] left-[55%] w-[220px]"
-                                style={{ animation: 'bubblePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.35s both', opacity: 0 }}
+                        {/* ── Character + Bubble row ── */}
+                        <div className="flex items-end gap-3 pl-4 mb-[-6px] relative z-10">
+                            {/* Character image */}
+                            <img
+                                src="/delivery-character.png"
+                                alt="Delivery Character"
+                                className="w-36 h-36 object-contain object-bottom drop-shadow-xl flex-shrink-0"
+                            />
+
+                            {/* Speech bubble — pops in after character */}
+                            <div
+                                className="relative mb-6"
+                                style={{ animation: 'msBubblePop 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both', opacity: 0 }}
                             >
-                                {/* Bubble shape */}
-                                <div className="relative bg-white rounded-[1.4rem] px-4 py-3 shadow-xl border border-gray-100">
-                                    {/* Bubble tail pointing down-left to character mouth */}
-                                    <div className="absolute -bottom-[9px] left-6 w-0 h-0"
+                                <div className="bg-white dark:bg-gray-800 rounded-[1.6rem] rounded-bl-sm px-4 py-3 shadow-2xl border border-gray-100 dark:border-gray-700 max-w-[230px]">
+                                    {/* Tail bottom-left */}
+                                    <div
+                                        className="absolute -bottom-[8px] left-2 w-0 h-0"
                                         style={{
-                                            borderLeft: '8px solid transparent',
-                                            borderRight: '5px solid transparent',
-                                            borderTop: '10px solid white',
-                                            filter: 'drop-shadow(0 2px 2px rgba(0,0,0,0.08))'
+                                            borderLeft: '0px solid transparent',
+                                            borderRight: '12px solid transparent',
+                                            borderTop: '9px solid white',
                                         }}
                                     />
-                                    <p className="text-[13px] font-black leading-snug text-gray-800 tracking-tight">
-                                        Heads up! 🙌
+                                    <p className="text-[11px] font-bold text-orange-500 uppercase tracking-widest mb-1">
+                                        {t('Note!')}
                                     </p>
-                                    <p className="text-[11.5px] font-medium text-gray-500 leading-relaxed mt-0.5">
-                                        Adding from another store bumps delivery to{' '}
-                                        <span className="font-black text-orange-500">₹{nextStoreCharge}</span>{' '}
-                                        <span className="text-gray-400 text-[10px]">(+₹5)</span>
-                                        . Cool with that?
+                                    <p className="text-[12.5px] font-semibold text-gray-800 dark:text-gray-100 leading-snug">
+                                        {t('Adding products from another store will increase your delivery charge to')}{' '}
+                                        <span className="text-orange-500 font-black">₹{nextStoreCharge}</span>.{' '}
+                                        {t('Do you wish to continue?')}
                                     </p>
                                 </div>
                             </div>
-
-                            {/* Character Image */}
-                            <img 
-                                src="/delivery-character.png" 
-                                alt="Delivery Character"
-                                className="w-40 h-40 object-contain object-bottom drop-shadow-2xl"
-                                style={{ imageRendering: 'crisp-edges' }}
-                            />
                         </div>
 
-                        {/* Card Panel */}
-                        <div className="w-full bg-white dark:bg-gray-900 rounded-t-[2.5rem] px-6 pt-8 pb-8 shadow-2xl">
-                            {/* Drag handle */}
-                            <div className="w-10 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-5" />
-
-                            {/* Title */}
-                            <h2 className="text-xl font-black text-gray-900 dark:text-white text-center mb-1 tracking-tight">
-                                Multi-store cart? 🛒
-                            </h2>
-                            <p className="text-center text-xs text-gray-400 dark:text-gray-500 mb-6 font-medium">
-                                Your wallet might feel it a little 👀
-                            </p>
-
-                            {/* Charge Info Card */}
-                            <div className="flex items-center justify-between bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-900 rounded-2xl px-4 py-3 mb-6">
-                                <div>
-                                    <p className="text-[11px] text-orange-400 font-bold uppercase tracking-widest">New Delivery Charge</p>
-                                    <p className="text-2xl font-black text-orange-500 mt-0.5">₹{nextStoreCharge}</p>
-                                </div>
-                                <div className="text-3xl">🛵</div>
+                        {/* ── Card panel ── */}
+                        <div
+                            className="w-[92vw] max-w-sm bg-white dark:bg-gray-900 rounded-t-[2rem] rounded-br-[2rem] px-5 pt-5 pb-6 shadow-2xl ml-3 mb-2"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            {/* Title row */}
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="text-2xl">🛵</span>
+                                <h2 className="text-[17px] font-black text-gray-900 dark:text-white tracking-tight">
+                                    {t('Multi-Store Order')}
+                                </h2>
                             </div>
 
-                            {/* Action Buttons */}
+                            {/* Charge badge */}
+                            <div className="flex items-center justify-between bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-2xl px-4 py-3 mb-5">
+                                <div>
+                                    <p className="text-[10px] text-orange-400 font-bold uppercase tracking-widest">{t('New Delivery Charge')}</p>
+                                    <p className="text-[26px] font-black text-orange-500 leading-none mt-0.5">₹{nextStoreCharge}</p>
+                                </div>
+                                <div className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/40 flex items-center justify-center text-xl">🛒</div>
+                            </div>
+
+                            {/* Buttons */}
                             <div className="flex gap-3">
-                                <button 
+                                <button
                                     onClick={cancelAddToCart}
-                                    className="flex-1 py-3.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-extrabold rounded-2xl text-sm active:scale-95 transition-transform"
+                                    className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-2xl text-sm active:scale-95 transition-transform"
                                 >
-                                    Nah, cancel
+                                    {t('Cancel')}
                                 </button>
-                                <button 
+                                <button
                                     onClick={confirmAddToCart}
-                                    className="flex-1 py-3.5 text-white font-extrabold rounded-2xl text-sm active:scale-95 transition-transform shadow-lg"
+                                    className="flex-1 py-3 text-white font-extrabold rounded-2xl text-sm active:scale-95 transition-transform shadow-lg"
                                     style={{ background: 'linear-gradient(135deg, #FF6B00, #FF9D00)' }}
                                 >
-                                    Yeah, add it! 🔥
+                                    {t('Yes, Add')}
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    {/* Keyframe animations injected inline */}
                     <style>{`
-                        @keyframes fadeIn {
+                        @keyframes msOverlayIn {
                             from { opacity: 0; }
                             to { opacity: 1; }
                         }
-                        @keyframes slideUp {
-                            from { transform: translateY(100%); opacity: 0.5; }
-                            to { transform: translateY(0%); opacity: 1; }
+                        @keyframes msPanelUp {
+                            from { transform: translateY(110%); }
+                            to { transform: translateY(0%); }
                         }
-                        @keyframes charSlideUp {
-                            from { transform: translateY(60px); opacity: 0; }
-                            to { transform: translateY(0px); opacity: 1; }
-                        }
-                        @keyframes bubblePop {
-                            from { transform: scale(0.5) translateY(10px); opacity: 0; }
+                        @keyframes msBubblePop {
+                            from { transform: scale(0.4) translateY(12px); opacity: 0; }
                             to { transform: scale(1) translateY(0px); opacity: 1; }
                         }
                     `}</style>

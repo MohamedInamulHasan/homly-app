@@ -313,6 +313,12 @@ export const LanguageProvider = ({ children }) => {
         'Failed to update address': { en: 'Failed to update address', ta: 'முகவரியைப் புதுப்பிக்க முடியவில்லை' },
         'Saving Changes...': { en: 'Saving Changes...', ta: 'மாற்றங்களைச் சேமிக்கிறது...' },
         'Manage delivery locations & ensures reachability': { en: 'Manage delivery locations & ensures reachability', ta: 'டெலிவரி இடங்களை நிர்வகித்தல் மற்றும் அணுகலை உறுதி செய்தல்' },
+        'Multi-Store Order': { en: 'Multi-Store Order', ta: 'பல கடை ஆர்டர்' },
+        'Note!': { en: 'Note!', ta: 'கவனிக்கவும்!' },
+        'Adding products from another store will increase your delivery charge to': { en: 'Adding products from another store will increase your delivery charge to', ta: 'வேறொரு கடையிலிருந்து பொருட்களை சேர்க்கும்போது உங்கள் டெலிவரி கட்டணம் உயரும்' },
+        'Do you wish to continue?': { en: 'Do you wish to continue?', ta: 'தொடர விரும்புகிறீர்களா?' },
+        'Yes, Add': { en: 'Yes, Add', ta: 'ஆம், சேர்க்கவும்' },
+        'New Delivery Charge': { en: 'New Delivery Charge', ta: 'புதிய டெலிவரி கட்டணம்' },
     };
 
     const t = (key, field = null) => {
