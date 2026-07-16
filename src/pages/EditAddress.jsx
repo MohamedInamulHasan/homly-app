@@ -254,13 +254,7 @@ const EditAddress = () => {
                             }`} />
                         </button>
 
-                        {/* Inline hint when location not attached */}
-                        {!formData.location && !isDetecting && (
-                            <div className="mt-2 flex items-center gap-2 px-2">
-                                <AlertCircle size={13} className="text-amber-400 flex-shrink-0" />
-                                <p className="text-[11px] text-amber-500 font-medium">{t('Please attach your location for accurate delivery')}</p>
-                            </div>
-                        )}
+
 
                         {/* Remove link when attached */}
                         {formData.location && !isDetecting && (
@@ -277,7 +271,7 @@ const EditAddress = () => {
                     {/* Form Fields */}
                     <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] p-6 shadow-sm border border-gray-50 dark:border-gray-700 space-y-5">
                         <div>
-                            <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest mb-2 px-1">{t('Recipient Name')}</label>
+                            <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2 px-1">{t('Recipient Name')}</label>
                             <input
                                 ref={fullNameRef}
                                 type="text"
@@ -285,12 +279,13 @@ const EditAddress = () => {
                                 value={formData.fullName}
                                 onChange={handleChange}
                                 placeholder="Enter full name"
-                                className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 text-gray-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#CBF9B2] transition-all text-sm font-medium"
+                                required
+                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest mb-2 px-1">{t('Mobile Number')}</label>
+                            <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2 px-1">{t('Mobile Number')}</label>
                             <input
                                 ref={mobileRef}
                                 type="tel"
@@ -298,12 +293,13 @@ const EditAddress = () => {
                                 value={formData.mobile}
                                 onChange={handleChange}
                                 placeholder="10-digit mobile number"
-                                className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 text-gray-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#CBF9B2] transition-all text-sm font-medium"
+                                required
+                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest mb-2 px-1">{t('Street / Area')}</label>
+                            <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2 px-1">{t('Street / Area')}</label>
                             <textarea
                                 ref={streetRef}
                                 name="street"
@@ -311,32 +307,34 @@ const EditAddress = () => {
                                 value={formData.street}
                                 onChange={handleChange}
                                 placeholder="House no, Street name, Landmark"
-                                className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 text-gray-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#CBF9B2] transition-all text-sm font-medium resize-none"
+                                required
+                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm resize-none"
                             />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest mb-2 px-1">{t('City')}</label>
+                                <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2 px-1">{t('City')}</label>
                                 <select
                                     ref={cityRef}
                                     name="city"
                                     value={formData.city}
                                     onChange={handleChange}
-                                    className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 text-gray-900 dark:text-white rounded-2xl focus:ring-2 focus:ring-[#CBF9B2] transition-all text-sm font-medium appearance-none"
+                                    required
+                                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm appearance-none"
                                 >
                                     <option value="">{t('Select City')}</option>
                                     {cities.map((city, idx) => <option key={idx} value={city}>{city}</option>)}
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest mb-2 px-1">{t('Pincode')}</label>
+                                <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2 px-1">{t('Pincode')}</label>
                                 <input
                                     type="text"
                                     name="zip"
                                     value="630702"
                                     readOnly
-                                    className="w-full px-5 py-4 bg-gray-150 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 text-gray-400 rounded-2xl focus:outline-none text-sm font-medium cursor-not-allowed"
+                                    className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-600 text-gray-400 rounded-xl focus:outline-none text-sm cursor-not-allowed"
                                 />
                             </div>
                         </div>
@@ -344,8 +342,8 @@ const EditAddress = () => {
                     <div className="pt-4">
                             <button
                                 type="submit"
-                                disabled={isSaving}
-                                className="w-full bg-black text-white py-4 rounded-full font-bold text-[15px] active:scale-[0.98] transition-all disabled:opacity-50"
+                                disabled={isSaving || !formData.fullName || !formData.mobile || !formData.street || !formData.city}
+                                className="w-full bg-black text-white py-4 rounded-full font-bold text-[15px] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isSaving ? t('Saving Changes...') : t('Update Address')}
                             </button>
