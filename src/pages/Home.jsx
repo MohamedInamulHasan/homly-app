@@ -199,18 +199,17 @@ const Home = () => {
             </div>
 
             {/* Floating Delivery Charge Card - right side like MyJio */}
-            <div className="fixed right-0 top-1/2 -translate-y-1/2 z-[90] flex flex-col items-center">
+            <div className="fixed right-0 top-1/3 -translate-y-1/2 z-[90]">
                 <div
-                    className="bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 rounded-l-2xl py-3 px-2 flex flex-col items-center gap-1.5 cursor-pointer active:scale-95 transition-all duration-200"
+                    className="rounded-l-2xl py-2.5 px-3 flex flex-col items-center gap-1 cursor-pointer active:scale-95 transition-all duration-200 shadow-lg"
+                    style={{ background: 'linear-gradient(135deg, #FF8C00, #FF4500)' }}
                     onClick={() => navigate('/checkout')}
                     title="Delivery Charge"
                 >
-                    <div className="w-8 h-8 rounded-full bg-[#CBF9B2] dark:bg-[#2E5A2E]/40 flex items-center justify-center">
-                        <Bike size={15} className="text-[#2E5A2E] dark:text-[#CBF9B2]" />
-                    </div>
-                    <div className="flex flex-col items-center leading-tight">
-                        <span className="text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Delivery</span>
-                        <span className="text-[13px] font-extrabold text-[#2E5A2E] dark:text-[#CBF9B2]">₹20</span>
+                    <span className="text-[9px] font-bold text-white/80 uppercase tracking-widest">Delivery</span>
+                    <div className="flex items-center gap-1">
+                        <Bike size={13} className="text-white flex-shrink-0" />
+                        <span className="text-[14px] font-extrabold text-white leading-none">₹20</span>
                     </div>
                 </div>
             </div>
