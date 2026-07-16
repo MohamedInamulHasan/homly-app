@@ -16,8 +16,10 @@ import CategorySection from '../components/home/CategorySection';
 import StoreSection from '../components/home/StoreSection';
 import SortDropdown from '../components/SortDropdown';
 import PullToRefreshLayout from '../components/PullToRefreshLayout';
+import { useCart } from '../context/CartContext';
 
 const Home = () => {
+    const { cartItems, deliveryCharge } = useCart();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const { globalSortOrder, setGlobalSortOrder } = useData();
@@ -199,18 +201,22 @@ const Home = () => {
             </div>
 
             {/* Floating Delivery Charge Card - right side */}
-            <div className="fixed right-0 top-1/3 -translate-y-1/2 z-[90]">
-                <div
-                    className="rounded-l-2xl py-3 px-3 flex items-center gap-2 cursor-pointer active:scale-95 transition-all duration-200 shadow-lg border-2 border-white"
-                    style={{ background: '#FF6B00' }}
-                    onClick={() => navigate('/checkout')}
-                >
-                    <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-                        <Bike size={14} className="text-orange-500" />
+            {cartItems && cartItems.length > 0 && (
+                <div className="fixed right-0 top-[25%] -translate-y-1/2 z-[90]">
+                    <div
+                        className="rounded-l-2xl py-1.5 px-2 flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all duration-200 shadow-lg border-2 border-white"
+                        style={{ background: '#FF6B00' }}
+                        onClick={() => navigate('/checkout')}
+                    >
+                        <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+                            <Bike size={11} className="text-orange-500" />
+                        </div>
+                        <span className="text-[12px] font-extrabold text-white leading-none">
+                            {deliveryCharge === 0 ? t('Free') : `₹${deliveryCharge}`}
+                        </span>
                     </div>
-                    <span className="text-[15px] font-extrabold text-white leading-none">₹20</span>
                 </div>
-            </div>
+            )}
 
             <PullToRefreshLayout>
                 <div className="pt-[95px]">

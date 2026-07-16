@@ -1,7 +1,8 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { apiService } from '../utils/api';
 import { useData } from './DataContext';
-import { isStoreOpen } from '../utils/storeHelpers';
+import { useAuth } from './AuthContext';
+import { isStoreOpen, calculateDeliveryCharge } from '../utils/storeHelpers';
 
 const CartContext = createContext();
 
@@ -25,6 +26,13 @@ export const CartProvider = ({ children }) => {
     };
 
     const [userId, setUserId] = useState(getUserId());
+    const { user } = useAuth();
+    const [pendingProduct, setPendingProduct] = useState(null);
+    const [showStoreWarning, setShowStoreWarning] = useState(false);
+    const [nextStoreCharge, setNextStoreCharge] = useState(25);
+
+
+
     const [cartItems, setCartItems] = useState(() => {
         const currentUserId = getUserId();
         const cartKey = `cart_${currentUserId}`;
@@ -191,8 +199,25 @@ export const CartProvider = ({ children }) => {
         }
     }, [cartItems, userId]);
 
-    const addToCart = (product) => {
+
+
+    const addToCart = (product, force = false) => {
         const productId = product._id || product.id;
+        const newStoreId = (product.storeId?._id || product.storeId || '').toString();
+
+        if (!force && newStoreId && cartItems.length > 0) {
+            const currentUniqueStores = new Set(
+                cartItems.map(item => (item.storeId?._id || item.storeId || '').toString()).filter(Boolean)
+            );
+
+            if (!currentUniqueStores.has(newStoreId) && currentUniqueStores.size > 0) {
+                const nextCharge = currentUniqueStores.size === 1 ? 25 : 30;
+                setPendingProduct(product);
+                setNextStoreCharge(nextCharge);
+                setShowStoreWarning(true);
+                return;
+            }
+        }
 
         // Create a lean object to save space
         const productToSave = {
@@ -219,6 +244,19 @@ export const CartProvider = ({ children }) => {
             }
             return [...prevItems, productToSave];
         });
+    };
+
+    const confirmAddToCart = () => {
+        if (pendingProduct) {
+            addToCart(pendingProduct, true);
+        }
+        setShowStoreWarning(false);
+        setPendingProduct(null);
+    };
+
+    const cancelAddToCart = () => {
+        setShowStoreWarning(false);
+        setPendingProduct(null);
     };
 
     const removeFromCart = (productId) => {
@@ -248,6 +286,11 @@ export const CartProvider = ({ children }) => {
 
     const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);
 
+    const hasCoins = user?.coins > 0;
+    const hasGoldProduct = cartItems.some(item => item.isGold);
+    const baseDeliveryCharge = calculateDeliveryCharge(cartItems);
+    const deliveryCharge = (hasCoins || hasGoldProduct) ? 0 : baseDeliveryCharge;
+
     const value = {
         cartItems,
         addToCart,
@@ -256,7 +299,62 @@ export const CartProvider = ({ children }) => {
         clearCart,
         cartTotal,
         cartCount,
+        deliveryCharge,
     };
 
-    return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+    return (
+        <CartContext.Provider value={value}>
+            {children}
+            
+            {/* Multi-Store Warning Popup Modal (Character mascot with blur background) */}
+            {showStoreWarning && (
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-5 select-none pointer-events-auto">
+                    {/* Dark Blurred Backdrop */}
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={cancelAddToCart} />
+                    
+                    {/* Modal Dialog */}
+                    <div className="relative bg-white dark:bg-gray-900 rounded-[2.5rem] p-6 max-w-sm w-full text-center shadow-2xl border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in duration-300">
+                        {/* Cute Delivery Mascot SVG */}
+                        <div className="w-24 h-24 mx-auto mb-4 bg-orange-50 dark:bg-orange-950/20 rounded-full flex items-center justify-center">
+                            <svg viewBox="0 0 100 100" className="w-16 h-16 animate-bounce">
+                                <circle cx="50" cy="50" r="45" fill="#FFEFE6" />
+                                <path d="M25 45 C25 25, 75 25, 75 45 Z" fill="#FF6B00" />
+                                <rect x="45" y="20" width="10" height="8" rx="2" fill="#333" />
+                                <circle cx="50" cy="53" r="23" fill="#FFD1B3" />
+                                <circle cx="43" cy="50" r="3" fill="#333" />
+                                <circle cx="57" cy="50" r="3" fill="#333" />
+                                <path d="M44 58 Q50 64, 56 58" fill="none" stroke="#333" strokeWidth="2.5" strokeLinecap="round" />
+                                <circle cx="38" cy="55" r="2.5" fill="#FF9E9E" />
+                                <circle cx="62" cy="55" r="2.5" fill="#FF9E9E" />
+                                <rect x="72" y="55" width="15" height="15" rx="2" fill="#FF6B00" />
+                            </svg>
+                        </div>
+                        
+                        <h3 className="text-lg font-extrabold text-gray-900 dark:text-white mb-2 tracking-tight">
+                            Multi-Store Order
+                        </h3>
+                        
+                        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">
+                            Adding products from another store increases the delivery charge to <strong className="text-[#FF6B00]">₹{nextStoreCharge}</strong> (+₹5). Do you wish to proceed?
+                        </p>
+                        
+                        <div className="flex gap-3">
+                            <button 
+                                onClick={cancelAddToCart}
+                                className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-full text-xs sm:text-sm active:scale-95 transition-transform"
+                            >
+                                Cancel
+                            </button>
+                            <button 
+                                onClick={confirmAddToCart}
+                                className="flex-1 py-3 bg-[#FF6B00] text-white font-bold rounded-full text-xs sm:text-sm active:scale-95 transition-transform shadow-md"
+                            >
+                                OK
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </CartContext.Provider>
+    );
 };
