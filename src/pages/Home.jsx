@@ -19,7 +19,7 @@ import PullToRefreshLayout from '../components/PullToRefreshLayout';
 import { useCart } from '../context/CartContext';
 
 const Home = () => {
-    const { cartItems, deliveryCharge } = useCart();
+    const { cartItems, baseDeliveryCharge } = useCart();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const { globalSortOrder, setGlobalSortOrder } = useData();
@@ -200,19 +200,18 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Floating Delivery Charge Card - right side */}
+            {/* Floating Delivery Charge Card - left side (non-reactive) */}
             {cartItems && cartItems.length > 0 && (
-                <div className="fixed right-0 top-[25%] -translate-y-1/2 z-[90]">
+                <div className="fixed left-0 top-[25%] -translate-y-1/2 z-[90]">
                     <div
-                        className="rounded-l-2xl py-1.5 px-2 flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all duration-200 shadow-lg border-2 border-white"
+                        className="rounded-r-2xl py-1.5 px-2.5 flex items-center gap-1.5 shadow-lg border-2 border-l-0 border-white"
                         style={{ background: '#FF6B00' }}
-                        onClick={() => navigate('/checkout')}
                     >
                         <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center flex-shrink-0">
                             <Bike size={11} className="text-orange-500" />
                         </div>
                         <span className="text-[12px] font-extrabold text-white leading-none">
-                            {deliveryCharge === 0 ? t('Free') : `₹${deliveryCharge}`}
+                            {`₹${baseDeliveryCharge}`}
                         </span>
                     </div>
                 </div>

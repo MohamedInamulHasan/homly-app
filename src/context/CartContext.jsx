@@ -300,54 +300,95 @@ export const CartProvider = ({ children }) => {
         cartTotal,
         cartCount,
         deliveryCharge,
+        baseDeliveryCharge,
     };
 
     return (
         <CartContext.Provider value={value}>
             {children}
             
-            {/* Multi-Store Warning Popup Modal (Character mascot with blur background) */}
+            {/* Multi-Store Warning Popup Modal (Character mascot with speech bubble and blur background) */}
             {showStoreWarning && (
-                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-5 select-none pointer-events-auto">
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 select-none pointer-events-auto">
                     {/* Dark Blurred Backdrop */}
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={cancelAddToCart} />
                     
                     {/* Modal Dialog */}
-                    <div className="relative bg-white dark:bg-gray-900 rounded-[2.5rem] p-6 max-w-sm w-full text-center shadow-2xl border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in duration-300">
-                        {/* Cute Delivery Mascot SVG */}
-                        <div className="w-24 h-24 mx-auto mb-4 bg-orange-50 dark:bg-orange-950/20 rounded-full flex items-center justify-center">
-                            <svg viewBox="0 0 100 100" className="w-16 h-16 animate-bounce">
-                                <circle cx="50" cy="50" r="45" fill="#FFEFE6" />
-                                <path d="M25 45 C25 25, 75 25, 75 45 Z" fill="#FF6B00" />
-                                <rect x="45" y="20" width="10" height="8" rx="2" fill="#333" />
-                                <circle cx="50" cy="53" r="23" fill="#FFD1B3" />
-                                <circle cx="43" cy="50" r="3" fill="#333" />
-                                <circle cx="57" cy="50" r="3" fill="#333" />
-                                <path d="M44 58 Q50 64, 56 58" fill="none" stroke="#333" strokeWidth="2.5" strokeLinecap="round" />
-                                <circle cx="38" cy="55" r="2.5" fill="#FF9E9E" />
-                                <circle cx="62" cy="55" r="2.5" fill="#FF9E9E" />
-                                <rect x="72" y="55" width="15" height="15" rx="2" fill="#FF6B00" />
-                            </svg>
+                    <div className="relative bg-white dark:bg-gray-900 rounded-[2.5rem] p-6 max-w-md w-full shadow-2xl border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in duration-300 overflow-hidden">
+                        
+                        {/* Layout: Character Mascot + Speech Bubble */}
+                        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-6">
+                            
+                            {/* SVG of Vector Character Girl with Glasses, bow-tie wrap, yellow jacket */}
+                            <div className="w-28 sm:w-32 flex-shrink-0">
+                                <svg viewBox="0 0 160 200" className="w-full h-auto drop-shadow-md">
+                                    {/* Hair (Back) */}
+                                    <path d="M50 80 C30 90 30 130 50 150 C40 130 40 100 50 80 Z" fill="#3B2314" />
+                                    <path d="M110 80 C130 90 130 130 110 150 C120 130 120 100 110 80 Z" fill="#3B2314" />
+                                    
+                                    {/* Face/Neck */}
+                                    <path d="M72 110 L72 125 L88 125 L88 110 Z" fill="#C68B59" />
+                                    <circle cx="80" cy="85" r="28" fill="#DFA375" />
+                                    
+                                    {/* Hair (Front Curly) */}
+                                    <path d="M52 75 C45 50 115 50 108 75 C95 60 65 60 52 75 Z" fill="#4A2E1B" />
+                                    <path d="M50 72 C40 85 45 110 55 115 C48 100 48 85 50 72 Z" fill="#4A2E1B" />
+                                    <path d="M110 72 C120 85 115 110 105 115 C112 100 112 85 110 72 Z" fill="#4A2E1B" />
+                                    
+                                    {/* Red Head-wrap / Bow */}
+                                    <path d="M48 65 Q80 50 112 65 L108 55 Q80 40 52 55 Z" fill="#E0533C" />
+                                    <path d="M70 48 C60 32 73 25 78 43 C83 25 96 32 86 48 Z" fill="#E0533C" />
+                                    
+                                    {/* Glasses */}
+                                    <rect x="58" y="76" width="18" height="14" rx="3" fill="none" stroke="#2B1A0F" strokeWidth="2.5" />
+                                    <rect x="84" y="76" width="18" height="14" rx="3" fill="none" stroke="#2B1A0F" strokeWidth="2.5" />
+                                    <line x1="76" y1="83" x2="84" y2="83" stroke="#2B1A0F" strokeWidth="2.5" />
+                                    
+                                    {/* Eyes */}
+                                    <circle cx="67" cy="83" r="2.5" fill="#2B1A0F" />
+                                    <circle cx="93" cy="83" r="2.5" fill="#2B1A0F" />
+                                    
+                                    {/* Nose & Smile */}
+                                    <path d="M78 90 Q80 94 82 90" fill="none" stroke="#2B1A0F" strokeWidth="2" strokeLinecap="round" />
+                                    <path d="M72 99 Q80 106 88 99" fill="none" stroke="#2B1A0F" strokeWidth="2.5" strokeLinecap="round" />
+                                    
+                                    {/* Yellow Jacket & Orange Shirt */}
+                                    <path d="M50 125 L110 125 L120 200 L40 200 Z" fill="#F4B843" />
+                                    <path d="M68 125 L92 125 L98 200 L62 200 Z" fill="#E06A43" />
+                                    {/* White stripes on shirt */}
+                                    <line x1="68" y1="135" x2="92" y2="135" stroke="#FFFFFF" strokeWidth="2" opacity="0.3" />
+                                    <line x1="66" y1="155" x2="94" y2="155" stroke="#FFFFFF" strokeWidth="2" opacity="0.3" />
+                                    <line x1="64" y1="175" x2="96" y2="175" stroke="#FFFFFF" strokeWidth="2" opacity="0.3" />
+                                    
+                                    {/* Arm Gesturing Up/Right */}
+                                    <path d="M102 145 C115 140 135 125 145 122 C148 121 150 124 146 127 C138 135 120 155 106 165 Z" fill="#DFA375" />
+                                </svg>
+                            </div>
+                            
+                            {/* Speech Bubble */}
+                            <div className="relative flex-1 bg-[#FADBD8] dark:bg-red-950/40 text-gray-800 dark:text-gray-100 p-5 rounded-[2rem] border border-[#F5B7B1] dark:border-red-900 shadow-sm mt-3 sm:mt-0">
+                                {/* Speech Bubble Arrow pointing to the left character */}
+                                <div className="hidden sm:block absolute left-[-10px] top-12 w-0 h-0 border-t-[8px] border-t-transparent border-r-[10px] border-r-[#FADBD8] border-b-[8px] border-b-transparent" />
+                                <div className="sm:hidden absolute top-[-10px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[8px] border-l-transparent border-b-[10px] border-b-[#FADBD8] border-r-[8px] border-r-transparent" />
+                                
+                                <p className="text-xs sm:text-sm font-semibold leading-relaxed">
+                                    Adding products from another store increases the delivery charge to <strong className="text-red-600 dark:text-red-400">₹{nextStoreCharge}</strong> (+₹5). Do you wish to proceed?
+                                </p>
+                            </div>
+                            
                         </div>
                         
-                        <h3 className="text-lg font-extrabold text-gray-900 dark:text-white mb-2 tracking-tight">
-                            Multi-Store Order
-                        </h3>
-                        
-                        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">
-                            Adding products from another store increases the delivery charge to <strong className="text-[#FF6B00]">₹{nextStoreCharge}</strong> (+₹5). Do you wish to proceed?
-                        </p>
-                        
-                        <div className="flex gap-3">
+                        {/* Buttons Footer */}
+                        <div className="flex gap-3 justify-end">
                             <button 
                                 onClick={cancelAddToCart}
-                                className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-full text-xs sm:text-sm active:scale-95 transition-transform"
+                                className="px-6 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-full text-xs sm:text-sm active:scale-95 transition-transform"
                             >
                                 Cancel
                             </button>
                             <button 
                                 onClick={confirmAddToCart}
-                                className="flex-1 py-3 bg-[#FF6B00] text-white font-bold rounded-full text-xs sm:text-sm active:scale-95 transition-transform shadow-md"
+                                className="px-8 py-2.5 bg-[#FF6B00] text-white font-bold rounded-full text-xs sm:text-sm active:scale-95 transition-transform shadow-md"
                             >
                                 OK
                             </button>
