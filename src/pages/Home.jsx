@@ -198,19 +198,17 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Floating Delivery Charge Card - right side like MyJio */}
+            {/* Floating Delivery Charge Card - right side */}
             <div className="fixed right-0 top-1/3 -translate-y-1/2 z-[90]">
                 <div
-                    className="rounded-l-2xl py-2.5 px-3 flex flex-col items-center gap-1 cursor-pointer active:scale-95 transition-all duration-200 shadow-lg"
-                    style={{ background: 'linear-gradient(135deg, #FF8C00, #FF4500)' }}
+                    className="rounded-l-2xl py-3 px-3 flex items-center gap-2 cursor-pointer active:scale-95 transition-all duration-200 shadow-lg border-2 border-white"
+                    style={{ background: '#FF6B00' }}
                     onClick={() => navigate('/checkout')}
-                    title="Delivery Charge"
                 >
-                    <span className="text-[9px] font-bold text-white/80 uppercase tracking-widest">Delivery</span>
-                    <div className="flex items-center gap-1">
-                        <Bike size={13} className="text-white flex-shrink-0" />
-                        <span className="text-[14px] font-extrabold text-white leading-none">₹20</span>
+                    <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+                        <Bike size={14} className="text-orange-500" />
                     </div>
+                    <span className="text-[15px] font-extrabold text-white leading-none">₹20</span>
                 </div>
             </div>
 
