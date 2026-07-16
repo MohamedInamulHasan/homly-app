@@ -57,6 +57,10 @@ const Checkout = () => {
     const [locationMessage, setLocationMessage] = useState({ show: false, type: '', text: '' });
     const [showLocationError, setShowLocationError] = useState(false);
     const locationRef = useRef(null);
+    const fullNameRef = useRef(null);
+    const addressRef = useRef(null);
+    const mobileRef = useRef(null);
+    const cityRef = useRef(null);
 
     // PRE-FETCH LOCATION DISABLED - Causes crashes when permission dialog appears
     // User must manually click "Use Current Location" button
@@ -461,15 +465,6 @@ const Checkout = () => {
                                             }`} />
                                         </button>
 
-                                        {/* Inline hint when location not attached or showLocationError is true */}
-                                        {(!formData.location || showLocationError) && !isLocationSearching && (
-                                            <div className="mt-2 flex items-center gap-2 px-2">
-                                                <AlertCircle size={13} className={showLocationError ? "text-amber-500 flex-shrink-0" : "text-amber-400 flex-shrink-0"} />
-                                                <p className={`text-[11px] font-medium ${showLocationError ? "text-amber-600 font-bold animate-pulse" : "text-amber-500"}`}>
-                                                    {showLocationError ? t('Please attach your GPS Location to place your order') : t('Please attach your location for accurate delivery')}
-                                                </p>
-                                            </div>
-                                        )}
 
                                         {/* Remove link when attached */}
                                         {formData.location && !isLocationSearching && (
@@ -487,9 +482,9 @@ const Checkout = () => {
                                         <div className="md:col-span-2">
                                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">{t('Full Name')}</label>
                                             <input
+                                                ref={fullNameRef}
                                                 type="text"
                                                 name="fullName"
-                                                required
                                                 value={formData.fullName}
                                                 onChange={handleChange}
                                                 className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm"
@@ -500,8 +495,8 @@ const Checkout = () => {
                                         <div className="md:col-span-2">
                                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">{t('Full Address')}</label>
                                             <textarea
+                                                ref={addressRef}
                                                 name="address"
-                                                required
                                                 rows="3"
                                                 value={formData.address}
                                                 onChange={handleChange}
@@ -513,9 +508,9 @@ const Checkout = () => {
                                         <div className="md:col-span-2">
                                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">{t('Mobile Number')}</label>
                                             <input
+                                                ref={mobileRef}
                                                 type="tel"
                                                 name="mobile"
-                                                required
                                                 value={formData.mobile}
                                                 onChange={handleChange}
                                                 className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm"
@@ -555,8 +550,31 @@ const Checkout = () => {
 
                                     <button 
                                         type="button" 
-                                        onClick={() => setIsEditingAddress(false)} 
-                                        className="w-full py-3.5 bg-black text-white rounded-full font-bold text-[14px] active:scale-[0.98] transition-transform"
+                                        onClick={() => {
+                                            if (!formData.fullName) {
+                                                fullNameRef.current?.focus();
+                                                fullNameRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                return;
+                                            }
+                                            if (!formData.address) {
+                                                addressRef.current?.focus();
+                                                addressRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                return;
+                                            }
+                                            if (!formData.mobile) {
+                                                mobileRef.current?.focus();
+                                                mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                return;
+                                            }
+                                            if (!formData.city) {
+                                                cityRef.current?.focus();
+                                                cityRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                return;
+                                            }
+                                            setIsEditingAddress(false);
+                                        }}
+                                        disabled={!formData.fullName || !formData.address || !formData.mobile || !formData.city}
+                                        className="w-full py-3.5 bg-black text-white rounded-full font-bold text-[14px] active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         {t('Save Shipping Details')}
                                     </button>

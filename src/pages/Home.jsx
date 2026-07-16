@@ -1,6 +1,6 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Search, ListFilter } from 'lucide-react';
+import { Search, ListFilter, Bike } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useProducts } from '../hooks/queries/useProducts';
 import { useAds, adKeys } from '../hooks/queries/useAds';
@@ -195,6 +195,23 @@ const Home = () => {
                 
                 <div className="relative z-10">
                     <HomeHeader />
+                </div>
+            </div>
+
+            {/* Floating Delivery Charge Card - right side like MyJio */}
+            <div className="fixed right-0 top-1/2 -translate-y-1/2 z-[90] flex flex-col items-center">
+                <div
+                    className="bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 rounded-l-2xl py-3 px-2 flex flex-col items-center gap-1.5 cursor-pointer active:scale-95 transition-all duration-200"
+                    onClick={() => navigate('/checkout')}
+                    title="Delivery Charge"
+                >
+                    <div className="w-8 h-8 rounded-full bg-[#CBF9B2] dark:bg-[#2E5A2E]/40 flex items-center justify-center">
+                        <Bike size={15} className="text-[#2E5A2E] dark:text-[#CBF9B2]" />
+                    </div>
+                    <div className="flex flex-col items-center leading-tight">
+                        <span className="text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Delivery</span>
+                        <span className="text-[13px] font-extrabold text-[#2E5A2E] dark:text-[#CBF9B2]">₹20</span>
+                    </div>
                 </div>
             </div>
 
