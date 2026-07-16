@@ -30,9 +30,7 @@ createRoot(document.getElementById('root')).render(
                     <ThemeProvider>
                         <LanguageProvider>
                             <DataProvider>
-                                <CartProvider>
-                                    <App />
-                                </CartProvider>
+                                <App />
                             </DataProvider>
                         </LanguageProvider>
                     </ThemeProvider>
