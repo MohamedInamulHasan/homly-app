@@ -573,8 +573,7 @@ const Checkout = () => {
                                             }
                                             setIsEditingAddress(false);
                                         }}
-                                        disabled={!formData.fullName || !formData.address || !formData.mobile || !formData.city}
-                                        className="w-full py-3.5 bg-black text-white rounded-full font-bold text-[14px] active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="w-full py-3.5 bg-black text-white rounded-full font-bold text-[14px] active:scale-[0.98] transition-transform"
                                     >
                                         {t('Save Shipping Details')}
                                     </button>

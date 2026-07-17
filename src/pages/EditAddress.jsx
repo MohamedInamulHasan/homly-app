@@ -107,11 +107,6 @@ const EditAddress = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!formData.fullName) {
-            fullNameRef.current?.focus();
-            fullNameRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            return;
-        }
         if (!formData.mobile) {
             mobileRef.current?.focus();
             mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -279,7 +274,6 @@ const EditAddress = () => {
                                 value={formData.fullName}
                                 onChange={handleChange}
                                 placeholder="Enter full name"
-                                required
                                 className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm"
                             />
                         </div>
@@ -342,8 +336,7 @@ const EditAddress = () => {
                     <div className="pt-4">
                             <button
                                 type="submit"
-                                disabled={isSaving || !formData.fullName || !formData.mobile || !formData.street || !formData.city}
-                                className="w-full bg-black text-white py-4 rounded-full font-bold text-[15px] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full bg-black text-white py-4 rounded-full font-bold text-[15px] active:scale-[0.98] transition-all"
                             >
                                 {isSaving ? t('Saving Changes...') : t('Update Address')}
                             </button>
