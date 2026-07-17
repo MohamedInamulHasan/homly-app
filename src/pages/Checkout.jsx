@@ -185,6 +185,7 @@ const Checkout = () => {
         if (!formData.mobile) errors.mobile = true;
         if (!formData.address) errors.address = true;
         if (!formData.city) errors.city = true;
+        if (!formData.location) errors.location = true;
 
         if (Object.keys(errors).length > 0) {
             setFieldErrors(errors);
@@ -194,6 +195,7 @@ const Checkout = () => {
                 else if (errors.address) addressRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 else if (errors.mobile) mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 else if (errors.city) cityRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                else if (errors.location) locationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 150);
             return;
         }
@@ -409,6 +411,7 @@ const Checkout = () => {
                                                 
                                                 if (result.success) {
                                                     setFormData(prev => ({ ...prev, location: result.mapsLink }));
+                                                    setFieldErrors(prev => ({ ...prev, location: false }));
                                                     setIsLocationSearching(false);
                                                     setLocationMessage({ show: true, type: 'success', text: t('Location Accessed Successfully') });
                                                 } else {
@@ -417,7 +420,8 @@ const Checkout = () => {
                                                 }
                                             }}
                                             disabled={isLocationSearching}
-                                            className={`w-full bg-white dark:bg-gray-800 border rounded-2xl px-4 py-3 flex items-center gap-3 transition-all duration-300 active:scale-[0.98] ${
+                                            className={`w-full bg-white dark:bg-gray-800 border rounded-xl px-4 py-3.5 flex items-center gap-3 transition-all duration-300 active:scale-[0.98] shadow-none ${
+                                                fieldErrors.location ? 'border-orange-500 ring-2 ring-orange-100' :
                                                 isLocationSearching ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-green-50/30' :
                                                 formData.location ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-green-50/30 dark:bg-[#CBF9B2]/5' :
                                                 showLocationError ? 'border-amber-400 bg-amber-50/10' :
@@ -466,6 +470,13 @@ const Checkout = () => {
                                             }`} />
                                         </button>
 
+                                        {fieldErrors.location && (
+                                            <div className="relative mt-2 bg-orange-50 dark:bg-gray-800 border border-orange-400 dark:border-orange-500 rounded-xl px-3 py-1.5 text-orange-600 dark:text-orange-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
+                                                <div className="absolute -top-[5px] left-4 w-2 h-2 bg-orange-50 dark:bg-gray-800 border-t border-l border-orange-400 dark:border-orange-500 rotate-45 transform"></div>
+                                                <span className="w-4 h-4 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
+                                                <span>{t('GPS Location')} is required</span>
+                                            </div>
+                                        )}
 
                                         {/* Remove link when attached */}
                                         {formData.location && !isLocationSearching && (
@@ -488,10 +499,16 @@ const Checkout = () => {
                                                 name="fullName"
                                                 value={formData.fullName}
                                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, fullName: false})); }}
-                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm ${fieldErrors.fullName ? 'border-red-400 ring-2 ring-red-200' : 'border-gray-200 dark:border-gray-600'}`}
+                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm shadow-none ${fieldErrors.fullName ? 'border-orange-500 ring-2 ring-orange-100' : 'border-gray-200 dark:border-gray-600'}`}
                                                 placeholder={t('Enter your full name')}
                                             />
-                                            {fieldErrors.fullName && <p className="text-red-500 text-[11px] font-semibold mt-1 px-1">{t('Full Name')} is required</p>}
+                                            {fieldErrors.fullName && (
+                                                <div className="relative mt-2 bg-orange-50 dark:bg-gray-800 border border-orange-400 dark:border-orange-500 rounded-xl px-3 py-1.5 text-orange-600 dark:text-orange-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
+                                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-orange-50 dark:bg-gray-800 border-t border-l border-orange-400 dark:border-orange-500 rotate-45 transform"></div>
+                                                    <span className="w-4 h-4 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
+                                                    <span>{t('Full Name')} is required</span>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className="md:col-span-2">
@@ -502,10 +519,16 @@ const Checkout = () => {
                                                 rows="3"
                                                 value={formData.address}
                                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, address: false})); }}
-                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm ${fieldErrors.address ? 'border-red-400 ring-2 ring-red-200' : 'border-gray-200 dark:border-gray-600'}`}
+                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm shadow-none ${fieldErrors.address ? 'border-orange-500 ring-2 ring-orange-100' : 'border-gray-200 dark:border-gray-600'}`}
                                                 placeholder={t('House no, Flat, Street name, Landmark')}
                                             />
-                                            {fieldErrors.address && <p className="text-red-500 text-[11px] font-semibold mt-1 px-1">{t('Full Address')} is required</p>}
+                                            {fieldErrors.address && (
+                                                <div className="relative mt-2 bg-orange-50 dark:bg-gray-800 border border-orange-400 dark:border-orange-500 rounded-xl px-3 py-1.5 text-orange-600 dark:text-orange-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
+                                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-orange-50 dark:bg-gray-800 border-t border-l border-orange-400 dark:border-orange-500 rotate-45 transform"></div>
+                                                    <span className="w-4 h-4 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
+                                                    <span>{t('Full Address')} is required</span>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className="md:col-span-2">
@@ -516,10 +539,16 @@ const Checkout = () => {
                                                 name="mobile"
                                                 value={formData.mobile}
                                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, mobile: false})); }}
-                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm ${fieldErrors.mobile ? 'border-red-400 ring-2 ring-red-200' : 'border-gray-200 dark:border-gray-600'}`}
+                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm shadow-none ${fieldErrors.mobile ? 'border-orange-500 ring-2 ring-orange-100' : 'border-gray-200 dark:border-gray-600'}`}
                                                 placeholder={t('Enter 10-digit mobile number')}
                                             />
-                                            {fieldErrors.mobile && <p className="text-red-500 text-[11px] font-semibold mt-1 px-1">{t('Mobile Number')} is required</p>}
+                                            {fieldErrors.mobile && (
+                                                <div className="relative mt-2 bg-orange-50 dark:bg-gray-800 border border-orange-400 dark:border-orange-500 rounded-xl px-3 py-1.5 text-orange-600 dark:text-orange-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
+                                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-orange-50 dark:bg-gray-800 border-t border-l border-orange-400 dark:border-orange-500 rotate-45 transform"></div>
+                                                    <span className="w-4 h-4 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
+                                                    <span>{t('Mobile Number')} is required</span>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div>
@@ -528,14 +557,20 @@ const Checkout = () => {
                                                 name="city"
                                                 value={formData.city}
                                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, city: false})); }}
-                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm ${fieldErrors.city ? 'border-red-400 ring-2 ring-red-200' : 'border-gray-200 dark:border-gray-600'}`}
+                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm shadow-none ${fieldErrors.city ? 'border-orange-500 ring-2 ring-orange-100' : 'border-gray-200 dark:border-gray-600'}`}
                                             >
                                                 <option value="">{t('Select City')}</option>
                                                 {cities.map((city, index) => (
                                                     <option key={index} value={city}>{city}</option>
                                                 ))}
                                             </select>
-                                            {fieldErrors.city && <p className="text-red-500 text-[11px] font-semibold mt-1 px-1">{t('City')} is required</p>}
+                                            {fieldErrors.city && (
+                                                <div className="relative mt-2 bg-orange-50 dark:bg-gray-800 border border-orange-400 dark:border-orange-500 rounded-xl px-3 py-1.5 text-orange-600 dark:text-orange-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
+                                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-orange-50 dark:bg-gray-800 border-t border-l border-orange-400 dark:border-orange-500 rotate-45 transform"></div>
+                                                    <span className="w-4 h-4 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
+                                                    <span>{t('City')} is required</span>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div>

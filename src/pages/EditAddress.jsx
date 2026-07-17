@@ -295,9 +295,15 @@ const EditAddress = () => {
                                 value={formData.mobile}
                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, mobile: false})); }}
                                 placeholder="10-digit mobile number"
-                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm ${fieldErrors.mobile ? 'border-red-400 ring-2 ring-red-200' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
+                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm shadow-none ${fieldErrors.mobile ? 'border-orange-500 ring-2 ring-orange-100' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
                             />
-                            {fieldErrors.mobile && <p className="text-red-500 text-[11px] font-semibold mt-1 px-1">{t('Mobile Number')} is required</p>}
+                            {fieldErrors.mobile && (
+                                <div className="relative mt-2 bg-orange-50 dark:bg-gray-800 border border-orange-400 dark:border-orange-500 rounded-xl px-3 py-1.5 text-orange-600 dark:text-orange-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
+                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-orange-50 dark:bg-gray-800 border-t border-l border-orange-400 dark:border-orange-500 rotate-45 transform"></div>
+                                    <span className="w-4 h-4 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
+                                    <span>{t('Mobile Number')} is required</span>
+                                </div>
+                            )}
                         </div>
 
                         <div>
@@ -309,9 +315,15 @@ const EditAddress = () => {
                                 value={formData.street}
                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, street: false})); }}
                                 placeholder="House no, Street name, Landmark"
-                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm resize-none ${fieldErrors.street ? 'border-red-400 ring-2 ring-red-200' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
+                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm resize-none shadow-none ${fieldErrors.street ? 'border-orange-500 ring-2 ring-orange-100' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
                             />
-                            {fieldErrors.street && <p className="text-red-500 text-[11px] font-semibold mt-1 px-1">{t('Street / Area')} is required</p>}
+                            {fieldErrors.street && (
+                                <div className="relative mt-2 bg-orange-50 dark:bg-gray-800 border border-orange-400 dark:border-orange-500 rounded-xl px-3 py-1.5 text-orange-600 dark:text-orange-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
+                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-orange-50 dark:bg-gray-800 border-t border-l border-orange-400 dark:border-orange-500 rotate-45 transform"></div>
+                                    <span className="w-4 h-4 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
+                                    <span>{t('Street / Area')} is required</span>
+                                </div>
+                            )}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
@@ -322,12 +334,18 @@ const EditAddress = () => {
                                     name="city"
                                     value={formData.city}
                                     onChange={e => { handleChange(e); setFieldErrors(p => ({...p, city: false})); }}
-                                    className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm appearance-none ${fieldErrors.city ? 'border-red-400 ring-2 ring-red-200' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
+                                    className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm appearance-none shadow-none ${fieldErrors.city ? 'border-orange-500 ring-2 ring-orange-100' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
                                 >
                                     <option value="">{t('Select City')}</option>
                                     {cities.map((city, idx) => <option key={idx} value={city}>{city}</option>)}
                                 </select>
-                                {fieldErrors.city && <p className="text-red-500 text-[11px] font-semibold mt-1 px-1">{t('City')} is required</p>}
+                                {fieldErrors.city && (
+                                    <div className="relative mt-2 bg-orange-50 dark:bg-gray-800 border border-orange-400 dark:border-orange-500 rounded-xl px-3 py-1.5 text-orange-600 dark:text-orange-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
+                                        <div className="absolute -top-[5px] left-4 w-2 h-2 bg-orange-50 dark:bg-gray-800 border-t border-l border-orange-400 dark:border-orange-500 rotate-45 transform"></div>
+                                        <span className="w-4 h-4 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
+                                        <span>{t('City')} is required</span>
+                                    </div>
+                                )}
                             </div>
                             <div>
                                 <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2 px-1">{t('Pincode')}</label>
