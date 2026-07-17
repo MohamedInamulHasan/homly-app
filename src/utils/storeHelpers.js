@@ -231,6 +231,8 @@ export const calculateDeliveryCharge = (items) => {
         }
     });
 
+    const storeCount = uniqueStoreIds.size;
+
     if (storeCount <= 1) return 20;
     return 20 + (storeCount - 1) * 5;
 };
