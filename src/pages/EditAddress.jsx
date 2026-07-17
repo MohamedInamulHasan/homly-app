@@ -34,6 +34,7 @@ const EditAddress = () => {
     const [isSaving, setIsSaving] = useState(false);
     const [isDetecting, setIsDetecting] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
+    const [fieldErrors, setFieldErrors] = useState({});
 
     useEffect(() => {
         // Fetch cities list
@@ -107,22 +108,29 @@ const EditAddress = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!formData.mobile) {
-            mobileRef.current?.focus();
-            mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            return;
-        }
-        if (!formData.street) {
-            streetRef.current?.focus();
-            streetRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            return;
-        }
-        if (!formData.city) {
-            cityRef.current?.focus();
-            cityRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        const errors = {};
+        if (!formData.mobile) errors.mobile = true;
+        if (!formData.street) errors.street = true;
+        if (!formData.city) errors.city = true;
+
+        if (Object.keys(errors).length > 0) {
+            setFieldErrors(errors);
+            // Scroll to first error
+            if (errors.mobile) mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            else if (errors.street) streetRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            else if (errors.city) cityRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
         }
 
+        // Validate Mobile Number (10 digits)
+        if (!/^\d{10}$/.test(formData.mobile)) {
+            setFieldErrors(prev => ({ ...prev, mobile: true }));
+            mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+
+        setFieldErrors({});
         setIsSaving(true);
 
         try {
@@ -285,11 +293,11 @@ const EditAddress = () => {
                                 type="tel"
                                 name="mobile"
                                 value={formData.mobile}
-                                onChange={handleChange}
+                                onChange={e => { handleChange(e); setFieldErrors(p => ({...p, mobile: false})); }}
                                 placeholder="10-digit mobile number"
-                                required
-                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm"
+                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm ${fieldErrors.mobile ? 'border-red-400 ring-2 ring-red-200' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
                             />
+                            {fieldErrors.mobile && <p className="text-red-500 text-[11px] font-semibold mt-1 px-1">{t('Mobile Number')} is required</p>}
                         </div>
 
                         <div>
@@ -299,11 +307,11 @@ const EditAddress = () => {
                                 name="street"
                                 rows="3"
                                 value={formData.street}
-                                onChange={handleChange}
+                                onChange={e => { handleChange(e); setFieldErrors(p => ({...p, street: false})); }}
                                 placeholder="House no, Street name, Landmark"
-                                required
-                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm resize-none"
+                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm resize-none ${fieldErrors.street ? 'border-red-400 ring-2 ring-red-200' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
                             />
+                            {fieldErrors.street && <p className="text-red-500 text-[11px] font-semibold mt-1 px-1">{t('Street / Area')} is required</p>}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
@@ -313,13 +321,13 @@ const EditAddress = () => {
                                     ref={cityRef}
                                     name="city"
                                     value={formData.city}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm appearance-none"
+                                    onChange={e => { handleChange(e); setFieldErrors(p => ({...p, city: false})); }}
+                                    className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm appearance-none ${fieldErrors.city ? 'border-red-400 ring-2 ring-red-200' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
                                 >
                                     <option value="">{t('Select City')}</option>
                                     {cities.map((city, idx) => <option key={idx} value={city}>{city}</option>)}
                                 </select>
+                                {fieldErrors.city && <p className="text-red-500 text-[11px] font-semibold mt-1 px-1">{t('City')} is required</p>}
                             </div>
                             <div>
                                 <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2 px-1">{t('Pincode')}</label>

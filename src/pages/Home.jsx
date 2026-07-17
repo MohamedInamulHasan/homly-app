@@ -200,11 +200,11 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Floating Delivery Charge Card - left side (non-reactive) */}
+            {/* Floating Delivery Charge Card - right side (non-reactive) */}
             {cartItems && cartItems.length > 0 && (
-                <div className="fixed left-0 top-[25%] -translate-y-1/2 z-[90]">
+                <div className="fixed right-0 top-[25%] -translate-y-1/2 z-[90]">
                     <div
-                        className="rounded-r-2xl py-1.5 px-2.5 flex items-center gap-1.5 shadow-lg border-2 border-l-0 border-white"
+                        className="rounded-l-2xl py-1.5 px-2.5 flex items-center gap-1.5 shadow-lg border-2 border-r-0 border-white"
                         style={{ background: '#FF6B00' }}
                     >
                         <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center flex-shrink-0">

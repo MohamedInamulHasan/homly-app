@@ -73,6 +73,7 @@ const Checkout = () => {
     const [isEditingAddress, setIsEditingAddress] = useState(false);
     const [isInitialized, setIsInitialized] = useState(false);
     const [permissionStatus, setPermissionStatus] = useState('prompt'); // granted, prompt, denied
+    const [fieldErrors, setFieldErrors] = useState({});
 
 
     // With the guest-first flow, all users have a session auto-created on launch.
@@ -179,30 +180,31 @@ const Checkout = () => {
         e.preventDefault();
 
         // Validation
-        if (!formData.fullName || !formData.mobile || !formData.address || !formData.city) {
-            alert(t('Please fill in all required fields'));
-            return;
-        }
+        const errors = {};
+        if (!formData.fullName) errors.fullName = true;
+        if (!formData.mobile) errors.mobile = true;
+        if (!formData.address) errors.address = true;
+        if (!formData.city) errors.city = true;
 
-        // Validate Location (GPS Location must be pinned/attached)
-        if (!formData.location) {
+        if (Object.keys(errors).length > 0) {
+            setFieldErrors(errors);
             setIsEditingAddress(true);
-            setShowLocationError(true);
             setTimeout(() => {
-                locationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (errors.fullName) fullNameRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                else if (errors.address) addressRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                else if (errors.mobile) mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                else if (errors.city) cityRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 150);
             return;
         }
 
         // Validate Mobile Number (10 digits)
         if (!/^\d{10}$/.test(formData.mobile)) {
-            alert(t('Please enter a valid 10-digit mobile number'));
-            return;
-        }
-
-        // Validate Zip Code
-        if (!/^\d{6}$/.test(formData.zip)) {
-            alert(t('Please enter a valid 6-digit Pincode'));
+            setFieldErrors({ mobile: true });
+            setIsEditingAddress(true);
+            setTimeout(() => {
+                mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 150);
             return;
         }
 
@@ -396,7 +398,6 @@ const Checkout = () => {
                                     <div ref={locationRef} className="relative mb-6">
                                         <div className="flex items-center justify-between mb-2 px-1">
                                             <span className="text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest">{t('GPS Location')}</span>
-                                            <span className="text-[10px] font-semibold text-red-500 bg-red-50 dark:bg-red-950/20 px-2.5 py-0.5 rounded-full">{t('Required')}</span>
                                         </div>
 
                                         <button
@@ -486,10 +487,11 @@ const Checkout = () => {
                                                 type="text"
                                                 name="fullName"
                                                 value={formData.fullName}
-                                                onChange={handleChange}
-                                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm"
+                                                onChange={e => { handleChange(e); setFieldErrors(p => ({...p, fullName: false})); }}
+                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm ${fieldErrors.fullName ? 'border-red-400 ring-2 ring-red-200' : 'border-gray-200 dark:border-gray-600'}`}
                                                 placeholder={t('Enter your full name')}
                                             />
+                                            {fieldErrors.fullName && <p className="text-red-500 text-[11px] font-semibold mt-1 px-1">{t('Full Name')} is required</p>}
                                         </div>
 
                                         <div className="md:col-span-2">
@@ -499,10 +501,11 @@ const Checkout = () => {
                                                 name="address"
                                                 rows="3"
                                                 value={formData.address}
-                                                onChange={handleChange}
-                                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm"
+                                                onChange={e => { handleChange(e); setFieldErrors(p => ({...p, address: false})); }}
+                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm ${fieldErrors.address ? 'border-red-400 ring-2 ring-red-200' : 'border-gray-200 dark:border-gray-600'}`}
                                                 placeholder={t('House no, Flat, Street name, Landmark')}
                                             />
+                                            {fieldErrors.address && <p className="text-red-500 text-[11px] font-semibold mt-1 px-1">{t('Full Address')} is required</p>}
                                         </div>
 
                                         <div className="md:col-span-2">
@@ -512,26 +515,27 @@ const Checkout = () => {
                                                 type="tel"
                                                 name="mobile"
                                                 value={formData.mobile}
-                                                onChange={handleChange}
-                                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm"
+                                                onChange={e => { handleChange(e); setFieldErrors(p => ({...p, mobile: false})); }}
+                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm ${fieldErrors.mobile ? 'border-red-400 ring-2 ring-red-200' : 'border-gray-200 dark:border-gray-600'}`}
                                                 placeholder={t('Enter 10-digit mobile number')}
                                             />
+                                            {fieldErrors.mobile && <p className="text-red-500 text-[11px] font-semibold mt-1 px-1">{t('Mobile Number')} is required</p>}
                                         </div>
 
                                         <div>
                                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">{t('City')}</label>
                                             <select
                                                 name="city"
-                                                required
                                                 value={formData.city}
-                                                onChange={handleChange}
-                                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm"
+                                                onChange={e => { handleChange(e); setFieldErrors(p => ({...p, city: false})); }}
+                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm ${fieldErrors.city ? 'border-red-400 ring-2 ring-red-200' : 'border-gray-200 dark:border-gray-600'}`}
                                             >
                                                 <option value="">{t('Select City')}</option>
                                                 {cities.map((city, index) => (
                                                     <option key={index} value={city}>{city}</option>
                                                 ))}
                                             </select>
+                                            {fieldErrors.city && <p className="text-red-500 text-[11px] font-semibold mt-1 px-1">{t('City')} is required</p>}
                                         </div>
 
                                         <div>
@@ -551,26 +555,21 @@ const Checkout = () => {
                                     <button 
                                         type="button" 
                                         onClick={() => {
-                                            if (!formData.fullName) {
-                                                fullNameRef.current?.focus();
-                                                fullNameRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                            const errors = {};
+                                            if (!formData.fullName) errors.fullName = true;
+                                            if (!formData.address) errors.address = true;
+                                            if (!formData.mobile) errors.mobile = true;
+                                            if (!formData.city) errors.city = true;
+                                            if (Object.keys(errors).length > 0) {
+                                                setFieldErrors(errors);
+                                                // Scroll to first error
+                                                if (errors.fullName) fullNameRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                else if (errors.address) addressRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                else if (errors.mobile) mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                else if (errors.city) cityRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                                                 return;
                                             }
-                                            if (!formData.address) {
-                                                addressRef.current?.focus();
-                                                addressRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                return;
-                                            }
-                                            if (!formData.mobile) {
-                                                mobileRef.current?.focus();
-                                                mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                return;
-                                            }
-                                            if (!formData.city) {
-                                                cityRef.current?.focus();
-                                                cityRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                return;
-                                            }
+                                            setFieldErrors({});
                                             setIsEditingAddress(false);
                                         }}
                                         className="w-full py-3.5 bg-black text-white rounded-full font-bold text-[14px] active:scale-[0.98] transition-transform"
