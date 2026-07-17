@@ -308,91 +308,57 @@ export const CartProvider = ({ children }) => {
     return (
         <CartContext.Provider value={value}>
             {children}
-            
-            {/* Multi-Store Warning — Side screen slide-up character popup */}
+
+            {/* Multi-Store Warning — Simple speech bubble, right-center of screen */}
             {showStoreWarning && (
                 <div className="fixed inset-0 z-[9999] select-none pointer-events-auto">
                     {/* Blurred backdrop */}
                     <div
-                        className="absolute inset-0 bg-black/55 backdrop-blur-sm"
-                        style={{ animation: 'msOverlayIn 0.25s ease-out forwards' }}
+                        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                        style={{ animation: 'msOverlayIn 0.2s ease-out forwards' }}
                         onClick={cancelAddToCart}
                     />
 
-                    {/* Side panel — bottom-left, slides up */}
+                    {/* Speech bubble — right side, vertically centered */}
                     <div
-                        className="absolute bottom-0 left-0 flex flex-col items-start"
-                        style={{ animation: 'msPanelUp 0.45s cubic-bezier(0.34, 1.4, 0.64, 1) forwards' }}
+                        className="absolute right-4 top-1/2 -translate-y-1/2"
+                        style={{ animation: 'msBubblePop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards', opacity: 0 }}
+                        onClick={e => e.stopPropagation()}
                     >
-                        {/* ── Character + Bubble row ── */}
-                        <div className="flex items-end gap-3 pl-4 mb-[-6px] relative z-10">
-                            {/* Character image */}
-                            <img
-                                src="/delivery-character.png"
-                                alt="Delivery Character"
-                                className="w-36 h-36 object-contain object-bottom drop-shadow-xl flex-shrink-0"
-                            />
-
-                            {/* Speech bubble — pops in after character */}
-                            <div
-                                className="relative mb-6"
-                                style={{ animation: 'msBubblePop 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both', opacity: 0 }}
-                            >
-                                <div className="bg-white dark:bg-gray-800 rounded-[1.6rem] rounded-bl-sm px-4 py-3 shadow-2xl border border-gray-100 dark:border-gray-700 max-w-[230px]">
-                                    {/* Tail bottom-left */}
-                                    <div
-                                        className="absolute -bottom-[8px] left-2 w-0 h-0"
-                                        style={{
-                                            borderLeft: '0px solid transparent',
-                                            borderRight: '12px solid transparent',
-                                            borderTop: '9px solid white',
-                                        }}
-                                    />
-                                    <p className="text-[11px] font-bold text-orange-500 uppercase tracking-widest mb-1">
-                                        {t('Note!')}
-                                    </p>
-                                    <p className="text-[12.5px] font-semibold text-gray-800 dark:text-gray-100 leading-snug">
-                                        {t('Adding products from another store will increase your delivery charge to')}{' '}
-                                        <span className="text-orange-500 font-black">₹{nextStoreCharge}</span>.{' '}
-                                        {t('Do you wish to continue?')}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* ── Card panel ── */}
+                        {/* Bubble tail on the right side (pointing right) */}
                         <div
-                            className="w-[92vw] max-w-sm bg-white dark:bg-gray-900 rounded-t-[2rem] rounded-br-[2rem] px-5 pt-5 pb-6 shadow-2xl ml-3 mb-2"
-                            onClick={e => e.stopPropagation()}
-                        >
-                            {/* Title row */}
-                            <div className="flex items-center gap-2 mb-3">
-                                <span className="text-2xl">🛵</span>
-                                <h2 className="text-[17px] font-black text-gray-900 dark:text-white tracking-tight">
-                                    {t('Multi-Store Order')}
-                                </h2>
-                            </div>
+                            className="absolute right-[-10px] top-1/3 w-0 h-0"
+                            style={{
+                                borderTop: '9px solid transparent',
+                                borderBottom: '9px solid transparent',
+                                borderLeft: '10px solid white',
+                            }}
+                        />
 
-                            {/* Charge badge */}
-                            <div className="flex items-center justify-between bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-2xl px-4 py-3 mb-5">
-                                <div>
-                                    <p className="text-[10px] text-orange-400 font-bold uppercase tracking-widest">{t('New Delivery Charge')}</p>
-                                    <p className="text-[26px] font-black text-orange-500 leading-none mt-0.5">₹{nextStoreCharge}</p>
-                                </div>
-                                <div className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/40 flex items-center justify-center text-xl">🛒</div>
-                            </div>
+                        <div className="bg-white dark:bg-gray-900 rounded-[1.6rem] rounded-tr-sm px-5 py-4 shadow-2xl border border-gray-100 dark:border-gray-700 w-[240px]">
+                            {/* Note label */}
+                            <p className="text-[11px] font-bold text-orange-500 uppercase tracking-widest mb-1.5">
+                                {t('Note!')}
+                            </p>
+
+                            {/* Message */}
+                            <p className="text-[13px] font-semibold text-gray-800 dark:text-gray-100 leading-snug mb-4">
+                                {t('Adding products from another store will increase your delivery charge to')}{' '}
+                                <span className="text-orange-500 font-black">₹{nextStoreCharge}</span>.{' '}
+                                {t('Do you wish to continue?')}
+                            </p>
 
                             {/* Buttons */}
-                            <div className="flex gap-3">
+                            <div className="flex gap-2 justify-end">
                                 <button
                                     onClick={cancelAddToCart}
-                                    className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-2xl text-sm active:scale-95 transition-transform"
+                                    className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-xl text-xs active:scale-95 transition-transform"
                                 >
                                     {t('Cancel')}
                                 </button>
                                 <button
                                     onClick={confirmAddToCart}
-                                    className="flex-1 py-3 text-white font-extrabold rounded-2xl text-sm active:scale-95 transition-transform shadow-lg"
+                                    className="px-5 py-2 text-white font-extrabold rounded-xl text-xs active:scale-95 transition-transform shadow-md"
                                     style={{ background: 'linear-gradient(135deg, #FF6B00, #FF9D00)' }}
                                 >
                                     {t('Yes, Add')}
@@ -406,13 +372,9 @@ export const CartProvider = ({ children }) => {
                             from { opacity: 0; }
                             to { opacity: 1; }
                         }
-                        @keyframes msPanelUp {
-                            from { transform: translateY(110%); }
-                            to { transform: translateY(0%); }
-                        }
                         @keyframes msBubblePop {
-                            from { transform: scale(0.4) translateY(12px); opacity: 0; }
-                            to { transform: scale(1) translateY(0px); opacity: 1; }
+                            from { transform: translateY(-50%) scale(0.7) translateX(20px); opacity: 0; }
+                            to { transform: translateY(-50%) scale(1) translateX(0px); opacity: 1; }
                         }
                     `}</style>
                 </div>
