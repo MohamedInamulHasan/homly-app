@@ -19,7 +19,7 @@ import PullToRefreshLayout from '../components/PullToRefreshLayout';
 import { useCart } from '../context/CartContext';
 
 const Home = () => {
-    const { cartItems, baseDeliveryCharge } = useCart();
+    const { cartItems, deliveryCharge } = useCart();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const { globalSortOrder, setGlobalSortOrder } = useData();
@@ -211,7 +211,7 @@ const Home = () => {
                             <Bike size={11} className="text-orange-500" />
                         </div>
                         <span className="text-[12px] font-extrabold text-white leading-none">
-                            {`₹${baseDeliveryCharge}`}
+                            {deliveryCharge === 0 ? t('Free') : `₹${deliveryCharge}`}
                         </span>
                     </div>
                 </div>

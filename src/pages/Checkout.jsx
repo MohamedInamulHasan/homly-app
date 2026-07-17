@@ -421,7 +421,7 @@ const Checkout = () => {
                                             }}
                                             disabled={isLocationSearching}
                                             className={`w-full bg-white dark:bg-gray-800 border rounded-xl px-4 py-3.5 flex items-center gap-3 transition-all duration-300 active:scale-[0.98] shadow-none ${
-                                                fieldErrors.location ? 'border-orange-500 ring-2 ring-orange-100' :
+                                                fieldErrors.location ? 'border-gray-400 dark:border-gray-500 ring-2 ring-gray-200/50' :
                                                 isLocationSearching ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-green-50/30' :
                                                 formData.location ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-green-50/30 dark:bg-[#CBF9B2]/5' :
                                                 showLocationError ? 'border-amber-400 bg-amber-50/10' :
@@ -471,9 +471,9 @@ const Checkout = () => {
                                         </button>
 
                                         {fieldErrors.location && (
-                                            <div className="relative mt-2 bg-orange-50 dark:bg-gray-800 border border-orange-400 dark:border-orange-500 rounded-xl px-3 py-1.5 text-orange-600 dark:text-orange-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
-                                                <div className="absolute -top-[5px] left-4 w-2 h-2 bg-orange-50 dark:bg-gray-800 border-t border-l border-orange-400 dark:border-orange-500 rotate-45 transform"></div>
-                                                <span className="w-4 h-4 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
+                                            <div className="relative mt-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-1.5 text-gray-900 dark:text-gray-100 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
+                                                <div className="absolute -top-[5px] left-4 w-2 h-2 bg-white dark:bg-gray-800 border-t border-l border-gray-300 dark:border-gray-600 rotate-45 transform"></div>
+                                                <span className="w-4 h-4 rounded-full bg-yellow-400 text-black flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
                                                 <span>{t('GPS Location')} is required</span>
                                             </div>
                                         )}
@@ -499,14 +499,14 @@ const Checkout = () => {
                                                 name="fullName"
                                                 value={formData.fullName}
                                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, fullName: false})); }}
-                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm shadow-none ${fieldErrors.fullName ? 'border-orange-500 ring-2 ring-orange-100' : 'border-gray-200 dark:border-gray-600'}`}
+                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none ${fieldErrors.fullName ? 'border-gray-400 dark:border-gray-500 ring-2 ring-gray-200/50' : 'border-gray-200 dark:border-gray-600'}`}
                                                 placeholder={t('Enter your full name')}
                                             />
                                             {fieldErrors.fullName && (
-                                                <div className="relative mt-2 bg-orange-50 dark:bg-gray-800 border border-orange-400 dark:border-orange-500 rounded-xl px-3 py-1.5 text-orange-600 dark:text-orange-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
-                                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-orange-50 dark:bg-gray-800 border-t border-l border-orange-400 dark:border-orange-500 rotate-45 transform"></div>
-                                                    <span className="w-4 h-4 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
-                                                    <span>{t('Full Name')} is required</span>
+                                                <div className="relative mt-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-1.5 text-gray-900 dark:text-gray-100 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
+                                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-white dark:bg-gray-800 border-t border-l border-gray-300 dark:border-gray-600 rotate-45 transform"></div>
+                                                    <span className="w-4 h-4 rounded-full bg-yellow-400 text-black flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
+                                                    <span>{t('Full Name is required')}</span>
                                                 </div>
                                             )}
                                         </div>
@@ -519,14 +519,14 @@ const Checkout = () => {
                                                 rows="3"
                                                 value={formData.address}
                                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, address: false})); }}
-                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm shadow-none ${fieldErrors.address ? 'border-orange-500 ring-2 ring-orange-100' : 'border-gray-200 dark:border-gray-600'}`}
+                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none ${fieldErrors.address ? 'border-gray-400 dark:border-gray-500 ring-2 ring-gray-200/50' : 'border-gray-200 dark:border-gray-600'}`}
                                                 placeholder={t('House no, Flat, Street name, Landmark')}
                                             />
                                             {fieldErrors.address && (
-                                                <div className="relative mt-2 bg-orange-50 dark:bg-gray-800 border border-orange-400 dark:border-orange-500 rounded-xl px-3 py-1.5 text-orange-600 dark:text-orange-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
-                                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-orange-50 dark:bg-gray-800 border-t border-l border-orange-400 dark:border-orange-500 rotate-45 transform"></div>
-                                                    <span className="w-4 h-4 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
-                                                    <span>{t('Full Address')} is required</span>
+                                                <div className="relative mt-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-1.5 text-gray-900 dark:text-gray-100 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
+                                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-white dark:bg-gray-800 border-t border-l border-gray-300 dark:border-gray-600 rotate-45 transform"></div>
+                                                    <span className="w-4 h-4 rounded-full bg-yellow-400 text-black flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
+                                                    <span>{t('Full Address is required')}</span>
                                                 </div>
                                             )}
                                         </div>
@@ -539,14 +539,14 @@ const Checkout = () => {
                                                 name="mobile"
                                                 value={formData.mobile}
                                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, mobile: false})); }}
-                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm shadow-none ${fieldErrors.mobile ? 'border-orange-500 ring-2 ring-orange-100' : 'border-gray-200 dark:border-gray-600'}`}
+                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none ${fieldErrors.mobile ? 'border-gray-400 dark:border-gray-500 ring-2 ring-gray-200/50' : 'border-gray-200 dark:border-gray-600'}`}
                                                 placeholder={t('Enter 10-digit mobile number')}
                                             />
                                             {fieldErrors.mobile && (
-                                                <div className="relative mt-2 bg-orange-50 dark:bg-gray-800 border border-orange-400 dark:border-orange-500 rounded-xl px-3 py-1.5 text-orange-600 dark:text-orange-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
-                                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-orange-50 dark:bg-gray-800 border-t border-l border-orange-400 dark:border-orange-500 rotate-45 transform"></div>
-                                                    <span className="w-4 h-4 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
-                                                    <span>{t('Mobile Number')} is required</span>
+                                                <div className="relative mt-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-1.5 text-gray-900 dark:text-gray-100 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
+                                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-white dark:bg-gray-800 border-t border-l border-gray-300 dark:border-gray-600 rotate-45 transform"></div>
+                                                    <span className="w-4 h-4 rounded-full bg-yellow-400 text-black flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
+                                                    <span>{t('Mobile Number is required')}</span>
                                                 </div>
                                             )}
                                         </div>
@@ -557,7 +557,7 @@ const Checkout = () => {
                                                 name="city"
                                                 value={formData.city}
                                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, city: false})); }}
-                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm shadow-none ${fieldErrors.city ? 'border-orange-500 ring-2 ring-orange-100' : 'border-gray-200 dark:border-gray-600'}`}
+                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none ${fieldErrors.city ? 'border-gray-400 dark:border-gray-500 ring-2 ring-gray-200/50' : 'border-gray-200 dark:border-gray-600'}`}
                                             >
                                                 <option value="">{t('Select City')}</option>
                                                 {cities.map((city, index) => (
@@ -565,10 +565,10 @@ const Checkout = () => {
                                                 ))}
                                             </select>
                                             {fieldErrors.city && (
-                                                <div className="relative mt-2 bg-orange-50 dark:bg-gray-800 border border-orange-400 dark:border-orange-500 rounded-xl px-3 py-1.5 text-orange-600 dark:text-orange-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
-                                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-orange-50 dark:bg-gray-800 border-t border-l border-orange-400 dark:border-orange-500 rotate-45 transform"></div>
-                                                    <span className="w-4 h-4 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
-                                                    <span>{t('City')} is required</span>
+                                                <div className="relative mt-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-1.5 text-gray-900 dark:text-gray-100 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
+                                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-white dark:bg-gray-800 border-t border-l border-gray-300 dark:border-gray-600 rotate-45 transform"></div>
+                                                    <span className="w-4 h-4 rounded-full bg-yellow-400 text-black flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
+                                                    <span>{t('City is required')}</span>
                                                 </div>
                                             )}
                                         </div>

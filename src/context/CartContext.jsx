@@ -213,7 +213,7 @@ export const CartProvider = ({ children }) => {
             );
 
             if (!currentUniqueStores.has(newStoreId) && currentUniqueStores.size > 0) {
-                const nextCharge = currentUniqueStores.size === 1 ? 25 : 30;
+                const nextCharge = 20 + currentUniqueStores.size * 5;
                 setPendingProduct(product);
                 setNextStoreCharge(nextCharge);
                 setShowStoreWarning(true);
