@@ -105,9 +105,9 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                 )}
                 {isAvailable && isOpen && !isScheduled && timeLabel && (
                     <div className="absolute inset-0 z-20 flex flex-col items-center justify-center backdrop-blur-[1px] bg-black/10 rounded-2xl gap-1">
-                        <div className="bg-white/95 dark:bg-gray-900/95 shadow-lg rounded-xl px-3 py-2 flex flex-col items-center gap-0.5 mx-2">
-                            <span className="text-[9px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">{t('Available')}</span>
-                            <span className="text-[11px] font-bold text-gray-800 dark:text-white leading-tight text-center">{timeLabel}</span>
+                        <div className="bg-black/70 shadow-lg rounded-xl px-3 py-2 flex flex-col items-center gap-0.5 mx-2">
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-white/80">{t('Available')}</span>
+                            <span className="text-[11px] font-bold text-white leading-tight text-center">{timeLabel}</span>
                         </div>
                     </div>
                 )}
