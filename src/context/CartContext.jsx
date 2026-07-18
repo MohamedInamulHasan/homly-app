@@ -33,6 +33,7 @@ export const CartProvider = ({ children }) => {
     const [showStoreWarning, setShowStoreWarning] = useState(false);
     const [nextStoreCharge, setNextStoreCharge] = useState(25);
     const [warningStoreNames, setWarningStoreNames] = useState('');
+    const [newStoreName, setNewStoreName] = useState('');
 
 
 
@@ -233,7 +234,10 @@ export const CartProvider = ({ children }) => {
                     storesText = `${storeNames.slice(0, -1).join(', ')} and ${storeNames[storeNames.length - 1]}`;
                 }
 
+                const newStoreNameVal = getStoreName(newStoreId, stores) || 'another store';
+
                 setWarningStoreNames(storesText);
+                setNewStoreName(newStoreNameVal);
                 setPendingProduct(product);
                 setNextStoreCharge(nextCharge);
                 setShowStoreWarning(true);
@@ -365,11 +369,11 @@ export const CartProvider = ({ children }) => {
                             <p className="text-[13px] font-semibold text-gray-800 dark:text-gray-100 leading-snug mb-4">
                                 {language === 'ta' ? (
                                     <>
-                                        நீங்கள் ஏற்கனவே <span className="text-orange-500 font-black">{warningStoreNames}</span> கடைகளில் இருந்து பொருட்களைச் சேர்த்துள்ளீர்கள். வேறொரு கடையிலிருந்து சேர்த்தால் ₹5 கூடுதலாக வசூலிக்கப்படும். சேர்க்கலாமா?
+                                        நீங்கள் ஏற்கனவே <span className="text-orange-500 font-black">{warningStoreNames}</span> கடைகளில் இருந்து பொருட்களைச் சேர்த்துள்ளீர்கள். <span className="text-orange-500 font-black">{newStoreName}</span> இலிருந்து சேர்த்தால் ₹5 கூடுதலாக வசூலிக்கப்படும். சேர்க்கலாமா?
                                     </>
                                 ) : (
                                     <>
-                                        You already added products from <span className="text-orange-500 font-black">{warningStoreNames}</span>. If you add another, it can take 5 rs extra. Can I add it?
+                                        You already added products from <span className="text-orange-500 font-black">{warningStoreNames}</span>. If you add from <span className="text-orange-500 font-black">{newStoreName}</span>, it can take 5 rs extra. Can I add it?
                                     </>
                                 )}
                             </p>
