@@ -103,14 +103,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                         </span>
                     </div>
                 )}
-                {isAvailable && isOpen && !isScheduled && timeLabel && (
-                    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center backdrop-blur-[1px] bg-black/10 rounded-2xl gap-1">
-                        <div className="bg-black/70 shadow-lg rounded-xl px-3 py-2 flex flex-col items-center gap-0.5 mx-2">
-                            <span className="text-[9px] font-bold uppercase tracking-wider text-white/80">{t('Available')}</span>
-                            <span className="text-[11px] font-bold text-white leading-tight text-center">{timeLabel}</span>
-                        </div>
-                    </div>
-                )}
+
 
                 {/* Image Container (Full Bleed) */}
                 <div className={`aspect-square bg-[#F9FAFB] m-1 rounded-2xl overflow-hidden flex items-center justify-center relative ${!isOpen || !isAvailable ? 'opacity-60' : !isScheduled ? 'opacity-75' : ''}`}>
@@ -138,6 +131,15 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                         loading="lazy"
                         onError={(e) => { e.target.onerror = null; e.target.src = 'https://atlas-content-cdn.pixelbin.io/ast/feed_v2/static_assets/common/vegetable_placeholder.png'; }}
                     />
+                    {/* Available time overlay — inside image container so it centers on the image */}
+                    {isAvailable && isOpen && !isScheduled && timeLabel && (
+                        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center backdrop-blur-[1px] bg-black/10 gap-1">
+                            <div className="bg-black/70 shadow-lg rounded-xl px-3 py-2 flex flex-col items-center gap-0.5 mx-2">
+                                <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400">{t('Available')}</span>
+                                <span className="text-[11px] font-bold text-gray-300 leading-tight text-center">{timeLabel}</span>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Content Section */}
