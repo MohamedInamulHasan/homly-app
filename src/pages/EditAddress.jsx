@@ -110,6 +110,7 @@ const EditAddress = () => {
         e.preventDefault();
         
         const errors = {};
+        if (!formData.fullName) errors.fullName = true;
         if (!formData.mobile) errors.mobile = true;
         if (!formData.street) errors.street = true;
         if (!formData.city) errors.city = true;
@@ -117,7 +118,8 @@ const EditAddress = () => {
         if (Object.keys(errors).length > 0) {
             setFieldErrors(errors);
             // Scroll to first error
-            if (errors.mobile) mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (errors.fullName) fullNameRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            else if (errors.mobile) mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             else if (errors.street) streetRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             else if (errors.city) cityRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
@@ -280,10 +282,17 @@ const EditAddress = () => {
                                 type="text"
                                 name="fullName"
                                 value={formData.fullName}
-                                onChange={handleChange}
+                                onChange={e => { handleChange(e); setFieldErrors(p => ({...p, fullName: false})); }}
                                 placeholder="Enter full name"
-                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#2E5A2E]/20 outline-none transition-all text-sm"
+                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none ${fieldErrors.fullName ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
                             />
+                            {fieldErrors.fullName && (
+                                <div className="relative mt-2 bg-red-50/80 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-xl px-3 py-1.5 text-red-500 dark:text-red-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
+                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-red-50/80 dark:bg-red-950/20 border-t border-l border-red-100 dark:border-red-900/30 rotate-45 transform"></div>
+                                    <AlertCircle size={14} className="flex-shrink-0 text-red-500 dark:text-red-400" />
+                                    <span>Recipient Name is required</span>
+                                </div>
+                            )}
                         </div>
 
                         <div>
@@ -295,12 +304,12 @@ const EditAddress = () => {
                                 value={formData.mobile}
                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, mobile: false})); }}
                                 placeholder="10-digit mobile number"
-                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none ${fieldErrors.mobile ? 'border-gray-400 dark:border-gray-500 ring-2 ring-gray-200/50' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
+                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none ${fieldErrors.mobile ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50' : 'border-gray-200 dark:border-gray-600'}`}
                             />
                             {fieldErrors.mobile && (
-                                <div className="relative mt-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-1.5 text-gray-900 dark:text-gray-100 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
-                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-white dark:bg-gray-800 border-t border-l border-gray-300 dark:border-gray-600 rotate-45 transform"></div>
-                                    <span className="w-4 h-4 rounded-full bg-yellow-400 text-black flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
+                                <div className="relative mt-2 bg-red-50/80 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-xl px-3 py-1.5 text-red-500 dark:text-red-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
+                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-red-50/80 dark:bg-red-950/20 border-t border-l border-red-100 dark:border-red-900/30 rotate-45 transform"></div>
+                                    <AlertCircle size={14} className="flex-shrink-0 text-red-500 dark:text-red-400" />
                                     <span>Mobile Number is required</span>
                                 </div>
                             )}
@@ -315,12 +324,12 @@ const EditAddress = () => {
                                 value={formData.street}
                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, street: false})); }}
                                 placeholder="House no, Street name, Landmark"
-                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm resize-none shadow-none ${fieldErrors.street ? 'border-gray-400 dark:border-gray-500 ring-2 ring-gray-200/50' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
+                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm resize-none shadow-none ${fieldErrors.street ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
                             />
                             {fieldErrors.street && (
-                                <div className="relative mt-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-1.5 text-gray-900 dark:text-gray-100 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
-                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-white dark:bg-gray-800 border-t border-l border-gray-300 dark:border-gray-600 rotate-45 transform"></div>
-                                    <span className="w-4 h-4 rounded-full bg-yellow-400 text-black flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
+                                <div className="relative mt-2 bg-red-50/80 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-xl px-3 py-1.5 text-red-500 dark:text-red-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
+                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-red-50/80 dark:bg-red-950/20 border-t border-l border-red-100 dark:border-red-900/30 rotate-45 transform"></div>
+                                    <AlertCircle size={14} className="flex-shrink-0 text-red-500 dark:text-red-400" />
                                     <span>Street / Area is required</span>
                                 </div>
                             )}
@@ -334,15 +343,15 @@ const EditAddress = () => {
                                     name="city"
                                     value={formData.city}
                                     onChange={e => { handleChange(e); setFieldErrors(p => ({...p, city: false})); }}
-                                    className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm appearance-none shadow-none ${fieldErrors.city ? 'border-gray-400 dark:border-gray-500 ring-2 ring-gray-200/50' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
+                                    className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm appearance-none shadow-none ${fieldErrors.city ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
                                 >
                                     <option value="">{t('Select City')}</option>
                                     {cities.map((city, idx) => <option key={idx} value={city}>{city}</option>)}
                                 </select>
                                 {fieldErrors.city && (
-                                    <div className="relative mt-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-1.5 text-gray-900 dark:text-gray-100 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
-                                        <div className="absolute -top-[5px] left-4 w-2 h-2 bg-white dark:bg-gray-800 border-t border-l border-gray-300 dark:border-gray-600 rotate-45 transform"></div>
-                                        <span className="w-4 h-4 rounded-full bg-yellow-400 text-black flex items-center justify-center text-[10px] font-black font-mono flex-shrink-0">!</span>
+                                    <div className="relative mt-2 bg-red-50/80 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-xl px-3 py-1.5 text-red-500 dark:text-red-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
+                                        <div className="absolute -top-[5px] left-4 w-2 h-2 bg-red-50/80 dark:bg-red-950/20 border-t border-l border-red-100 dark:border-red-900/30 rotate-45 transform"></div>
+                                        <AlertCircle size={14} className="flex-shrink-0 text-red-500 dark:text-red-400" />
                                         <span>City is required</span>
                                     </div>
                                 )}
