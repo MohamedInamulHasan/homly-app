@@ -170,7 +170,7 @@ const StoreManagement = () => {
     const [productForm, setProductForm] = useState({
         title: '',
         price: '',
-        category: '',
+        category: [],
         subcategory: [],
         description: '',
         image: '',
@@ -319,17 +319,21 @@ const StoreManagement = () => {
     };
 
     const handleAddProductToStore = () => {
-        setProductForm({ title: '', price: '', category: '', subcategory: [], description: '', image: '', sliderImages: [], stock: 0, unit: '', useTimeLimit: false, openingTime: '00:00', closingTime: '23:59' });
+        setProductForm({ title: '', price: '', category: [], subcategory: [], description: '', image: '', sliderImages: [], stock: 0, unit: '', useTimeLimit: false, openingTime: '00:00', closingTime: '23:59' });
         setEditingProduct(null);
         setView('addProductToStore');
     };
 
     const handleEditProduct = (product) => {
         setEditingProduct(product);
+        // Normalize category to array
+        const normCategory = Array.isArray(product.category)
+            ? product.category
+            : (product.category ? [product.category] : []);
         setProductForm({
             title: product.title,
             price: product.price,
-            category: product.category,
+            category: normCategory,
             subcategory: Array.isArray(product.subcategory) ? product.subcategory : (product.subcategory ? [product.subcategory] : []),
             description: product.description,
             image: product.image,
@@ -406,14 +410,26 @@ const StoreManagement = () => {
             return;
         }
 
+        // Validate category is selected
+        const categoryArr = Array.isArray(productForm.category) ? productForm.category : (productForm.category ? [productForm.category] : []);
+        if (categoryArr.length === 0) {
+            alert(t('Please select at least one category'));
+            return;
+        }
+
         const imagesArray = productForm.sliderImages.length > 0
             ? productForm.sliderImages
             : (productForm.image ? [productForm.image] : []);
 
+        // Resolve category: if array with one item use string, else keep array
+        const categoryValue = Array.isArray(productForm.category)
+            ? (productForm.category.length === 1 ? productForm.category[0] : productForm.category)
+            : productForm.category;
+
         const productData = {
             title: productForm.title,
             description: productForm.description,
-            category: productForm.category,
+            category: categoryValue,
             subcategory: productForm.subcategory,
             price: parseFloat(productForm.price),
             storeId: (selectedStore?.id === 'none' || !selectedStore) ? null : (selectedStore._id || selectedStore.id),
@@ -1223,30 +1239,86 @@ const StoreManagement = () => {
                                     placeholder={t('e.g., 1 kg, 500g, 1 Pack')}
                                 />
                             </div>
-                            <div>
+                            {/* Category field — multi-select for multi-category stores, dropdown for single */}
+                            <div className="col-span-1 md:col-span-2">
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Category')}</label>
-                                <select
-                                    value={productForm.category}
-                                    onChange={(e) => setProductForm({ ...productForm, category: e.target.value, subcategory: [] })}
-                                    className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none"
-                                    required
-                                >
-                                    <option value="">{t('Select Category')}</option>
-                                    {categories && categories.length > 0 ? (
-                                        categories.map((cat) => (
-                                            <option key={cat._id || cat.id} value={cat.name}>
-                                                {t(cat.name)}
-                                            </option>
-                                        ))
-                                    ) : (
-                                        <>
-                                            <option value="Electronics">{t('Electronics')}</option>
-                                            <option value="Fashion">{t('Fashion')}</option>
-                                            <option value="Home">{t('Home')}</option>
-                                            <option value="Beauty">{t('Beauty')}</option>
-                                        </>
-                                    )}
-                                </select>
+                                {(() => {
+                                    // Determine if the selected store is multi-category
+                                    const storeCategories = selectedStore && selectedStore.id !== 'none'
+                                        ? (Array.isArray(selectedStore.type) ? selectedStore.type : (selectedStore.type ? [selectedStore.type] : []))
+                                        : [];
+                                    const isMultiCategoryStore = storeCategories.length > 1;
+
+                                    if (isMultiCategoryStore) {
+                                        // Multi-category store → show checkboxes limited to store's categories
+                                        const selectedCats = Array.isArray(productForm.category) ? productForm.category : (productForm.category ? [productForm.category] : []);
+                                        return (
+                                            <div>
+                                                <div className="p-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 flex flex-wrap gap-2">
+                                                    {storeCategories.map((catName) => {
+                                                        const isChecked = selectedCats.includes(catName);
+                                                        return (
+                                                            <label
+                                                                key={catName}
+                                                                className={`flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border transition-all ${
+                                                                    isChecked
+                                                                        ? 'bg-[#2E5A2E] text-white border-[#2E5A2E]'
+                                                                        : 'bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-500 hover:border-[#2E5A2E]'
+                                                                }`}
+                                                            >
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="sr-only"
+                                                                    checked={isChecked}
+                                                                    onChange={(e) => {
+                                                                        const checked = e.target.checked;
+                                                                        const prev = Array.isArray(productForm.category) ? productForm.category : (productForm.category ? [productForm.category] : []);
+                                                                        const next = checked
+                                                                            ? [...prev, catName]
+                                                                            : prev.filter(c => c !== catName);
+                                                                        setProductForm(pf => ({ ...pf, category: next, subcategory: [] }));
+                                                                    }}
+                                                                />
+                                                                <span className="text-sm font-medium">{t(catName)}</span>
+                                                            </label>
+                                                        );
+                                                    })}
+                                                </div>
+                                                {(!Array.isArray(productForm.category) || productForm.category.length === 0) && (
+                                                    <p className="text-xs text-red-500 mt-1">{t('Please select at least one category')}</p>
+                                                )}
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('Select all categories this product belongs to')}</p>
+                                            </div>
+                                        );
+                                    }
+
+                                    // Single-category store or no store → show dropdown
+                                    const catValue = Array.isArray(productForm.category) ? (productForm.category[0] || '') : (productForm.category || '');
+                                    return (
+                                        <select
+                                            value={catValue}
+                                            onChange={(e) => setProductForm({ ...productForm, category: e.target.value ? [e.target.value] : [], subcategory: [] })}
+                                            className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none"
+                                            required
+                                        >
+                                            <option value="">{t('Select Category')}</option>
+                                            {categories && categories.length > 0 ? (
+                                                categories.map((cat) => (
+                                                    <option key={cat._id || cat.id} value={cat.name}>
+                                                        {t(cat.name)}
+                                                    </option>
+                                                ))
+                                            ) : (
+                                                <>
+                                                    <option value="Electronics">{t('Electronics')}</option>
+                                                    <option value="Fashion">{t('Fashion')}</option>
+                                                    <option value="Home">{t('Home')}</option>
+                                                    <option value="Beauty">{t('Beauty')}</option>
+                                                </>
+                                            )}
+                                        </select>
+                                    );
+                                })()}
                             </div>
 
                             {/* Subcategory multi-select */}
@@ -1256,7 +1328,10 @@ const StoreManagement = () => {
                                 </label>
                                 <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 min-h-[100px] max-h-48 overflow-y-auto">
                                     {(() => {
-                                        const selectedCategoryData = categories.find(cat => cat.name === productForm.category);
+                                        const activeCat = Array.isArray(productForm.category)
+                                            ? productForm.category[0]
+                                            : productForm.category;
+                                        const selectedCategoryData = categories.find(cat => cat.name === activeCat);
                                         if (selectedCategoryData?.subcategories && selectedCategoryData.subcategories.length > 0) {
                                             return (
                                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
