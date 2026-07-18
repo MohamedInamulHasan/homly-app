@@ -207,7 +207,12 @@ export const CartProvider = ({ children }) => {
         const productId = product._id || product.id;
         const newStoreId = (product.storeId?._id || product.storeId || '').toString();
 
-        if (!force && newStoreId && cartItems.length > 0) {
+        // Never show the multi-store warning for free (gold) products,
+        // or when the cart already contains a free/gold product
+        const isNewProductFree = product.isGold === true;
+        const cartHasFreeProduct = cartItems.some(item => item.isGold);
+
+        if (!force && !isNewProductFree && !cartHasFreeProduct && newStoreId && cartItems.length > 0) {
             const currentUniqueStores = new Set(
                 cartItems.map(item => (item.storeId?._id || item.storeId || '').toString()).filter(Boolean)
             );

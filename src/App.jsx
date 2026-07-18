@@ -35,8 +35,10 @@ import MobileFooter from './components/MobileFooter';
 import InstallPrompt from './components/InstallPrompt';
 import IntroAnimation from './components/IntroAnimation';
 import NotificationOverlay from './components/NotificationOverlay';
-import { CartProvider } from './context/CartContext';
+import { CartProvider, useCart } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
+import { useLanguage } from './context/LanguageContext';
+import { Bike } from 'lucide-react';
 import { SocketProvider, useSocket } from './context/SocketContext';
 import { useData } from './context/DataContext';
 import { useAuth } from './context/AuthContext';
@@ -148,6 +150,11 @@ const Layout = ({ children, onRefresh }) => {
     const allowedFooterRoutes = ['/', '/store', '/orders', '/profile', '/categories'];
     const showMobileFooter = allowedFooterRoutes.includes(location.pathname) && !isFooterHidden;
 
+    const { cartItems, deliveryCharge } = useCart();
+    const { t } = useLanguage();
+
+    const showFloatingDeliveryBadge = cartItems && cartItems.length > 0 && !isAdminRoute && !isAuthPage;
+
     return (
         <div className="flex flex-col min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200">
             <ScrollToTop />
@@ -157,6 +164,24 @@ const Layout = ({ children, onRefresh }) => {
                 {children}
             </main>
             {/* </PullToRefresh> */}
+
+            {/* Floating Delivery Charge Card - right side */}
+            {showFloatingDeliveryBadge && (
+                <div className="fixed right-0 top-[25%] -translate-y-1/2 z-[90]">
+                    <div
+                        className="rounded-l-2xl py-1.5 px-2.5 flex items-center gap-1.5 shadow-lg border-2 border-r-0 border-white"
+                        style={{ background: '#FF6B00' }}
+                    >
+                        <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+                            <Bike size={11} className="text-orange-500" />
+                        </div>
+                        <span className="text-[12px] font-extrabold text-white leading-none">
+                            {deliveryCharge === 0 ? t('Free') : `₹${deliveryCharge}`}
+                        </span>
+                    </div>
+                </div>
+            )}
+
             {showMobileFooter && <MobileFooter />}
             {!isAuthPage && <InstallPrompt />}
         </div>

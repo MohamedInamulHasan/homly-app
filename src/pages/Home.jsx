@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Search, ListFilter, Bike } from 'lucide-react';
+import { Search, ListFilter } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useProducts } from '../hooks/queries/useProducts';
 import { useAds, adKeys } from '../hooks/queries/useAds';
@@ -200,22 +200,7 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Floating Delivery Charge Card - right side (non-reactive) */}
-            {cartItems && cartItems.length > 0 && (
-                <div className="fixed right-0 top-[25%] -translate-y-1/2 z-[90]">
-                    <div
-                        className="rounded-l-2xl py-1.5 px-2.5 flex items-center gap-1.5 shadow-lg border-2 border-r-0 border-white"
-                        style={{ background: '#FF6B00' }}
-                    >
-                        <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-                            <Bike size={11} className="text-orange-500" />
-                        </div>
-                        <span className="text-[12px] font-extrabold text-white leading-none">
-                            {deliveryCharge === 0 ? t('Free') : `₹${deliveryCharge}`}
-                        </span>
-                    </div>
-                </div>
-            )}
+
 
             <PullToRefreshLayout>
                 <div className="pt-[95px]">
