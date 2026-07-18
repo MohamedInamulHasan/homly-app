@@ -3,7 +3,7 @@ import { apiService } from '../utils/api';
 import { useData } from './DataContext';
 import { useAuth } from './AuthContext';
 import { useLanguage } from './LanguageContext';
-import { isStoreOpen, calculateDeliveryCharge } from '../utils/storeHelpers';
+import { isStoreOpen, calculateDeliveryCharge, getStoreName } from '../utils/storeHelpers';
 
 const CartContext = createContext();
 
@@ -28,10 +28,11 @@ export const CartProvider = ({ children }) => {
 
     const [userId, setUserId] = useState(getUserId());
     const { user } = useAuth();
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const [pendingProduct, setPendingProduct] = useState(null);
     const [showStoreWarning, setShowStoreWarning] = useState(false);
     const [nextStoreCharge, setNextStoreCharge] = useState(25);
+    const [warningStoreNames, setWarningStoreNames] = useState('');
 
 
 
@@ -219,6 +220,20 @@ export const CartProvider = ({ children }) => {
 
             if (!currentUniqueStores.has(newStoreId) && currentUniqueStores.size > 0) {
                 const nextCharge = 20 + currentUniqueStores.size * 5;
+
+                // Get names of existing stores in the cart
+                const currentStoreIds = Array.from(currentUniqueStores);
+                const storeNames = currentStoreIds.map(id => getStoreName(id, stores));
+                let storesText = '';
+                if (storeNames.length === 1) {
+                    storesText = storeNames[0];
+                } else if (storeNames.length === 2) {
+                    storesText = `${storeNames[0]} and ${storeNames[1]}`;
+                } else if (storeNames.length > 2) {
+                    storesText = `${storeNames.slice(0, -1).join(', ')} and ${storeNames[storeNames.length - 1]}`;
+                }
+
+                setWarningStoreNames(storesText);
                 setPendingProduct(product);
                 setNextStoreCharge(nextCharge);
                 setShowStoreWarning(true);
@@ -348,9 +363,15 @@ export const CartProvider = ({ children }) => {
 
                             {/* Message */}
                             <p className="text-[13px] font-semibold text-gray-800 dark:text-gray-100 leading-snug mb-4">
-                                {t('Adding products from another store will increase your delivery charge to')}{' '}
-                                <span className="text-orange-500 font-black">₹{nextStoreCharge}</span>.{' '}
-                                {t('Do you wish to continue?')}
+                                {language === 'ta' ? (
+                                    <>
+                                        நீங்கள் ஏற்கனவே <span className="text-orange-500 font-black">{warningStoreNames}</span> கடைகளில் இருந்து பொருட்களைச் சேர்த்துள்ளீர்கள். வேறொரு கடையிலிருந்து சேர்த்தால் ₹5 கூடுதலாக வசூலிக்கப்படும். சேர்க்கலாமா?
+                                    </>
+                                ) : (
+                                    <>
+                                        You already added products from <span className="text-orange-500 font-black">{warningStoreNames}</span>. If you add another, it can take 5 rs extra. Can I add it?
+                                    </>
+                                )}
                             </p>
 
                             {/* Buttons */}

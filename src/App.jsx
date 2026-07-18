@@ -169,13 +169,13 @@ const Layout = ({ children, onRefresh }) => {
             {showFloatingDeliveryBadge && (
                 <div className="fixed right-0 top-[25%] -translate-y-1/2 z-[90]">
                     <div
-                        className="rounded-l-2xl py-1.5 px-2.5 flex items-center gap-1.5 shadow-lg border-2 border-r-0 border-white"
+                        className="rounded-l-2xl py-2 px-3 flex flex-col items-center shadow-lg border-2 border-r-0 border-white text-center"
                         style={{ background: '#FF6B00' }}
                     >
-                        <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-                            <Bike size={11} className="text-orange-500" />
-                        </div>
-                        <span className="text-[12px] font-extrabold text-white leading-none">
+                        <span className="text-[10px] font-bold text-white/90 uppercase tracking-wider mb-0.5 select-none leading-none">
+                            {t('Delivery')}
+                        </span>
+                        <span className="text-[14px] font-black text-white select-none leading-none">
                             {deliveryCharge === 0 ? t('Free') : `₹${deliveryCharge}`}
                         </span>
                     </div>
