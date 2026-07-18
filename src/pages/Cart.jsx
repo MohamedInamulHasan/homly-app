@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, MoreHorizontal } from 'lucide-react';
+import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, ShoppingCart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -46,19 +46,31 @@ const Cart = () => {
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 flex flex-col transition-colors duration-200 relative overflow-hidden mx-auto max-w-md w-full my-auto pb-10">
             
-            {/* Simple Header */}
-            <div className="w-full px-5 py-4">
-                <div className="max-w-md mx-auto flex items-center justify-between">
-                     <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95 border border-gray-100/50">
-                         <ArrowLeft size={22} />
-                     </button>
-                     <h1 className="text-[17px] font-bold text-gray-900 dark:text-white tracking-tight">{t('Cart')}</h1>
-                     <div className="w-[42px]" /> {/* Spacer */}
+            {/* Premium Green Header — matches Orders / Profile style */}
+            <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] dark:bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm overflow-hidden">
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none" />
+                <div className="relative z-10">
+                    <div className="w-full px-4 relative flex items-center justify-center min-h-[42px]">
+                        <div className="absolute left-2 top-1/2 -translate-y-1/2">
+                            <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-white/80 rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50">
+                                <ArrowLeft size={22} />
+                            </button>
+                        </div>
+                        <div className="flex flex-col text-center">
+                            <h1 className="text-[18px] font-bold text-gray-900 tracking-tight leading-tight">{t('Cart')}</h1>
+                            <p className="text-[11px] font-semibold text-gray-700 mt-0.5">{cartItems.length} {t('items')}</p>
+                        </div>
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                            <div className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-white/80 rounded-full shadow-sm border border-gray-100/50">
+                                <ShoppingCart size={20} className="text-[#2E5A2E]" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {/* Scrollable Container for Top Half */}
-            <div className="flex-1 overflow-y-auto px-5 pt-2 pb-32 no-scrollbar">
+            {/* Scrollable Container */}
+            <div className="flex-1 overflow-y-auto px-5 pt-[90px] pb-32 no-scrollbar">
 
                 {/* Items */}
                 <div className="space-y-4 mb-6">

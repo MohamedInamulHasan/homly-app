@@ -124,10 +124,10 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                         </button>
                     )}
                     <img
-                        key={featuredVariant.image || currentVariantIndex} // Force new element per variant for animation
+                        key={featuredVariant.image || currentVariantIndex}
                         src={featuredVariant.image || `${API_BASE_URL}/products/${productId}/image`}
                         alt={t(featuredVariant, 'title')}
-                        className={`w-full h-full object-cover transition-transform duration-300 ${isAvailable && isOpen ? 'group-hover:scale-110' : ''}`}
+                        className={`w-full h-full object-cover transition-transform duration-300 ${isAvailable && isOpen ? 'group-hover:scale-110' : ''} ${isAvailable && isOpen && !isScheduled ? 'blur-sm' : ''}`}
                         loading="lazy"
                         onError={(e) => { e.target.onerror = null; e.target.src = 'https://atlas-content-cdn.pixelbin.io/ast/feed_v2/static_assets/common/vegetable_placeholder.png'; }}
                     />
@@ -135,7 +135,7 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                     {isAvailable && isOpen && !isScheduled && timeLabel && (
                         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center backdrop-blur-[1px] bg-black/10 gap-1">
                             <div className="bg-black/70 shadow-lg rounded-xl px-3 py-2 flex flex-col items-center gap-0.5 mx-2">
-                                <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400">{t('Available')}</span>
+                                <span className="text-[9px] font-bold uppercase tracking-wider text-gray-300">{t('Available')}</span>
                                 <span className="text-[11px] font-bold text-gray-300 leading-tight text-center">{timeLabel}</span>
                             </div>
                         </div>

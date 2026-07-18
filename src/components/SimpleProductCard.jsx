@@ -295,7 +295,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                     src={product.image || `${API_BASE_URL}/products/${productId}/image`}
                     alt={t(product, 'title')}
                     loading="lazy"
-                    className={`absolute top-0 left-0 w-full h-full object-cover transition-transform duration-300 ${isStoreOpenCheck && isAvailable ? 'group-hover:scale-105' : 'grayscale'}`}
+                    className={`absolute top-0 left-0 w-full h-full object-cover transition-transform duration-300 ${isStoreOpenCheck && isAvailable ? 'group-hover:scale-105' : 'grayscale'} ${isAvailable && isStoreOpenCheck && !isScheduled ? 'blur-sm' : ''}`}
                     onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300?text=No+Image'; }}
                 />
                 {showSave && (
@@ -335,7 +335,7 @@ const SimpleProductCard = ({ product, isFastPurchase, stores: propStores, showSa
                 {isAvailable && isStoreOpenCheck && !isScheduled && timeLabel && (
                     <div className="absolute top-0 left-0 w-full h-full z-20 flex flex-col items-center justify-center backdrop-blur-[1px] bg-black/10 gap-1">
                         <div className="bg-black/70 shadow-lg rounded-xl px-3 py-2 flex flex-col items-center gap-0.5 mx-2">
-                            <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400">{t('Available')}</span>
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-gray-300">{t('Available')}</span>
                             <span className="text-[11px] font-bold text-gray-300 leading-tight text-center">{timeLabel}</span>
                         </div>
                     </div>
