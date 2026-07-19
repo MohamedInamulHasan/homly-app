@@ -499,7 +499,7 @@ const Checkout = () => {
                                                 name="fullName"
                                                 value={formData.fullName}
                                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, fullName: false})); }}
-                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none ${fieldErrors.fullName ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50' : 'border-gray-200 dark:border-gray-600'}`}
+                                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none"
                                                 placeholder={t('Enter your full name')}
                                             />
                                             {fieldErrors.fullName && (
@@ -519,7 +519,7 @@ const Checkout = () => {
                                                 rows="3"
                                                 value={formData.address}
                                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, address: false})); }}
-                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none ${fieldErrors.address ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50' : 'border-gray-200 dark:border-gray-600'}`}
+                                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none"
                                                 placeholder={t('House no, Flat, Street name, Landmark')}
                                             />
                                             {fieldErrors.address && (
@@ -539,7 +539,7 @@ const Checkout = () => {
                                                 name="mobile"
                                                 value={formData.mobile}
                                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, mobile: false})); }}
-                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none ${fieldErrors.mobile ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50' : 'border-gray-200 dark:border-gray-600'}`}
+                                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none"
                                                 placeholder={t('Enter 10-digit mobile number')}
                                             />
                                             {fieldErrors.mobile && (
@@ -557,7 +557,7 @@ const Checkout = () => {
                                                 name="city"
                                                 value={formData.city}
                                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, city: false})); }}
-                                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none ${fieldErrors.city ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50' : 'border-gray-200 dark:border-gray-600'}`}
+                                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none"
                                             >
                                                 <option value="">{t('Select City')}</option>
                                                 {cities.map((city, index) => (

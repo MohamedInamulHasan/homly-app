@@ -284,7 +284,7 @@ const EditAddress = () => {
                                 value={formData.fullName}
                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, fullName: false})); }}
                                 placeholder="Enter full name"
-                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none ${fieldErrors.fullName ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
+                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none"
                             />
                             {fieldErrors.fullName && (
                                 <div className="relative mt-2 bg-white dark:bg-gray-850 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 text-[13px] font-normal flex items-center gap-2.5 w-fit shadow-md z-10">
@@ -304,7 +304,7 @@ const EditAddress = () => {
                                 value={formData.mobile}
                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, mobile: false})); }}
                                 placeholder="10-digit mobile number"
-                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none ${fieldErrors.mobile ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50' : 'border-gray-200 dark:border-gray-600'}`}
+                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none"
                             />
                             {fieldErrors.mobile && (
                                 <div className="relative mt-2 bg-white dark:bg-gray-855 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 text-[13px] font-normal flex items-center gap-2.5 w-fit shadow-md z-10">
@@ -324,7 +324,7 @@ const EditAddress = () => {
                                 value={formData.street}
                                 onChange={e => { handleChange(e); setFieldErrors(p => ({...p, street: false})); }}
                                 placeholder="House no, Street name, Landmark"
-                                className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm resize-none shadow-none ${fieldErrors.street ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
+                                className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm resize-none shadow-none"
                             />
                             {fieldErrors.street && (
                                 <div className="relative mt-2 bg-white dark:bg-gray-855 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 text-[13px] font-normal flex items-center gap-2.5 w-fit shadow-md z-10">
@@ -343,7 +343,7 @@ const EditAddress = () => {
                                     name="city"
                                     value={formData.city}
                                     onChange={e => { handleChange(e); setFieldErrors(p => ({...p, city: false})); }}
-                                    className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm appearance-none shadow-none ${fieldErrors.city ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
+                                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm appearance-none shadow-none"
                                 >
                                     <option value="">{t('Select City')}</option>
                                     {cities.map((city, idx) => <option key={idx} value={city}>{city}</option>)}
