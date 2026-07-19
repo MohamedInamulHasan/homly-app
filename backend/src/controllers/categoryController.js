@@ -97,6 +97,8 @@ export const updateCategory = async (req, res, next) => {
             throw new Error('Category not found');
         }
 
+        const oldName = category.name;
+
         // Strip immutable fields to prevent Mongoose errors
         const { _id, __v, createdAt, ...updateFields } = req.body;
 
@@ -108,6 +110,45 @@ export const updateCategory = async (req, res, next) => {
                 runValidators: true
             }
         );
+
+        // If the category name changed, update all products, stores, services, and news that used the old name
+        if (updateFields.name && updateFields.name !== oldName) {
+            try {
+                // Update Products
+                const Product = (await import('../models/Product.js')).default;
+                const prodResult = await Product.updateMany(
+                    { category: oldName },
+                    { $set: { category: updateFields.name } }
+                );
+                console.log(`📦 Updated ${prodResult.modifiedCount} products from category "${oldName}" → "${updateFields.name}"`);
+
+                // Update Stores
+                const Store = (await import('../models/Store.js')).default;
+                const storeResult = await Store.updateMany(
+                    { category: oldName },
+                    { $set: { "category.$": updateFields.name } }
+                );
+                console.log(`🏪 Updated ${storeResult.modifiedCount} stores from category "${oldName}" → "${updateFields.name}"`);
+
+                // Update Services
+                const Service = (await import('../models/Service.js')).default;
+                const serviceResult = await Service.updateMany(
+                    { category: oldName },
+                    { $set: { category: updateFields.name } }
+                );
+                console.log(`🛠️ Updated ${serviceResult.modifiedCount} services from category "${oldName}" → "${updateFields.name}"`);
+
+                // Update News
+                const News = (await import('../models/News.js')).default;
+                const newsResult = await News.updateMany(
+                    { category: oldName },
+                    { $set: { category: updateFields.name } }
+                );
+                console.log(`📰 Updated ${newsResult.modifiedCount} news items from category "${oldName}" → "${updateFields.name}"`);
+            } catch (err) {
+                console.error('Failed to cascade category name changes (non-fatal):', err.message);
+            }
+        }
 
         res.status(200).json({
             success: true,
