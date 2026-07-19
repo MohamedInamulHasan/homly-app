@@ -268,6 +268,28 @@ export const getUserProfile = async (req, res, next) => {
 // @desc    Update user profile
 // @route   PUT /api/users/profile
 // @access  Private
+
+// Helper: delete any auto-generated guest account that shares the same mobile number
+const cleanupGuestAccount = async (mobileNumber, currentUserId) => {
+    if (!mobileNumber || !mobileNumber.trim()) return;
+    const raw = mobileNumber.trim().replace(/[^0-9]/g, '');
+    if (!raw) return;
+    try {
+        // Guest accounts created by OTP flow have email: mobile_XXXX@ily-mart.com
+        const guestEmail = `mobile_${raw}@ily-mart.com`;
+        const guest = await User.findOne({ email: guestEmail });
+        if (guest && guest._id.toString() !== currentUserId.toString()) {
+            // Reassign any orders from the ghost account to the real user
+            const Order = (await import('../models/Order.js')).default;
+            await Order.updateMany({ user: guest._id }, { $set: { user: currentUserId } });
+            await guest.deleteOne();
+            console.log(`🧹 Deleted ghost account ${guestEmail} and reassigned its orders to ${currentUserId}`);
+        }
+    } catch (err) {
+        console.error('cleanupGuestAccount error (non-fatal):', err.message);
+    }
+};
+
 export const updateUserProfile = async (req, res, next) => {
     try {
         const user = await User.findById(req.user._id);
@@ -297,6 +319,8 @@ export const updateUserProfile = async (req, res, next) => {
             }
 
             const updatedUser = await user.save();
+            // Clean up ghost guest account with same mobile
+            if (req.body.mobile) await cleanupGuestAccount(req.body.mobile, user._id);
             sendTokenResponse(updatedUser, 200, res);
 
             // Real-time update to the user
@@ -397,6 +421,8 @@ export const updateUserByAdmin = async (req, res, next) => {
         }
 
         await user.save();
+        // Clean up ghost guest account with same mobile
+        if (req.body.mobile) await cleanupGuestAccount(req.body.mobile, user._id);
         const updatedUser = await User.findById(user._id).populate('storeId', 'name').populate('serviceId', 'name');
 
         res.status(200).json({
