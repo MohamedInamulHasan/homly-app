@@ -75,6 +75,13 @@ export const updateSettings = async (req, res) => {
         }
         // --------------------------------
 
+        // When admin starts a NEW signup bonus round, reset hasReceivedSignupBonus for all users
+        // so they can qualify again in the new round
+        if (key === 'signup_bonus' && value?.isEnabled === true) {
+            await User.updateMany({}, { $set: { hasReceivedSignupBonus: false } });
+            console.log('🔄 Reset hasReceivedSignupBonus for all users (new signup bonus round started)');
+        }
+
         const setting = await Settings.findOneAndUpdate(
             { key },
             {

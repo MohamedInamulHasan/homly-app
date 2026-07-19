@@ -269,6 +269,34 @@ export const getUserProfile = async (req, res, next) => {
 // @route   PUT /api/users/profile
 // @access  Private
 
+
+// Helper: award signup bonus coins to a user if eligible
+const rewardSignupBonus = async (user) => {
+    // Skip if already received in this round
+    if (user.hasReceivedSignupBonus) return false;
+    // Skip if no mobile number
+    if (!user.mobile || !user.mobile.trim()) return false;
+    try {
+        const bonusConfig = await Settings.findOne({ key: 'signup_bonus' });
+        if (bonusConfig && bonusConfig.value?.isEnabled && bonusConfig.value?.remainingLimit > 0) {
+            user.coins = (user.coins || 0) + 1;
+            user.hasReceivedSignupBonus = true;
+            await user.save();
+            bonusConfig.value.remainingLimit -= 1;
+            if (bonusConfig.value.remainingLimit <= 0) {
+                bonusConfig.value.isEnabled = false;
+            }
+            bonusConfig.markModified('value');
+            await bonusConfig.save();
+            console.log(`🪙 Signup bonus awarded to user ${user._id} (${user.mobile}). Remaining: ${bonusConfig.value.remainingLimit}`);
+            return true;
+        }
+    } catch (err) {
+        console.error('rewardSignupBonus error (non-fatal):', err.message);
+    }
+    return false;
+};
+
 // Helper: delete any auto-generated guest account that shares the same mobile number
 const cleanupGuestAccount = async (mobileNumber, currentUserId) => {
     if (!mobileNumber || !mobileNumber.trim()) return;
@@ -321,6 +349,8 @@ export const updateUserProfile = async (req, res, next) => {
             const updatedUser = await user.save();
             // Clean up ghost guest account with same mobile
             if (req.body.mobile) await cleanupGuestAccount(req.body.mobile, user._id);
+            // Award signup bonus if this is the first time they set their mobile
+            if (req.body.mobile) await rewardSignupBonus(updatedUser);
             sendTokenResponse(updatedUser, 200, res);
 
             // Real-time update to the user
@@ -939,6 +969,9 @@ export const updateGuest = async (req, res, next) => {
         user.mobile = rawMobile;
         user.email = `mobile_${rawMobile}@ily-mart.com`;
         await user.save();
+
+        // Award signup bonus if eligible (first time setting mobile)
+        await rewardSignupBonus(user);
 
         sendTokenResponse(user, 200, res);
     } catch (error) {
