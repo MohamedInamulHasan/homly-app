@@ -44,6 +44,13 @@ const EditAddress = () => {
                 const data = await response.json();
                 if (data.success && data.data && Array.isArray(data.data.value)) {
                     setCities(data.data.value);
+                    // Auto-clear if saved city is now marked unavailable
+                    setFormData(prev => {
+                        if (!prev.city) return prev;
+                        const cl = prev.city.toLowerCase();
+                        const isUnavail = cl.includes('(') && (cl.includes('not available') || cl.includes('not deliverable') || cl.includes('unavailable'));
+                        return isUnavail ? { ...prev, city: '' } : prev;
+                    });
                 }
             } catch (error) {
                 console.error('Error fetching cities:', error);
@@ -113,7 +120,14 @@ const EditAddress = () => {
         if (!formData.fullName) errors.fullName = true;
         if (!formData.mobile) errors.mobile = true;
         if (!formData.street) errors.street = true;
-        if (!formData.city) errors.city = true;
+        if (!formData.city) {
+            errors.city = true;
+        } else {
+            const cl = formData.city.toLowerCase();
+            if (cl.includes('(') && (cl.includes('not available') || cl.includes('not deliverable') || cl.includes('unavailable'))) {
+                errors.city = true;
+            }
+        }
 
         if (Object.keys(errors).length > 0) {
             setFieldErrors(errors);
