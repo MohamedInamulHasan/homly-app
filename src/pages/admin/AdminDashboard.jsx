@@ -3879,6 +3879,8 @@ const CityManagement = () => {
     const [cities, setCities] = useState([]);
     const [newCity, setNewCity] = useState('');
     const [loading, setLoading] = useState(true);
+    const [editingIndex, setEditingIndex] = useState(null);
+    const [editingValue, setEditingValue] = useState('');
 
     const fetchCities = async () => {
         try {
@@ -3894,6 +3896,45 @@ const CityManagement = () => {
             console.error('Error fetching cities:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleStartEdit = (index, city) => {
+        setEditingIndex(index);
+        setEditingValue(city);
+    };
+
+    const handleCancelEdit = () => {
+        setEditingIndex(null);
+        setEditingValue('');
+    };
+
+    const handleSaveEdit = async (index) => {
+        const trimmedVal = editingValue.trim();
+        if (!trimmedVal) return;
+
+        // Prevent duplicates (case-insensitive) except the current city
+        const duplicate = cities.some((c, i) => i !== index && c.toLowerCase() === trimmedVal.toLowerCase());
+        if (duplicate) {
+            alert(t('City already exists!'));
+            return;
+        }
+
+        const updatedCities = cities.map((c, i) => i === index ? trimmedVal : c);
+
+        try {
+            const data = await apiService.settings.update('cities', updatedCities);
+            if (data.success) {
+                setCities(updatedCities);
+                setEditingIndex(null);
+                setEditingValue('');
+                alert(t('City updated successfully!'));
+            } else {
+                alert(data.message || t('Failed to update city'));
+            }
+        } catch (error) {
+            console.error('Error updating city:', error);
+            alert(`Failed to update city. Error: ${error.message}`);
         }
     };
 
@@ -3977,18 +4018,60 @@ const CityManagement = () => {
                     <div className="p-8 text-center text-gray-500 dark:text-gray-400">{t('Loading cities...')}</div>
                 ) : cities.length > 0 ? (
                     <div className="divide-y divide-gray-100 dark:divide-gray-700">
-                        {cities.map((city, index) => (
-                            <div key={index} className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                                <span className="font-normal text-gray-900 dark:text-white">{city}</span>
-                                <button
-                                    onClick={() => handleRemoveCity(city)}
-                                    className="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/30 rounded-lg transition-colors"
-                                    title={t('Remove')}
-                                >
-                                    <Trash2 size={18} />
-                                </button>
-                            </div>
-                        ))}
+                        {cities.map((city, index) => {
+                            const isEditing = editingIndex === index;
+                            return (
+                                <div key={index} className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors gap-4">
+                                    {isEditing ? (
+                                        <input
+                                            type="text"
+                                            value={editingValue}
+                                            onChange={(e) => setEditingValue(e.target.value)}
+                                            className="flex-1 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-750 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none text-sm"
+                                        />
+                                    ) : (
+                                        <span className="font-normal text-gray-900 dark:text-white flex-1">{city}</span>
+                                    )}
+                                    <div className="flex items-center gap-1.5">
+                                        {isEditing ? (
+                                            <>
+                                                <button
+                                                    onClick={() => handleSaveEdit(index)}
+                                                    className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
+                                                    title={t('Save')}
+                                                >
+                                                    <Save size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={handleCancelEdit}
+                                                    className="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/30 rounded-lg transition-colors"
+                                                    title={t('Cancel')}
+                                                >
+                                                    <X size={18} />
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <button
+                                                    onClick={() => handleStartEdit(index, city)}
+                                                    className="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/30 rounded-lg transition-colors"
+                                                    title={t('Edit')}
+                                                >
+                                                    <Pencil size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleRemoveCity(city)}
+                                                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700/30 rounded-lg transition-colors"
+                                                    title={t('Remove')}
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                 ) : (
                     <div className="p-12 text-center">
