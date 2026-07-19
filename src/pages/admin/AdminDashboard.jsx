@@ -1920,7 +1920,7 @@ const OrderManagement = () => {
                                                 #{String(order._id || order.id).slice(-6).toUpperCase()}
                                             </Link>
                                         </td>
-                                        <td className="p-4 text-gray-600 dark:text-gray-300">{order.shippingAddress?.name || order.user}</td>
+                                        <td className="p-4 text-gray-600 dark:text-gray-300">{!order.shippingAddress?.mobile ? t('Guest User') : (order.shippingAddress?.name || order.user)}</td>
                                         <td className="p-4 text-gray-600 dark:text-gray-300">{order.shippingAddress?.mobile || 'N/A'}</td>
                                         <td className="p-4 text-gray-500 dark:text-gray-400 text-sm max-w-xs">
                                             {editingOrder === (order._id || order.id) ? (
@@ -2842,10 +2842,12 @@ const UserManagement = () => {
                                         <td className="px-6 py-4">
                                             <div className="flex items-center">
                                                 <div className="h-10 w-10 flex-shrink-0 bg-[#E8F5E9] dark:bg-[#2E5A2E]/30 rounded-full flex items-center justify-center text-[#2E5A2E] font-normal text-lg">
-                                                    {user.name.charAt(0).toUpperCase()}
+                                                    {((!user.mobile || user.mobile.trim() === '') ? t('Guest User') : user.name).charAt(0).toUpperCase()}
                                                 </div>
                                                 <div className="ml-4">
-                                                    <div className="text-sm font-normal text-gray-900 dark:text-white whitespace-nowrap">{user.name}</div>
+                                                    <div className="text-sm font-normal text-gray-900 dark:text-white whitespace-nowrap">
+                                                        {(!user.mobile || user.mobile.trim() === '') ? t('Guest User') : user.name}
+                                                    </div>
                                                     <div className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">{new Date(user.createdAt).toLocaleDateString()}</div>
                                                 </div>
                                             </div>
@@ -3048,6 +3050,15 @@ const UserManagement = () => {
                                                                 type="text"
                                                                 value={formData.name}
                                                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                                className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('Mobile')}</label>
+                                                            <input
+                                                                type="text"
+                                                                value={formData.mobile}
+                                                                onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
                                                                 className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
                                                             />
                                                         </div>
@@ -3791,8 +3802,8 @@ const ServiceRequestManagement = () => {
                                                     </div>
                                                 </td>
                                                 <td className="p-4 text-gray-600 dark:text-gray-300">
-                                                    <div className="truncate max-w-[150px]" title={request.user?.name || t('Unknown User')}>
-                                                        {request.user?.name || t('Unknown User')}
+                                                    <div className="truncate max-w-[150px]" title={!request.user?.mobile ? t('Guest User') : (request.user?.name || t('Unknown User'))}>
+                                                        {!request.user?.mobile ? t('Guest User') : (request.user?.name || t('Unknown User'))}
                                                     </div>
                                                 </td>
                                                 <td className="p-4 text-gray-600 dark:text-gray-300">

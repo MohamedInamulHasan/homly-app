@@ -10,12 +10,62 @@ import { Capacitor } from '@capacitor/core';
 const VERCEL_REDIRECT_URI = 'https://homly-app.vercel.app/login';
 
 const Login = () => {
-    const { googleLogin, error, user } = useContext(AuthContext);
+    const { googleLogin, error, user, sendOtp, verifyOtp } = useContext(AuthContext);
     const { t } = useLanguage();
     const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [loginError, setLoginError] = useState(null);
     const [debugLogs, setDebugLogs] = useState([]);
+
+    // Mobile login state
+    const [loginMethod, setLoginMethod] = useState('google'); // 'google' | 'mobile'
+    const [mobileNumber, setMobileNumber] = useState('');
+    const [otpCode, setOtpCode] = useState('');
+    const [otpSent, setOtpSent] = useState(false);
+    const [otpSending, setOtpSending] = useState(false);
+    const [otpVerifying, setOtpVerifying] = useState(false);
+
+    const handleSendOtp = async (e) => {
+        e.preventDefault();
+        if (!mobileNumber || mobileNumber.trim().length < 10) {
+            setLoginError(t('Please enter a valid mobile number'));
+            return;
+        }
+        setLoginError(null);
+        setOtpSending(true);
+        try {
+            const success = await sendOtp(mobileNumber);
+            if (success) {
+                setOtpSent(true);
+            } else {
+                setLoginError(t('Failed to send verification code. Please try again.'));
+            }
+        } catch (err) {
+            setLoginError(t('Failed to send verification code. Please try again.'));
+        } finally {
+            setOtpSending(false);
+        }
+    };
+
+    const handleVerifyOtp = async (e) => {
+        e.preventDefault();
+        if (!otpCode || otpCode.trim().length < 6) {
+            setLoginError(t('Please enter a 6-digit verification code'));
+            return;
+        }
+        setLoginError(null);
+        setOtpVerifying(true);
+        try {
+            const success = await verifyOtp(mobileNumber, otpCode);
+            if (!success) {
+                setLoginError(t('Invalid or expired verification code'));
+            }
+        } catch (err) {
+            setLoginError(t('Verification failed. Please try again.'));
+        } finally {
+            setOtpVerifying(false);
+        }
+    };
 
     // Load initial debug logs
     useEffect(() => {
@@ -213,50 +263,126 @@ const Login = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#CBF9B2] dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
-            <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-[3rem] border border-gray-100 dark:border-gray-700">
+            <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-[3rem] border border-gray-100 dark:border-gray-700 shadow-xl">
                 <div className="text-center">
-                    <div className="mx-auto h-12 w-12 bg-[#2E5A2E] dark:bg-[#CBF9B2] rounded-xl flex items-center justify-center mb-6 transform rotate-3">
+                    <div className="mx-auto h-12 w-12 bg-[#2E5A2E] dark:bg-[#CBF9B2] rounded-xl flex items-center justify-center mb-6 transform rotate-3 shadow-md">
                         <Lock className="h-6 w-6 text-white dark:text-gray-900" />
                     </div>
                     <h2 className="mt-2 text-3xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
                         Welcome Back
                     </h2>
-                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 mb-8">
-                        Sign in to access your account using Google
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
+                        {loginMethod === 'google' ? t('Sign in to access your account using Google') : t('Sign in to access your account using Mobile OTP')}
                     </p>
                 </div>
 
+                {/* Tab Switcher */}
+                <div className="flex border-b border-gray-100 dark:border-gray-750 mb-6">
+                    <button
+                        onClick={() => { setLoginMethod('google'); setLoginError(null); }}
+                        className={`flex-1 pb-3 text-sm font-bold border-b-2 transition-all ${loginMethod === 'google' ? 'border-[#2E5A2E] text-gray-900 dark:text-white' : 'border-transparent text-gray-400'}`}
+                    >
+                        {t('Google Sign-In')}
+                    </button>
+                    <button
+                        onClick={() => { setLoginMethod('mobile'); setLoginError(null); }}
+                        className={`flex-1 pb-3 text-sm font-bold border-b-2 transition-all ${loginMethod === 'mobile' ? 'border-[#2E5A2E] text-gray-900 dark:text-white' : 'border-transparent text-gray-400'}`}
+                    >
+                        {t('Mobile OTP Login')}
+                    </button>
+                </div>
+
                 {(error || loginError) && (
-                    <div className="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 p-4 rounded-md">
-                        <p className="text-sm text-red-700 dark:text-red-200">
+                    <div className="bg-red-50 dark:bg-red-950/20 border-l-4 border-red-500 p-4 rounded-xl">
+                        <p className="text-sm text-red-700 dark:text-red-300">
                             {loginError || t(error)}
                         </p>
                     </div>
                 )}
 
-                <div className="flex flex-col items-center justify-center w-full gap-4">
-                    <button
-                        onClick={handleGoogleLogin}
-                        disabled={isSubmitting}
-                        className="flex items-center justify-center gap-3 w-full max-w-xs py-3 px-6 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
-                        {isSubmitting ? (
-                            <Loader className="animate-spin h-5 w-5 text-gray-500" />
+                {loginMethod === 'google' ? (
+                    <div className="flex flex-col items-center justify-center w-full gap-4">
+                        <button
+                            onClick={handleGoogleLogin}
+                            disabled={isSubmitting}
+                            className="flex items-center justify-center gap-3 w-full max-w-xs py-3 px-6 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full hover:bg-gray-50 dark:hover:bg-gray-650 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed shadow-sm font-medium"
+                        >
+                            {isSubmitting ? (
+                                <Loader className="animate-spin h-5 w-5 text-gray-500" />
+                            ) : (
+                                <>
+                                    <svg width="20" height="20" viewBox="0 0 48 48">
+                                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                                    </svg>
+                                    <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                        Sign in with Google
+                                    </span>
+                                </>
+                            )}
+                        </button>
+                    </div>
+                ) : (
+                    <div className="w-full">
+                        {!otpSent ? (
+                            <form onSubmit={handleSendOtp} className="space-y-4 w-full max-w-xs mx-auto">
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 px-1 text-center">
+                                        {t('Mobile Number')}
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        placeholder={t('e.g., 9876543210')}
+                                        value={mobileNumber}
+                                        onChange={(e) => setMobileNumber(e.target.value)}
+                                        className="w-full px-4 py-3 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-[#2E5A2E] transition-all text-sm text-center font-medium"
+                                        disabled={otpSending}
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    disabled={otpSending}
+                                    className="w-full py-3 bg-[#2E5A2E] text-white rounded-full font-bold text-sm shadow-md hover:bg-[#1a3d1a] transition-all flex items-center justify-center gap-2"
+                                >
+                                    {otpSending ? <Loader className="animate-spin h-5 w-5" /> : t('Send OTP')}
+                                </button>
+                            </form>
                         ) : (
-                            <>
-                                <svg width="20" height="20" viewBox="0 0 48 48">
-                                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-                                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-                                </svg>
-                                <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-                                    Sign in with Google
-                                </span>
-                            </>
+                            <form onSubmit={handleVerifyOtp} className="space-y-4 w-full max-w-xs mx-auto text-center">
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 px-1">
+                                        {t('Verification Code')}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        maxLength="6"
+                                        placeholder="• • • • • •"
+                                        value={otpCode}
+                                        onChange={(e) => setOtpCode(e.target.value)}
+                                        className="w-full px-4 py-3 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-[#2E5A2E] transition-all text-base text-center tracking-widest font-mono font-bold"
+                                        disabled={otpVerifying}
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    disabled={otpVerifying}
+                                    className="w-full py-3 bg-[#2E5A2E] text-white rounded-full font-bold text-sm shadow-md hover:bg-[#1a3d1a] transition-all flex items-center justify-center gap-2"
+                                >
+                                    {otpVerifying ? <Loader className="animate-spin h-5 w-5" /> : t('Verify & Login')}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => { setOtpSent(false); setOtpCode(''); }}
+                                    className="mt-2 text-xs text-gray-500 hover:text-gray-700 underline font-medium block mx-auto"
+                                >
+                                    {t('Change Phone Number')}
+                                </button>
+                            </form>
                         )}
-                    </button>
-                </div>
+                    </div>
+                )}
 
                 {/* Debug Logs Container */}
                 {debugLogs.length > 0 && (
