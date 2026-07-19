@@ -567,99 +567,45 @@ const Checkout = () => {
 
                                         <div>
                                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">{t('City')}</label>
-                                            {/* Group cities: unavailable (bracketed with not available/not deliverable) shown as disabled, others as radio/dropdown */}
-                                            {(() => {
-                                                const isUnavailable = (name) => {
-                                                    const m = name.match(/\(([^)]+)\)/);
-                                                    if (!m) return false;
-                                                    const inner = m[1].toLowerCase();
-                                                    return inner.includes('not available') || inner.includes('not deliverable') || inner.includes('unavailable');
-                                                };
-                                                const unavailableCities = cities.filter(c => isUnavailable(c));
-                                                const selectableBracketed = cities.filter(c => c.includes('(') && c.includes(')') && !isUnavailable(c));
-                                                const standardCities = cities.filter(c => !c.includes('(') && !c.includes(')'));
-
-                                                const isDropdownSelected = selectableBracketed.includes(formData.city);
-
-                                                return (
-                                                    <div className="space-y-3">
-                                                        {standardCities.map((city) => {
-                                                            const isSelected = formData.city === city;
-                                                            return (
-                                                                <label key={city} className={`flex items-center p-3.5 rounded-2xl border cursor-pointer transition-all ${
-                                                                    isSelected 
-                                                                        ? 'border-[#2E5A2E] bg-green-50/20 dark:border-[#CBF9B2] dark:bg-[#CBF9B2]/5 font-semibold' 
-                                                                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
-                                                                }`}>
-                                                                    <input
-                                                                        type="radio"
-                                                                        name="city-selection"
-                                                                        checked={!!isSelected}
-                                                                        onChange={() => {
-                                                                            setFormData(prev => ({ ...prev, city }));
-                                                                            if (setFieldErrors) setFieldErrors(prev => ({ ...prev, city: false }));
-                                                                        }}
-                                                                        className="w-4 h-4 text-[#2E5A2E] border-gray-300 focus:ring-[#2E5A2E] mr-3"
-                                                                    />
-                                                                    <span className="text-sm text-gray-900 dark:text-white flex-1">{t(city)}</span>
-                                                                </label>
-                                                            );
-                                                        })}
-
-                                                        {selectableBracketed.length > 0 && (
-                                                            <div className="space-y-2">
-                                                                <label className={`flex items-center p-3.5 rounded-2xl border cursor-pointer transition-all ${
-                                                                    isDropdownSelected 
-                                                                        ? 'border-[#2E5A2E] bg-green-50/20 dark:border-[#CBF9B2] dark:bg-[#CBF9B2]/5 font-semibold' 
-                                                                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
-                                                                }`}>
-                                                                    <input
-                                                                        type="radio"
-                                                                        name="city-selection"
-                                                                        checked={!!isDropdownSelected}
-                                                                        onChange={() => {
-                                                                            setFormData(prev => ({ ...prev, city: selectableBracketed[0] }));
-                                                                            if (setFieldErrors) setFieldErrors(prev => ({ ...prev, city: false }));
-                                                                        }}
-                                                                        className="w-4 h-4 text-[#2E5A2E] border-gray-300 focus:ring-[#2E5A2E] mr-3"
-                                                                    />
-                                                                    <span className="text-sm text-gray-900 dark:text-white flex-1">
-                                                                        {t('Other Cities')}
-                                                                    </span>
-                                                                </label>
-
-                                                                {isDropdownSelected && (
-                                                                    <div className="pl-7 animate-in fade-in slide-in-from-top-1 duration-200">
-                                                                        <select
-                                                                            value={formData.city}
-                                                                            onChange={(e) => {
-                                                                                setFormData(prev => ({ ...prev, city: e.target.value }));
-                                                                            }}
-                                                                            className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all text-sm shadow-none"
-                                                                        >
-                                                                            {selectableBracketed.map(city => (
-                                                                                <option key={city} value={city}>{city}</option>
-                                                                            ))}
-                                                                        </select>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        )}
-
-                                                        {unavailableCities.map((city) => {
-                                                            const baseName = city.replace(/\s*\([^)]*\)/, '').trim();
-                                                            const note = (city.match(/\(([^)]+)\)/) || [])[1] || '';
-                                                            return (
-                                                                <div key={city} className="flex items-center p-3.5 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 opacity-70 cursor-not-allowed select-none">
-                                                                    <span className="w-4 h-4 mr-3 flex-shrink-0 rounded-full border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700" />
-                                                                    <span className="text-sm text-gray-400 dark:text-gray-500 flex-1">{t(baseName)}</span>
-                                                                    <span className="ml-2 text-[11px] font-medium px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400">{note}</span>
-                                                                </div>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                );
-                                            })()}
+                                            {loadingCities ? (
+                                                <div className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-400">{t('Loading cities...')}</div>
+                                            ) : (
+                                                <select
+                                                    ref={cityRef}
+                                                    value={formData.city}
+                                                    onChange={(e) => {
+                                                        const val = e.target.value;
+                                                        setFormData(prev => ({ ...prev, city: val }));
+                                                        setFieldErrors(prev => ({ ...prev, city: false }));
+                                                    }}
+                                                    className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border ${
+                                                        fieldErrors.city
+                                                            ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50'
+                                                            : 'border-gray-200 dark:border-gray-600'
+                                                    } text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all text-sm`}
+                                                >
+                                                    <option value="">{t('Select City')}</option>
+                                                    {cities.map((city) => {
+                                                        const m = city.match(/\(([^)]+)\)/);
+                                                        const isUnavail = m && (() => {
+                                                            const inner = m[1].toLowerCase();
+                                                            return inner.includes('not available') || inner.includes('not deliverable') || inner.includes('unavailable');
+                                                        })();
+                                                        const baseName = city.replace(/\s*\([^)]*\)/, '').trim();
+                                                        const note = m ? m[1] : '';
+                                                        return (
+                                                            <option
+                                                                key={city}
+                                                                value={city}
+                                                                disabled={!!isUnavail}
+                                                                style={isUnavail ? { color: '#9CA3AF' } : {}}
+                                                            >
+                                                                {isUnavail ? `${baseName} (${note})` : city}
+                                                            </option>
+                                                        );
+                                                    })}
+                                                </select>
+                                            )}
                                             {fieldErrors.city && (
                                                 <div className="relative mt-2 bg-white dark:bg-gray-855 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 text-[13px] font-normal flex items-center gap-2.5 w-fit shadow-md z-10">
                                                     <div className="absolute -top-[5px] left-4 w-2 h-2 bg-white dark:bg-gray-855 border-t border-l border-gray-300 dark:border-gray-600 rotate-45 transform"></div>
