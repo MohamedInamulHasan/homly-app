@@ -287,10 +287,10 @@ const EditAddress = () => {
                                 className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none ${fieldErrors.fullName ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
                             />
                             {fieldErrors.fullName && (
-                                <div className="relative mt-2 bg-red-50/80 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-xl px-3 py-1.5 text-red-500 dark:text-red-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
-                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-red-50/80 dark:bg-red-950/20 border-t border-l border-red-100 dark:border-red-900/30 rotate-45 transform"></div>
-                                    <AlertCircle size={14} className="flex-shrink-0 text-red-500 dark:text-red-400" />
-                                    <span>Recipient Name is required</span>
+                                <div className="relative mt-2 bg-white dark:bg-gray-850 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 text-[13px] font-normal flex items-center gap-2.5 w-fit shadow-md z-10">
+                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-white dark:bg-gray-855 border-t border-l border-gray-300 dark:border-gray-600 rotate-45 transform"></div>
+                                    <div className="w-5 h-5 rounded bg-[#F59E0B] text-white flex items-center justify-center text-[12px] font-black flex-shrink-0">!</div>
+                                    <span>{language === 'ta' ? 'தயவுசெய்து இந்த புலத்தை நிரப்பவும்.' : 'Please fill out this field.'}</span>
                                 </div>
                             )}
                         </div>
@@ -307,10 +307,10 @@ const EditAddress = () => {
                                 className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none ${fieldErrors.mobile ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50' : 'border-gray-200 dark:border-gray-600'}`}
                             />
                             {fieldErrors.mobile && (
-                                <div className="relative mt-2 bg-red-50/80 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-xl px-3 py-1.5 text-red-500 dark:text-red-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
-                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-red-50/80 dark:bg-red-950/20 border-t border-l border-red-100 dark:border-red-900/30 rotate-45 transform"></div>
-                                    <AlertCircle size={14} className="flex-shrink-0 text-red-500 dark:text-red-400" />
-                                    <span>Mobile Number is required</span>
+                                <div className="relative mt-2 bg-white dark:bg-gray-855 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 text-[13px] font-normal flex items-center gap-2.5 w-fit shadow-md z-10">
+                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-white dark:bg-gray-855 border-t border-l border-gray-300 dark:border-gray-600 rotate-45 transform"></div>
+                                    <div className="w-5 h-5 rounded bg-[#F59E0B] text-white flex items-center justify-center text-[12px] font-black flex-shrink-0">!</div>
+                                    <span>{language === 'ta' ? 'தயவுசெய்து இந்த புலத்தை நிரப்பவும்.' : 'Please fill out this field.'}</span>
                                 </div>
                             )}
                         </div>
@@ -327,10 +327,10 @@ const EditAddress = () => {
                                 className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm resize-none shadow-none ${fieldErrors.street ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50' : 'border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white'}`}
                             />
                             {fieldErrors.street && (
-                                <div className="relative mt-2 bg-red-50/80 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-xl px-3 py-1.5 text-red-500 dark:text-red-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
-                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-red-50/80 dark:bg-red-950/20 border-t border-l border-red-100 dark:border-red-900/30 rotate-45 transform"></div>
-                                    <AlertCircle size={14} className="flex-shrink-0 text-red-500 dark:text-red-400" />
-                                    <span>Street / Area is required</span>
+                                <div className="relative mt-2 bg-white dark:bg-gray-855 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 text-[13px] font-normal flex items-center gap-2.5 w-fit shadow-md z-10">
+                                    <div className="absolute -top-[5px] left-4 w-2 h-2 bg-white dark:bg-gray-855 border-t border-l border-gray-300 dark:border-gray-600 rotate-45 transform"></div>
+                                    <div className="w-5 h-5 rounded bg-[#F59E0B] text-white flex items-center justify-center text-[12px] font-black flex-shrink-0">!</div>
+                                    <span>{language === 'ta' ? 'தயவுசெய்து இந்த புலத்தை நிரப்பவும்.' : 'Please fill out this field.'}</span>
                                 </div>
                             )}
                         </div>
@@ -349,10 +349,10 @@ const EditAddress = () => {
                                     {cities.map((city, idx) => <option key={idx} value={city}>{city}</option>)}
                                 </select>
                                 {fieldErrors.city && (
-                                    <div className="relative mt-2 bg-red-50/80 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-xl px-3 py-1.5 text-red-500 dark:text-red-400 text-xs font-semibold flex items-center gap-1.5 w-fit shadow-none">
-                                        <div className="absolute -top-[5px] left-4 w-2 h-2 bg-red-50/80 dark:bg-red-950/20 border-t border-l border-red-100 dark:border-red-900/30 rotate-45 transform"></div>
-                                        <AlertCircle size={14} className="flex-shrink-0 text-red-500 dark:text-red-400" />
-                                        <span>City is required</span>
+                                    <div className="relative mt-2 bg-white dark:bg-gray-855 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 text-[13px] font-normal flex items-center gap-2.5 w-fit shadow-md z-10">
+                                        <div className="absolute -top-[5px] left-4 w-2 h-2 bg-white dark:bg-gray-855 border-t border-l border-gray-300 dark:border-gray-600 rotate-45 transform"></div>
+                                        <div className="w-5 h-5 rounded bg-[#F59E0B] text-white flex items-center justify-center text-[12px] font-black flex-shrink-0">!</div>
+                                        <span>{language === 'ta' ? 'தயவுசெய்து இந்த புலத்தை நிரப்பவும்.' : 'Please fill out this field.'}</span>
                                     </div>
                                 )}
                             </div>
