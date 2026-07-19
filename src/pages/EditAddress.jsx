@@ -11,7 +11,7 @@ import { getCurrentLocation } from '../utils/locationHelpers';
 const EditAddress = () => {
     const navigate = useNavigate();
     const { user, setUser, updateGuest } = useAuth();
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const { updateProfile } = useData();
     const [showLocationError, setShowLocationError] = useState(false);
     const locationRef = useRef(null);
