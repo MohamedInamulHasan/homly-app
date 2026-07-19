@@ -103,7 +103,6 @@ export const createOrder = async (req, res, next) => {
         if (req.user?._id) {
             try {
                 await User.findByIdAndUpdate(req.user._id, {
-                    mobile: shippingAddress.mobile,
                     address: {
                         street: shippingAddress.street,
                         city: shippingAddress.city,

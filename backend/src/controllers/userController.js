@@ -216,7 +216,7 @@ export const loginUser = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-};
+};;
 
 // @desc    Logout user / clear cookie
 // @route   POST /api/users/logout

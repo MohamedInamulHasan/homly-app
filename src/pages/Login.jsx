@@ -10,62 +10,12 @@ import { Capacitor } from '@capacitor/core';
 const VERCEL_REDIRECT_URI = 'https://homly-app.vercel.app/login';
 
 const Login = () => {
-    const { googleLogin, error, user, sendOtp, verifyOtp } = useContext(AuthContext);
+    const { googleLogin, error, user } = useContext(AuthContext);
     const { t } = useLanguage();
     const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [loginError, setLoginError] = useState(null);
     const [debugLogs, setDebugLogs] = useState([]);
-
-    // Mobile login state
-    const [loginMethod, setLoginMethod] = useState('google'); // 'google' | 'mobile'
-    const [mobileNumber, setMobileNumber] = useState('');
-    const [otpCode, setOtpCode] = useState('');
-    const [otpSent, setOtpSent] = useState(false);
-    const [otpSending, setOtpSending] = useState(false);
-    const [otpVerifying, setOtpVerifying] = useState(false);
-
-    const handleSendOtp = async (e) => {
-        e.preventDefault();
-        if (!mobileNumber || mobileNumber.trim().length < 10) {
-            setLoginError(t('Please enter a valid mobile number'));
-            return;
-        }
-        setLoginError(null);
-        setOtpSending(true);
-        try {
-            const success = await sendOtp(mobileNumber);
-            if (success) {
-                setOtpSent(true);
-            } else {
-                setLoginError(t('Failed to send verification code. Please try again.'));
-            }
-        } catch (err) {
-            setLoginError(t('Failed to send verification code. Please try again.'));
-        } finally {
-            setOtpSending(false);
-        }
-    };
-
-    const handleVerifyOtp = async (e) => {
-        e.preventDefault();
-        if (!otpCode || otpCode.trim().length < 6) {
-            setLoginError(t('Please enter a 6-digit verification code'));
-            return;
-        }
-        setLoginError(null);
-        setOtpVerifying(true);
-        try {
-            const success = await verifyOtp(mobileNumber, otpCode);
-            if (!success) {
-                setLoginError(t('Invalid or expired verification code'));
-            }
-        } catch (err) {
-            setLoginError(t('Verification failed. Please try again.'));
-        } finally {
-            setOtpVerifying(false);
-        }
-    };
 
     // Load initial debug logs
     useEffect(() => {
@@ -326,61 +276,41 @@ const Login = () => {
                     </div>
                 ) : (
                     <div className="w-full">
-                        {!otpSent ? (
-                            <form onSubmit={handleSendOtp} className="space-y-4 w-full max-w-xs mx-auto">
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 px-1 text-center">
-                                        {t('Mobile Number')}
-                                    </label>
-                                    <input
-                                        type="tel"
-                                        placeholder={t('e.g., 9876543210')}
-                                        value={mobileNumber}
-                                        onChange={(e) => setMobileNumber(e.target.value)}
-                                        className="w-full px-4 py-3 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-[#2E5A2E] transition-all text-sm text-center font-medium"
-                                        disabled={otpSending}
-                                    />
-                                </div>
-                                <button
-                                    type="submit"
-                                    disabled={otpSending}
-                                    className="w-full py-3 bg-[#2E5A2E] text-white rounded-full font-bold text-sm shadow-md hover:bg-[#1a3d1a] transition-all flex items-center justify-center gap-2"
-                                >
-                                    {otpSending ? <Loader className="animate-spin h-5 w-5" /> : t('Send OTP')}
-                                </button>
-                            </form>
-                        ) : (
-                            <form onSubmit={handleVerifyOtp} className="space-y-4 w-full max-w-xs mx-auto text-center">
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 px-1">
-                                        {t('Verification Code')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        maxLength="6"
-                                        placeholder="• • • • • •"
-                                        value={otpCode}
-                                        onChange={(e) => setOtpCode(e.target.value)}
-                                        className="w-full px-4 py-3 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-[#2E5A2E] transition-all text-base text-center tracking-widest font-mono font-bold"
-                                        disabled={otpVerifying}
-                                    />
-                                </div>
-                                <button
-                                    type="submit"
-                                    disabled={otpVerifying}
-                                    className="w-full py-3 bg-[#2E5A2E] text-white rounded-full font-bold text-sm shadow-md hover:bg-[#1a3d1a] transition-all flex items-center justify-center gap-2"
-                                >
-                                    {otpVerifying ? <Loader className="animate-spin h-5 w-5" /> : t('Verify & Login')}
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => { setOtpSent(false); setOtpCode(''); }}
-                                    className="mt-2 text-xs text-gray-500 hover:text-gray-700 underline font-medium block mx-auto"
-                                >
-                                    {t('Change Phone Number')}
-                                </button>
-                            </form>
-                        )}
+                        <form onSubmit={handleMobilePasswordLogin} className="space-y-4 w-full max-w-xs mx-auto">
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 px-1 text-center">
+                                    {t('Mobile Number')}
+                                </label>
+                                <input
+                                    type="tel"
+                                    placeholder={t('e.g., 9876543210')}
+                                    value={mobileNumber}
+                                    onChange={(e) => setMobileNumber(e.target.value)}
+                                    className="w-full px-4 py-3 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-[#2E5A2E] transition-all text-sm text-center font-medium"
+                                    disabled={loggingIn}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 px-1 text-center">
+                                    {t('Password')}
+                                </label>
+                                <input
+                                    type="password"
+                                    placeholder="••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full px-4 py-3 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-[#2E5A2E] transition-all text-sm text-center font-medium"
+                                    disabled={loggingIn}
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                disabled={loggingIn}
+                                className="w-full py-3 bg-[#2E5A2E] text-white rounded-full font-bold text-sm shadow-md hover:bg-[#1a3d1a] transition-all flex items-center justify-center gap-2"
+                            >
+                                {loggingIn ? <Loader className="animate-spin h-5 w-5" /> : t('Sign In')}
+                            </button>
+                        </form>
                     </div>
                 )}
 
