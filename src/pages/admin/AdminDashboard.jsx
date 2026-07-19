@@ -2644,7 +2644,13 @@ const UserManagement = () => {
 
     // Stats for Top Card
     // Filter out delivery boys from general user management
-    const filteredUsers = users.filter(u => Array.isArray(u.role) ? !u.role.includes('delivery_boy') : u.role !== 'delivery_boy');
+    const filteredUsers = users.filter(u => {
+        const isDeliveryBoy = Array.isArray(u.role) ? u.role.includes('delivery_boy') : u.role === 'delivery_boy';
+        const hasMobile = u.mobile && u.mobile.trim() !== '';
+        const isAdmin = Array.isArray(u.role) ? u.role.includes('admin') : u.role === 'admin';
+        // Show only users with a mobile number (real users), plus admins regardless
+        return !isDeliveryBoy && (hasMobile || isAdmin);
+    });
 
     // Stats for Top Card
     const totalUsers = filteredUsers.length;
