@@ -97,9 +97,12 @@ export const updateCategory = async (req, res, next) => {
             throw new Error('Category not found');
         }
 
+        // Strip immutable fields to prevent Mongoose errors
+        const { _id, __v, createdAt, ...updateFields } = req.body;
+
         category = await Category.findByIdAndUpdate(
             req.params.id,
-            req.body,
+            { $set: updateFields },
             {
                 new: true,
                 runValidators: true
@@ -117,6 +120,7 @@ export const updateCategory = async (req, res, next) => {
         next(error);
     }
 };
+
 
 // @desc    Update categories order
 // @route   PUT /api/categories/reorder
