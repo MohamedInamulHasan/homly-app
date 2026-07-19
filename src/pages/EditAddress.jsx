@@ -338,19 +338,19 @@ const EditAddress = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2 px-1">{t('City')}</label>
-                                {/* Group cities by standard and bracketed */}
+                                {/* Group cities: unavailable (bracketed with not available/not deliverable) shown as disabled, others as radio/dropdown */}
                                             {(() => {
-                                                const standardCities = [];
-                                                const bracketedCities = [];
-                                                cities.forEach(c => {
-                                                    if (c.includes('(') && c.includes(')')) {
-                                                        bracketedCities.push(c);
-                                                    } else {
-                                                        standardCities.push(c);
-                                                    }
-                                                });
+                                                const isUnavailable = (name) => {
+                                                    const m = name.match(/\(([^)]+)\)/);
+                                                    if (!m) return false;
+                                                    const inner = m[1].toLowerCase();
+                                                    return inner.includes('not available') || inner.includes('not deliverable') || inner.includes('unavailable');
+                                                };
+                                                const unavailableCities = cities.filter(c => isUnavailable(c));
+                                                const selectableBracketed = cities.filter(c => c.includes('(') && c.includes(')') && !isUnavailable(c));
+                                                const standardCities = cities.filter(c => !c.includes('(') && !c.includes(')'));
 
-                                                const isDropdownSelected = bracketedCities.includes(formData.city);
+                                                const isDropdownSelected = selectableBracketed.includes(formData.city);
 
                                                 return (
                                                     <div className="space-y-3">
@@ -377,7 +377,7 @@ const EditAddress = () => {
                                                             );
                                                         })}
 
-                                                        {bracketedCities.length > 0 && (
+                                                        {selectableBracketed.length > 0 && (
                                                             <div className="space-y-2">
                                                                 <label className={`flex items-center p-3.5 rounded-2xl border cursor-pointer transition-all ${
                                                                     isDropdownSelected 
@@ -389,7 +389,7 @@ const EditAddress = () => {
                                                                         name="city-selection"
                                                                         checked={!!isDropdownSelected}
                                                                         onChange={() => {
-                                                                            setFormData(prev => ({ ...prev, city: bracketedCities[0] }));
+                                                                            setFormData(prev => ({ ...prev, city: selectableBracketed[0] }));
                                                                             if (setFieldErrors) setFieldErrors(prev => ({ ...prev, city: false }));
                                                                         }}
                                                                         className="w-4 h-4 text-[#2E5A2E] border-gray-300 focus:ring-[#2E5A2E] mr-3"
@@ -408,7 +408,7 @@ const EditAddress = () => {
                                                                             }}
                                                                             className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all text-sm shadow-none"
                                                                         >
-                                                                            {bracketedCities.map(city => (
+                                                                            {selectableBracketed.map(city => (
                                                                                 <option key={city} value={city}>{city}</option>
                                                                             ))}
                                                                         </select>
@@ -416,6 +416,18 @@ const EditAddress = () => {
                                                                 )}
                                                             </div>
                                                         )}
+
+                                                        {unavailableCities.map((city) => {
+                                                            const baseName = city.replace(/\s*\([^)]*\)/, '').trim();
+                                                            const note = (city.match(/\(([^)]+)\)/) || [])[1] || '';
+                                                            return (
+                                                                <div key={city} className="flex items-center p-3.5 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 opacity-70 cursor-not-allowed select-none">
+                                                                    <span className="w-4 h-4 mr-3 flex-shrink-0 rounded-full border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700" />
+                                                                    <span className="text-sm text-gray-400 dark:text-gray-500 flex-1">{t(baseName)}</span>
+                                                                    <span className="ml-2 text-[11px] font-medium px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400">{note}</span>
+                                                                </div>
+                                                            );
+                                                        })}
                                                     </div>
                                                 );
                                             })()}
