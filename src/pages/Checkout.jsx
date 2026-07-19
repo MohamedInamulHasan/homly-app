@@ -578,11 +578,7 @@ const Checkout = () => {
                                                         setFormData(prev => ({ ...prev, city: val }));
                                                         setFieldErrors(prev => ({ ...prev, city: false }));
                                                     }}
-                                                    className={`w-full px-4 py-3 bg-white dark:bg-gray-800 border ${
-                                                        fieldErrors.city
-                                                            ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50'
-                                                            : 'border-gray-200 dark:border-gray-600'
-                                                    } text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all text-sm`}
+                                                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm shadow-none"
                                                 >
                                                     <option value="">{t('Select City')}</option>
                                                     {cities.map((city) => {
