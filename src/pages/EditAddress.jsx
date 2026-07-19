@@ -338,16 +338,87 @@ const EditAddress = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2 px-1">{t('City')}</label>
-                                <select
-                                    ref={cityRef}
-                                    name="city"
-                                    value={formData.city}
-                                    onChange={e => { handleChange(e); setFieldErrors(p => ({...p, city: false})); }}
-                                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-gray-200 outline-none transition-all text-sm appearance-none shadow-none"
-                                >
-                                    <option value="">{t('Select City')}</option>
-                                    {cities.map((city, idx) => <option key={idx} value={city}>{city}</option>)}
-                                </select>
+                                {/* Group cities by standard and bracketed */}
+                                            {(() => {
+                                                const standardCities = [];
+                                                const bracketedCities = [];
+                                                cities.forEach(c => {
+                                                    if (c.includes('(') && c.includes(')')) {
+                                                        bracketedCities.push(c);
+                                                    } else {
+                                                        standardCities.push(c);
+                                                    }
+                                                });
+
+                                                const isDropdownSelected = bracketedCities.includes(formData.city);
+
+                                                return (
+                                                    <div className="space-y-3">
+                                                        {standardCities.map((city) => {
+                                                            const isSelected = formData.city === city;
+                                                            return (
+                                                                <label key={city} className={`flex items-center p-3.5 rounded-2xl border cursor-pointer transition-all ${
+                                                                    isSelected 
+                                                                        ? 'border-[#2E5A2E] bg-green-50/20 dark:border-[#CBF9B2] dark:bg-[#CBF9B2]/5 font-semibold' 
+                                                                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                                                                }`}>
+                                                                    <input
+                                                                        type="radio"
+                                                                        name="city-selection"
+                                                                        checked={!!isSelected}
+                                                                        onChange={() => {
+                                                                            setFormData(prev => ({ ...prev, city }));
+                                                                            if (setFieldErrors) setFieldErrors(prev => ({ ...prev, city: false }));
+                                                                        }}
+                                                                        className="w-4 h-4 text-[#2E5A2E] border-gray-300 focus:ring-[#2E5A2E] mr-3"
+                                                                    />
+                                                                    <span className="text-sm text-gray-900 dark:text-white flex-1">{t(city)}</span>
+                                                                </label>
+                                                            );
+                                                        })}
+
+                                                        {bracketedCities.length > 0 && (
+                                                            <div className="space-y-2">
+                                                                <label className={`flex items-center p-3.5 rounded-2xl border cursor-pointer transition-all ${
+                                                                    isDropdownSelected 
+                                                                        ? 'border-[#2E5A2E] bg-green-50/20 dark:border-[#CBF9B2] dark:bg-[#CBF9B2]/5 font-semibold' 
+                                                                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                                                                }`}>
+                                                                    <input
+                                                                        type="radio"
+                                                                        name="city-selection"
+                                                                        checked={!!isDropdownSelected}
+                                                                        onChange={() => {
+                                                                            setFormData(prev => ({ ...prev, city: bracketedCities[0] }));
+                                                                            if (setFieldErrors) setFieldErrors(prev => ({ ...prev, city: false }));
+                                                                        }}
+                                                                        className="w-4 h-4 text-[#2E5A2E] border-gray-300 focus:ring-[#2E5A2E] mr-3"
+                                                                    />
+                                                                    <span className="text-sm text-gray-900 dark:text-white flex-1">
+                                                                        {t('Other Cities')}
+                                                                    </span>
+                                                                </label>
+
+                                                                {isDropdownSelected && (
+                                                                    <div className="pl-7 animate-in fade-in slide-in-from-top-1 duration-200">
+                                                                        <select
+                                                                            value={formData.city}
+                                                                            onChange={(e) => {
+                                                                                setFormData(prev => ({ ...prev, city: e.target.value }));
+                                                                            }}
+                                                                            className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#2E5A2E] outline-none transition-all text-sm shadow-none"
+                                                                        >
+                                                                            {bracketedCities.map(city => (
+                                                                                <option key={city} value={city}>{city}</option>
+                                                                            ))}
+                                                                        </select>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })()}
                                 {fieldErrors.city && (
                                     <div className="relative mt-2 bg-white dark:bg-gray-855 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 text-[13px] font-normal flex items-center gap-2.5 w-fit shadow-md z-10">
                                         <div className="absolute -top-[5px] left-4 w-2 h-2 bg-white dark:bg-gray-855 border-t border-l border-gray-300 dark:border-gray-600 rotate-45 transform"></div>
