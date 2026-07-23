@@ -328,7 +328,7 @@ export const CartProvider = ({ children }) => {
         <CartContext.Provider value={value}>
             {children}
 
-            {/* Multi-Store Warning — Right Speech Bubble Popup */}
+            {/* Multi-Store Warning — Center Right Speech Bubble Popup with Blur Backdrop */}
             {showStoreWarning && (() => {
                 const currentUniqueStores = new Set(
                     cartItems.map(item => (item.storeId?._id || item.storeId || '').toString()).filter(Boolean)
@@ -339,10 +339,10 @@ export const CartProvider = ({ children }) => {
                 const extraCharge = newCharge - currentCharge;
 
                 return (
-                    <div className="fixed right-3 top-[22%] -translate-y-1/2 z-[9999] max-w-[285px] sm:max-w-[300px] w-[calc(100vw-32px)] pointer-events-auto">
-                        <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-orange-200 dark:border-gray-800 p-4">
-                            {/* Speech Bubble Arrow Tail pointing to right edge */}
-                            <div className="absolute -right-2 top-6 w-0 h-0 border-t-[7px] border-t-transparent border-b-[7px] border-b-transparent border-l-[9px] border-l-white dark:border-l-gray-900 filter drop-shadow-[2px_0_1px_rgba(0,0,0,0.08)]"></div>
+                    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9998] flex items-center justify-end pr-3 sm:pr-4 pointer-events-auto">
+                        <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 p-4 max-w-[285px] sm:max-w-[300px] w-full">
+                            {/* Speech Bubble Arrow Tail pointing to right */}
+                            <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-0 h-0 border-t-[7px] border-t-transparent border-b-[7px] border-b-transparent border-l-[9px] border-l-white dark:border-l-gray-900 filter drop-shadow-[2px_0_1px_rgba(0,0,0,0.08)]"></div>
 
                             {/* Close button */}
                             <button
@@ -376,11 +376,11 @@ export const CartProvider = ({ children }) => {
                                         </>
                                     ) : (
                                         <>
-                                            You already added products from <span className="text-orange-500 font-black">{warningStoreNames}</span>. Current delivery charge: <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{currentCharge}</span>.
+                                            Neenga already <span className="text-orange-500 font-black">{warningStoreNames}</span> la products add pannirukeenga. Current delivery charge: <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{currentCharge}</span>.
                                             <br /><br />
-                                            Adding from <span className="text-orange-500 font-black">{newStoreName}</span> will make delivery charge <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{newCharge}</span> (<span className="text-orange-500 font-bold">₹{extraCharge} extra</span>).
+                                            Ippo <span className="text-orange-500 font-black">{newStoreName}</span> la irundhu products add panna, delivery charge <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{newCharge}</span> (<span className="text-orange-500 font-bold">₹{extraCharge} extra</span>) aagum.
                                             <br /><br />
-                                            Shall I add?
+                                            Add pannava?
                                         </>
                                     )
                                 ) : (
@@ -394,11 +394,11 @@ export const CartProvider = ({ children }) => {
                                         </>
                                     ) : (
                                         <>
-                                            You already added products from <span className="text-orange-500 font-black">{warningStoreNames}</span>.
+                                            Neenga already <span className="text-orange-500 font-black">{warningStoreNames}</span> la products add pannirukeenga.
                                             <br /><br />
-                                            Adding from <span className="text-orange-500 font-black">{newStoreName}</span> will cost <span className="text-orange-500 font-bold">₹5 extra charge</span>.
+                                            <span className="text-orange-500 font-black">{newStoreName}</span> la irundhu add panna <span className="text-orange-500 font-bold">₹5 extra charge</span> aagum.
                                             <br /><br />
-                                            Shall I add?
+                                            Add pannava?
                                         </>
                                     )
                                 )}
