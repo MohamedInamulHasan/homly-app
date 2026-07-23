@@ -1004,10 +1004,12 @@ const StoreManagement = () => {
                                                                 );
                                                             })()}
                                                             {product.useTimeLimit && (
-                                                                <div className={`mt-1 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider ${isProductScheduled(product) ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
-                                                                    <Clock size={10} />
-                                                                    <span>{t('TIMED')}</span>
-                                                                    <span className="opacity-70">({formatTime12h(product.openingTime)} - {formatTime12h(product.closingTime)})</span>
+                                                                <div className={`mt-1 text-[10px] font-black uppercase tracking-wider ${isProductScheduled(product) ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
+                                                                    <span className="flex items-center gap-1">
+                                                                        <Clock size={10} />
+                                                                        <span>{t('TIMED')}</span>
+                                                                    </span>
+                                                                    <span className="opacity-70 whitespace-nowrap block font-normal normal-case tracking-normal">{formatTime12h(product.openingTime)} - {formatTime12h(product.closingTime)}</span>
                                                                 </div>
                                                             )}
                                                         </div>

@@ -269,7 +269,11 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                                         if (!user) { navigate('/login'); return; }
                                         addToCart(product);
                                     }}
-                                     className="w-10 h-10 bg-[#2E5A2E] dark:bg-[#CBF9B2] hover:opacity-90 text-white dark:text-gray-900 rounded-full flex items-center justify-center transition-all active:scale-90 select-none"
+                                     className={`w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-90 select-none ${
+                                        (!isAvailable || !isOpen || !isScheduled)
+                                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                                            : 'bg-[#2E5A2E] dark:bg-[#CBF9B2] hover:opacity-90 text-white dark:text-gray-900'
+                                    }`}
                                     disabled={!isAvailable || !isOpen || !isScheduled}
                                 >
                                     <ShoppingCart size={18} />
