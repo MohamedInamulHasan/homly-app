@@ -353,13 +353,10 @@ export const CartProvider = ({ children }) => {
                                 ×
                             </button>
 
-                            {/* Icon + Label */}
+                            {/* Label without logo icon */}
                             <div className="flex items-center gap-1.5 mb-2">
-                                <div className="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
-                                    <span className="text-xs">🛍️</span>
-                                </div>
-                                <p className="text-[11px] font-bold text-orange-500 uppercase tracking-wider">
-                                    {language === 'ta' ? 'கவனம்!' : 'Note!'}
+                                <p className="text-[12px] font-extrabold text-orange-500 uppercase tracking-wider">
+                                    {language === 'ta' ? 'கவனம்!' : 'NOTE!'}
                                 </p>
                             </div>
 
@@ -369,35 +366,35 @@ export const CartProvider = ({ children }) => {
                                     language === 'ta' ? (
                                         <>
                                             நீங்கள் ஏற்கனவே <span className="text-orange-500 font-black">{warningStoreNames}</span> ல் products add பண்ணிருக்கீங்க. Current delivery charge: <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{currentCharge}</span>.
-                                            <br /><br />
+                                            <br />
                                             இப்போ <span className="text-orange-500 font-black">{newStoreName}</span> ல் இருந்து products add பண்ண, delivery charge <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{newCharge}</span> (<span className="text-orange-500 font-bold">₹{extraCharge} extra</span>) ஆகும்.
-                                            <br /><br />
+                                            <br />
                                             Add பண்ணலாமா?
                                         </>
                                     ) : (
                                         <>
                                             Neenga already <span className="text-orange-500 font-black">{warningStoreNames}</span> la products add pannirukeenga. Current delivery charge: <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{currentCharge}</span>.
-                                            <br /><br />
+                                            <br />
                                             Ippo <span className="text-orange-500 font-black">{newStoreName}</span> la irundhu products add panna, delivery charge <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{newCharge}</span> (<span className="text-orange-500 font-bold">₹{extraCharge} extra</span>) aagum.
-                                            <br /><br />
+                                            <br />
                                             Add pannava?
                                         </>
                                     )
                                 ) : (
                                     language === 'ta' ? (
                                         <>
-                                            நீங்கள் ஏற்கனவே <span className="text-orange-500 font-black">{warningStoreNames}</span> ல் products add பண்ணிருக்கீங்க.
-                                            <br /><br />
+                                            நீங்கள் ஏற்கனவே <span className="text-orange-500 font-black">{warningStoreNames}</span> ல் products add பண்ணிருக்கீங்க. Current delivery charge: <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{currentCharge}</span>.
+                                            <br />
                                             <span className="text-orange-500 font-black">{newStoreName}</span> ல் இருந்து add பண்ண <span className="text-orange-500 font-bold">₹5 extra charge</span> ஆகும்.
-                                            <br /><br />
+                                            <br />
                                             Add பண்ணலாமா?
                                         </>
                                     ) : (
                                         <>
-                                            Neenga already <span className="text-orange-500 font-black">{warningStoreNames}</span> la products add pannirukeenga.
-                                            <br /><br />
+                                            Neenga already <span className="text-orange-500 font-black">{warningStoreNames}</span> la products add pannirukeenga. Current delivery charge: <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{currentCharge}</span>.
+                                            <br />
                                             <span className="text-orange-500 font-black">{newStoreName}</span> la irundhu add panna <span className="text-orange-500 font-bold">₹5 extra charge</span> aagum.
-                                            <br /><br />
+                                            <br />
                                             Add pannava?
                                         </>
                                     )
