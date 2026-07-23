@@ -225,14 +225,7 @@ export const CartProvider = ({ children }) => {
                 // Get names of existing stores in the cart
                 const currentStoreIds = Array.from(currentUniqueStores);
                 const storeNames = currentStoreIds.map(id => getStoreName(id, stores));
-                let storesText = '';
-                if (storeNames.length === 1) {
-                    storesText = storeNames[0];
-                } else if (storeNames.length === 2) {
-                    storesText = `${storeNames[0]} and ${storeNames[1]}`;
-                } else if (storeNames.length > 2) {
-                    storesText = `${storeNames.slice(0, -1).join(', ')} and ${storeNames[storeNames.length - 1]}`;
-                }
+                const storesText = storeNames.join(', ');
 
                 const newStoreNameVal = getStoreName(newStoreId, stores) || 'another store';
 
@@ -333,82 +326,135 @@ export const CartProvider = ({ children }) => {
         <CartContext.Provider value={value}>
             {children}
 
-            {/* Multi-Store Warning — Simple speech bubble, right-center of screen */}
-            {showStoreWarning && (
-                <div className="fixed inset-0 z-[9999] select-none pointer-events-auto">
-                    {/* Blurred backdrop */}
-                    <div
-                        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-                        style={{ animation: 'msOverlayIn 0.2s ease-out forwards' }}
-                        onClick={cancelAddToCart}
-                    />
+            {/* Multi-Store Warning — Centered dialog */}
+            {showStoreWarning && (() => {
+                // Build current store count for charge display
+                const currentUniqueStores = new Set(
+                    cartItems.map(item => (item.storeId?._id || item.storeId || '').toString()).filter(Boolean)
+                );
+                const currentCharge = 20 + (currentUniqueStores.size - 1) * 5;
+                const newCharge = nextStoreCharge;
+                const extraCharge = newCharge - currentCharge;
 
-                    {/* Speech bubble — right side, vertically centered */}
-                    <div
-                        className="absolute right-4 top-1/2 -translate-y-1/2"
-                        style={{ animation: 'msBubblePop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards', opacity: 0 }}
-                        onClick={e => e.stopPropagation()}
-                    >
-                        {/* Bubble tail on the right side (pointing right) */}
+                return (
+                    <div className="fixed inset-0 z-[9999] select-none pointer-events-auto flex items-center justify-center px-5">
+                        {/* Blurred backdrop */}
                         <div
-                            className="absolute right-[-10px] top-1/3 w-0 h-0"
-                            style={{
-                                borderTop: '9px solid transparent',
-                                borderBottom: '9px solid transparent',
-                                borderLeft: '10px solid white',
-                            }}
+                            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                            style={{ animation: 'msOverlayIn 0.2s ease-out forwards' }}
+                            onClick={cancelAddToCart}
                         />
 
-                        <div className="bg-white dark:bg-gray-900 rounded-[1.6rem] rounded-tr-sm px-5 py-4 shadow-2xl border border-gray-100 dark:border-gray-700 w-[240px]">
-                            {/* Note label */}
-                            <p className="text-[11px] font-bold text-orange-500 uppercase tracking-widest mb-1.5">
-                                {t('Note!')}
-                            </p>
+                        {/* Dialog */}
+                        <div
+                            className="relative z-10 bg-white dark:bg-gray-900 rounded-[1.8rem] shadow-2xl border border-gray-100 dark:border-gray-700 w-full max-w-sm px-6 py-6"
+                            style={{ animation: 'msDialogPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards', opacity: 0 }}
+                            onClick={e => e.stopPropagation()}
+                        >
+                            {/* Icon + Label */}
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+                                    <span className="text-base">🛍️</span>
+                                </div>
+                                <p className="text-[11px] font-bold text-orange-500 uppercase tracking-widest">
+                                    {language === 'ta' ? 'கவனம்!' : 'Note!'}
+                                </p>
+                            </div>
 
-                            {/* Message */}
-                            <p className="text-[13px] font-semibold text-gray-800 dark:text-gray-100 leading-snug mb-4">
+                            {/* Main message */}
+                            <p className="text-[14px] font-semibold text-gray-800 dark:text-gray-100 leading-relaxed mb-4">
                                 {language === 'ta' ? (
                                     <>
-                                        நீங்கள் ஏற்கனவே <span className="text-orange-500 font-black">{warningStoreNames}</span> கடைகளில் இருந்து பொருட்களைச் சேர்த்துள்ளீர்கள். <span className="text-orange-500 font-black">{newStoreName}</span> இலிருந்து சேர்த்தால் ₹5 கூடுதலாக வசூலிக்கப்படும். சேர்க்கலாமா?
+                                        நீங்கள் ஏற்கனவே{' '}
+                                        <span className="text-orange-500 font-black">{warningStoreNames}</span>
+                                        {' '}ல் products add பண்ணிருக்கீங்க.{' '}
+                                        Current delivery charge:{' '}
+                                        <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{currentCharge}</span>.
+                                        <br />
+                                        <br />
+                                        இப்போ{' '}
+                                        <span className="text-orange-500 font-black">{newStoreName}</span>
+                                        {' '}ல் இருந்து products add பண்ண, delivery charge{' '}
+                                        <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{newCharge}</span>
+                                        {' '}(
+                                        <span className="text-orange-500 font-bold">₹{extraCharge} extra</span>
+                                        ) ஆகும்.
+                                        <br />
+                                        Add பண்ணலாமா?
                                     </>
                                 ) : (
                                     <>
-                                        You already added products from <span className="text-orange-500 font-black">{warningStoreNames}</span>. If you add from <span className="text-orange-500 font-black">{newStoreName}</span>, it can take 5 rs extra. Can I add it?
+                                        You already added products from{' '}
+                                        <span className="text-orange-500 font-black">{warningStoreNames}</span>.{' '}
+                                        Current delivery charge:{' '}
+                                        <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{currentCharge}</span>.
+                                        <br />
+                                        <br />
+                                        Adding from{' '}
+                                        <span className="text-orange-500 font-black">{newStoreName}</span>
+                                        {' '}will make delivery charge{' '}
+                                        <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{newCharge}</span>
+                                        {' '}(
+                                        <span className="text-orange-500 font-bold">₹{extraCharge} extra</span>
+                                        ).
+                                        <br />
+                                        Shall I add?
                                     </>
                                 )}
                             </p>
 
+                            {/* Charge pill */}
+                            <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-xl px-4 py-2.5 mb-5">
+                                <div className="text-center">
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">
+                                        {language === 'ta' ? 'தற்போது' : 'Current'}
+                                    </p>
+                                    <p className="text-lg font-black text-gray-700 dark:text-gray-200">₹{currentCharge}</p>
+                                </div>
+                                <div className="text-orange-400 font-black text-lg">→</div>
+                                <div className="text-center">
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">
+                                        {language === 'ta' ? 'புதியது' : 'New'}
+                                    </p>
+                                    <p className="text-lg font-black text-[#2E5A2E] dark:text-[#CBF9B2]">₹{newCharge}</p>
+                                </div>
+                                <div className="text-center bg-orange-100 dark:bg-orange-900/30 rounded-lg px-3 py-1.5">
+                                    <p className="text-[10px] font-bold text-orange-500 uppercase tracking-wider mb-0.5">Extra</p>
+                                    <p className="text-base font-black text-orange-500">+₹{extraCharge}</p>
+                                </div>
+                            </div>
+
                             {/* Buttons */}
-                            <div className="flex gap-2 justify-end">
+                            <div className="flex gap-3">
                                 <button
                                     onClick={cancelAddToCart}
-                                    className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-xl text-xs active:scale-95 transition-transform"
+                                    className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-2xl text-sm active:scale-95 transition-transform"
                                 >
-                                    {t('Cancel')}
+                                    {language === 'ta' ? 'வேண்டாம்' : 'Cancel'}
                                 </button>
                                 <button
                                     onClick={confirmAddToCart}
-                                    className="px-5 py-2 text-white font-extrabold rounded-xl text-xs active:scale-95 transition-transform shadow-md"
+                                    className="flex-1 py-3 text-white font-extrabold rounded-2xl text-sm active:scale-95 transition-transform shadow-md"
                                     style={{ background: 'linear-gradient(135deg, #FF6B00, #FF9D00)' }}
                                 >
-                                    {t('Yes, Add')}
+                                    {language === 'ta' ? 'ஆமா, சேர்' : 'Yes, Add'}
                                 </button>
                             </div>
                         </div>
-                    </div>
 
-                    <style>{`
-                        @keyframes msOverlayIn {
-                            from { opacity: 0; }
-                            to { opacity: 1; }
-                        }
-                        @keyframes msBubblePop {
-                            from { transform: translateY(-50%) scale(0.7) translateX(20px); opacity: 0; }
-                            to { transform: translateY(-50%) scale(1) translateX(0px); opacity: 1; }
-                        }
-                    `}</style>
-                </div>
-            )}
+                        <style>{`
+                            @keyframes msOverlayIn {
+                                from { opacity: 0; }
+                                to { opacity: 1; }
+                            }
+                            @keyframes msDialogPop {
+                                from { transform: scale(0.85); opacity: 0; }
+                                to { transform: scale(1); opacity: 1; }
+                            }
+                        `}</style>
+                    </div>
+                );
+            })()}
         </CartContext.Provider>
     );
 };
