@@ -337,85 +337,36 @@ export const CartProvider = ({ children }) => {
                 const extraCharge = newCharge - currentCharge;
 
                 return (
-                    <div className="fixed inset-0 z-[9999] select-none pointer-events-auto flex items-center justify-center px-5">
-                        {/* Blurred backdrop */}
-                        <div
-                            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-                            style={{ animation: 'msOverlayIn 0.2s ease-out forwards' }}
-                            onClick={cancelAddToCart}
-                        />
-
-                        {/* Dialog */}
-                        <div
-                            className="relative z-10 bg-white dark:bg-gray-900 rounded-[1.8rem] shadow-2xl border border-gray-100 dark:border-gray-700 w-full max-w-sm px-6 py-6"
-                            style={{ animation: 'msDialogPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards', opacity: 0 }}
-                            onClick={e => e.stopPropagation()}
-                        >
-                            {/* Icon + Label */}
-                            <div className="flex items-center gap-2 mb-3">
+                    <div className="fixed inset-0 flex items-center justify-center z-[9999] bg-black bg-opacity-30">
+                        <div className="relative bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 p-6 max-w-md w-full mx-4">
+                            <button onClick={cancelAddToCart} className="absolute top-2 right-2 text-gray-400 hover:text-gray-600" aria-label={language === 'ta' ? 'வேண்டாம்' : 'Cancel'}>×</button>
+                            <div className="flex items-center gap-2 mb-4">
                                 <div className="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
                                     <span className="text-base">🛍️</span>
                                 </div>
-                                <p className="text-[11px] font-bold text-orange-500 uppercase tracking-widest">
-                                    {language === 'ta' ? 'கவனம்!' : 'Note!'}
-                                </p>
+                                <p className="text-[11px] font-bold text-orange-500 uppercase tracking-widest">{language === 'ta' ? 'கவனம்!' : 'Note!'}</p>
                             </div>
-
-                            {/* Main message */}
                             <p className="text-[14px] font-semibold text-gray-800 dark:text-gray-100 leading-relaxed mb-4">
                                 {language === 'ta' ? (
                                     <>
-                                        நீங்கள் ஏற்கனவே{' '}
-                                        <span className="text-orange-500 font-black">{warningStoreNames}</span>
-                                        {' '}ல் products add பண்ணிருக்கீங்க.{' '}
-                                        Current delivery charge:{' '}
-                                        <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{currentCharge}</span>.
-                                        <br />
-                                        <br />
-                                        இப்போ{' '}
-                                        <span className="text-orange-500 font-black">{newStoreName}</span>
-                                        {' '}ல் இருந்து products add பண்ண, delivery charge{' '}
-                                        <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{newCharge}</span>
-                                        {' '}(
-                                        <span className="text-orange-500 font-bold">₹{extraCharge} extra</span>
-                                        ) ஆகும்.
-                                        <br />
-                                        Add பண்ணலாமா?
+                                        நீங்கள் ஏற்கனவே <span className="text-orange-500 font-black">{warningStoreNames}</span>ல் products add பண்ணிருக்கீங்க. Current delivery charge: <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{currentCharge}</span>.<br/><br/>
+                                        இப்போ <span className="text-orange-500 font-black">{newStoreName}</span>ல் இருந்து products add பண்ண, delivery charge <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{newCharge}</span> (<span className="text-orange-500 font-bold">₹{extraCharge} extra</span>) ஆகும்.<br/>Add பண்ணலாமா?
                                     </>
                                 ) : (
                                     <>
-                                        You already added products from{' '}
-                                        <span className="text-orange-500 font-black">{warningStoreNames}</span>.{' '}
-                                        Current delivery charge:{' '}
-                                        <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{currentCharge}</span>.
-                                        <br />
-                                        <br />
-                                        Adding from{' '}
-                                        <span className="text-orange-500 font-black">{newStoreName}</span>
-                                        {' '}will make delivery charge{' '}
-                                        <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{newCharge}</span>
-                                        {' '}(
-                                        <span className="text-orange-500 font-bold">₹{extraCharge} extra</span>
-                                        ).
-                                        <br />
-                                        Shall I add?
+                                        You already added products from <span className="text-orange-500 font-black">{warningStoreNames}</span>. Current delivery charge: <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{currentCharge}</span>.<br/><br/>
+                                        Adding from <span className="text-orange-500 font-black">{newStoreName}</span> will make delivery charge <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{newCharge}</span> (<span className="text-orange-500 font-bold">₹{extraCharge} extra</span>).<br/>Shall I add?
                                     </>
                                 )}
                             </p>
-
-                            {/* Charge pill */}
                             <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-xl px-4 py-2.5 mb-5">
                                 <div className="text-center">
-                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">
-                                        {language === 'ta' ? 'தற்போது' : 'Current'}
-                                    </p>
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{language === 'ta' ? 'தற்போது' : 'Current'}</p>
                                     <p className="text-lg font-black text-gray-700 dark:text-gray-200">₹{currentCharge}</p>
                                 </div>
                                 <div className="text-orange-400 font-black text-lg">→</div>
                                 <div className="text-center">
-                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">
-                                        {language === 'ta' ? 'புதியது' : 'New'}
-                                    </p>
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{language === 'ta' ? 'புதியது' : 'New'}</p>
                                     <p className="text-lg font-black text-[#2E5A2E] dark:text-[#CBF9B2]">₹{newCharge}</p>
                                 </div>
                                 <div className="text-center bg-orange-100 dark:bg-orange-900/30 rounded-lg px-3 py-1.5">
@@ -423,35 +374,11 @@ export const CartProvider = ({ children }) => {
                                     <p className="text-base font-black text-orange-500">+₹{extraCharge}</p>
                                 </div>
                             </div>
-
-                            {/* Buttons */}
                             <div className="flex gap-3">
-                                <button
-                                    onClick={cancelAddToCart}
-                                    className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-2xl text-sm active:scale-95 transition-transform"
-                                >
-                                    {language === 'ta' ? 'வேண்டாம்' : 'Cancel'}
-                                </button>
-                                <button
-                                    onClick={confirmAddToCart}
-                                    className="flex-1 py-3 text-white font-extrabold rounded-2xl text-sm active:scale-95 transition-transform shadow-md"
-                                    style={{ background: 'linear-gradient(135deg, #FF6B00, #FF9D00)' }}
-                                >
-                                    {language === 'ta' ? 'ஆமா, சேர்' : 'Yes, Add'}
-                                </button>
+                                <button onClick={cancelAddToCart} className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-2xl text-sm active:scale-95 transition-transform">{language === 'ta' ? 'வேண்டாம்' : 'Cancel'}</button>
+                                <button onClick={confirmAddToCart} className="flex-1 py-3 text-white font-extrabold rounded-2xl text-sm active:scale-95 transition-transform shadow-md" style={{ background: 'linear-gradient(135deg, #FF6B00, #FF9D00)' }}>{language === 'ta' ? 'ஆமா, சேர்' : 'Yes, Add'}</button>
                             </div>
                         </div>
-
-                        <style>{`
-                            @keyframes msOverlayIn {
-                                from { opacity: 0; }
-                                to { opacity: 1; }
-                            }
-                            @keyframes msDialogPop {
-                                from { transform: scale(0.85); opacity: 0; }
-                                to { transform: scale(1); opacity: 1; }
-                            }
-                        `}</style>
                     </div>
                 );
             })()}
