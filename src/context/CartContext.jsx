@@ -224,8 +224,10 @@ export const CartProvider = ({ children }) => {
 
                 // Get names of existing stores in the cart
                 const currentStoreIds = Array.from(currentUniqueStores);
-                const storeNames = currentStoreIds.map(id => getStoreName(id, stores));
-                const storesText = storeNames.join(', ');
+                const storeNames = currentStoreIds.map(id => getStoreName(id, stores)).filter(Boolean);
+                const storesText = storeNames.length > 1
+                    ? storeNames.slice(0, -1).join(', ') + (language === 'ta' ? ' and ' : ' and ') + storeNames[storeNames.length - 1]
+                    : storeNames.join(', ');
 
                 const newStoreNameVal = getStoreName(newStoreId, stores) || 'another store';
 
@@ -326,57 +328,97 @@ export const CartProvider = ({ children }) => {
         <CartContext.Provider value={value}>
             {children}
 
-            {/* Multi-Store Warning — Centered dialog */}
+            {/* Multi-Store Warning — Right Speech Bubble Popup */}
             {showStoreWarning && (() => {
-                // Build current store count for charge display
                 const currentUniqueStores = new Set(
                     cartItems.map(item => (item.storeId?._id || item.storeId || '').toString()).filter(Boolean)
                 );
+                const isMultiStore = currentUniqueStores.size > 1;
                 const currentCharge = 20 + (currentUniqueStores.size - 1) * 5;
                 const newCharge = nextStoreCharge;
                 const extraCharge = newCharge - currentCharge;
 
                 return (
-                    <div className="fixed inset-0 flex items-center justify-center z-[9999] bg-black bg-opacity-30">
-                        <div className="relative bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 p-6 max-w-md w-full mx-4">
-                            <button onClick={cancelAddToCart} className="absolute top-2 right-2 text-gray-400 hover:text-gray-600" aria-label={language === 'ta' ? 'வேண்டாம்' : 'Cancel'}>×</button>
-                            <div className="flex items-center gap-2 mb-4">
-                                <div className="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
-                                    <span className="text-base">🛍️</span>
+                    <div className="fixed right-3 top-[22%] -translate-y-1/2 z-[9999] max-w-[285px] sm:max-w-[300px] w-[calc(100vw-32px)] pointer-events-auto">
+                        <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-orange-200 dark:border-gray-800 p-4">
+                            {/* Speech Bubble Arrow Tail pointing to right edge */}
+                            <div className="absolute -right-2 top-6 w-0 h-0 border-t-[7px] border-t-transparent border-b-[7px] border-b-transparent border-l-[9px] border-l-white dark:border-l-gray-900 filter drop-shadow-[2px_0_1px_rgba(0,0,0,0.08)]"></div>
+
+                            {/* Close button */}
+                            <button
+                                onClick={cancelAddToCart}
+                                className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-base font-bold"
+                                aria-label={language === 'ta' ? 'வேண்டாம்' : 'Cancel'}
+                            >
+                                ×
+                            </button>
+
+                            {/* Icon + Label */}
+                            <div className="flex items-center gap-1.5 mb-2">
+                                <div className="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+                                    <span className="text-xs">🛍️</span>
                                 </div>
-                                <p className="text-[11px] font-bold text-orange-500 uppercase tracking-widest">{language === 'ta' ? 'கவனம்!' : 'Note!'}</p>
+                                <p className="text-[11px] font-bold text-orange-500 uppercase tracking-wider">
+                                    {language === 'ta' ? 'கவனம்!' : 'Note!'}
+                                </p>
                             </div>
-                            <p className="text-[14px] font-semibold text-gray-800 dark:text-gray-100 leading-relaxed mb-4">
-                                {language === 'ta' ? (
-                                    <>
-                                        நீங்கள் ஏற்கனவே <span className="text-orange-500 font-black">{warningStoreNames}</span>ல் products add பண்ணிருக்கீங்க. Current delivery charge: <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{currentCharge}</span>.<br/><br/>
-                                        இப்போ <span className="text-orange-500 font-black">{newStoreName}</span>ல் இருந்து products add பண்ண, delivery charge <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{newCharge}</span> (<span className="text-orange-500 font-bold">₹{extraCharge} extra</span>) ஆகும்.<br/>Add பண்ணலாமா?
-                                    </>
+
+                            {/* Main speech message */}
+                            <p className="text-[13px] font-semibold text-gray-800 dark:text-gray-100 leading-relaxed mb-3">
+                                {isMultiStore ? (
+                                    language === 'ta' ? (
+                                        <>
+                                            நீங்கள் ஏற்கனவே <span className="text-orange-500 font-black">{warningStoreNames}</span> ல் products add பண்ணிருக்கீங்க. Current delivery charge: <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{currentCharge}</span>.
+                                            <br /><br />
+                                            இப்போ <span className="text-orange-500 font-black">{newStoreName}</span> ல் இருந்து products add பண்ண, delivery charge <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{newCharge}</span> (<span className="text-orange-500 font-bold">₹{extraCharge} extra</span>) ஆகும்.
+                                            <br /><br />
+                                            Add பண்ணலாமா?
+                                        </>
+                                    ) : (
+                                        <>
+                                            You already added products from <span className="text-orange-500 font-black">{warningStoreNames}</span>. Current delivery charge: <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{currentCharge}</span>.
+                                            <br /><br />
+                                            Adding from <span className="text-orange-500 font-black">{newStoreName}</span> will make delivery charge <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{newCharge}</span> (<span className="text-orange-500 font-bold">₹{extraCharge} extra</span>).
+                                            <br /><br />
+                                            Shall I add?
+                                        </>
+                                    )
                                 ) : (
-                                    <>
-                                        You already added products from <span className="text-orange-500 font-black">{warningStoreNames}</span>. Current delivery charge: <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{currentCharge}</span>.<br/><br/>
-                                        Adding from <span className="text-orange-500 font-black">{newStoreName}</span> will make delivery charge <span className="text-[#2E5A2E] dark:text-[#CBF9B2] font-black">₹{newCharge}</span> (<span className="text-orange-500 font-bold">₹{extraCharge} extra</span>).<br/>Shall I add?
-                                    </>
+                                    language === 'ta' ? (
+                                        <>
+                                            நீங்கள் ஏற்கனவே <span className="text-orange-500 font-black">{warningStoreNames}</span> ல் products add பண்ணிருக்கீங்க.
+                                            <br /><br />
+                                            <span className="text-orange-500 font-black">{newStoreName}</span> ல் இருந்து add பண்ண <span className="text-orange-500 font-bold">₹5 extra charge</span> ஆகும்.
+                                            <br /><br />
+                                            Add பண்ணலாமா?
+                                        </>
+                                    ) : (
+                                        <>
+                                            You already added products from <span className="text-orange-500 font-black">{warningStoreNames}</span>.
+                                            <br /><br />
+                                            Adding from <span className="text-orange-500 font-black">{newStoreName}</span> will cost <span className="text-orange-500 font-bold">₹5 extra charge</span>.
+                                            <br /><br />
+                                            Shall I add?
+                                        </>
+                                    )
                                 )}
                             </p>
-                            <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-xl px-4 py-2.5 mb-5">
-                                <div className="text-center">
-                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{language === 'ta' ? 'தற்போது' : 'Current'}</p>
-                                    <p className="text-lg font-black text-gray-700 dark:text-gray-200">₹{currentCharge}</p>
-                                </div>
-                                <div className="text-orange-400 font-black text-lg">→</div>
-                                <div className="text-center">
-                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{language === 'ta' ? 'புதியது' : 'New'}</p>
-                                    <p className="text-lg font-black text-[#2E5A2E] dark:text-[#CBF9B2]">₹{newCharge}</p>
-                                </div>
-                                <div className="text-center bg-orange-100 dark:bg-orange-900/30 rounded-lg px-3 py-1.5">
-                                    <p className="text-[10px] font-bold text-orange-500 uppercase tracking-wider mb-0.5">Extra</p>
-                                    <p className="text-base font-black text-orange-500">+₹{extraCharge}</p>
-                                </div>
-                            </div>
-                            <div className="flex gap-3">
-                                <button onClick={cancelAddToCart} className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-2xl text-sm active:scale-95 transition-transform">{language === 'ta' ? 'வேண்டாம்' : 'Cancel'}</button>
-                                <button onClick={confirmAddToCart} className="flex-1 py-3 text-white font-extrabold rounded-2xl text-sm active:scale-95 transition-transform shadow-md" style={{ background: 'linear-gradient(135deg, #FF6B00, #FF9D00)' }}>{language === 'ta' ? 'ஆமா, சேர்' : 'Yes, Add'}</button>
+
+                            {/* Buttons */}
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={cancelAddToCart}
+                                    className="flex-1 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-xl text-xs active:scale-95 transition-transform"
+                                >
+                                    {language === 'ta' ? 'வேண்டாம்' : 'Cancel'}
+                                </button>
+                                <button
+                                    onClick={confirmAddToCart}
+                                    className="flex-1 py-2 text-white font-extrabold rounded-xl text-xs active:scale-95 transition-transform shadow-md"
+                                    style={{ background: 'linear-gradient(135deg, #FF6B00, #FF9D00)' }}
+                                >
+                                    {language === 'ta' ? 'ஆமா, சேர்' : 'Yes, Add'}
+                                </button>
                             </div>
                         </div>
                     </div>
