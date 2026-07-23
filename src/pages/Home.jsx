@@ -61,7 +61,10 @@ const Home = () => {
         return allProducts.filter(p => normalize(p.category) === normalizedSelected);
     }, [rawProducts, selectedCategory]);
 
-    const stores = Array.isArray(rawStores) ? rawStores : (rawStores?.data || []);
+    const stores = useMemo(() => {
+        const list = Array.isArray(rawStores) ? rawStores : (rawStores?.data || []);
+        return list.filter(s => s.isActive !== false);
+    }, [rawStores]);
 
     // Filter categories — only show categories that have at least one product
     const featuredCategories = useMemo(() => {

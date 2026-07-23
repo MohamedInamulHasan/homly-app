@@ -435,7 +435,6 @@ const Checkout = () => {
                                             }}
                                             disabled={isLocationSearching}
                                             className={`w-full bg-white dark:bg-gray-800 border rounded-xl px-4 py-3.5 flex items-center gap-3 transition-all duration-300 active:scale-[0.98] shadow-none ${
-                                                fieldErrors.location ? 'border-red-400 dark:border-red-500 ring-2 ring-red-200/50' :
                                                 isLocationSearching ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-green-50/30' :
                                                 formData.location ? 'border-[#2E5A2E] dark:border-[#CBF9B2] bg-green-50/30 dark:bg-[#CBF9B2]/5' :
                                                 showLocationError ? 'border-amber-400 bg-amber-50/10' :

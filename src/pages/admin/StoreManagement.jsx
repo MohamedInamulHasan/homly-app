@@ -19,7 +19,9 @@ import {
     Power,
     GripVertical,
     ShoppingBag,
-    Copy // Added Copy
+    Copy,
+    Eye,
+    EyeOff
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -398,6 +400,21 @@ const StoreManagement = () => {
         }
     };
 
+    const handleToggleActive = async (store) => {
+        const currentActive = store.isActive !== false;
+        const newActive = !currentActive;
+
+        try {
+            await updateStore({
+                id: store.id || store._id,
+                data: { isActive: newActive }
+            });
+        } catch (error) {
+            console.error('Error toggling store active status:', error);
+            alert(t('Failed to update store status.'));
+        }
+    };
+
     const handleProductSubmit = async (e) => {
         e.preventDefault();
 
@@ -585,14 +602,20 @@ const StoreManagement = () => {
                                                         </div>
                                                     </div>
 
-                                                    {/* Large Closed Overlay */}
-                                                    {isClosed && (
+                                                    {/* Large Closed/Hidden Overlay */}
+                                                    {store.isActive === false ? (
+                                                        <div className="absolute inset-0 z-20 bg-black/40 flex items-center justify-center backdrop-blur-[1px]">
+                                                            <span className="bg-red-600 text-white px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg animate-in fade-in zoom-in-95 duration-500">
+                                                                {t('Hidden')}
+                                                            </span>
+                                                        </div>
+                                                    ) : isClosed ? (
                                                         <div className="absolute inset-0 z-20 bg-black/10 flex items-center justify-center backdrop-blur-[1px]">
                                                             <span className="bg-gray-800 text-white px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg animate-in fade-in zoom-in-95 duration-500">
                                                                 {t('Closed')}
                                                             </span>
                                                         </div>
-                                                    )}
+                                                    ) : null}
                                                 </div>
 
                                                 <div className="p-4 flex flex-col flex-grow">
@@ -643,6 +666,15 @@ const StoreManagement = () => {
                                                                     : !isOpen ? 'bg-gray-50 dark:bg-gray-800 text-gray-300 cursor-not-allowed' : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600'}`}
                                                             >
                                                                 <Power size={18} />
+                                                            </button>
+                                                            <button
+                                                                onClick={(e) => { e.stopPropagation(); handleToggleActive(store); }}
+                                                                title={store.isActive === false ? t('Unhide Store') : t('Hide Store')}
+                                                                className={`p-2 rounded-xl transition-all active:scale-90 ${store.isActive === false 
+                                                                    ? 'bg-red-50 dark:bg-red-900/20 text-red-500' 
+                                                                    : 'bg-gray-100 dark:bg-gray-700 text-gray-400 hover:text-gray-600'}`}
+                                                            >
+                                                                {store.isActive === false ? <EyeOff size={18} /> : <Eye size={18} />}
                                                             </button>
                                                             <button
                                                                 onClick={(e) => { e.stopPropagation(); handleEditStore(store); }}
@@ -906,7 +938,7 @@ const StoreManagement = () => {
                                             <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Category')}</th>
                                             <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Price')}</th>
                                             <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Free Delivery')}</th>
-                                            <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Status')}</th>
+                                            <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400">{t('Hide')}</th>
                                             <th className="p-4 text-sm font-medium text-gray-500 dark:text-gray-400 text-right">{t('Actions')}</th>
                                         </tr>
                                     </thead>
@@ -1062,9 +1094,7 @@ const StoreManagement = () => {
                                                     <td className="p-4">
                                                         <button
                                                             onClick={async () => {
-                                                                const isScheduled = isProductScheduled(product);
                                                                 const currentStatus = product.isAvailable !== false;
-
                                                                 const productId = product._id || product.id;
 
                                                                 // Optimistic update - instant UI response
@@ -1096,16 +1126,15 @@ const StoreManagement = () => {
                                                                     alert(t('Failed to update status'));
                                                                 }
                                                             }}
-                                                            className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2E5A2E] ${product.isAvailable !== false ? 'bg-[#2E5A2E]' : 'bg-gray-200 dark:bg-gray-600'
-                                                                }`}
-                                                            title={product.isAvailable !== false ? t('Available') : t('Out of Stock')}
+                                                            className={`p-2 rounded-xl transition-all active:scale-90 flex items-center gap-1.5 text-xs font-semibold ${
+                                                                product.isAvailable === false
+                                                                    ? 'bg-red-50 dark:bg-red-900/20 text-red-500'
+                                                                    : 'bg-gray-100 dark:bg-gray-700 text-gray-500 hover:text-gray-700'
+                                                            }`}
+                                                            title={product.isAvailable === false ? t('Unhide Product') : t('Hide Product')}
                                                         >
-                                                            <motion.span
-                                                                layout
-                                                                transition={{ type: "spring", stiffness: 700, damping: 30 }}
-                                                                animate={{ x: (product.isAvailable !== false) ? 22 : 2 }}
-                                                                className="inline-block h-5 w-5 transform rounded-full bg-white shadow-md"
-                                                            />
+                                                            {product.isAvailable === false ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                            <span>{product.isAvailable === false ? t('Hidden') : t('Hide')}</span>
                                                         </button>
                                                         {!isProductScheduled(product) && product.isAvailable !== false && (
                                                             <div className="mt-1 text-[9px] font-black uppercase text-amber-500 tracking-tighter text-center leading-none">

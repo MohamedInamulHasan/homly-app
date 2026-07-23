@@ -31,8 +31,8 @@ const Shop = () => {
         ...(dbCategories || []).map(cat => ({ name: cat.name }))
     ];
 
-    // Safety check for stores array to prevent crash if undefined (though DataContext should init it)
-    const safeStores = stores || [];
+    // Safety check for stores array to prevent crash if undefined & filter active only
+    const safeStores = useMemo(() => (stores || []).filter(s => s.isActive !== false), [stores]);
 
     // Calculate store counts per category
     const categoryData = useMemo(() => {

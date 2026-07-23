@@ -251,7 +251,7 @@ const StoreProducts = () => {
         }
     }, [selectedSubcategory]);
 
-    if (!store) {
+    if (!store || store.isActive === false) {
         return (
             <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center p-4">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t('Store not found')}</h2>
