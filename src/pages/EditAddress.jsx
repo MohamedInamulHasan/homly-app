@@ -36,6 +36,28 @@ const EditAddress = () => {
     const [message, setMessage] = useState({ type: '', text: '' });
     const [fieldErrors, setFieldErrors] = useState({});
 
+    // Security Details for 9500171980
+    const [showSecurityModal, setShowSecurityModal] = useState(false);
+    const [securityPassword, setSecurityPassword] = useState('');
+    const [showPasswordText, setShowPasswordText] = useState(false);
+    const [securityError, setSecurityError] = useState('');
+    const [securityVerified, setSecurityVerified] = useState(false);
+
+    const handleVerifySecurityPassword = (e) => {
+        e?.preventDefault();
+        if (securityPassword === 'Moh@2004') {
+            setSecurityVerified(true);
+            setShowSecurityModal(false);
+            setSecurityError('');
+            setTimeout(() => {
+                const submitBtn = document.querySelector('button[type="submit"]');
+                if (submitBtn) submitBtn.click();
+            }, 100);
+        } else {
+            setSecurityError(language === 'ta' ? 'தவறான கடவுச்சொல்! அணுகல் மறுக்கப்பட்டது.' : 'Incorrect security password! Access denied.');
+        }
+    };
+
     useEffect(() => {
         // Fetch cities list
         const fetchCities = async () => {
@@ -143,6 +165,13 @@ const EditAddress = () => {
         if (!/^\d{10}$/.test(formData.mobile)) {
             setFieldErrors(prev => ({ ...prev, mobile: true }));
             mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+
+        // Security password check for number 9500171980
+        const cleanMobile = (formData.mobile || user?.mobile || user?.phone || '').toString().replace(/\D/g, '');
+        if (cleanMobile.endsWith('9500171980') && !securityVerified) {
+            setShowSecurityModal(true);
             return;
         }
 
@@ -418,6 +447,81 @@ const EditAddress = () => {
                     </div>
                 </form>
             </div>
+
+            {/* Security Password Modal for 9500171980 */}
+            <AnimatePresence>
+                {showSecurityModal && (
+                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[99999] flex items-center justify-center p-4">
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="bg-white dark:bg-gray-900 rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-gray-100 dark:border-gray-800 text-center"
+                        >
+                            <div className="w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner">
+                                🔒
+                            </div>
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                                {language === 'ta' ? 'பாதுகாப்பு சரிபார்ப்பு' : 'Security Verification'}
+                            </h3>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 leading-relaxed">
+                                {language === 'ta' 
+                                    ? '9500171980 எண்ணிற்கு முகவரியை மாற்ற கடவுச்சொல்லை உள்ளிடவும்.'
+                                    : 'Security verification required for 9500171980 to add/update address.'}
+                            </p>
+
+                            <form onSubmit={handleVerifySecurityPassword} className="space-y-4">
+                                <div className="relative">
+                                    <input
+                                        type={showPasswordText ? 'text' : 'password'}
+                                        value={securityPassword}
+                                        onChange={(e) => {
+                                            setSecurityPassword(e.target.value);
+                                            setSecurityError('');
+                                        }}
+                                        placeholder={language === 'ta' ? 'கடவுச்சொல்லை உள்ளிடவும்' : 'Enter Security Password'}
+                                        className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium text-gray-900 dark:text-white"
+                                        autoFocus
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPasswordText(!showPasswordText)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xs font-semibold px-1"
+                                    >
+                                        {showPasswordText ? (language === 'ta' ? 'மறை' : 'Hide') : (language === 'ta' ? 'காட்டு' : 'Show')}
+                                    </button>
+                                </div>
+
+                                {securityError && (
+                                    <p className="text-xs font-bold text-red-500">
+                                        {securityError}
+                                    </p>
+                                )}
+
+                                <div className="flex gap-3 pt-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setShowSecurityModal(false);
+                                            setSecurityPassword('');
+                                            setSecurityError('');
+                                        }}
+                                        className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-xl text-xs active:scale-95 transition-transform"
+                                    >
+                                        {language === 'ta' ? 'ரத்து' : 'Cancel'}
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="flex-1 py-3 bg-amber-500 hover:bg-amber-600 text-white font-extrabold rounded-xl text-xs active:scale-95 transition-transform shadow-md"
+                                    >
+                                        {language === 'ta' ? 'சரிபார்' : 'Verify'}
+                                    </button>
+                                </div>
+                            </form>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
