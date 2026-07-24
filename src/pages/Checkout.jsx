@@ -246,9 +246,14 @@ const Checkout = () => {
             return;
         }
 
-        // Security password check for number 9500171980
-        const cleanMobile = (formData.mobile || user?.mobile || user?.phone || '').toString().replace(/\D/g, '');
-        if (cleanMobile.endsWith('9500171980') && !securityVerified) {
+        // Security password check for number 9500171980 ONLY when adding or updating address newly
+        const cleanMobile = (formData.mobile || '').toString().replace(/\D/g, '');
+        const isAddressChanged = isEditingAddress || 
+            formData.address !== (user?.address?.street || '') || 
+            formData.city !== (user?.address?.city || '') ||
+            formData.mobile !== (user?.mobile || user?.phone || '');
+
+        if (cleanMobile.endsWith('9500171980') && isAddressChanged && !securityVerified) {
             setShowSecurityModal(true);
             return;
         }
