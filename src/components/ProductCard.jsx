@@ -63,26 +63,14 @@ const ProductCard = ({ product, showCartControls = true, showHeart = false, stor
                     }
                 }}
             >
-                {/* Unit pill — left side */}
-                <div className="absolute top-3 left-3 z-[15] pointer-events-none flex flex-col gap-1.5 items-start">
-                    {!product.isGroup && product.unit && product.unit.trim() !== '' && (
+                {/* Unit pill — left side (only for single products) */}
+                {!product.isGroup && product.unit && product.unit.trim() !== '' && (
+                    <div className="absolute top-3 left-3 z-[15] pointer-events-none flex flex-col gap-1.5 items-start">
                         <div className="bg-red-500 text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow-sm">
                             {product.unit.trim()}
                         </div>
-                    )}
-                    {product.isGroup && variants.length > 0 && (() => {
-                        const units = variants.map(v => v.unit?.trim()).filter(Boolean);
-                        if (units.length === 0) return null;
-                        const firstUnit = units[0];
-                        const lastUnit = units[units.length - 1];
-                        const label = firstUnit === lastUnit ? firstUnit : `${firstUnit} - ${lastUnit}`;
-                        return (
-                            <div className="bg-red-500 text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow-sm">
-                                {label}
-                            </div>
-                        );
-                    })()}
-                </div>
+                    </div>
+                )}
 
 
 

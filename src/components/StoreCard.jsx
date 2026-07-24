@@ -61,7 +61,7 @@ const StoreCard = ({ store }) => {
                 {/* Solid White Banner Strip */}
                 <div className="absolute inset-0 bg-white dark:bg-gray-800 border-t border-gray-50 dark:border-gray-700" />
                 
-                <div className={`relative z-10 ${!isOpen ? 'blur-[2px] opacity-80' : ''}`}>
+                <div className={`relative z-10 ${!isOpen ? 'opacity-70' : ''}`}>
                     <h3 className="text-gray-900 dark:text-white text-[15px] font-semibold tracking-tight leading-tight mb-0.5 truncate">
                         {t(store, 'name')}
                     </h3>
@@ -75,7 +75,7 @@ const StoreCard = ({ store }) => {
             </div>
 
             {/* Right Action - Floating Arrow (Synced with slimmer banner) */}
-            <div className={`absolute bottom-4 right-4 z-20 transition-all duration-300 ${!isOpen ? 'blur-[1.5px] opacity-40 scale-75' : ''}`}>
+            <div className={`absolute bottom-4 right-4 z-20 transition-all duration-300 ${!isOpen ? 'opacity-40 scale-75' : ''}`}>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
                     isOpen 
                     ? 'bg-[#2E5A2E] dark:bg-[#CBF9B2] text-white dark:text-gray-900 scale-90 group-hover:scale-105 active:scale-90' 
