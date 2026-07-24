@@ -61,7 +61,7 @@ const StoreCard = ({ store }) => {
                 {/* Solid White Banner Strip */}
                 <div className="absolute inset-0 bg-white dark:bg-gray-800 border-t border-gray-50 dark:border-gray-700" />
                 
-                <div className={`relative z-10 ${!isOpen ? 'opacity-70' : ''}`}>
+                <div className={`relative z-10 ${!isOpen ? 'blur-[0.8px] opacity-70' : ''}`}>
                     <h3 className="text-gray-900 dark:text-white text-[15px] font-semibold tracking-tight leading-tight mb-0.5 truncate">
                         {t(store, 'name')}
                     </h3>
