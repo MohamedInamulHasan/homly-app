@@ -51,22 +51,16 @@ const SavedProducts = () => {
             <div className="pt-[95px] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
 
                 {savedProducts.length === 0 ? (
-                    <div className="flex-1 flex flex-col items-center justify-center text-center py-20 px-4">
-                        <div className="w-24 h-24 sm:w-28 sm:h-28 bg-[#D5E0D5] dark:bg-gray-800 rounded-full flex items-center justify-center mb-6 shadow-inner">
-                            <Bookmark className="text-[#255225] dark:text-[#CBF9B2]" size={40} strokeWidth={2} />
+                    <div className="flex-1 flex flex-col items-center justify-center text-center py-24 px-4 min-h-[60vh]">
+                        <div className="w-24 h-24 sm:w-28 sm:h-28 bg-white/90 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                            <Bookmark className="text-gray-400 dark:text-gray-500" size={38} strokeWidth={1.5} />
                         </div>
-                        <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-white mb-2 text-center">
+                        <h2 className="text-[18px] sm:text-[20px] font-bold text-gray-900 dark:text-white mb-1.5 text-center">
                             {t('No saved products')}
                         </h2>
-                        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-xs mx-auto text-center leading-relaxed font-medium">
+                        <p className="text-[13px] sm:text-[14px] text-gray-500 dark:text-gray-400 max-w-xs mx-auto text-center font-normal">
                             {t('Products you mark as favorite will appear here for easy access.')}
                         </p>
-                        <Link
-                            to="/store"
-                            className="inline-flex items-center justify-center px-8 py-3 rounded-full font-bold text-white bg-[#255225] hover:bg-[#1D421D] shadow-md transition-all active:scale-95 text-sm"
-                        >
-                            {t('Browse Products')}
-                        </Link>
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">

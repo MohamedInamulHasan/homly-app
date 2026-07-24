@@ -48,23 +48,17 @@ const Cart = () => {
                     </div>
                 </div>
 
-                {/* Centered Empty State Content */}
-                <div className="flex-1 flex flex-col items-center justify-center px-4 pt-[110px] pb-24 text-center">
-                    <div className="w-24 h-24 sm:w-28 sm:h-28 bg-[#D5E0D5] dark:bg-gray-800 rounded-full flex items-center justify-center mb-6 shadow-inner">
-                        <ShoppingBag className="text-[#255225] dark:text-[#CBF9B2]" size={40} strokeWidth={2} />
+                {/* Centered Empty State Content (Minimal Image 2 Style) */}
+                <div className="flex-1 flex flex-col items-center justify-center text-center px-4 pt-[120px] pb-24 min-h-[60vh]">
+                    <div className="w-24 h-24 sm:w-28 sm:h-28 bg-white/90 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                        <ShoppingBag className="text-gray-400 dark:text-gray-500" size={38} strokeWidth={1.5} />
                     </div>
-                    <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-white mb-2 text-center">
+                    <h2 className="text-[18px] sm:text-[20px] font-bold text-gray-900 dark:text-white mb-1.5 text-center">
                         {t('Your cart is empty')}
                     </h2>
-                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-xs mx-auto text-center leading-relaxed font-medium">
+                    <p className="text-[13px] sm:text-[14px] text-gray-500 dark:text-gray-400 max-w-xs mx-auto text-center font-normal">
                         {t('Products you add to your cart will appear here for checkout.')}
                     </p>
-                    <Link
-                        to="/store"
-                        className="inline-flex items-center justify-center px-8 py-3 rounded-full font-bold text-white bg-[#255225] hover:bg-[#1D421D] shadow-md transition-all active:scale-95 text-sm"
-                    >
-                        {t('Browse Products')}
-                    </Link>
                 </div>
             </div>
         );
