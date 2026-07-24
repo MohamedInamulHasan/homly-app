@@ -51,19 +51,19 @@ const SavedProducts = () => {
             <div className="pt-[95px] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
 
                 {savedProducts.length === 0 ? (
-                    <div className="text-center py-24 flex flex-col items-center">
-                        <div className="w-32 h-32 bg-[#2E5A2E]/10 dark:bg-[#CBF9B2]/20 rounded-full flex items-center justify-center mb-8 shadow-sm">
-                            <Bookmark className="text-[#2E5A2E] dark:text-[#CBF9B2]" size={56} />
+                    <div className="flex-1 flex flex-col items-center justify-center text-center py-20 px-4">
+                        <div className="w-24 h-24 sm:w-28 sm:h-28 bg-[#DCE6DC] dark:bg-gray-800 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                            <Bookmark className="text-[#2E5A2E] dark:text-[#CBF9B2]" size={40} strokeWidth={2} />
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                        <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-white mb-2 text-center">
                             {t('No saved products')}
                         </h2>
-                        <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-sm mx-auto font-medium leading-relaxed">
+                        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-xs mx-auto text-center leading-relaxed font-medium">
                             {t('Products you mark as favorite will appear here for easy access.')}
                         </p>
                         <Link
                             to="/store"
-                            className="inline-flex items-center justify-center px-10 py-4 border border-transparent text-base font-bold rounded-full text-white dark:text-gray-900 bg-[#2E5A2E] dark:bg-[#CBF9B2] shadow-lg hover:shadow-xl transition-all active:scale-95"
+                            className="inline-flex items-center justify-center px-8 py-3 rounded-full font-bold text-white bg-[#2E5A2E] shadow-md hover:bg-[#234523] transition-all active:scale-95 text-sm"
                         >
                             {t('Browse Products')}
                         </Link>

@@ -26,19 +26,46 @@ const Cart = () => {
 
     if (cartItems.length === 0) {
         return (
-            <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-12 transition-colors duration-200">
-                <div className="bg-[#2E5A2E]/5 dark:bg-[#2E5A2E]/10 p-8 rounded-full mb-8 animate-pulse-slow">
-                    <ShoppingBag className="h-16 w-16 text-[#2E5A2E]" />
+            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 flex flex-col transition-colors duration-200">
+                {/* Premium Green Header */}
+                <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm overflow-hidden">
+                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none" />
+                    <div className="relative z-10">
+                        <div className="max-w-7xl mx-auto px-2 relative min-h-[42px]">
+                            <div className="absolute left-2 top-1/2 -translate-y-1/2">
+                                <button 
+                                    onClick={() => navigate(-1)} 
+                                    className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-white/80 rounded-full text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50"
+                                >
+                                    <ArrowLeft size={22} />
+                                </button>
+                            </div>
+                            <div className="flex flex-col items-center text-center pt-1">
+                                <h1 className="text-[18px] font-bold text-gray-900 tracking-tight leading-tight">{t('Cart')}</h1>
+                                <p className="text-[11px] font-semibold text-gray-700 mt-0.5">{t('Your selected items')}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white mb-3 text-center">
-                    {t('Your cart is empty')}
-                </h2>
-                <Link
-                    to="/store"
-                    className="mt-4 inline-flex items-center px-8 py-3.5 border border-transparent text-base font-bold rounded-full text-white bg-[#2E5A2E] transition-all duration-300 active:scale-95"
-                >
-                    {t('Start Shopping')}
-                </Link>
+
+                {/* Centered Empty State Content */}
+                <div className="flex-1 flex flex-col items-center justify-center px-4 pt-[110px] pb-24 text-center">
+                    <div className="w-24 h-24 sm:w-28 sm:h-28 bg-[#DCE6DC] dark:bg-gray-800 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                        <ShoppingBag className="text-[#2E5A2E] dark:text-[#CBF9B2]" size={40} strokeWidth={2} />
+                    </div>
+                    <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-white mb-2 text-center">
+                        {t('Your cart is empty')}
+                    </h2>
+                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-xs mx-auto text-center leading-relaxed font-medium">
+                        {t('Products you add to your cart will appear here for checkout.')}
+                    </p>
+                    <Link
+                        to="/store"
+                        className="inline-flex items-center justify-center px-8 py-3 rounded-full font-bold text-white bg-[#2E5A2E] shadow-md hover:bg-[#234523] transition-all active:scale-95 text-sm"
+                    >
+                        {t('Browse Products')}
+                    </Link>
+                </div>
             </div>
         );
     }
