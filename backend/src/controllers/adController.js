@@ -1,5 +1,6 @@
 import Ad from '../models/Ad.js';
 import { getIO } from '../socket.js';
+import { deleteFromCloudinary } from '../utils/cloudinaryHelper.js';
 
 // @desc    Get all ads
 // @route   GET /api/ads
@@ -97,12 +98,17 @@ export const updateAd = async (req, res, next) => {
 // @access  Private/Admin
 export const deleteAd = async (req, res, next) => {
     try {
-        const ad = await Ad.findByIdAndDelete(req.params.id);
+        const ad = await Ad.findById(req.params.id);
 
         if (!ad) {
             res.status(404);
             throw new Error('Ad not found');
         }
+
+        if (ad.imageUrl) await deleteFromCloudinary(ad.imageUrl);
+        if (ad.image) await deleteFromCloudinary(ad.image);
+
+        await Ad.findByIdAndDelete(req.params.id);
 
         getIO().emit('ads:updated');
 

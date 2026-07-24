@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import Product from '../models/Product.js';
 import { getIO } from '../socket.js';
+import { deleteFromCloudinary } from '../utils/cloudinaryHelper.js';
 
 // @desc    Get all products
 // @route   GET /api/products
@@ -269,6 +270,14 @@ export const deleteProduct = async (req, res, next) => {
                 res.status(403);
                 throw new Error('Not authorized to delete this product');
             }
+        }
+
+        // Delete image(s) from Cloudinary
+        if (productToCheck.image) {
+            await deleteFromCloudinary(productToCheck.image);
+        }
+        if (Array.isArray(productToCheck.images) && productToCheck.images.length > 0) {
+            await deleteFromCloudinary(productToCheck.images);
         }
 
         await Product.findByIdAndDelete(req.params.id);

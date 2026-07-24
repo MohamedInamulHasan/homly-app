@@ -1,6 +1,7 @@
 import Service from '../models/Service.js';
 import ServiceItem from '../models/ServiceItem.js';
 import { getIO } from '../socket.js';
+import { deleteFromCloudinary } from '../utils/cloudinaryHelper.js';
 
 // @desc    Get all services
 // @route   GET /api/services
@@ -123,9 +124,15 @@ export const deleteService = async (req, res) => {
     try {
         const service = await Service.findById(req.params.id);
         if (service) {
-            await service.deleteOne();
-            // Also delete associated items
+            if (service.image) await deleteFromCloudinary(service.image);
+            
+            // Delete service items and their images
+            const items = await ServiceItem.find({ serviceId: service._id });
+            for (const item of items) {
+                if (item.image) await deleteFromCloudinary(item.image);
+            }
             await ServiceItem.deleteMany({ serviceId: service._id });
+            await service.deleteOne();
             res.json({ message: 'Service removed' });
             getIO().emit('service:updated');
         } else {

@@ -1,5 +1,6 @@
 import Category from '../models/Category.js';
 import { getIO } from '../socket.js';
+import { deleteFromCloudinary } from '../utils/cloudinaryHelper.js';
 
 // @desc    Get all categories
 // @route   GET /api/categories
@@ -203,6 +204,10 @@ export const deleteCategory = async (req, res, next) => {
         if (!category) {
             res.status(404);
             throw new Error('Category not found');
+        }
+
+        if (category.image) {
+            await deleteFromCloudinary(category.image);
         }
 
         await category.deleteOne();

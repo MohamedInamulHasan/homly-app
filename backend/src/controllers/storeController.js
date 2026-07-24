@@ -1,5 +1,6 @@
 import Store from '../models/Store.js';
 import bcrypt from 'bcryptjs';
+import { deleteFromCloudinary } from '../utils/cloudinaryHelper.js';
 
 // @desc    Get all stores
 // @route   GET /api/stores
@@ -154,17 +155,28 @@ export const deleteStore = async (req, res, next) => {
         // and to ensure we can update associated products
         const Product = await import('../models/Product.js').then(m => m.default);
 
-        // Before deleting the store, delete all associated products
-        console.log(`📦 Deleting products from store ${storeId}...`);
+        // Before deleting the store, delete all associated products and their Cloudinary images
+        console.log(`📦 Deleting products and images from store ${storeId}...`);
+        const storeProducts = await Product.find({ storeId: storeId });
+        for (const prod of storeProducts) {
+            if (prod.image) await deleteFromCloudinary(prod.image);
+            if (Array.isArray(prod.images)) await deleteFromCloudinary(prod.images);
+        }
         const deleteResult = await Product.deleteMany({ storeId: storeId });
-        console.log(`✅ Deleted ${deleteResult.deletedCount} products.`);
+        console.log(`✅ Deleted ${deleteResult.deletedCount} products and their images.`);
 
-        const store = await Store.findByIdAndDelete(storeId);
-
+        const store = await Store.findById(storeId);
         if (!store) {
             res.status(404);
             throw new Error('Store not found');
         }
+
+        // Delete store images from Cloudinary
+        if (store.image) await deleteFromCloudinary(store.image);
+        if (store.logo) await deleteFromCloudinary(store.logo);
+        if (store.bannerImage) await deleteFromCloudinary(store.bannerImage);
+
+        await Store.findByIdAndDelete(storeId);
 
         res.status(200).json({
             success: true,
