@@ -11,6 +11,7 @@ import { checkLocationPermission, requestLocationPermission, getCurrentLocation 
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { API_BASE_URL } from '../utils/api';
+import { openExternalLink } from '../utils/linkHelper';
 
 const Checkout = () => {
     const navigate = useNavigate();
@@ -422,22 +423,35 @@ const Checkout = () => {
                                     >
                                         <Pencil size={16} />
                                     </button>
-                                    <div className="space-y-2">
-                                        <div className="flex flex-col gap-0.5">
-                                            <p className="font-bold text-[16px] text-gray-900 dark:text-white">{formData.fullName || t('No Name')}</p>
-                                            <p className="text-[13px] text-gray-400 font-medium">{formData.mobile}</p>
-                                        </div>
-                                        <div className="space-y-0.5">
-                                            <p className="text-[13px] text-gray-500 dark:text-gray-400 leading-relaxed">{formData.address}</p>
-                                            <p className="text-[13px] text-gray-500 dark:text-gray-400">{formData.city} - {formData.zip}</p>
-                                        </div>
+                                    <div className="space-y-1.5">
+                                        {/* 1. Name */}
+                                        <p className="font-bold text-[16px] text-gray-900 dark:text-white">
+                                            {formData.fullName || t('No Name')}
+                                        </p>
+
+                                        {/* 2. Number */}
+                                        {formData.mobile && (
+                                            <p className="text-[13px] font-semibold text-gray-600 dark:text-gray-300">
+                                                {formData.mobile}
+                                            </p>
+                                        )}
+
+                                        {/* 3. Address */}
+                                        <p className="text-[13px] text-gray-500 dark:text-gray-400 leading-relaxed">
+                                            {formData.address}{formData.city ? `, ${formData.city}` : ''}{formData.zip ? ` - ${formData.zip}` : ''}
+                                        </p>
                                         
+                                        {/* 4. Pin / View on Map */}
                                         {formData.location && (
                                             <div className="pt-1">
-                                                <div className="flex items-center gap-1.5 text-[#2E5A2E] dark:text-[#CBF9B2] text-[10px] font-bold bg-[#E8F5E9] dark:bg-[#CBF9B2]/10 px-2.5 py-1 rounded-full w-fit border border-[#2E5A2E]/10 dark:border-[#CBF9B2]/10">
-                                                    <CheckCircle size={11} className="text-[#2E5A2E] dark:text-[#CBF9B2]" />
-                                                    <span>{t('Location Saved')}</span>
-                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => openExternalLink(formData.location)}
+                                                    className="inline-flex items-center gap-1.5 text-[#2E5A2E] dark:text-[#CBF9B2] text-[11px] font-bold bg-green-50 dark:bg-[#CBF9B2]/10 px-3 py-1.5 rounded-full hover:bg-green-100 dark:hover:bg-[#CBF9B2]/20 transition-all border border-[#2E5A2E]/10 dark:border-[#CBF9B2]/20"
+                                                >
+                                                    <MapPin size={13} className="text-[#2E5A2E] dark:text-[#CBF9B2]" />
+                                                    <span>{t('View on Map')}</span>
+                                                </button>
                                             </div>
                                         )}
                                     </div>

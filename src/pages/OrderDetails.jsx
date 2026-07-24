@@ -369,26 +369,37 @@ const OrderDetails = () => {
                         </div>
                         <h3 className="font-bold text-gray-900 dark:text-white">{t('Delivery To')}</h3>
                     </div>
-                    <address className="not-italic text-sm text-gray-600 dark:text-gray-300 pl-11">
-                        <div className="flex items-center gap-2 flex-wrap mb-1">
-                            <p className="font-bold text-gray-900 dark:text-white">{order.shippingAddress?.name || 'User'}</p>
-                            <p className="text-[12px] font-bold text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700 px-2 py-0.5 rounded-lg border border-gray-100 dark:border-gray-700">
+                    <div className="pl-11 space-y-1.5">
+                        {/* 1. Name */}
+                        <p className="font-bold text-[16px] text-gray-900 dark:text-white">
+                            {order.shippingAddress?.name || 'User'}
+                        </p>
+
+                        {/* 2. Number */}
+                        {order.shippingAddress?.mobile && (
+                            <p className="text-[13px] font-semibold text-gray-600 dark:text-gray-300">
                                 {order.shippingAddress?.mobile}
                             </p>
-                        </div>
-                        <p className="leading-relaxed opacity-80 whitespace-pre-wrap">
-                            {order.shippingAddress?.street}, {order.shippingAddress?.city} - {order.shippingAddress?.zip}
-                        </p>
-                        {order.shippingAddress?.location && (
-                            <button
-                                onClick={() => openExternalLink(order.shippingAddress.location)}
-                                className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-green-50 dark:bg-[#CBF9B2]/10 text-[#2E5A2E] dark:text-[#CBF9B2] rounded-xl text-xs font-bold hover:bg-green-100 dark:hover:bg-[#CBF9B2]/20 transition-all border border-green-100/50 dark:border-[#CBF9B2]/20"
-                            >
-                                <MapPin size={14} />
-                                {t('View on Map')}
-                            </button>
                         )}
-                    </address>
+
+                        {/* 3. Address */}
+                        <p className="text-[13px] text-gray-500 dark:text-gray-400 leading-relaxed">
+                            {order.shippingAddress?.street}{order.shippingAddress?.city ? `, ${order.shippingAddress.city}` : ''}{order.shippingAddress?.zip ? ` - ${order.shippingAddress.zip}` : ''}
+                        </p>
+
+                        {/* 4. Pin / View on Map */}
+                        {order.shippingAddress?.location && (
+                            <div className="pt-1">
+                                <button
+                                    onClick={() => openExternalLink(order.shippingAddress.location)}
+                                    className="inline-flex items-center gap-1.5 text-[#2E5A2E] dark:text-[#CBF9B2] text-[11px] font-bold bg-green-50 dark:bg-[#CBF9B2]/10 px-3 py-1.5 rounded-full hover:bg-green-100 dark:hover:bg-[#CBF9B2]/20 transition-all border border-[#2E5A2E]/10 dark:border-[#CBF9B2]/20"
+                                >
+                                    <MapPin size={13} className="text-[#2E5A2E] dark:text-[#CBF9B2]" />
+                                    <span>{t('View on Map')}</span>
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Price Breakdown */}
