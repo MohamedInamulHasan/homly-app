@@ -268,15 +268,44 @@ const StoreProducts = () => {
     return (
         <PullToRefreshLayout>
             <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-20 transition-colors duration-200">
-                {/* Header with back button and store name */}
-                <div className="w-full px-4 pt-4 pb-2 flex items-center gap-3">
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100 dark:border-gray-700 z-10 flex-shrink-0"
-                    >
-                        <ArrowLeft size={22} />
-                    </button>
-                    <h1 className="text-gray-900 dark:text-white text-xl font-bold truncate">{store?.name}</h1>
+                {/* Premium Light Green Header Card */}
+                <div className="w-full bg-[#CBF9B2] dark:bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm relative overflow-hidden mb-6">
+                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#CBF9B2]/20 rounded-full blur-3xl pointer-events-none"></div>
+                    
+                    <div className="relative z-10">
+                        <div className="w-full px-2 relative flex items-center justify-center min-h-[42px]">
+                            <div className="absolute left-2 top-1/2 -translate-y-1/2">
+                                <button 
+                                    onClick={() => navigate(-1)} 
+                                    className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-white/80 rounded-full text-gray-900 dark:text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-200/50"
+                                >
+                                    <ArrowLeft size={22} />
+                                </button>
+                            </div>
+                            <div className="flex flex-col items-center text-center px-14 min-w-0">
+                                <h1 className="text-[18px] font-bold text-gray-900 tracking-tight leading-tight truncate max-w-[200px] sm:max-w-[300px]">{store?.name}</h1>
+                                {store?.address && (
+                                    <div className="flex items-center justify-center gap-1 mt-0.5 max-w-[200px] sm:max-w-[300px] truncate">
+                                        <MapPin size={11} className="text-[#2E5A2E] flex-shrink-0" />
+                                        <p className="text-[11px] font-semibold text-gray-700 truncate">{store?.address}</p>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                <button 
+                                    onClick={() => navigate('/cart')}
+                                    className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-white/80 rounded-full text-gray-900 dark:text-gray-900 transition-transform active:scale-95 shadow-sm border border-black/5 dark:border-gray-200/50 relative"
+                                >
+                                    <ShoppingCart size={22} className="text-gray-700 dark:text-gray-800" />
+                                    {cartCount > 0 && (
+                                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-5 w-5 rounded-full flex items-center justify-center shadow-sm border-2 border-white dark:border-gray-800">
+                                            {cartCount}
+                                        </span>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Store Search & Filter (Now Below the Design) */}
