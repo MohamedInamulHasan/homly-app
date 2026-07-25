@@ -183,15 +183,13 @@ const EditAddress = () => {
             const freshUser = await updateGuest(formData.fullName, formData.mobile);
             const activeUser = freshUser || user;
 
-            // If we switched to a different existing user account, stop here and redirect.
-            // Do not call updateProfile to avoid overwriting their profile or using the wrong token context.
-            const freshId = freshUser?._id || freshUser?.id;
-            const currentId = user?._id || user?.id;
-            if (freshId && currentId && freshId !== currentId) {
-                setMessage({ type: 'success', text: t('Switched profile successfully!') });
-                setTimeout(() => navigate('/profile'), 1500);
-                return;
-            }
+            // Retrieve the updated JWT token from localStorage after account switch/link
+            const token = localStorage.getItem('authToken');
+            const config = token ? {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            } : {};
 
             const profileData = {
                 name: formData.fullName,
@@ -205,7 +203,7 @@ const EditAddress = () => {
                 location: formData.location
             };
 
-            const result = await updateProfile(profileData);
+            const result = await updateProfile(profileData, config);
             if (result) {
                 // Update local auth state with returned data
                 setUser(result);

@@ -707,9 +707,9 @@ export const DataProvider = ({ children }) => {
         }
     };
 
-    const updateProfile = async (profileData) => {
+    const updateProfile = async (profileData, config = {}) => {
         try {
-            const response = await apiService.updateProfile(profileData);
+            const response = await apiService.updateProfile(profileData, config);
             if (response.success && response.data) {
                 // If the update was successful, the AuthContext usually handles the main state,
                 // but we return the data so components can update locally if needed.

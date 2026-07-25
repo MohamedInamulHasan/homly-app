@@ -147,7 +147,7 @@ export const apiService = {
     forgotPassword: (email) => api.post('/users/forgotpassword', { email }),
     resetPassword: (token, password) => api.put(`/users/resetpassword/${token}`, { password }),
     getProfile: () => api.get('/users/profile'),
-    updateProfile: (data) => api.put('/users/profile', data),
+    updateProfile: (data, config = {}) => api.put('/users/profile', data, config),
     getSavedProducts: () => api.get('/users/profile/saved-products'),
     toggleSavedProduct: (productId) => api.post('/users/profile/saved-products', { productId }),
     requestDeleteAccount: (data) => api.post('/users/delete-request', data),
