@@ -1245,9 +1245,9 @@ const StoreManagement = () => {
                                         const selectedCategoryData = categories.find(cat => cat.name === productForm.category);
                                         if (selectedCategoryData?.subcategories && selectedCategoryData.subcategories.length > 0) {
                                             return (
-                                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                                                     {selectedCategoryData.subcategories.map((sub, index) => (
-                                                        <label key={index} className="flex items-center gap-2 cursor-pointer p-2 hover:bg-white dark:hover:bg-gray-600 rounded-lg transition-colors border border-transparent hover:border-gray-200 dark:hover:border-gray-500">
+                                                        <label key={index} className="flex items-start gap-2.5 cursor-pointer p-2.5 hover:bg-white dark:hover:bg-gray-600/50 rounded-xl transition-colors border border-transparent hover:border-gray-200 dark:hover:border-gray-500 min-w-0">
                                                             <input
                                                                 type="checkbox"
                                                                 checked={productForm.subcategory.includes(sub)}
@@ -1260,9 +1260,9 @@ const StoreManagement = () => {
                                                                             : prev.subcategory.filter(s => s !== sub)
                                                                     }));
                                                                 }}
-                                                                className="w-4 h-4 text-[#2E5A2E] rounded border-gray-300 focus:ring-[#2E5A2E]"
+                                                                className="w-4 h-4 mt-0.5 text-[#2E5A2E] rounded border-gray-300 focus:ring-[#2E5A2E] flex-shrink-0"
                                                             />
-                                                            <span className="text-gray-700 dark:text-gray-300 text-sm">{t(sub)}</span>
+                                                            <span className="text-gray-700 dark:text-gray-300 text-xs sm:text-sm font-medium leading-snug break-words flex-1 min-w-0">{t(sub)}</span>
                                                         </label>
                                                     ))}
                                                 </div>
