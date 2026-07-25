@@ -39,10 +39,7 @@ const MyService = () => {
                                 <ArrowLeft size={22} />
                             </button>
                         </div>
-                        <div className="flex flex-col text-center">
-                            <h1 className="text-[18px] font-bold text-gray-900 tracking-tight leading-tight">{t('My Service')}</h1>
-                            <p className="text-[11px] font-semibold text-gray-700 mt-0.5">{user?.name}</p>
-                        </div>
+
                         <div className="absolute right-2 top-1/2 -translate-y-1/2">
                             <button 
                                 onClick={() => navigate('/cart')}
