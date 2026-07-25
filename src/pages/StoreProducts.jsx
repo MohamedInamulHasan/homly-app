@@ -268,14 +268,15 @@ const StoreProducts = () => {
     return (
         <PullToRefreshLayout>
             <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-20 transition-colors duration-200">
-                {/* Minimal header with back button only */}
-                <div className="w-full px-4 pt-4 pb-2 flex items-center">
+                {/* Header with back button and store name */}
+                <div className="w-full px-4 pt-4 pb-2 flex items-center gap-3">
                     <button
                         onClick={() => navigate(-1)}
-                        className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100 dark:border-gray-700 z-10"
+                        className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100 dark:border-gray-700 z-10 flex-shrink-0"
                     >
                         <ArrowLeft size={22} />
                     </button>
+                    <h1 className="text-gray-900 dark:text-white text-xl font-bold truncate">{store?.name}</h1>
                 </div>
 
                 {/* Store Search & Filter (Now Below the Design) */}

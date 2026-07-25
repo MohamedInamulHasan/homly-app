@@ -485,8 +485,8 @@ const StoreManagement = () => {
             {/* Header */}
             {/* Dynamic Header for all views */}
             <div className="flex justify-between items-center mb-6 gap-3">
-                <div className="flex items-center gap-2 min-w-0 flex-1">
-                    {view !== 'list' && !(isStoreAdmin && view === 'storeProducts') && (
+                <div className={`flex items-center gap-2 min-w-0 flex-1 ${view === 'list' && isStoreAdmin ? 'justify-center' : ''}`}>
+                    {view !== 'list' && (
                         <button
                             onClick={() => {
                                 if (view === 'addProductToStore') {
@@ -501,7 +501,7 @@ const StoreManagement = () => {
                             <ArrowLeft size={24} />
                         </button>
                     )}
-                    <h2 className="text-xl md:text-2xl font-normal text-gray-900 dark:text-white truncate flex items-center gap-2">
+                    <h2 className={`text-xl md:text-2xl text-gray-900 dark:text-white truncate flex items-center gap-2 ${view === 'list' && isStoreAdmin ? 'font-bold text-center text-2xl' : 'font-normal'}`}>
                         {view === 'list' ? (!isStoreAdmin ? t('Manage Stores') : t('My Store')) :
                             view === 'form' ? (editingStore ? t('Edit Store') : t('Add New Store')) :
                                 view === 'storeProducts' ? `${selectedStore?.name || ''}` :
@@ -703,22 +703,6 @@ const StoreManagement = () => {
 
             {view === 'form' && (
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-                    <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-4">
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                                {editingStore ? (isStoreAdmin ? t('My Store Settings') : t('Edit Store')) : t('Add New Store')}
-                            </h2>
-                        </div>
-                        {isStoreAdmin && editingStore && (
-                            <button
-                                onClick={() => proceedToManageProducts(editingStore)}
-                                className="px-4 py-2 bg-[#E8F5E9] text-[#2E5A2E] rounded-xl hover:bg-[#CBF9B2] transition-colors flex items-center gap-2 font-bold"
-                            >
-                                <Package size={18} />
-                                {t('Manage Products')}
-                            </button>
-                        )}
-                    </div>
                     <form onSubmit={handleStoreSubmit} className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
@@ -744,83 +728,53 @@ const StoreManagement = () => {
                                 />
                             </div>
 
-                            <div className="col-span-full">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Timing Mode')}</label>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <button
-                                        type="button"
-                                        onClick={() => setStoreForm({ ...storeForm, timingType: 'daily' })}
-                                        className={`px-4 py-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1 ${storeForm.timingType === 'daily'
-                                            ? 'border-[#2E5A2E] bg-[#E8F5E9] text-[#2E5A2E]'
-                                            : 'border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500'
-                                            }`}
-                                    >
-                                        <Clock size={20} />
-                                        <span className="font-bold text-sm">{t('Daily Schedule')}</span>
-                                        <span className="text-[10px] opacity-70">{t('Auto Open/Close by hours')}</span>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setStoreForm({ ...storeForm, timingType: 'permanent' })}
-                                        className={`px-4 py-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1 ${storeForm.timingType === 'permanent'
-                                            ? 'border-[#2E5A2E] bg-[#E8F5E9] dark:bg-[#7CA90E]/20 text-[#2E5A2E] dark:text-[#7CA90E]'
-                                            : 'border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500'
-                                            }`}
-                                    >
-                                        <Power size={20} />
-                                        <span className="font-bold text-sm">{t('Permanent Status')}</span>
-                                        <span className="text-[10px] opacity-70">{t('Always Open/Closed until changed')}</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="col-span-full">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Manual Status')}</label>
-                                <button
-                                    type="button"
-                                    onClick={() => setStoreForm(prev => ({ ...prev, isManuallyClosed: !prev.isManuallyClosed }))}
-                                    className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all ${storeForm.isManuallyClosed 
-                                        ? 'border-red-200 bg-red-50 text-red-600' 
-                                        : 'border-emerald-200 bg-emerald-50 text-emerald-600'}`}
-                                >
+                            <div className="col-span-full bg-gray-50 dark:bg-gray-750 p-4 rounded-2xl border border-gray-200/80 dark:border-gray-700">
+                                <div className="flex items-center justify-between mb-2">
                                     <div className="flex items-center gap-3">
-                                        <Power size={20} />
-                                        <div className="text-left">
-                                            <p className="font-bold text-sm">{storeForm.isManuallyClosed ? t('Manually Closed') : t('Operational')}</p>
-                                            <p className="text-[10px] opacity-70">{storeForm.isManuallyClosed ? t('Store is forced closed') : t('Following schedule/mode')}</p>
+                                        <div className="p-2.5 bg-[#E8F5E9] dark:bg-[#2E5A2E]/30 text-[#2E5A2E] dark:text-[#CBF9B2] rounded-xl">
+                                            <Clock size={20} />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-gray-900 dark:text-white">{t('Store Timing')}</h4>
+                                            <p className="text-[10px] text-gray-500 dark:text-gray-400 tracking-tight">{t('Schedule opening and closing hours for this store')}</p>
                                         </div>
                                     </div>
-                                    <div className={`w-10 h-5 rounded-full relative transition-colors ${storeForm.isManuallyClosed ? 'bg-red-500' : 'bg-emerald-500'}`}>
-                                        <div className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all ${storeForm.isManuallyClosed ? 'right-1' : 'left-1'}`} />
+                                    <label className="relative inline-flex items-center cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={storeForm.timingType === 'daily'}
+                                            onChange={(e) => setStoreForm({ ...storeForm, timingType: e.target.checked ? 'daily' : 'permanent' })}
+                                            className="sr-only peer"
+                                        />
+                                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#2E5A2E]"></div>
+                                    </label>
+                                </div>
+
+                                {storeForm.timingType === 'daily' && (
+                                    <div className="grid grid-cols-2 gap-4 mt-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                                        <div>
+                                            <label className="block text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1.5 ml-1">{t('Opening')}</label>
+                                            <input
+                                                type="time"
+                                                value={storeForm.openingTime}
+                                                onChange={(e) => setStoreForm({ ...storeForm, openingTime: e.target.value })}
+                                                className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none text-sm"
+                                                required={storeForm.timingType === 'daily'}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1.5 ml-1">{t('Closing')}</label>
+                                            <input
+                                                type="time"
+                                                value={storeForm.closingTime}
+                                                onChange={(e) => setStoreForm({ ...storeForm, closingTime: e.target.value })}
+                                                className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2E5A2E] outline-none text-sm"
+                                                required={storeForm.timingType === 'daily'}
+                                            />
+                                        </div>
                                     </div>
-                                </button>
+                                )}
                             </div>
-
-                            {storeForm.timingType === 'daily' && (
-                                <>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Opening Time')}</label>
-                                        <input
-                                            type="time"
-                                            value={storeForm.openingTime}
-                                            onChange={(e) => setStoreForm({ ...storeForm, openingTime: e.target.value })}
-                                            className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
-                                            required
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Closing Time')}</label>
-                                        <input
-                                            type="time"
-                                            value={storeForm.closingTime}
-                                            onChange={(e) => setStoreForm({ ...storeForm, closingTime: e.target.value })}
-                                            className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
-                                            required
-                                        />
-                                    </div>
-                                </>
-                            )}
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('Mobile Number')}</label>
@@ -845,9 +799,9 @@ const StoreManagement = () => {
                             <div>
                                 <div className="space-y-2">
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('Categories')}</label>
-                                    <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 max-h-48 overflow-y-auto grid grid-cols-2 gap-2">
+                                    <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 max-h-56 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         {categories && categories.length > 0 ? categories.map((cat) => (
-                                            <label key={cat._id || cat.id} className="flex items-center gap-2 cursor-pointer p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors">
+                                            <label key={cat._id || cat.id} className="flex items-start gap-2.5 cursor-pointer p-2.5 hover:bg-gray-100 dark:hover:bg-gray-600/50 rounded-xl transition-colors min-w-0">
                                                 <input
                                                     type="checkbox"
                                                     value={cat.name}
@@ -861,11 +815,11 @@ const StoreManagement = () => {
                                                                 : prev.category.filter(c => c !== value)
                                                         }));
                                                     }}
-                                                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                                    className="w-4 h-4 mt-0.5 text-[#2E5A2E] rounded border-gray-300 focus:ring-[#2E5A2E] flex-shrink-0"
                                                 />
-                                                <span className="text-gray-900 dark:text-white text-sm">{t(cat.name)}</span>
+                                                <span className="text-gray-900 dark:text-white text-xs sm:text-sm font-medium leading-snug break-words flex-1 min-w-0">{t(cat.name)}</span>
                                             </label>
-                                        )) : <p className="text-gray-500 text-sm col-span-2">{t('No categories available')}</p>}
+                                        )) : <p className="text-gray-500 text-sm col-span-full">{t('No categories available')}</p>}
                                     </div>
                                     <p className="text-xs text-gray-500 dark:text-gray-400">
                                         {storeForm.category.length > 0
