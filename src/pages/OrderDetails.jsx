@@ -63,7 +63,7 @@ const OrderDetails = () => {
     // Show skeleton ONLY if we don't have the order AND we are loading.
     if (!order && (loading.orders || loadingSingle)) {
         return (
-            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 mx-auto max-w-3xl w-full relative pb-48 animate-pulse">
+            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 mx-auto max-w-3xl w-full relative pb-12 animate-pulse">
                 <div className="px-5 pt-8">
                     {/* Header Skeleton */}
                     <div className="flex items-center justify-between mb-8 mt-2">
@@ -114,7 +114,7 @@ const OrderDetails = () => {
 
     if (!order) {
         return (
-            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 mx-auto max-w-md w-full relative pb-48 flex flex-col items-center justify-center p-4">
+            <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 mx-auto max-w-md w-full relative pb-12 flex flex-col items-center justify-center p-4">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('Order not found')}</h2>
                 <button
                     onClick={() => navigate('/orders')}
@@ -192,10 +192,10 @@ const OrderDetails = () => {
     const timelineSteps = getTimelineSteps(order.status);
 
     return (
-        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 mx-auto max-w-3xl w-full relative pb-48">
-            <div className="px-5 pt-8">
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 mx-auto max-w-3xl w-full relative pb-12">
+            <div className="px-5 pt-4">
                 {/* Header matching Profile & Cart */}
-                <div className="flex items-center justify-between mb-8 mt-2">
+                <div className="flex items-center justify-between mb-4">
                      <button 
                          onClick={() => navigate(-1)}
                          className="w-[46px] h-[46px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-700/50"

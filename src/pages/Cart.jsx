@@ -65,7 +65,7 @@ const Cart = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 flex flex-col transition-colors duration-200 relative overflow-hidden mx-auto max-w-md w-full my-auto pb-10">
+        <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 flex flex-col transition-colors duration-200 relative overflow-hidden mx-auto max-w-md w-full my-auto pb-2">
             
             {/* Premium Green Header — matches Orders / Profile style */}
             <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] dark:bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm overflow-hidden">
@@ -91,7 +91,7 @@ const Cart = () => {
             </div>
 
             {/* Scrollable Container */}
-            <div className="flex-1 overflow-y-auto px-5 pt-[90px] pb-32 no-scrollbar">
+            <div className="flex-1 overflow-y-auto px-5 pt-[90px] pb-6 no-scrollbar">
 
                 {/* Items */}
                 <div className="space-y-4 mb-6">
