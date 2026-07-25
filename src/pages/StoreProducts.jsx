@@ -578,6 +578,7 @@ const StoreProducts = () => {
                         )}
                     </div>
                 )}
+                    </div>
                 </div>
             </div>
         </PullToRefreshLayout>
