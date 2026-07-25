@@ -201,7 +201,8 @@ const EditAddress = () => {
             }
         } catch (err) {
             console.error('Update Profile Error:', err);
-            setMessage({ type: 'error', text: t('Failed to update address') });
+            const errMsg = err.response?.data?.message || err.message || t('Failed to update address');
+            setMessage({ type: 'error', text: errMsg });
         } finally {
             setIsSaving(false);
         }

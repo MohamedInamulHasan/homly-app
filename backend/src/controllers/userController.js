@@ -325,11 +325,27 @@ export const updateUserProfile = async (req, res, next) => {
         if (user) {
             user.name = req.body.name || req.body.fullName || user.name;
             user.email = req.body.email || user.email;
-            user.mobile = req.body.mobile || user.mobile;
-            user.address = req.body.address || user.address;
-            user.avatar = req.body.avatar || user.avatar;
+
+            if (req.body.mobile && req.body.mobile !== user.mobile) {
+                const rawMobile = req.body.mobile.replace(/[^0-9]/g, '');
+                const existingUser = await User.findOne({
+                    _id: { $ne: user._id },
+                    $or: [
+                        { mobile: rawMobile },
+                        { mobile: rawMobile.replace(/^91/, '') },
+                        { mobile: '91' + rawMobile.replace(/^91/, '') }
+                    ]
+                });
+
+                if (existingUser) {
+                    res.status(400);
+                    throw new Error('This mobile number is already registered to another account');
+                }
+                user.mobile = rawMobile;
+            }
 
             user.address = req.body.address || user.address;
+            user.avatar = req.body.avatar || user.avatar;
 
             if (req.body.location) {
                 user.location = req.body.location;
