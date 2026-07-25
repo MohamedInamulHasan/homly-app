@@ -3874,6 +3874,34 @@ const ServiceRequestManagement = () => {
     );
 };
 
+const SortableCityRow = ({ city, children }) => {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        setActivatorNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id: city });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        position: 'relative',
+        zIndex: isDragging ? 999 : 'auto',
+    };
+
+    return (
+        <SortableItemContext.Provider value={{ attributes, listeners, ref: setActivatorNodeRef }}>
+            <div ref={setNodeRef} style={style}>
+                {children}
+            </div>
+        </SortableItemContext.Provider>
+    );
+};
+
 const CityManagement = () => {
     const { t } = useLanguage();
     const [cities, setCities] = useState([]);
