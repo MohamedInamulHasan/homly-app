@@ -3959,7 +3959,6 @@ const CityManagement = () => {
             if (data.success) {
                 setCities(updatedCities);
                 setNewCity('');
-                setNewCity('');
                 alert(t('City added successfully!'));
             } else {
                 alert(data.message || t('Failed to add city'));
@@ -4017,62 +4016,80 @@ const CityManagement = () => {
                 {loading ? (
                     <div className="p-8 text-center text-gray-500 dark:text-gray-400">{t('Loading cities...')}</div>
                 ) : cities.length > 0 ? (
-                    <div className="divide-y divide-gray-100 dark:divide-gray-700">
-                        {cities.map((city, index) => {
-                            const isEditing = editingIndex === index;
-                            return (
-                                <div key={index} className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors gap-4">
-                                    {isEditing ? (
-                                        <input
-                                            type="text"
-                                            value={editingValue}
-                                            onChange={(e) => setEditingValue(e.target.value)}
-                                            className="flex-1 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-750 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none text-sm"
-                                        />
-                                    ) : (
-                                        <span className="font-normal text-gray-900 dark:text-white flex-1">{city}</span>
-                                    )}
-                                    <div className="flex items-center gap-1.5">
-                                        {isEditing ? (
-                                            <>
-                                                <button
-                                                    onClick={() => handleSaveEdit(index)}
-                                                    className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
-                                                    title={t('Save')}
-                                                >
-                                                    <Save size={18} />
-                                                </button>
-                                                <button
-                                                    onClick={handleCancelEdit}
-                                                    className="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/30 rounded-lg transition-colors"
-                                                    title={t('Cancel')}
-                                                >
-                                                    <X size={18} />
-                                                </button>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <button
-                                                    onClick={() => handleStartEdit(index, city)}
-                                                    className="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/30 rounded-lg transition-colors"
-                                                    title={t('Edit')}
-                                                >
-                                                    <Pencil size={18} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleRemoveCity(city)}
-                                                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700/30 rounded-lg transition-colors"
-                                                    title={t('Remove')}
-                                                >
-                                                    <Trash2 size={18} />
-                                                </button>
-                                            </>
-                                        )}
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
+                    <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}
+                    >
+                        <SortableContext
+                            items={cities}
+                            strategy={verticalListSortingStrategy}
+                        >
+                            <div className="divide-y divide-gray-100 dark:divide-gray-700">
+                                {cities.map((city, index) => {
+                                    const isEditing = editingIndex === index;
+                                    return (
+                                        <SortableCityRow key={city} city={city}>
+                                            <div className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors gap-4">
+                                                <div className="flex items-center gap-3 flex-1">
+                                                    <DragHandle className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                                        <GripVertical size={18} />
+                                                    </DragHandle>
+                                                    {isEditing ? (
+                                                        <input
+                                                            type="text"
+                                                            value={editingValue}
+                                                            onChange={(e) => setEditingValue(e.target.value)}
+                                                            className="flex-1 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-750 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none text-sm"
+                                                        />
+                                                    ) : (
+                                                        <span className="font-normal text-gray-900 dark:text-white flex-1">{city}</span>
+                                                    )}
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    {isEditing ? (
+                                                        <>
+                                                            <button
+                                                                onClick={() => handleSaveEdit(index)}
+                                                                className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
+                                                                title={t('Save')}
+                                                            >
+                                                                <Save size={18} />
+                                                            </button>
+                                                            <button
+                                                                onClick={handleCancelEdit}
+                                                                className="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/30 rounded-lg transition-colors"
+                                                                title={t('Cancel')}
+                                                            >
+                                                                <X size={18} />
+                                                            </button>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <button
+                                                                onClick={() => handleStartEdit(index, city)}
+                                                                className="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/30 rounded-lg transition-colors"
+                                                                title={t('Edit')}
+                                                            >
+                                                                <Pencil size={18} />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleRemoveCity(city)}
+                                                                className="p-2 text-gray-400 hover:text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700/30 rounded-lg transition-colors"
+                                                                title={t('Remove')}
+                                                            >
+                                                                <Trash2 size={18} />
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </SortableCityRow>
+                                    );
+                                })}
+                            </div>
+                        </SortableContext>
+                    </DndContext>
                 ) : (
                     <div className="p-12 text-center">
                         <MapPin className="mx-auto h-12 w-12 text-gray-300 dark:text-gray-600 mb-4" />
