@@ -834,9 +834,17 @@ const StoreManagement = () => {
                                 <input
                                     type="text"
                                     value={storeForm.mobile}
-                                    onChange={(e) => setStoreForm({ ...storeForm, mobile: e.target.value })}
+                                    onChange={(e) => {
+                                        const val = e.target.value.replace(/\D/g, '');
+                                        if (val.length <= 10) {
+                                            setStoreForm({ ...storeForm, mobile: val });
+                                        }
+                                    }}
+                                    maxLength={10}
+                                    pattern="[0-9]*"
+                                    inputMode="numeric"
                                     className="w-full px-4 py-3 rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7CA90E] outline-none"
-                                    placeholder="e.g., +91 9876543210"
+                                    placeholder="e.g., 9876543210"
                                     required
                                 />
                             </div>
