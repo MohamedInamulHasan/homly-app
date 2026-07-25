@@ -3910,6 +3910,49 @@ const CityManagement = () => {
     const [editingIndex, setEditingIndex] = useState(null);
     const [editingValue, setEditingValue] = useState('');
 
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
+        useSensor(TouchSensor, {
+            activationConstraint: {
+                delay: 200,
+                tolerance: 6,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    const handleDragEnd = async (event) => {
+        const { active, over } = event;
+        if (!over || active.id === over.id) return;
+
+        const oldIndex = cities.indexOf(active.id);
+        const newIndex = cities.indexOf(over.id);
+
+        if (oldIndex !== -1 && newIndex !== -1) {
+            const updatedCities = arrayMove(cities, oldIndex, newIndex);
+            const originalCities = [...cities];
+            setCities(updatedCities);
+
+            try {
+                const data = await apiService.settings.update('cities', updatedCities);
+                if (!data.success) {
+                    setCities(originalCities);
+                    alert(t('Failed to save sorted cities'));
+                }
+            } catch (error) {
+                console.error('Error saving sorted cities:', error);
+                setCities(originalCities);
+                alert(t('Failed to save sorted cities'));
+            }
+        }
+    };
+
     const fetchCities = async () => {
         try {
             setLoading(true);
