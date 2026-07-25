@@ -179,12 +179,7 @@ const EditAddress = () => {
         setIsSaving(true);
 
         try {
-            // Link guest profile or switch to existing profile using phone number
-            const freshUser = await updateGuest(formData.fullName, formData.mobile);
-            const activeUser = freshUser || user;
-
             const profileData = {
-                ...activeUser,
                 name: formData.fullName,
                 mobile: formData.mobile,
                 address: {

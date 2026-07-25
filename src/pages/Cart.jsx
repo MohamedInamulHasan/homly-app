@@ -91,7 +91,7 @@ const Cart = () => {
             </div>
 
             {/* Scrollable Container */}
-            <div className="flex-1 overflow-y-auto px-5 pt-[90px] pb-20 no-scrollbar">
+            <div className="flex-1 overflow-y-auto px-5 pt-[90px] pb-12 no-scrollbar">
 
                 {/* Items */}
                 <div className="space-y-4 mb-6">
