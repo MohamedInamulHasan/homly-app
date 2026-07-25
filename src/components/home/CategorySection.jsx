@@ -71,9 +71,9 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                             />
                         ) : (
                             <img
-                                src="https://cdn-icons-png.flaticon.com/512/9356/9356230.png"
+                                src="https://cdn-icons-png.flaticon.com/512/2311/2311524.png"
                                 alt="All Categories"
-                                className={`w-full h-full object-cover rounded-full transition-transform p-2 ${selectedCategory === 'All' ? 'scale-90' : ''}`}
+                                className={`w-full h-full object-cover rounded-full transition-transform p-3 ${selectedCategory === 'All' ? 'scale-90' : ''}`}
                             />
                         )}
                     </div>

@@ -8,7 +8,6 @@ import PullToRefreshLayout from '../components/PullToRefreshLayout';
 import StoreCard from '../components/StoreCard';
 import { API_BASE_URL } from '../utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useServices } from '../hooks/queries/useServices';
 import HomeHeader from '../components/home/HomeHeader';
 
 const Shop = () => {
@@ -16,7 +15,8 @@ const Shop = () => {
     const [viewType, setViewType] = useState('store'); // 'store' or 'service'
     const [searchParams, setSearchParams] = useSearchParams();
     const { stores, categories: dbCategories, loading, initialLoading } = useData();
-    const { data: services = [], isLoading: servicesLoading } = useServices();
+    const services = [];
+    const servicesLoading = false;
     const { t, language } = useLanguage();
 
     // Create a Set of valid category names for filtering store tags
