@@ -179,6 +179,20 @@ const EditAddress = () => {
         setIsSaving(true);
 
         try {
+            // Link guest profile or switch to existing profile using phone number
+            const freshUser = await updateGuest(formData.fullName, formData.mobile);
+            const activeUser = freshUser || user;
+
+            // If we switched to a different existing user account, stop here and redirect.
+            // Do not call updateProfile to avoid overwriting their profile or using the wrong token context.
+            const freshId = freshUser?._id || freshUser?.id;
+            const currentId = user?._id || user?.id;
+            if (freshId && currentId && freshId !== currentId) {
+                setMessage({ type: 'success', text: t('Switched profile successfully!') });
+                setTimeout(() => navigate('/profile'), 1500);
+                return;
+            }
+
             const profileData = {
                 name: formData.fullName,
                 mobile: formData.mobile,
