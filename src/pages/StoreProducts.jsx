@@ -268,8 +268,8 @@ const StoreProducts = () => {
     return (
         <PullToRefreshLayout>
             <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-20 transition-colors duration-200">
-                {/* Premium Light Green Header Card */}
-                <div className="w-full bg-[#CBF9B2] dark:bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm relative overflow-hidden mb-6">
+                {/* Premium Light Green Header Card (Fixed Header) */}
+                <div className="fixed top-0 left-0 right-0 z-50 w-full bg-[#CBF9B2] dark:bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm overflow-hidden">
                     <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#CBF9B2]/20 rounded-full blur-3xl pointer-events-none"></div>
                     
                     <div className="relative z-10">
@@ -307,6 +307,8 @@ const StoreProducts = () => {
                         </div>
                     </div>
                 </div>
+
+                <div className="pt-[100px]">
 
                 {/* Store Search & Filter (Now Below the Design) */}
                 <section className="px-4 relative z-20 mb-10">

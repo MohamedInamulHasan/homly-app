@@ -222,7 +222,7 @@ const OrderConfirmation = () => {
     return (
         <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 transition-colors duration-200 pb-20 md:pb-40 relative">
             {/* Simple Header */}
-            <div className="w-full px-5 py-6">
+            <div className="w-full px-5 py-4">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                      <button onClick={() => navigate(-1)} className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full shadow-sm text-gray-900 dark:text-white transition-transform active:scale-95 border border-gray-100/50">
                          <ArrowLeft size={22} />
@@ -232,7 +232,7 @@ const OrderConfirmation = () => {
                 </div>
             </div>
 
-            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 space-y-6">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
                 <div className="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                     <div className="p-5 border-b border-gray-50 dark:border-gray-700 flex items-center gap-3">
                         <div className="p-2 bg-green-50 dark:bg-[#CBF9B2]/20 rounded-lg text-[#2E5A2E] dark:text-[#CBF9B2]">
