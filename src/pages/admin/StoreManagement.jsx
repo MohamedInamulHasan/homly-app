@@ -1,5 +1,6 @@
 import { API_BASE_URL } from '../../utils/api';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { isStoreOpen, formatTime12h, isProductScheduled } from '../../utils/storeHelpers';
 import { motion } from 'framer-motion';
 import {
@@ -38,6 +39,7 @@ import { SortableStoreCard, SortableProductRow, DragHandle } from './AdminDashbo
 const StoreManagement = () => {
     const { user } = useAuth();
     const { t } = useLanguage();
+    const navigate = useNavigate();
 
     // NEW HOOKS
     const { data: stores = [] } = useStores();
@@ -485,23 +487,25 @@ const StoreManagement = () => {
             {/* Header */}
             {/* Dynamic Header for all views */}
             <div className="flex justify-between items-center mb-6 gap-3">
-                <div className={`flex items-center gap-2 min-w-0 flex-1 ${view === 'list' && isStoreAdmin ? 'justify-center' : ''}`}>
-                    {view !== 'list' && (
+                <div className="flex items-center gap-2 min-w-0 flex-1 relative">
+                    {(view !== 'list' || isStoreAdmin) && (
                         <button
                             onClick={() => {
                                 if (view === 'addProductToStore') {
                                     setView('storeProducts');
-                                } else {
+                                } else if (view === 'form' || view === 'storeProducts') {
                                     setView('list');
+                                } else {
+                                    navigate(-1);
                                 }
                             }}
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors text-gray-700 dark:text-gray-200 flex-shrink-0"
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors text-gray-700 dark:text-gray-200 flex-shrink-0 z-10"
                             title={t('Back')}
                         >
                             <ArrowLeft size={24} />
                         </button>
                     )}
-                    <h2 className={`text-xl md:text-2xl text-gray-900 dark:text-white truncate flex items-center gap-2 ${view === 'list' && isStoreAdmin ? 'font-bold text-center text-2xl' : 'font-normal'}`}>
+                    <h2 className={`text-xl md:text-2xl text-gray-900 dark:text-white truncate flex items-center gap-2 ${view === 'list' && isStoreAdmin ? 'font-bold text-center flex-1 text-2xl pr-8' : 'font-normal'}`}>
                         {view === 'list' ? (!isStoreAdmin ? t('Manage Stores') : t('My Store')) :
                             view === 'form' ? (editingStore ? t('Edit Store') : t('Add New Store')) :
                                 view === 'storeProducts' ? `${selectedStore?.name || ''}` :
