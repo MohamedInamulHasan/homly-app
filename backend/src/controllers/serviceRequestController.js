@@ -3,6 +3,7 @@ import Service from '../models/Service.js';
 import { sendServiceRequestNotification } from '../services/emailService.js';
 import { sendServiceRequestTelegramNotification } from '../services/telegramService.js';
 import { sendServiceRequestVoiceAlert } from '../services/voiceService.js';
+import { sendServiceRequestNtfyAlert } from '../services/ntfyService.js';
 
 
 // @desc    Create a new service request
@@ -74,6 +75,14 @@ export const createServiceRequest = async (req, res) => {
             console.error('❌ Voice alert trigger error:', voiceError);
         }
 
+        // Send ntfy push notification alert to admin phone (non-blocking)
+        try {
+            sendServiceRequestNtfyAlert(createdRequest)
+                .then(result => console.log('🔔 ntfy service request alert result:', result))
+                .catch(err => console.error('❌ Failed to send ntfy service request alert:', err));
+        } catch (ntfyError) {
+            console.error('❌ ntfy service request trigger error:', ntfyError);
+        }
 
         res.status(201).json(createdRequest);
     } catch (error) {

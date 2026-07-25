@@ -3,6 +3,7 @@ import User from '../models/User.js';
 import { sendOrderNotificationEmail, sendCustomerOrderConfirmationEmail } from '../services/emailService.js';
 import { sendOrderTelegramNotification } from '../services/telegramService.js';
 import { sendOrderVoiceAlert } from '../services/voiceService.js';
+import { sendOrderNtfyAlert } from '../services/ntfyService.js';
 import { getIO } from '../socket.js';
 
 
@@ -169,6 +170,11 @@ export const createOrder = async (req, res, next) => {
             .then(result => console.log('📞 Voice alert service result:', result))
             .catch(err => console.error('❌ Failed to send Voice alert:', err));
 
+        // Send ntfy push notification alert to admin phone (non-blocking)
+        console.log('🔔 Sending ntfy push notification...');
+        sendOrderNtfyAlert(order)
+            .then(result => console.log('🔔 ntfy alert result:', result))
+            .catch(err => console.error('❌ Failed to send ntfy alert:', err));
 
         // Emit real-time event for admin
         getIO().emit('order:created', order);
