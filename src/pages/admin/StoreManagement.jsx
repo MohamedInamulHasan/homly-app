@@ -502,18 +502,11 @@ const StoreManagement = () => {
                         </button>
                     )}
                     <h2 className="text-xl md:text-2xl font-normal text-gray-900 dark:text-white truncate flex items-center gap-2">
-                        {view === 'storeProducts' && <ShoppingBag className="text-[#2E5A2E] dark:text-[#7CA90E] flex-shrink-0" size={24} />}
                         {view === 'list' ? (!isStoreAdmin ? t('Manage Stores') : t('My Store')) :
                             view === 'form' ? (editingStore ? t('Edit Store') : t('Add New Store')) :
                                 view === 'storeProducts' ? `${selectedStore?.name || ''}` :
                                     view === 'addProductToStore' ? (editingProduct ? t('Edit Product') : `${t('Add Product')}`) :
                                         t('Manage Stores')}
-                        {/* Show "- Products" only if there is space? Or just simplify header text on mobile? 
-                            The user said "make store name small". 
-                            I'll simplify the text rendering to just Store Name for 'storeProducts' view if possible, 
-                            or keep it simple. 
-                            Let's rely on the truncate class above. 
-                        */}
                     </h2>
                 </div>
 

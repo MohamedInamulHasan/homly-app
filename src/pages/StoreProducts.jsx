@@ -268,40 +268,14 @@ const StoreProducts = () => {
     return (
         <PullToRefreshLayout>
             <div className="min-h-screen bg-[#E8EAEF] dark:bg-gray-900 pb-20 transition-colors duration-200">
-                {/* Premium Store Header Card / Dark Mode Adjusted */}
-                <div className="w-full bg-[#CBF9B2] dark:bg-[#CBF9B2] rounded-b-[2.5rem] px-4 pt-4 pb-4 shadow-sm relative overflow-hidden mb-8">
-                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/30 dark:bg-[#CBF9B2]/20 rounded-full blur-3xl pointer-events-none"></div>
-                    
-                    <div className="relative z-10">
-                        <div className="max-w-7xl mx-auto px-2 relative min-h-[42px]">
-                            <button
-                                onClick={() => navigate(-1)}
-                                className="absolute left-2 top-1/2 -translate-y-1/2 w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-white/80 rounded-full text-gray-900 dark:text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-200/50 z-10"
-                            >
-                                <ArrowLeft size={22} />
-                            </button>
-                            <div className="flex flex-col items-center text-center px-14 pt-1 min-w-0">
-                                <h1 className="text-gray-900 dark:text-gray-900 text-[18px] font-bold tracking-tight truncate w-full">{store?.name}</h1>
-                                {store?.address && (
-                                    <div className="flex items-center justify-center gap-1 mt-0.5 w-full">
-                                        <MapPin size={12} className="text-[#2E5A2E] dark:text-[#CBF9B2] flex-shrink-0" />
-                                        <p className="text-[#2E5A2E] dark:text-[#7CA90E] text-[13px] font-medium truncate max-w-[250px]">{store?.address}</p>
-                                    </div>
-                                )}
-                            </div>
-                            <Link 
-                                to="/cart"
-                                className="absolute right-2 top-1/2 -translate-y-1/2 w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-white/80 rounded-full text-gray-900 dark:text-gray-900 transition-transform active:scale-95 shadow-sm border border-gray-100/50 dark:border-gray-200/50 z-10"
-                            >
-                                <ShoppingCart size={22} className="text-[#2E5A2E] dark:text-[#2E5A2E]" />
-                                {cartCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center border border-white dark:border-gray-800">
-                                        {cartCount}
-                                    </span>
-                                )}
-                            </Link>
-                        </div>
-                    </div>
+                {/* Minimal header with back button only */}
+                <div className="w-full px-4 pt-4 pb-2 flex items-center">
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="w-[42px] h-[42px] flex items-center justify-center bg-white dark:bg-gray-800 rounded-full text-gray-900 dark:text-white transition-transform active:scale-95 shadow-sm border border-gray-100 dark:border-gray-700 z-10"
+                    >
+                        <ArrowLeft size={22} />
+                    </button>
                 </div>
 
                 {/* Store Search & Filter (Now Below the Design) */}
