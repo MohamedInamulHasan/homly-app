@@ -138,9 +138,9 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
 
                                     return (
                                         <>
-                                            <span className={`text-[11px] md:text-xs lg:text-sm truncate w-full ${isSelected ? 'font-bold' : 'font-semibold'}`}>{mainPart}</span>
+                                            <span className={`text-[11px] md:text-xs lg:text-sm w-full break-words text-center ${isSelected ? 'font-bold' : 'font-semibold'}`}>{mainPart}</span>
                                             {bracketPart && (
-                                                <span className={`text-[9px] md:text-[10px] lg:text-[11px] truncate w-full opacity-80 ${isSelected ? 'font-semibold' : 'font-medium'}`}>{bracketPart}</span>
+                                                <span className={`text-[9px] md:text-[10px] lg:text-[11px] w-full break-words text-center opacity-80 ${isSelected ? 'font-semibold' : 'font-medium'}`}>{bracketPart}</span>
                                             )}
                                         </>
                                     );
