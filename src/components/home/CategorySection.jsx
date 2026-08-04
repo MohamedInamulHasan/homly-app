@@ -96,7 +96,7 @@ const CategorySection = ({ categories = [], isLoading = false, selectedCategory 
                                     alt={category.name}
                                     className={`w-full h-full object-cover rounded-full transition-transform ${isSelected ? 'scale-90' : ''}`}
                                     loading="lazy"
-                                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://cdn-icons-png.flaticon.com/512/3014/3014470.png'; }}
+                                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://cdn-icons-png.flaticon.com/512/2311/2311524.png'; }}
                                 />
                             </div>
                             <div className={`flex flex-col items-center justify-center text-center w-full max-w-[80px] md:max-w-[110px] transition-colors ${isSelected ? 'text-[#2E5A2E] dark:text-[#CBF9B2]' : 'text-gray-600 dark:text-gray-400'}`}>
