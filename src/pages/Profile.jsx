@@ -213,8 +213,8 @@ const Profile = () => {
                      </div>
                 </div>
 
-                {/* Performance Summary for Admins/Delivery Boys */}
-                {isAdminView && (
+                {/* Performance Summary for Global Admin */}
+                {roles.includes('admin') && (
                     <div className="grid grid-cols-4 gap-2 mb-8">
                         {/* Processing */}
                         <div className="bg-white dark:bg-gray-800/50 p-2.5 rounded-2xl border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center">
